@@ -5,22 +5,23 @@ import org.kde.plasma.core 2.0
 
 ColumnLayout {
     readonly property bool softwareRendering: GraphicsInfo.api === GraphicsInfo.Software
-
+    
     Label {
-        text: Qt.formatTime(timeSource.data["Local"]["DateTime"])
+        text: Qt.formatTime(timeSource.data["Local"]["DateTime"]).toLowerCase()
         color: ColorScope.textColor
         style: softwareRendering ? Text.Outline : Text.Normal
         styleColor: softwareRendering ? ColorScope.backgroundColor : "transparent" //no outline, doesn't matter
-        font.pointSize: 40
-        Layout.alignment: Qt.AlignHCenter
+        font.weight: Font.Light
+        font.pointSize: 36
+        Layout.alignment: parent.Layout.alignment
     }
     Label {
         text: Qt.formatDate(timeSource.data["Local"]["DateTime"], Qt.DefaultLocaleLongDate)
         color: ColorScope.textColor
         style: softwareRendering ? Text.Outline : Text.Normal
         styleColor: softwareRendering ? ColorScope.backgroundColor : "transparent" //no outline, doesn't matter
-        font.pointSize: 16
-        Layout.alignment: Qt.AlignHCenter
+        font.pointSize: 14
+        Layout.alignment: parent.Layout.alignment
     }
     DataSource {
         id: timeSource
