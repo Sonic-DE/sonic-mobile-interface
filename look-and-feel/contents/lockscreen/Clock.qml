@@ -1,27 +1,49 @@
 import QtQuick 2.8
 import QtQuick.Layouts 1.1
 import QtQuick.Controls 2.5
+import QtGraphicalEffects 1.12
 import org.kde.plasma.core 2.0
 
 ColumnLayout {
     readonly property bool softwareRendering: GraphicsInfo.api === GraphicsInfo.Software
+    property int alignment
+    Layout.alignment: alignment
+    spacing: units.gridUnit
     
     Label {
         text: Qt.formatTime(timeSource.data["Local"]["DateTime"]).toLowerCase()
         color: ColorScope.textColor
         style: softwareRendering ? Text.Outline : Text.Normal
-        styleColor: softwareRendering ? ColorScope.backgroundColor : "transparent" //no outline, doesn't matter
-        font.weight: Font.Light
+        styleColor: softwareRendering ? ColorScope.backgroundColor : "transparent" // no outline, doesn't matter
+        
+        Layout.alignment: alignment
+        font.weight: Font.Light // this font weight may switch to regular on distros that don't have a light variant
         font.pointSize: 36
-        Layout.alignment: parent.Layout.alignment
+        layer.enabled: true
+        layer.effect: DropShadow {
+            verticalOffset: 1
+            radius: 4
+            samples: 6
+            color: "#757575"
+            opacity: 1 - (passwordFlickable.contentY / passwordFlickable.columnHeight)
+        }
     }
     Label {
         text: Qt.formatDate(timeSource.data["Local"]["DateTime"], Qt.DefaultLocaleLongDate)
         color: ColorScope.textColor
         style: softwareRendering ? Text.Outline : Text.Normal
-        styleColor: softwareRendering ? ColorScope.backgroundColor : "transparent" //no outline, doesn't matter
+        styleColor: softwareRendering ? ColorScope.backgroundColor : "transparent" // no outline, doesn't matter
+        
+        Layout.alignment: alignment
         font.pointSize: 14
-        Layout.alignment: parent.Layout.alignment
+        layer.enabled: true
+        layer.effect: DropShadow {
+            verticalOffset: 1
+            radius: 4
+            samples: 6
+            color: "#757575"
+            opacity: 1 - (passwordFlickable.contentY / passwordFlickable.columnHeight)
+        }
     }
     DataSource {
         id: timeSource

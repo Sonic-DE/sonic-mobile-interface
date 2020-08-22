@@ -35,13 +35,15 @@ PlasmaCore.ColorScope {
     colorGroup: PlasmaCore.Theme.ComplementaryColorGroup
     anchors.fill: parent
     
+    // lighten background as you scroll up
     BrightnessContrast {
         id: lighten
         anchors.fill: parent
         source: wallpaper
-        brightness: +(passwordFlickable.contentY / passwordFlickable.columnHeight * 0.6)
+        brightness: passwordFlickable.contentY / passwordFlickable.columnHeight * 0.6
     }
     
+    // blur background once keypad is open
     FastBlur {
         cached: true
         anchors.fill: parent
@@ -60,7 +62,7 @@ PlasmaCore.ColorScope {
     Notifications.WatchedNotificationsModel {
         id: notifModel
     }
-
+    
     // phone clock component
     ColumnLayout {
         id: phoneClockComponent
@@ -77,7 +79,7 @@ PlasmaCore.ColorScope {
         
         Clock {
             id: phoneClock
-            Layout.alignment: Qt.AlignHCenter
+            alignment: Qt.AlignHCenter
         }
         MediaControls {
             Layout.alignment: Qt.AlignHCenter
@@ -99,6 +101,7 @@ PlasmaCore.ColorScope {
             top: parent.top
             bottom: parent.bottom
             left: parent.left
+            leftMargin: units.gridUnit * 2
         }
         
         ColumnLayout {
@@ -109,7 +112,7 @@ PlasmaCore.ColorScope {
             
             Clock {
                 id: tabletClock
-                Layout.alignment: Qt.AlignLeft
+                alignment: Qt.AlignLeft
             }
             MediaControls {
                 Layout.alignment: Qt.AlignLeft
