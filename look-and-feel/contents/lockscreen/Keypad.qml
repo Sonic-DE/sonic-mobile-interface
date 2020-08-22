@@ -7,7 +7,8 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.workspace.keyboardlayout 1.0
 
 Rectangle {
-    color: "#fafafa" // slight grey, for contrast between the keys
+    color: Qt.rgba(250, 250, 250, 0.85) // slight grey, for contrast between the keys
+    property string pinLabel: qsTr("Enter PIN")
     
     // for displaying temporary number in pin dot display
     property string lastKeyPressValue: "0"
@@ -30,12 +31,23 @@ Rectangle {
     }
     
     function keyPress(data) {
+        if (keypad.pinLabel !== qsTr("Enter PIN")) {
+            keypad.pinLabel = qsTr("Enter PIN");
+        }
         lastKeyPressValue = data;
         indexWithNumber = root.password.length;
         root.password += data
         
         // trigger turning letter into dot later
         letterTimer.restart();
+    }
+    
+    Connections {
+        target: authenticator
+        onFailed: {
+            root.password = "";
+            pinLabel = qsTr("Wrong PIN")
+        }
     }
     
     // listen for keyboard events
@@ -83,7 +95,7 @@ Rectangle {
             Label {
                 visible: root.password.length === 0
                 anchors.centerIn: parent
-                text: qsTr("Enter PIN")
+                text: pinLabel
                 font.pointSize: 12
                 color: "#616161"
             }
@@ -118,7 +130,7 @@ Rectangle {
         Rectangle {
             Layout.fillWidth: true
             height: 1
-            color: "#e0e0e0"
+            color: "#eeeeee"
         }
         
         // number keys
@@ -144,22 +156,14 @@ Rectangle {
                         anchors.centerIn: parent
                         width: parent.width
                         height: parent.height
-                        radius: 3
+                        radius: 5
                         color: "white"
-                        border.color: "#eeeeee"
-                        border.width: 1
                         visible: modelData.length > 0
 
                         MouseArea {
                             anchors.fill: parent
-                            onPressed: {
-                                parent.color = "#e0e0e0"
-                                parent.border.color = parent.color;
-                            }
-                            onReleased: {
-                                parent.color = "white"
-                                parent.border.color = "#eeeeee";
-                            }
+                            onPressed: parent.color = "#e0e0e0"
+                            onReleased: parent.color = "white"
                             onClicked: {
                                 if (modelData === "R") {
                                     backspace();
@@ -177,9 +181,9 @@ Rectangle {
                         source: keyRect
                         cached: true
                         horizontalOffset: 0
-                        verticalOffset: 3
-                        radius: 10.0
-                        samples: 8
+                        verticalOffset: 1
+                        radius: 4
+                        samples: 6
                         color: "#e0e0e0"
                     }
 
@@ -187,21 +191,21 @@ Rectangle {
                         visible: modelData !== "R" && modelData !== "E"
                         text: modelData
                         anchors.centerIn: parent
-                        font.pointSize: 20
+                        font.pointSize: 18
                         color: "#424242"
                     }
 
                     PlasmaCore.IconItem {
                         visible: modelData === "R"
                         anchors.centerIn: parent
-                        colorGroup: PlasmaCore.ColorScope.backgroundColor
+//                         colorGroup: PlasmaCore.ColorScope.backgroundColor
                         source: "edit-clear"
                     }
 
                     PlasmaCore.IconItem {
                         visible: modelData === "E"
                         anchors.centerIn: parent
-                        colorGroup: PlasmaCore.ColorScope.backgroundColor
+//                         colorGroup: PlasmaCore.ColorScope.backgroundColor
                         source: "go-next"
                     }
                 }
