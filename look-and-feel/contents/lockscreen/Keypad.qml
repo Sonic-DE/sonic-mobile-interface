@@ -44,7 +44,7 @@ Rectangle {
     
     Connections {
         target: authenticator
-        onFailed: {
+        function onFailed() {
             root.password = "";
             pinLabel = qsTr("Wrong PIN")
         }
