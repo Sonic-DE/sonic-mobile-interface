@@ -40,12 +40,12 @@ PlasmaCore.ColorScope {
         return passwordFlickable.contentY === passwordFlickable.columnHeight;
     }
     
-    Image {
-        id: wallpaper
-        anchors.fill: parent
-        source: "../components/artwork/background.png"
-        z: -2
-    }
+//     Image {
+//         id: wallpaper
+//         anchors.fill: parent
+//         source: "../components/artwork/background.png"
+//         z: -2
+//     }
     
     // lighten background as you scroll up, or if notifications are shown
     BrightnessContrast {
@@ -61,7 +61,7 @@ PlasmaCore.ColorScope {
         anchors.fill: parent
         radius: 32
         source: lighten
-        visible: notificationsShown || isPinDrawerOpen() // only blur once animation finished for performance
+        visible: isPinDrawerOpen() // only blur once animation finished for performance
     }
     
     Notifications.WatchedNotificationsModel {
@@ -79,12 +79,13 @@ PlasmaCore.ColorScope {
             left: parent.left
             right: parent.right
         }
-        spacing: units.gridUnit * 2
+        spacing: 0
         opacity: 1 - (passwordFlickable.contentY / passwordFlickable.columnHeight)
         
         Clock {
             id: phoneClock
             alignment: Qt.AlignHCenter
+            Layout.bottomMargin: units.gridUnit * 2 // keep spacing even if media controls are gone
         }
         MediaControls {
             Layout.alignment: Qt.AlignHCenter
@@ -160,7 +161,7 @@ PlasmaCore.ColorScope {
         NotificationsList {
             Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
             Layout.fillWidth: true
-            Layout.minimumHeight: height
+            Layout.minimumHeight: this.notificationListHeight
             Layout.minimumWidth: units.gridUnit * 15
             Layout.maximumWidth: units.gridUnit * 25
         }
