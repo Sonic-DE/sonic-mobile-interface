@@ -37,11 +37,8 @@ MouseArea {
         axis: Drag.XAxis
         target: draggable && Kirigami.Settings.tabletMode ? this : null
     }
-    
-    onClicked: console.log("click")
 
     onReleased: {
-        console.log("release");
         if (Math.abs(x) > width / 2) {
             delegate.dismissRequested();
         } else {
@@ -52,7 +49,7 @@ MouseArea {
     NumberAnimation {
         id: slideAnim
         target: delegate
-        property:"x"
+        property: "x"
         to: 0
         duration: units.longDuration
     }
