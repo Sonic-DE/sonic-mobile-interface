@@ -25,6 +25,8 @@ import org.kde.notificationmanager 1.1 as Notifications
 import "../components"
 
 Item {
+    property alias notificationListHeight: notificationListView.contentHeight
+    
     ListView {
         id: notificationListView
         
@@ -40,19 +42,42 @@ Item {
         opacity: 1 - (passwordFlickable.contentY / passwordFlickable.columnHeight)
         spacing: units.gridUnit
         
-        model: ListModel {
-            ListElement {
-                summary: "KDE VDG - Main room"
-                body: "Kai Uwe: yes"
-            }
-            ListElement {
-                summary: "KDE Chat (Offtopic)"
-                body: "Filip Fila: yeah my impression is the newer maps are better done than the older ones"
-            }
-        }
+//         model: ListModel {
+//             ListElement {
+//                 summary: "KDE VDG - Main room"
+//                 body: "Kai Uwe: yes"
+//             }
+//             ListElement {
+//                 summary: "KDE Chat (Offtopic)"
+//                 body: "Devin Lin: this is a test of a very long notification message that is extremely long and very long"
+//             }
+//         }
+
+        model: notifModel
         
-        delegate: SimpleNotification {
-            notification: model
+        delegate: Column {
+            anchors.left: parent.left
+            anchors.right: parent.right
+            RowLayout {
+                visible: model.applicationName !== undefined
+                anchors.left: parent.left
+                anchors.right: parent.right
+                spacing: units.smallSpacing
+                PlasmaCore.IconItem {
+                    Layout.preferredWidth: units.iconSizes.small
+                    Layout.preferredHeight: units.iconSizes.small
+                    source: model.applicationIconSource
+                    usesPlasmaTheme: false
+                }
+                Label {
+                    Layout.fillWidth: true
+                    text: model.applicationName + (model.originName ? " · " + model.originName : "")
+                    color: "white"
+                }
+            }
+            SimpleNotification {
+                notification: model
+            }
         }
     }
 }

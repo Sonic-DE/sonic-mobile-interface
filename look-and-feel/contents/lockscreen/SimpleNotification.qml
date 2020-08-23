@@ -133,21 +133,20 @@ Item {
         }
         
         Component.onCompleted: {
-            console.log(notification.summary);
+            console.log(notification.applicationIconSource);
+            console.log(notification.icon);
         }
         
         // swipe gesture for dismissing notification (left/right)
         MouseArea {
             id: dismissSwipe
             anchors.fill: parent
-            signal dismissRequested
-            
             drag.axis: Drag.XAxis
             drag.target: rect
 
             onReleased: {
-                if (Math.abs(x) > width / 2) {
-                    dismissRequested();
+                if (Math.abs(rect.x) > width / 2) { // dismiss notification when finished swipe
+                    notifModel.CloseNotification(notification.id);
                 } else {
                     slideAnim.restart();
                 }

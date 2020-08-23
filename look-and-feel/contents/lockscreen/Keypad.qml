@@ -24,17 +24,12 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.workspace.keyboardlayout 1.0
 
 Rectangle {
-    color: Qt.rgba(250, 250, 250, 0.85) // slight grey, for contrast between the keys
+    color: Qt.rgba(250, 250, 250, 0.85) // slightly translucent background, for key contrast
     property string pinLabel: qsTr("Enter PIN")
     
     // for displaying temporary number in pin dot display
     property string lastKeyPressValue: "0"
     property int indexWithNumber: -2
-    
-    function displayNum(index) {
-        // if correct index, and within a second of the keypress
-        return index === indexWithNumber;
-    }
     
     // keypad functions
     function backspace() {
@@ -124,8 +119,8 @@ Rectangle {
                 
                 Repeater {
                     model: root.password.length
-                    delegate: Rectangle {
-                        visible: !displayNum(index)
+                    delegate: Rectangle { // dot
+                        visible: index !== indexWithNumber // hide dot if number is shown
                         Layout.preferredWidth: units.gridUnit * 0.25
                         Layout.preferredHeight: Layout.preferredWidth
                         Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
@@ -133,8 +128,8 @@ Rectangle {
                         color: "#424242"
                     }
                 }
-                Label {
-                    visible: displayNum(root.password.length-1) ? 1 : 0 // maintain height
+                Label { // number/letter
+                    visible: root.password.length-1 === indexWithNumber // hide label if no label needed
                     Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
                     color: "#424242"
                     text: lastKeyPressValue
