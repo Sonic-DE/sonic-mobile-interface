@@ -132,11 +132,6 @@ Item {
             }
         }
         
-        Component.onCompleted: {
-            console.log(notification.applicationIconSource);
-            console.log(notification.icon);
-        }
-        
         // swipe gesture for dismissing notification (left/right)
         MouseArea {
             id: dismissSwipe

@@ -29,6 +29,7 @@ Item {
     
     ListView {
         id: notificationListView
+        model: notifModel
         
         anchors {
             top: parent.top
@@ -42,38 +43,12 @@ Item {
         opacity: 1 - (passwordFlickable.contentY / passwordFlickable.columnHeight)
         spacing: units.gridUnit
         
-//         model: ListModel {
-//             ListElement {
-//                 summary: "KDE VDG - Main room"
-//                 body: "Kai Uwe: yes"
-//             }
-//             ListElement {
-//                 summary: "KDE Chat (Offtopic)"
-//                 body: "Devin Lin: this is a test of a very long notification message that is extremely long and very long"
-//             }
-//         }
-
-        model: notifModel
-        
         delegate: Column {
             width: notificationListView.width
-            RowLayout {
-                visible: model.applicationName !== undefined
-                anchors.left: parent.left
-                anchors.right: parent.right
-                spacing: units.smallSpacing
-                PlasmaCore.IconItem {
-                    Layout.preferredWidth: units.iconSizes.small
-                    Layout.preferredHeight: units.iconSizes.small
-                    source: model.applicationIconSource
-                    usesPlasmaTheme: false
-                }
-                Label {
-                    Layout.fillWidth: true
-                    text: model.applicationName + (model.originName ? " · " + model.originName : "")
-                    color: "white"
-                }
-            }
+            spacing: units.smallSpacing
+            
+            // insert application heading here once application grouping is implemented
+            
             SimpleNotification {
                 notification: model
             }

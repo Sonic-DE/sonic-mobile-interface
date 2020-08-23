@@ -31,7 +31,7 @@ PlasmaCore.ColorScope {
     property string password
     
     property bool isWidescreen: root.height < root.width * 0.75
-    property bool notificationsShown: true
+    property bool notificationsShown: notifModel.length !== 0
 
     colorGroup: PlasmaCore.Theme.ComplementaryColorGroup
     anchors.fill: parent
@@ -57,11 +57,12 @@ PlasmaCore.ColorScope {
     
     // blur background once keypad is open
     FastBlur {
+        id: blur
         cached: true
         anchors.fill: parent
         radius: 32
         source: lighten
-        visible: isPinDrawerOpen() // only blur once animation finished for performance
+        visible: /* slow performance: notificationsShown ||*/ isPinDrawerOpen() // only blur once animation finished for performance
     }
     
     Notifications.WatchedNotificationsModel {
@@ -131,6 +132,7 @@ PlasmaCore.ColorScope {
                 id: tabletClock
                 alignment: Qt.AlignLeft
                 Layout.fillWidth: true
+                Layout.minimumWidth: units.gridUnit * 20
             }
             MediaControls {
                 Layout.alignment: Qt.AlignLeft
