@@ -68,6 +68,17 @@ PlasmaCore.ColorScope {
         id: notifModel
     }
     
+    // header bar
+    SimpleHeaderBar {
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
+        }
+        height: units.gridUnit
+        opacity: 1 - (passwordFlickable.contentY / passwordFlickable.columnHeight)
+    }
+    
     // phone clock component
     ColumnLayout {
         id: phoneClockComponent
@@ -119,6 +130,7 @@ PlasmaCore.ColorScope {
             Clock {
                 id: tabletClock
                 alignment: Qt.AlignLeft
+                Layout.fillWidth: true
             }
             MediaControls {
                 Layout.alignment: Qt.AlignLeft

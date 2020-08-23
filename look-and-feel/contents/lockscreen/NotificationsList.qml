@@ -56,8 +56,7 @@ Item {
         model: notifModel
         
         delegate: Column {
-            anchors.left: parent.left
-            anchors.right: parent.right
+            width: notificationListView.width
             RowLayout {
                 visible: model.applicationName !== undefined
                 anchors.left: parent.left
