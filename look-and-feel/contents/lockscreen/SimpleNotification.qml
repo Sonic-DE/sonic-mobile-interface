@@ -141,8 +141,7 @@ Item {
 
             onReleased: {
                 if (Math.abs(rect.x) > width / 2) { // dismiss notification when finished swipe
-//                     notifModel.CloseNotification(notification.id);
-                    Notifications.Notifications.close(notification.id);
+                    notifModel.close(notification.id);
                 } else {
                     slideAnim.restart();
                 }
