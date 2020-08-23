@@ -40,13 +40,6 @@ PlasmaCore.ColorScope {
         return passwordFlickable.contentY === passwordFlickable.columnHeight;
     }
     
-//     Image {
-//         id: wallpaper
-//         anchors.fill: parent
-//         source: "../components/artwork/background.png"
-//         z: -2
-//     }
-    
     // lighten background as you scroll up, or if notifications are shown
     BrightnessContrast {
         id: lighten
@@ -119,7 +112,7 @@ PlasmaCore.ColorScope {
             top: parent.top
             bottom: parent.bottom
             left: parent.left
-            leftMargin: units.gridUnit * 2
+            leftMargin: units.gridUnit * 3
         }
         
         ColumnLayout {
