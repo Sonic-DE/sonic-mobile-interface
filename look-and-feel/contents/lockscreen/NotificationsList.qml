@@ -1,3 +1,20 @@
+/*
+Copyright (C) 2020 Devin Lin <espidev@gmail.com>
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 import QtQuick 2.12
 import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.1
@@ -7,55 +24,35 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.notificationmanager 1.1 as Notifications
 import "../components"
 
-ListView {
-    model: ListModel {
-//         ListElement {
-//             summary: "Heading"
-//             body: "Text"
-//         }
-//         ListElement {
-//             summary: "Heading"
-//             body: "Text"
-//         }
-    }
-    
-    opacity: 1 - (passwordFlickable.contentY / passwordFlickable.columnHeight)
-    spacing: units.gridUnit
-    
-    delegate: Rectangle {
+Item {
+    ListView {
+        id: notificationListView
+        
         anchors {
+            top: parent.top
             left: parent.left
             right: parent.right
         }
-        radius: 3
-        color: "white"
-        z: 5
-        height: notifLayout.height + units.gridUnit
+        height: Math.min(contentHeight, parent.height) // don't take up the entire screen for notification list view
+
+        interactive: contentHeight > parent.height // only allow scrolling on notifications list if it is long enough
+        clip: true
+        opacity: 1 - (passwordFlickable.contentY / passwordFlickable.columnHeight)
+        spacing: units.gridUnit
         
-        ColumnLayout {
-            id: notifLayout
-            anchors {
-                left: parent.left
-                leftMargin: units.gridUnit * 0.5
-                right: parent.right
-                rightMargin: units.gridUnit * 0.5
-                verticalCenter: parent.verticalCenter
+        model: ListModel {
+            ListElement {
+                summary: "KDE VDG - Main room"
+                body: "Kai Uwe: yes"
             }
-            
-            spacing: units.gridUnit / 2
-            Label {
-                text: model.summary
-                color: "#212121"
-            }
-            Label {
-                text: model.body
-                color: "#616161"
+            ListElement {
+                summary: "KDE Chat (Offtopic)"
+                body: "Filip Fila: yeah my impression is the newer maps are better done than the older ones"
             }
         }
         
-        Component.onCompleted: {
-            console.log(model.summary);
-            console.log(notifLayout.height);
+        delegate: SimpleNotification {
+            notification: model
         }
     }
 }

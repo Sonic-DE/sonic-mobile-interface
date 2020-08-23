@@ -31,11 +31,23 @@ PlasmaCore.ColorScope {
     property string password
     
     property bool isWidescreen: root.height < root.width * 0.75
+    property bool notificationsShown: true
 
     colorGroup: PlasmaCore.Theme.ComplementaryColorGroup
     anchors.fill: parent
     
-    // lighten background as you scroll up
+    function isPinDrawerOpen() {
+        return passwordFlickable.contentY === passwordFlickable.columnHeight;
+    }
+    
+    Image {
+        id: wallpaper
+        anchors.fill: parent
+        source: "../components/artwork/background.png"
+        z: -2
+    }
+    
+    // lighten background as you scroll up, or if notifications are shown
     BrightnessContrast {
         id: lighten
         anchors.fill: parent
@@ -49,15 +61,8 @@ PlasmaCore.ColorScope {
         anchors.fill: parent
         radius: 32
         source: lighten
-        visible: passwordFlickable.contentY === passwordFlickable.columnHeight // only blur once animation finished for performance
+        visible: notificationsShown || isPinDrawerOpen() // only blur once animation finished for performance
     }
-
-//     Image {
-//         id: wallpaper
-//         anchors.fill: parent
-//         source: "../components/artwork/background.png"
-//         z: -1
-//     }
     
     Notifications.WatchedNotificationsModel {
         id: notifModel
@@ -127,9 +132,12 @@ PlasmaCore.ColorScope {
     // phone notifications list
     NotificationsList {
         visible: !isWidescreen
+        z: passwordFlickable.contentY === 0 ? 5 : 0 // prevent mousearea from interfering with pin drawer
         anchors {
             top: phoneClockComponent.bottom
             topMargin: units.gridUnit
+            bottom: scrollUpIcon.top
+            bottomMargin: units.gridUnit
             left: parent.left
             leftMargin: units.gridUnit
             right: parent.right
@@ -140,6 +148,7 @@ PlasmaCore.ColorScope {
     // tablet notifications list
     ColumnLayout {
         visible: isWidescreen
+        z: passwordFlickable.contentY === 0 ? 5 : 0 // prevent mousearea from interfering with pin drawer
         anchors {
             top: parent.top
             bottom: parent.bottom
@@ -151,6 +160,7 @@ PlasmaCore.ColorScope {
         NotificationsList {
             Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
             Layout.fillWidth: true
+            Layout.minimumHeight: height
             Layout.minimumWidth: units.gridUnit * 15
             Layout.maximumWidth: units.gridUnit * 25
         }
@@ -158,6 +168,7 @@ PlasmaCore.ColorScope {
     
     // scroll up icon
     PlasmaCore.IconItem {
+        id: scrollUpIcon
         anchors.bottom: parent.bottom
         anchors.bottomMargin: units.gridUnit + passwordFlickable.contentY * 0.5
         anchors.horizontalCenter: parent.horizontalCenter
