@@ -88,12 +88,24 @@ PlasmaCore.ColorScope {
         
         anchors {
             top: parent.top
-            topMargin: notificationsShown ? units.gridUnit * 5 : root.height / 2 - (height / 2 + units.gridUnit * 2)
+            topMargin: root.height / 2 - (height / 2 + units.gridUnit * 2)
             left: parent.left
             right: parent.right
         }
         spacing: 0
         opacity: 1 - (passwordFlickable.contentY / passwordFlickable.columnHeight)
+        
+        states: State {
+            name: "notification"; when: notificationsShown
+            PropertyChanges { target: phoneClockComponent; anchors.topMargin: units.gridUnit * 5 }
+        }
+        
+        transitions: Transition {
+            NumberAnimation {
+                properties: "anchors.topMargin"
+                easing.type: Easing.InOutQuad
+            }
+        }
         
         Clock {
             id: phoneClock
