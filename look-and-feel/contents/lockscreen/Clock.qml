@@ -29,7 +29,7 @@ ColumnLayout {
     spacing: units.gridUnit
     
     Label {
-        text: Qt.formatTime(timeSource.data["Local"]["DateTime"]).toLowerCase()
+        text: Qt.formatTime(timeSource.data["Local"]["DateTime"], "h:mm ap")
         color: ColorScope.textColor
         style: softwareRendering ? Text.Outline : Text.Normal
         styleColor: softwareRendering ? ColorScope.backgroundColor : "transparent" // no outline, doesn't matter
@@ -46,13 +46,13 @@ ColumnLayout {
         }
     }
     Label {
-        text: Qt.formatDate(timeSource.data["Local"]["DateTime"], Qt.DefaultLocaleLongDate)
+        text: Qt.formatDate(timeSource.data["Local"]["DateTime"], "ddd, MMM d")
         color: ColorScope.textColor
         style: softwareRendering ? Text.Outline : Text.Normal
         styleColor: softwareRendering ? ColorScope.backgroundColor : "transparent" // no outline, doesn't matter
         
         Layout.alignment: alignment
-        font.pointSize: 14
+        font.pointSize: 10
         layer.enabled: true
         layer.effect: DropShadow {
             verticalOffset: 1
