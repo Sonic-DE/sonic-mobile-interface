@@ -40,20 +40,12 @@ PlasmaCore.ColorScope {
         return passwordFlickable.contentY === passwordFlickable.columnHeight;
     }
     
-    // lighten background as you scroll up, or if notifications are shown
-    BrightnessContrast {
-        id: lighten
-        anchors.fill: parent
-        source: wallpaper
-        brightness: passwordFlickable.contentY / passwordFlickable.columnHeight * 0.6
-    }
-    
     // blur background once keypad is open
     FastBlur {
         id: blur
         cached: true
         anchors.fill: parent
-        source: lighten
+        source: wallpaper
         visible: true
         
         property bool doBlur: notificationsShown || isPinDrawerOpen() // only blur once animation finished for performance
@@ -63,7 +55,7 @@ PlasmaCore.ColorScope {
                 target: blur
                 property: "radius"
                 duration: 1000
-                to: blur.doBlur ? 0 : 32
+                to: blur.doBlur ? 0 : 50
                 easing.type: Easing.InOutQuad
             }
             PropertyAction {
