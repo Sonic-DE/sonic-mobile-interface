@@ -31,7 +31,7 @@ PlasmaCore.ColorScope {
     property string password
     
     property bool isWidescreen: root.height < root.width * 0.75
-    property bool notificationsShown: notifModel.length !== 0
+    property bool notificationsShown: phoneNotificationsList.count !== 0
 
     colorGroup: PlasmaCore.Theme.ComplementaryColorGroup
     anchors.fill: parent
@@ -53,9 +53,25 @@ PlasmaCore.ColorScope {
         id: blur
         cached: true
         anchors.fill: parent
-        radius: 32
         source: lighten
-        visible: /* slow performance: notificationsShown ||*/ isPinDrawerOpen() // only blur once animation finished for performance
+        visible: true
+        
+        property bool doBlur: notificationsShown || isPinDrawerOpen() // only blur once animation finished for performance
+        
+        Behavior on doBlur {
+            NumberAnimation {
+                target: blur
+                property: "radius"
+                duration: 1000
+                to: blur.doBlur ? 0 : 32
+                easing.type: Easing.InOutQuad
+            }
+            PropertyAction {
+                target: blur
+                property: "visible"
+                value: blur.doBlur
+            }
+        }
     }
     
     Notifications.WatchedNotificationsModel {
@@ -80,7 +96,7 @@ PlasmaCore.ColorScope {
         
         anchors {
             top: parent.top
-            topMargin: units.gridUnit * 5
+            topMargin: notificationsShown ? units.gridUnit * 5 : root.height / 2 - (height / 2 + units.gridUnit * 2)
             left: parent.left
             right: parent.right
         }
@@ -139,6 +155,7 @@ PlasmaCore.ColorScope {
     
     // phone notifications list
     NotificationsList {
+        id: phoneNotificationsList
         visible: !isWidescreen
         z: passwordFlickable.contentY === 0 ? 5 : 0 // prevent mousearea from interfering with pin drawer
         anchors {
