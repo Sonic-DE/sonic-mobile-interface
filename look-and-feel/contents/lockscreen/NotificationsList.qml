@@ -26,6 +26,7 @@ import "../components"
 
 Item {
     property alias notificationListHeight: notificationListView.contentHeight
+    property int count: notificationListView.count
     
     ListView {
         id: notificationListView
