@@ -278,16 +278,19 @@ Item {
         openThreshold: units.gridUnit * 2
         headerHeight: root.height
 
+        offset: quickSettingsParent.height
+        
         onClosed: quickSettings.closed()
 
         contentItem: GridLayout {
             id: panelContents
             anchors.fill: parent
             implicitWidth: quickSettingsParent.implicitWidth
-            implicitHeight: MAth.min(slidingPanel.height, quickSettingsParent.implicitHeight)
+            implicitHeight: Math.min(slidingPanel.height, quickSettingsParent.implicitHeight)
 
             columns: slidingPanel.wideScreen ? 2 : 1
             rows: slidingPanel.wideScreen ? 1 : 2
+            
             DrawerBackground {
                 id: quickSettingsParent
                 //anchors.fill: parent
