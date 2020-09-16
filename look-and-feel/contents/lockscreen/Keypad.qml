@@ -127,7 +127,7 @@ Rectangle {
                     model: root.password.length
                     delegate: Rectangle { // dot
                         visible: index !== indexWithNumber // hide dot if number is shown
-                        Layout.preferredWidth: units.gridUnit
+                        Layout.preferredWidth: units.gridUnit * 0.5
                         Layout.preferredHeight: Layout.preferredWidth
                         radius: width
                         color: "#424242"
@@ -138,7 +138,7 @@ Rectangle {
                     Layout.alignment: Qt.AlignHCenter
                     color: "#424242"
                     text: lastKeyPressValue
-                    font.pointSize: 15
+                    font.pointSize: 12
                 }
             }
         }
