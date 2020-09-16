@@ -197,39 +197,39 @@ Rectangle {
                                 }
                             }
                         }
+                    }
 
-                        DropShadow {
-                            anchors.fill: keyRect
-                            source: keyRect
-                            cached: true
-                            horizontalOffset: 0
-                            verticalOffset: 1
-                            radius: 4
-                            samples: 6
-                            color: "#e0e0e0"
-                        }
+                    DropShadow {
+                        anchors.fill: keyRect
+                        source: keyRect
+                        cached: true
+                        horizontalOffset: 0
+                        verticalOffset: 1
+                        radius: 4
+                        samples: 6
+                        color: "#e0e0e0"
+                    }
 
-                        PlasmaComponents.Label {
-                            visible: modelData !== "R" && modelData !== "E"
-                            text: modelData
-                            anchors.centerIn: parent
-                            font.pointSize: 18
-                            color: "#424242"
-                        }
+                    PlasmaComponents.Label {
+                        visible: modelData !== "R" && modelData !== "E"
+                        text: modelData
+                        anchors.centerIn: parent
+                        font.pointSize: 18
+                        color: "#424242"
+                    }
 
-                        PlasmaCore.IconItem {
-                            visible: modelData === "R"
-                            anchors.centerIn: parent
-                            //                         colorGroup: PlasmaCore.ColorScope.backgroundColor
-                            source: "edit-clear"
-                        }
+                    PlasmaCore.IconItem {
+                        visible: modelData === "R"
+                        anchors.centerIn: parent
+                        //                         colorGroup: PlasmaCore.ColorScope.backgroundColor
+                        source: "edit-clear"
+                    }
 
-                        PlasmaCore.IconItem {
-                            visible: modelData === "E"
-                            anchors.centerIn: parent
-                            //                         colorGroup: PlasmaCore.ColorScope.backgroundColor
-                            source: "go-next"
-                        }
+                    PlasmaCore.IconItem {
+                        visible: modelData === "E"
+                        anchors.centerIn: parent
+                        //                         colorGroup: PlasmaCore.ColorScope.backgroundColor
+                        source: "go-next"
                     }
                 }
             }
