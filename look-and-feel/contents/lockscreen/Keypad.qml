@@ -127,7 +127,7 @@ Rectangle {
                     model: root.password.length
                     delegate: Rectangle { // dot
                         visible: index !== indexWithNumber // hide dot if number is shown
-                        Layout.preferredWidth: units.gridUnit * 0.4
+                        Layout.preferredWidth: units.gridUnit * 0.35
                         Layout.preferredHeight: Layout.preferredWidth
                         Layout.alignment: Qt.AlignVCenter
                         radius: width
