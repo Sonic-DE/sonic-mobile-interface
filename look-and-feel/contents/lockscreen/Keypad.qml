@@ -129,6 +129,7 @@ Rectangle {
                         visible: index !== indexWithNumber // hide dot if number is shown
                         Layout.preferredWidth: units.gridUnit * 0.5
                         Layout.preferredHeight: Layout.preferredWidth
+                        Layout.alignment: Qt.AlignVCenter
                         radius: width
                         color: "#424242"
                     }
