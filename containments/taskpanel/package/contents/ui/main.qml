@@ -31,6 +31,8 @@ import org.kde.plasma.private.nanoshell 2.0 as NanoShell
 
 import org.kde.plasma.private.mobileshell 1.0 as MobileShell
 
+import org.kde.kirigami 2.12 as Kirigami
+
 PlasmaCore.ColorScope {
     id: root
     width: 600
@@ -197,11 +199,12 @@ PlasmaCore.ColorScope {
 
             Button {
                 anchors.left: parent.left
+                anchors.leftMargin: parent.width * 0.1
                 height: parent.height
-                width: parent.width/3
+                anchors.verticalCenter: parent.verticalCenter
+                width: parent.width*0.8/3
                 mouseArea: mainMouseArea
                 enabled: root.hasTasks
-                iconSource: "../icons/task-switcher.svg"
                 onClicked: {
                     if (!enabled) {
                         return;
@@ -209,15 +212,23 @@ PlasmaCore.ColorScope {
                     plasmoid.nativeInterface.showDesktop = false;
                     taskSwitcher.visible ? taskSwitcher.hide() : taskSwitcher.show();
                 }
+                Kirigami.Icon {
+                    source: "/usr/share/plasma/plasmoids/org.kde.phone.taskpanel/contents/icons/task-switcher.svg"
+                    anchors.centerIn: parent
+                    implicitHeight: parent.height * 0.6
+                    implicitWidth: implicitHeight
+                    color: PlasmaCore.ColorScope.textColor
+                    isMask: true
+                }
             }
 
             Button {
                 id: showDesktopButton
                 height: parent.height
-                width: parent.width/3
+                anchors.verticalCenter: parent.verticalCenter
+                width: parent.width*0.8/3
                 anchors.horizontalCenter: parent.horizontalCenter
                 mouseArea: mainMouseArea
-                iconSource: "start-here-kde"
                 enabled: !taskSwitcher.visible && (root.showingApp || MobileShell.HomeScreenControls.homeScreenPosition != 0)
                 onClicked: {
                     if (!enabled) {
@@ -227,14 +238,23 @@ PlasmaCore.ColorScope {
                     MobileShell.HomeScreenControls.resetHomeScreenPosition();
                     plasmoid.nativeInterface.allMinimizedChanged();
                 }
+                Kirigami.Icon {
+                    source: "start-here-kde"
+                    anchors.centerIn: parent
+                    implicitHeight: parent.height * 0.6
+                    implicitWidth: implicitHeight
+                    color: PlasmaCore.ColorScope.textColor
+                    isMask: true
+                }
             }
 
             Button {
                 height: parent.height
-                width: parent.width/3
+                anchors.verticalCenter: parent.verticalCenter
+                width: parent.width*0.8/3
                 anchors.right: parent.right
+                anchors.rightMargin: parent.width * 0.1
                 mouseArea: mainMouseArea
-                iconSource: "../icons/close.svg"
                 enabled: plasmoid.nativeInterface.hasCloseableActiveWindow && !taskSwitcher.visible
                 onClicked: {
                     if (!enabled) {
@@ -247,6 +267,14 @@ PlasmaCore.ColorScope {
                     if (index) {
                         taskSwitcher.model.requestClose(index);
                     }
+                }
+                Kirigami.Icon {
+                    source: "/usr/share/plasma/plasmoids/org.kde.phone.taskpanel/contents/icons/close.svg"
+                    anchors.centerIn: parent
+                    implicitHeight: parent.height * 0.6
+                    implicitWidth: implicitHeight
+                    color: PlasmaCore.ColorGroup.textColor
+                    isMask: true
                 }
             }
         }
