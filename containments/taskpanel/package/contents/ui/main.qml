@@ -182,7 +182,13 @@ PlasmaCore.ColorScope {
             anchors.fill: parent
 
             visible: plasmoid.configuration.PanelButtonsVisible
-
+            
+            PlasmaCore.Svg {
+                id: panelSvg
+                imagePath: "icons/mobile"
+                colorGroup: root.showingApp ? PlasmaCore.Theme.NormalColorGroup : PlasmaCore.Theme.ComplementaryColorGroup
+            }
+            
             Rectangle {
                 anchors.fill: parent
                 gradient: Gradient {
@@ -212,13 +218,13 @@ PlasmaCore.ColorScope {
                     plasmoid.nativeInterface.showDesktop = false;
                     taskSwitcher.visible ? taskSwitcher.hide() : taskSwitcher.show();
                 }
-                Kirigami.Icon {
-                    source: "/usr/share/plasma/plasmoids/org.kde.phone.taskpanel/contents/icons/task-switcher.svg"
+                PlasmaCore.SvgItem {
                     anchors.centerIn: parent
                     implicitHeight: parent.height * 0.6
                     implicitWidth: implicitHeight
-                    color: PlasmaCore.ColorScope.textColor
-                    isMask: true
+                    opacity: parent.enabled ? 1 : 0.6
+                    svg: panelSvg
+                    elementId: "mobile-task-switcher"
                 }
             }
 
@@ -268,13 +274,14 @@ PlasmaCore.ColorScope {
                         taskSwitcher.model.requestClose(index);
                     }
                 }
-                Kirigami.Icon {
-                    source: "/usr/share/plasma/plasmoids/org.kde.phone.taskpanel/contents/icons/close.svg"
+
+                PlasmaCore.SvgItem {
                     anchors.centerIn: parent
                     implicitHeight: parent.height * 0.6
                     implicitWidth: implicitHeight
-                    color: PlasmaCore.ColorGroup.textColor
-                    isMask: true
+                    opacity: parent.enabled ? 1 : 0.6
+                    svg: panelSvg
+                    elementId: "mobile-close-app"
                 }
             }
         }
