@@ -201,7 +201,7 @@ PlasmaCore.ColorScope {
                 width: parent.width/3
                 mouseArea: mainMouseArea
                 enabled: root.hasTasks
-                iconSource: "box"
+                iconSource: "../icons/task-switcher.svg"
                 onClicked: {
                     if (!enabled) {
                         return;
@@ -234,7 +234,7 @@ PlasmaCore.ColorScope {
                 width: parent.width/3
                 anchors.right: parent.right
                 mouseArea: mainMouseArea
-                iconSource: "paint-none"
+                iconSource: "../icons/close.svg"
                 enabled: plasmoid.nativeInterface.hasCloseableActiveWindow && !taskSwitcher.visible
                 onClicked: {
                     if (!enabled) {
