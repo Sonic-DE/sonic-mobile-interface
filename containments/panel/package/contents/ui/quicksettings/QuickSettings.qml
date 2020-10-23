@@ -74,15 +74,6 @@ Item {
         return service.startOperationCall(operation);
     }
 
-    function addPlasmoid(applet) {
-        settingsModel.append({"icon": applet.icon,
-                              "text": applet.title,
-                              "enabled": false,
-                              "applet": applet,
-                              "settingsCommand": "",
-                              "toggleFunction": ""});
-    }
-
     signal plasmoidTriggered(var applet, var id)
     Layout.minimumHeight: flow.implicitHeight + units.largeSpacing*2
 
@@ -140,7 +131,6 @@ Item {
             "enabled": false,
             "settingsCommand": "plasma-settings",
             "toggleFunction": "",
-            "delegate": "",
             "applet": null
         });
         settingsModel.append({
@@ -148,7 +138,6 @@ Item {
             "icon": "network-wireless-signal",
             "settingsCommand": "plasma-settings -m kcm_mobile_wifi",
             "toggleFunction": "toggleWifi",
-            "delegate": "",
             "enabled": enabledConnections.wirelessEnabled,
             "applet": null
         });
@@ -157,7 +146,6 @@ Item {
             "icon": "network-modem",
             "settingsCommand": "plasma-settings -m kcm_mobile_broadband",
             "toggleFunction": "toggleWwan",
-            "delegate": "",
             "enabled": enabledConnections.wwanEnabled,
             "applet": null
         });
@@ -167,7 +155,6 @@ Item {
             "enabled": false,
             "settingsCommand": "plasma-settings -m kcm_mobile_power",
             "toggleFunction": "",
-            "delegate": "",
             "applet": null
         });
         settingsModel.append({
@@ -176,7 +163,6 @@ Item {
             "enabled": false,
             "settingsCommand": "plasma-settings -m kcm_pulseaudio",
             "toggleFunction": "",
-            "delegate": "",
             "applet": null
         });
         settingsModel.append({
@@ -232,19 +218,20 @@ Item {
         spacing: 0
         Repeater {
             model: settingsModel
-            delegate: Loader {
-                id: loader
+            delegate: Delegate {
+                id: delegateItem
+
                 //FIXME: why this is needed?
                 width: flow.columnWidth
                 height: item ? item.implicitHeight : 0
-                source: Qt.resolvedUrl((model.delegate ? model.delegate : "Delegate") + ".qml")
+
                 Connections {
-                    target: loader.item
+                    target: delegateItem
                     onCloseRequested: root.closeRequested();
                 }
                 Connections {
                     target: root
-                    onClosed: loader.item.panelClosed();
+                    onClosed: delegateItem.panelClosed();
                 }
             }
         }
