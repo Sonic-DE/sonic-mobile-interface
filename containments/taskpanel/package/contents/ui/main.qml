@@ -31,8 +31,6 @@ import org.kde.plasma.private.nanoshell 2.0 as NanoShell
 
 import org.kde.plasma.private.mobileshell 1.0 as MobileShell
 
-import org.kde.kirigami 2.12 as Kirigami
-
 PlasmaCore.ColorScope {
     id: root
     width: 600
@@ -188,6 +186,11 @@ PlasmaCore.ColorScope {
                 imagePath: "icons/mobile"
                 colorGroup: root.showingApp ? PlasmaCore.Theme.NormalColorGroup : PlasmaCore.Theme.ComplementaryColorGroup
             }
+            PlasmaCore.Svg {
+                id: startSvg
+                imagePath: "icons/start"
+                colorGroup: root.showingApp ? PlasmaCore.Theme.NormalColorGroup : PlasmaCore.Theme.ComplementaryColorGroup
+            }
             
             Rectangle {
                 anchors.fill: parent
@@ -204,10 +207,12 @@ PlasmaCore.ColorScope {
             }
 
             Button {
-                anchors.left: parent.left
-                anchors.leftMargin: parent.width * 0.1
+                anchors {
+                    verticalCenter: parent.verticalCenter
+                    left: parent.left
+                    leftMargin: parent.width * 0.1
+                }
                 height: parent.height
-                anchors.verticalCenter: parent.verticalCenter
                 width: parent.width*0.8/3
                 mouseArea: mainMouseArea
                 enabled: root.hasTasks
@@ -220,20 +225,26 @@ PlasmaCore.ColorScope {
                 }
                 PlasmaCore.SvgItem {
                     anchors.centerIn: parent
-                    implicitHeight: parent.height * 0.6
+                    implicitHeight: 0.75 * parent.height * 0.6 // 0.75 sizing adjustment fix needed 
                     implicitWidth: implicitHeight
-                    opacity: parent.enabled ? 1 : 0.6
+                    opacity: parent.enabled ? 1 : 0.5
                     svg: panelSvg
                     elementId: "mobile-task-switcher"
+                    
+                    Behavior on opacity {
+                        NumberAnimation { duration: units.shortDuration }
+                    }
                 }
             }
 
             Button {
                 id: showDesktopButton
+                anchors {
+                    verticalCenter: parent.verticalCenter
+                    horizontalCenter: parent.horizontalCenter
+                }
                 height: parent.height
-                anchors.verticalCenter: parent.verticalCenter
                 width: parent.width*0.8/3
-                anchors.horizontalCenter: parent.horizontalCenter
                 mouseArea: mainMouseArea
                 enabled: !taskSwitcher.visible && (root.showingApp || MobileShell.HomeScreenControls.homeScreenPosition != 0)
                 onClicked: {
@@ -244,22 +255,28 @@ PlasmaCore.ColorScope {
                     MobileShell.HomeScreenControls.resetHomeScreenPosition();
                     plasmoid.nativeInterface.allMinimizedChanged();
                 }
-                Kirigami.Icon {
-                    source: "start-here-kde"
+                PlasmaCore.SvgItem {
                     anchors.centerIn: parent
                     implicitHeight: parent.height * 0.6
                     implicitWidth: implicitHeight
-                    color: PlasmaCore.ColorScope.textColor
-                    isMask: true
+                    opacity: parent.enabled ? 1 : 0.5
+                    svg: startSvg
+                    elementId: "16-16-start-here-kde"
+                    
+                    Behavior on opacity {
+                        NumberAnimation { duration: units.shortDuration }
+                    }
                 }
             }
 
             Button {
+                anchors {
+                    verticalCenter: parent.verticalCenter
+                    right: parent.right
+                    rightMargin: parent.width * 0.1
+                }
                 height: parent.height
-                anchors.verticalCenter: parent.verticalCenter
                 width: parent.width*0.8/3
-                anchors.right: parent.right
-                anchors.rightMargin: parent.width * 0.1
                 mouseArea: mainMouseArea
                 enabled: plasmoid.nativeInterface.hasCloseableActiveWindow && !taskSwitcher.visible
                 onClicked: {
@@ -277,11 +294,15 @@ PlasmaCore.ColorScope {
 
                 PlasmaCore.SvgItem {
                     anchors.centerIn: parent
-                    implicitHeight: parent.height * 0.6
+                    implicitHeight: 0.75 * parent.height * 0.6 // 0.75 sizing adjustment fix needed 
                     implicitWidth: implicitHeight
-                    opacity: parent.enabled ? 1 : 0.6
+                    opacity: parent.enabled ? 1 : 0.5
                     svg: panelSvg
                     elementId: "mobile-close-app"
+                    
+                    Behavior on opacity {
+                        NumberAnimation { duration: units.shortDuration }
+                    }
                 }
             }
         }
