@@ -61,6 +61,7 @@ void PhonePanel::toggleTorch()
 
   write(fd, m_running ? "0" : "1", 1);
   close(fd);
+  m_running = !m_running;
 }
 
 bool PhonePanel::autoRotate()
