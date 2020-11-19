@@ -244,7 +244,7 @@ Item {
         settingsModel.append({
             "text": i18n("Night Color"),
             "icon": "redshift-status-on",
-            "enabled": compositorAdaptor.nightColorAvailable,
+            "enabled": compositorAdaptor.active,
             "settingsCommand": "", // change once night color kcm is added
             "toggleFunction": "toggleNightColor",
             "applet": null
