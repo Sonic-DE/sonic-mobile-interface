@@ -273,5 +273,6 @@ PlasmaCore.ColorScope {
     LockOsd {
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
+        anchors.topMargin: PlasmaCore.Units.largeSpacing
     }
 }
