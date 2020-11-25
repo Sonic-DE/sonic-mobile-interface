@@ -24,7 +24,6 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.workspace.keyboardlayout 1.0
 import org.kde.notificationmanager 1.1 as Notifications
 import "../components"
-import "../../../org.kde.breeze.desktop/contents/lockscreen"
 
 PlasmaCore.ColorScope {
     id: root
