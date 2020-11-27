@@ -182,9 +182,9 @@ void PhonePanel::takeScreenshot()
                 } else {
                     KNotification *notif = new KNotification("captured");
                     notif->setComponentName(QStringLiteral("plasma_phone_components"));
-                    notif->setTitle(i18n("Screenshot taken"));
+                    notif->setTitle(i18n("New Screenshot"));
                     notif->setUrls({filePath});
-                    notif->setText(i18n("Screenshot has been saved to %1", filePath));
+                    notif->setText(i18n("New screenshot saved to %1", filePath));
                     notif->sendEvent();
                 }
             }
