@@ -1,6 +1,6 @@
 [Global]
 IconName=preferences-system-windows-effect-screenshot
-Name=Plasma_Phone_Panel
+Name=Plasma
 
 [Event/captured]
 Name=Captured
