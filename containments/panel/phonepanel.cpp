@@ -181,7 +181,7 @@ void PhonePanel::takeScreenshot()
                     qWarning() << "Failed to save screenshot to" << filePath;
                 } else {
                     KNotification *notif = new KNotification("captured");
-                    notif->setComponentName(QLiteralString("plasma_phone_components"));
+                    notif->setComponentName(QStringLiteral("plasma_phone_components"));
                     notif->setTitle(i18n("Screenshot taken"));
                     notif->setUrls({filePath});
                     notif->setText(i18n("Screenshot has been saved to %1", filePath));
