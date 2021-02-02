@@ -4,7 +4,7 @@
  *   SPDX-License-Identifier: LGPL-2.0-or-later
  */
 
-import QtQuick 2.0
+import QtQuick 2.14
 import QtQuick.Layouts 1.1
 import QtQuick.Window 2.2
 import org.kde.plasma.core 2.0 as PlasmaCore
@@ -28,6 +28,8 @@ NanoShell.FullScreenOverlay {
     property int headerHeight
 
     signal closed
+onOffsetChanged:
+    print("AAAAAAAAAAAAAAoff"+window.offset)
 
     //width: Screen.width
     //height: Screen.height
@@ -187,8 +189,9 @@ NanoShell.FullScreenOverlay {
                 window.offset = -contentY + contentArea.height
                 oldContentY = contentY;
             }
+           // onVerticalOvershootChanged: window.offset = -verticalOvershoot + headerHeight
             property real oldContentY
-            boundsBehavior: Flickable.StopAtBounds
+            boundsMovement: Flickable.StopAtBounds
             contentWidth: window.width
             contentHeight: window.height*2
             bottomMargin: window.height
