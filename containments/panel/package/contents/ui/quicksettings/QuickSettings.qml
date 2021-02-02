@@ -17,24 +17,49 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-import QtQuick 2.1
+import QtQuick 2.14
 import QtQuick.Layouts 1.1
+import QtQuick.Window 2.2
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 2.0 as PlasmaComponents
 import org.kde.plasma.networkmanagement 0.2 as PlasmaNM
 import org.kde.bluezqt 1.0 as BluezQt
 import org.kde.colorcorrect 0.1 as CC
+import org.kde.plasma.private.nanoshell 2.0 as NanoShell
+
+import org.kde.plasma.components 3.0 as PC3
 
 Item {
     id: root
 
     implicitWidth: flow.implicitWidth + units.smallSpacing * 6
-    implicitHeight: flow.implicitHeight + units.smallSpacing * 6
+    implicitHeight: flow.implicitHeight + units.smallSpacing * 6//(flow.implicitHeight * expandedRatio) + (flow.children[0].implicitHeight + (1 - expandedRatio))// + units.smallSpacing * 6
 
     signal closeRequested
     signal closed
 
+    property bool expandedMode: false
+    property bool expanding: false
+    property real expandedRatio: Math.max(0, Math.min(1, (parentSlidingPanel.offset - flow.children[0].height) / (flow.height - flow.children[0].height)))
+onExpandedRatioChanged:
+    print("BBBBBBBBB"+expandedRatio+" "+root.y)
+//root.expandedMode ? 1 : (Math.max(0, -root.flickable.verticalOvershoot)) / flow.height
+    /*Behavior on expandedRatio {
+        NumberAnimation {
+            duration: PlasmaCore.Units.shortDuration
+            easing.type: Easing.InOutQuad
+        }
+    }*/
+    clip: true
+
     property bool screenshotRequested: false
+
+    property NanoShell.FullScreenOverlay parentSlidingPanel
+    property Item background
+    onBackgroundChanged: {
+        background.parent = backgroundParent
+        background.anchors.fill = backgroundParent
+    }
 
     PlasmaNM.Handler {
         id: nmHandler
@@ -44,6 +69,28 @@ Item {
         id: enabledConnections
     }
 
+    Connections {
+        target: root.Window.window
+        function onVisibilityChanged() {
+            if (root.Window.visibility === Window.Hidden) {
+                root.expandedMode = false;
+                root.expanding = false;
+            }
+        }
+    }
+    Connections {
+        target: root.parentSlidingPanel.flickable
+        onContentYChanged: {
+            if (root.parentSlidingPanel.flickable.contentY <= 0) {
+                root.expanding = true;
+            }
+        }
+        /*function onVerticalOvershootChanged() {
+            if (root.flickable.verticalOvershoot < -PlasmaCore.Units.gridUnit * 10) {
+                root.expandedMode = true
+            }
+        }*/
+    }
     Connections {
         target: BluezQt.Manager
 
@@ -262,6 +309,16 @@ Item {
         id: settingsModel
     }
 
+    Item {
+        id: backgroundParent
+        anchors {
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+        }
+        height: flow.children[0].height + (flow.height - flow.children[0].height) * root.expandedRatio
+    }
+
     Flow {
         id: flow
         anchors {
@@ -279,6 +336,12 @@ Item {
                 //FIXME: why this is needed?
                 width: flow.columnWidth
                 height: item ? item.implicitHeight : 0
+
+                opacity: y <= 0  ? 1 : root.expandedRatio
+                transform: Translate {
+                    y: (flow.height - flow.children[0].height) * (1 - root.expandedRatio)
+                }
+
 
                 Connections {
                     target: delegateItem
@@ -298,6 +361,11 @@ Item {
             label: i18n("Display Brightness")
             value: root.screenBrightness
             maximumValue: root.maximumScreenBrightness
+            opacity: root.expandedRatio
+            transform: Translate{
+                y: (flow.height - flow.children[0].height) * (1 - root.expandedRatio)
+            }
+
             Connections {
                 target: root
                 onScreenBrightnessChanged: brightnessSlider.value = root.screenBrightness

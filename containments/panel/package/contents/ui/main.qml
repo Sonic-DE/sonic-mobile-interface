@@ -313,9 +313,11 @@ Item {
                     z: 4
                     contentItem: QuickSettings {
                         id: quickSettings
+                        parentSlidingPanel: slidingPanel
                         onCloseRequested: {
                             slidingPanel.hide()
                         }
+                        background: DrawerBackground {}
                     }
                 }
 
