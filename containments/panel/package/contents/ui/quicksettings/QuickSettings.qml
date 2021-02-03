@@ -49,9 +49,14 @@ Item {
     readonly property real firstRowHeight: flow.children[0].height
     readonly property real otherRowsHeight: flow.height - firstRowHeight
 
-    onExpandedRatioChanged: {
-        if (expandedRatio > 0.5) {
-            expandedMode = true;
+    Connections {
+        target: root.parentSlidingPanel
+        function onUserInteractingChanged() {
+            if (!parentSlidingPanel.userInteracting) {
+                if (root.expandedRatio > 0.7) {
+                    root.expandedMode = true;
+                }
+            }
         }
     }
 
