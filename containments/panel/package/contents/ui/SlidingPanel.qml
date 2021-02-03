@@ -36,16 +36,15 @@ NanoShell.FullScreenOverlay {
     property alias fixedArea: mainScope
     property alias flickable: mainFlickable
 
-    color: "transparent"//Qt.rgba(0, 0, 0, 0.6 * Math.min(1, offset/contentArea.height))
+    color: "transparent"
     property alias contentItem: contentArea.contentItem
     property int headerHeight
+    property real topEmptyAreaHeight
 
     signal closed
-onOffsetChanged:
-    print("AAAAAAAAAAAAAAoff"+window.offset)
 
-    //width: Screen.width
-    //height: Screen.height
+    width: Screen.width
+    height: Screen.height
 
     enum MovementDirection {
         None = 0,
@@ -119,7 +118,7 @@ onOffsetChanged:
         easing.type: Easing.InOutQuad
         properties: "offset"
         from: window.offset
-        to: contentArea.height
+        to: contentArea.height - topEmptyAreaHeight
     }
 
     Rectangle {
@@ -191,11 +190,10 @@ onOffsetChanged:
                 window.offset = -contentY + contentArea.height
                 oldContentY = contentY;
             }
-           // onVerticalOvershootChanged: window.offset = -verticalOvershoot + headerHeight
             property real oldContentY
             boundsMovement: Flickable.StopAtBounds
             contentWidth: window.width
-            contentHeight: window.height*2
+            contentHeight: window.height*2 - headerHeight*2
             bottomMargin: window.height
             onMovementStarted: window.userInteracting = true;
             onFlickStarted: window.userInteracting = true;
