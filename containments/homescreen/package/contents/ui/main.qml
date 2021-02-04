@@ -143,7 +143,62 @@ Item {
         favoriteStrip: favoriteStrip
     }
 
+    MouseArea {
+        id: arrowUpIcon
+        z: 9
+        anchors {
+            left: parent.left
+            right: parent.right
+            bottom: scrim.top
+            margins: -units.smallSpacing
+        }
+        property real factor: Math.min(1, (appDrawer.contentY + appDrawer.originY + appDrawer.height*2) / (appDrawer.height / 2))
+
+        height: units.iconSizes.medium
+        onClicked: {
+            if ((appDrawer.contentY + appDrawer.originY + appDrawer.height*2) >= mainFlickable.height/2) {
+                scrollAnim.to = -mainFlickable.height;
+            } else {
+                scrollAnim.to = -mainFlickable.height/3
+            }
+            scrollAnim.restart();
+        }
+        Item {
+            anchors.centerIn: parent
+
+            width: units.iconSizes.medium
+            height: width
+
+            Rectangle {
+                anchors {
+                    verticalCenter: parent.verticalCenter
+                    right: parent.horizontalCenter
+                    left: parent.left
+                    verticalCenterOffset: -arrowUpIcon.height/4 + (arrowUpIcon.height/4) * arrowUpIcon.factor
+                }
+                color: theme.backgroundColor
+                transformOrigin: Item.Right
+                rotation: -45 + 90 * arrowUpIcon.factor
+                antialiasing: true
+                height: 1
+            }
+            Rectangle {
+                anchors {
+                    verticalCenter: parent.verticalCenter
+                    left: parent.horizontalCenter
+                    right: parent.right
+                    verticalCenterOffset: -arrowUpIcon.height/4 + (arrowUpIcon.height/4) * arrowUpIcon.factor
+                }
+                color: theme.backgroundColor
+                transformOrigin: Item.Left
+                rotation: 45 - 90 * arrowUpIcon.factor
+                antialiasing: true
+                height: 1
+            }
+        }
+    }
     Rectangle {
+        id: scrim
         anchors {
             left: parent.left
             right: parent.right
@@ -161,7 +216,16 @@ Item {
 
     Launcher.AppDrawer {
         id: appDrawer
-        anchors.fill: parent
+        anchors {
+            fill: parent
+            //topMargin: plasmoid.availableScreenRect.y
+            bottomMargin: favoriteStrip.height + plasmoid.screenGeometry.height - plasmoid.availableScreenRect.height - plasmoid.availableScreenRect.y
+        }
+
+        onDragStarted: {
+            scrollAnim.to = -mainFlickable.height;
+            scrollAnim.restart();
+        }
         PlasmaComponents.ScrollBar.vertical: PlasmaComponents.ScrollBar {
             id: scrollabr
             opacity: appDrawer.moving
@@ -181,11 +245,15 @@ Item {
             }
         }
 
-        header: Flickable {
-            id: mainFlickable
+        header: Item {
             width: appDrawer.width
             height: appDrawer.height
-            clip: true
+        }
+        Flickable {
+            id: mainFlickable
+            parent: appDrawer.headerItem
+            width: appDrawer.width
+            height: appDrawer.height
         /*  anchors {
                 fill: parent
                 //topMargin: plasmoid.availableScreenRect.y
@@ -216,7 +284,7 @@ Item {
 
             Row {
                 id: flickableContents
-                width: mainFlickable.width*2
+                width: mainFlickable.width*3
                 height: mainFlickable.height
                 spacing: 0
 
@@ -225,7 +293,7 @@ Item {
                     height: plasmoid.availableScreenRect.y
                 }
                 DragDrop.DropArea {
-                    width: mainFlickable.width
+                    width: mainFlickable.width*2
                     height: mainFlickable.height
                 //  height: mainFlickable.height - plasmoid.availableScreenRect.y //TODO: multiple widgets pages
 
@@ -248,6 +316,13 @@ Item {
                     preventStealing: true
 
                     onDrop: {
+                        if (event.mimeData.formats[0] === "text/x-plasma-phone-homescreen-launcher") {
+                            let storageId = event.mimeData.getDataAsByteArray("text/x-plasma-phone-homescreen-launcher");
+                            print("ASAAAAAAAAAAAAAAAAAAAA")
+                            
+                            print(storageId)
+                            plasmoid.nativeInterface.favoritesModel.addFavorite(storageId, 0, 2)
+                        }
                         plasmoid.processMimeData(event.mimeData,
                                     event.x - appletsLayout.placeHolder.width / 2, event.y - appletsLayout.placeHolder.height / 2);
                         event.accept(event.proposedAction);
@@ -258,60 +333,6 @@ Item {
                         id: arrowsSvg
                         imagePath: "widgets/arrows"
                         colorGroup: PlasmaCore.Theme.ComplementaryColorGroup
-                    }
-                    MouseArea {
-                        id: arrowUpIcon
-                        z: 9
-                        anchors {
-                            left: parent.left
-                            right: parent.right
-                            bottom: parent.bottom
-                            margins: -units.smallSpacing
-                        }
-                        property real factor: Math.min(1, (appDrawer.contentY + appDrawer.originY + appDrawer.height*2) / (appDrawer.height / 2))
-
-                        height: units.iconSizes.medium
-                        onClicked: {
-                            if ((appDrawer.contentY + appDrawer.originY + appDrawer.height*2) >= mainFlickable.height/2) {
-                                scrollAnim.to = -mainFlickable.height;
-                            } else {
-                                scrollAnim.to = -mainFlickable.height/3
-                            }
-                            scrollAnim.restart();
-                        }
-                        Item {
-                            anchors.centerIn: parent
-
-                            width: units.iconSizes.medium
-                            height: width
-
-                            Rectangle {
-                                anchors {
-                                    verticalCenter: parent.verticalCenter
-                                    right: parent.horizontalCenter
-                                    left: parent.left
-                                    verticalCenterOffset: -arrowUpIcon.height/4 + (arrowUpIcon.height/4) * arrowUpIcon.factor
-                                }
-                                color: theme.backgroundColor
-                                transformOrigin: Item.Right
-                                rotation: -45 + 90 * arrowUpIcon.factor
-                                antialiasing: true
-                                height: 1
-                            }
-                            Rectangle {
-                                anchors {
-                                    verticalCenter: parent.verticalCenter
-                                    left: parent.horizontalCenter
-                                    right: parent.right
-                                    verticalCenterOffset: -arrowUpIcon.height/4 + (arrowUpIcon.height/4) * arrowUpIcon.factor
-                                }
-                                color: theme.backgroundColor
-                                transformOrigin: Item.Left
-                                rotation: 45 - 90 * arrowUpIcon.factor
-                                antialiasing: true
-                                height: 1
-                            }
-                        }
                     }
 
                     ContainmentLayoutManager.AppletsLayout {
@@ -358,6 +379,54 @@ Item {
                         }
 
                         placeHolder: ContainmentLayoutManager.PlaceHolder {}
+//FIXME: move
+Repeater {
+        model: plasmoid.nativeInterface.favoritesModel
+        delegate: Launcher.Delegate {
+            id: delegate
+            width: 100//root.cellWidth
+            height: 100//root.cellHeight
+
+            parent: parentFromLocation
+            property Item parentFromLocation: {
+                switch (model.applicationLocation) {
+                case ApplicationListModel.Desktop:
+                    return appletsLayout;
+                case ApplicationListModel.Favorites:
+                    return favoriteStrip.flow;
+                default:
+                    return appletsLayout;
+                }
+            }
+            Component.onCompleted: {
+                if (model.applicationLocation === ApplicationListModel.Desktop) {
+                    appletsLayout.restoreItem(delegate);
+                }
+            }
+            onLaunch: (x, y, icon, title) => {
+                if (icon !== "") {
+                    NanoShell.StartupFeedback.open(
+                            icon,
+                            title,
+                            delegate.iconItem.Kirigami.ScenePosition.x + delegate.iconItem.width/2,
+                            delegate.iconItem.Kirigami.ScenePosition.y + delegate.iconItem.height/2,
+                            Math.min(delegate.iconItem.width, delegate.iconItem.height));
+                }
+                root.launched();
+            }
+            onParentFromLocationChanged: {
+                if (!launcherDragManager.active && parent != parentFromLocation) {
+                    parent = parentFromLocation;
+                    if (model.applicationLocation === ApplicationListModel.Favorites) {
+                        plasmoid.nativeInterface.stackBefore(delegate, parentFromLocation.children[index]);
+
+                    } else if (model.applicationLocation === ApplicationListModel.Grid) {
+                        plasmoid.nativeInterface.stackBefore(delegate, parentFromLocation.children[Math.max(0, index - plasmoid.nativeInterface.applicationListModel.favoriteCount)]);
+                    }
+                }
+            }
+        }
+    }
                     }
                 }
 
