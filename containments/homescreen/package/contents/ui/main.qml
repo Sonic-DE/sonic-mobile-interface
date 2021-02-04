@@ -153,37 +153,18 @@ Item {
         border.color: Qt.rgba(1, 1, 1, 0.5)
         radius: units.gridUnit
         color: "black"
-        opacity: 0.4 * Math.min(1, mainFlickable.contentY / (units.gridUnit * 10))
+        opacity: 0.4 * Math.min(1, (appDrawer.contentY + appDrawer.originY + appDrawer.height*2) / (units.gridUnit * 10))
+        onOpacityChanged: print(opacity+" "+(appDrawer.contentY + appDrawer.originY + appDrawer.height*2))
         height: root.height + radius * 2
-        y: Math.max(-radius, -mainFlickable.contentY + arrowUpIcon.y)
+        y: Math.max(-radius, -appDrawer.contentY - appDrawer.originY - appDrawer.height)
     }
 
-    Flickable {
-        id: mainFlickable
-        width: parent.width
-        clip: true
-        anchors {
-            fill: parent
-            //topMargin: plasmoid.availableScreenRect.y
-            bottomMargin: favoriteStrip.height + plasmoid.screenGeometry.height - plasmoid.availableScreenRect.height - plasmoid.availableScreenRect.y
-        }
-
-        //bottomMargin: favoriteStrip.height
-        contentWidth: width
-        contentHeight: flickableContents.height
-        interactive: !plasmoid.editMode && !launcherDragManager.active
-
-        signal cancelEditModeForItemsRequested
-        onDragStarted: cancelEditModeForItemsRequested()
-        onDragEnded: cancelEditModeForItemsRequested()
-        onFlickStarted: cancelEditModeForItemsRequested()
-        onFlickEnded: cancelEditModeForItemsRequested()
-
-        onContentYChanged: MobileShell.HomeScreenControls.homeScreenPosition = contentY
-
+    Launcher.AppDrawer {
+        id: appDrawer
+        anchors.fill: parent
         PlasmaComponents.ScrollBar.vertical: PlasmaComponents.ScrollBar {
             id: scrollabr
-            opacity: mainFlickable.moving
+            opacity: appDrawer.moving
             interactive: false
             enabled: false
             Behavior on opacity {
@@ -199,17 +180,44 @@ Item {
                 border.color: Qt.rgba(0, 0, 0, 0.4)
             }
         }
+
+        header: Flickable {
+        id: mainFlickable
+        width: appDrawer.width
+        height: appDrawer.height
+        clip: true
+      /*  anchors {
+            fill: parent
+            //topMargin: plasmoid.availableScreenRect.y
+            bottomMargin: favoriteStrip.height + plasmoid.screenGeometry.height - plasmoid.availableScreenRect.height - plasmoid.availableScreenRect.y
+        }*/
+
+        //bottomMargin: favoriteStrip.height
+        contentWidth: width*2
+        contentHeight: height
+        interactive: !plasmoid.editMode && !launcherDragManager.active
+
+        signal cancelEditModeForItemsRequested
+        onDragStarted: cancelEditModeForItemsRequested()
+        onDragEnded: cancelEditModeForItemsRequested()
+        onFlickStarted: cancelEditModeForItemsRequested()
+        onFlickEnded: cancelEditModeForItemsRequested()
+
+        onContentYChanged: MobileShell.HomeScreenControls.homeScreenPosition = contentY
+
+        
         NumberAnimation {
             id: scrollAnim
-            target: mainFlickable
+            target: appDrawer
             properties: "contentY"
             duration: units.longDuration
             easing.type: Easing.InOutQuad
         }
 
-        Column {
+        Row {
             id: flickableContents
-            width: mainFlickable.width
+            width: mainFlickable.width*2
+            height: mainFlickable.height
             spacing: 0
 
             Item {
@@ -217,11 +225,9 @@ Item {
                 height: plasmoid.availableScreenRect.y
             }
             DragDrop.DropArea {
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                }
-                height: mainFlickable.height - plasmoid.availableScreenRect.y //TODO: multiple widgets pages
+                width: mainFlickable.width
+                height: mainFlickable.height
+              //  height: mainFlickable.height - plasmoid.availableScreenRect.y //TODO: multiple widgets pages
 
                 onDragEnter: {
                     event.accept(event.proposedAction);
@@ -262,14 +268,14 @@ Item {
                         bottom: parent.bottom
                         margins: -units.smallSpacing
                     }
-                    property real factor: Math.max(0, Math.min(1, mainFlickable.contentY / (mainFlickable.height/2)))
+                    property real factor: Math.min(1, (appDrawer.contentY + appDrawer.originY + appDrawer.height*2) / (appDrawer.height / 2))
 
                     height: units.iconSizes.medium
                     onClicked: {
-                        if (mainFlickable.contentY >= mainFlickable.height/2) {
-                            scrollAnim.to = 0;
+                        if ((appDrawer.contentY + appDrawer.originY + appDrawer.height*2) >= mainFlickable.height/2) {
+                            scrollAnim.to = -mainFlickable.height;
                         } else {
-                            scrollAnim.to = mainFlickable.height/2
+                            scrollAnim.to = -mainFlickable.height/3
                         }
                         scrollAnim.restart();
                     }
@@ -357,10 +363,8 @@ Item {
 
             Launcher.LauncherGrid {
                 id: launcher
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                }
+                width: mainFlickable.width
+                height: mainFlickable.height
                 onLaunched: scrollResetTimer.restart();
                 favoriteStrip: favoriteStrip
                 appletsLayout: appletsLayout
@@ -374,6 +378,7 @@ Item {
                 }
             }
         }
+    }
     }
 
     ScrollIndicator {
