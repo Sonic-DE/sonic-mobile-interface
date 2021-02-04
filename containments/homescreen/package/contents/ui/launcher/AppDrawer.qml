@@ -34,8 +34,10 @@ GridView {
     id: view
 
     readonly property int columns: Math.floor(view.width / cellWidth)
-    readonly property int cellWidth: view.width / Math.floor(view.width / ((availableCellHeight - reservedSpaceForLabel) + units.smallSpacing*4))
-    readonly property int cellHeight: availableCellHeight
+    cellWidth: view.width / Math.floor(view.width / ((availableCellHeight - reservedSpaceForLabel) + units.smallSpacing*4))
+    cellHeight: availableCellHeight
+
+    signal launched
 
     readonly property int reservedSpaceForLabel: metrics.height
     property int availableCellHeight: units.iconSizes.huge + reservedSpaceForLabel
@@ -63,7 +65,7 @@ GridView {
                         delegate.iconItem.Kirigami.ScenePosition.y + delegate.iconItem.height/2,
                         Math.min(delegate.iconItem.width, delegate.iconItem.height));
             }
-            //root.launched();
+            view.launched();
         }
     }
 }

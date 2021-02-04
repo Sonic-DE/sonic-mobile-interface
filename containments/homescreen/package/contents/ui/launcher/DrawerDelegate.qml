@@ -40,7 +40,7 @@ MouseArea {
 
     signal launch(int x, int y, var source, string title)
 
-    onClicked: {print(delegate.GridView.view)
+    onClicked: {
         if (model.applicationRunning) {
             delegate.launch(0, 0, "", model.applicationName);
         } else {

@@ -182,203 +182,203 @@ Item {
         }
 
         header: Flickable {
-        id: mainFlickable
-        width: appDrawer.width
-        height: appDrawer.height
-        clip: true
-      /*  anchors {
-            fill: parent
-            //topMargin: plasmoid.availableScreenRect.y
-            bottomMargin: favoriteStrip.height + plasmoid.screenGeometry.height - plasmoid.availableScreenRect.height - plasmoid.availableScreenRect.y
-        }*/
+            id: mainFlickable
+            width: appDrawer.width
+            height: appDrawer.height
+            clip: true
+        /*  anchors {
+                fill: parent
+                //topMargin: plasmoid.availableScreenRect.y
+                bottomMargin: favoriteStrip.height + plasmoid.screenGeometry.height - plasmoid.availableScreenRect.height - plasmoid.availableScreenRect.y
+            }*/
 
-        //bottomMargin: favoriteStrip.height
-        contentWidth: width*2
-        contentHeight: height
-        interactive: !plasmoid.editMode && !launcherDragManager.active
+            //bottomMargin: favoriteStrip.height
+            contentWidth: width*2
+            contentHeight: height
+            interactive: !plasmoid.editMode && !launcherDragManager.active
 
-        signal cancelEditModeForItemsRequested
-        onDragStarted: cancelEditModeForItemsRequested()
-        onDragEnded: cancelEditModeForItemsRequested()
-        onFlickStarted: cancelEditModeForItemsRequested()
-        onFlickEnded: cancelEditModeForItemsRequested()
+            signal cancelEditModeForItemsRequested
+            onDragStarted: cancelEditModeForItemsRequested()
+            onDragEnded: cancelEditModeForItemsRequested()
+            onFlickStarted: cancelEditModeForItemsRequested()
+            onFlickEnded: cancelEditModeForItemsRequested()
 
-        onContentYChanged: MobileShell.HomeScreenControls.homeScreenPosition = contentY
+            onContentYChanged: MobileShell.HomeScreenControls.homeScreenPosition = contentY
 
-        
-        NumberAnimation {
-            id: scrollAnim
-            target: appDrawer
-            properties: "contentY"
-            duration: units.longDuration
-            easing.type: Easing.InOutQuad
-        }
-
-        Row {
-            id: flickableContents
-            width: mainFlickable.width*2
-            height: mainFlickable.height
-            spacing: 0
-
-            Item {
-                width: 1
-                height: plasmoid.availableScreenRect.y
+            
+            NumberAnimation {
+                id: scrollAnim
+                target: appDrawer
+                properties: "contentY"
+                duration: units.longDuration
+                easing.type: Easing.InOutQuad
             }
-            DragDrop.DropArea {
-                width: mainFlickable.width
+
+            Row {
+                id: flickableContents
+                width: mainFlickable.width*2
                 height: mainFlickable.height
-              //  height: mainFlickable.height - plasmoid.availableScreenRect.y //TODO: multiple widgets pages
+                spacing: 0
 
-                onDragEnter: {
-                    event.accept(event.proposedAction);
+                Item {
+                    width: 1
+                    height: plasmoid.availableScreenRect.y
                 }
-                onDragMove: {
-                    appletsLayout.showPlaceHolderAt(
-                        Qt.rect(event.x - appletsLayout.defaultItemWidth / 2,
-                        event.y - appletsLayout.defaultItemHeight / 2,
-                        appletsLayout.defaultItemWidth,
-                        appletsLayout.defaultItemHeight)
-                    );
-                }
+                DragDrop.DropArea {
+                    width: mainFlickable.width
+                    height: mainFlickable.height
+                //  height: mainFlickable.height - plasmoid.availableScreenRect.y //TODO: multiple widgets pages
 
-                onDragLeave: {
-                    appletsLayout.hidePlaceHolder();
-                }
-
-                preventStealing: true
-
-                onDrop: {
-                    plasmoid.processMimeData(event.mimeData,
-                                event.x - appletsLayout.placeHolder.width / 2, event.y - appletsLayout.placeHolder.height / 2);
-                    event.accept(event.proposedAction);
-                    appletsLayout.hidePlaceHolder();
-                }
-
-                PlasmaCore.Svg {
-                    id: arrowsSvg
-                    imagePath: "widgets/arrows"
-                    colorGroup: PlasmaCore.Theme.ComplementaryColorGroup
-                }
-                MouseArea {
-                    id: arrowUpIcon
-                    z: 9
-                    anchors {
-                        left: parent.left
-                        right: parent.right
-                        bottom: parent.bottom
-                        margins: -units.smallSpacing
+                    onDragEnter: {
+                        event.accept(event.proposedAction);
                     }
-                    property real factor: Math.min(1, (appDrawer.contentY + appDrawer.originY + appDrawer.height*2) / (appDrawer.height / 2))
+                    onDragMove: {
+                        appletsLayout.showPlaceHolderAt(
+                            Qt.rect(event.x - appletsLayout.defaultItemWidth / 2,
+                            event.y - appletsLayout.defaultItemHeight / 2,
+                            appletsLayout.defaultItemWidth,
+                            appletsLayout.defaultItemHeight)
+                        );
+                    }
 
-                    height: units.iconSizes.medium
-                    onClicked: {
-                        if ((appDrawer.contentY + appDrawer.originY + appDrawer.height*2) >= mainFlickable.height/2) {
-                            scrollAnim.to = -mainFlickable.height;
-                        } else {
-                            scrollAnim.to = -mainFlickable.height/3
+                    onDragLeave: {
+                        appletsLayout.hidePlaceHolder();
+                    }
+
+                    preventStealing: true
+
+                    onDrop: {
+                        plasmoid.processMimeData(event.mimeData,
+                                    event.x - appletsLayout.placeHolder.width / 2, event.y - appletsLayout.placeHolder.height / 2);
+                        event.accept(event.proposedAction);
+                        appletsLayout.hidePlaceHolder();
+                    }
+
+                    PlasmaCore.Svg {
+                        id: arrowsSvg
+                        imagePath: "widgets/arrows"
+                        colorGroup: PlasmaCore.Theme.ComplementaryColorGroup
+                    }
+                    MouseArea {
+                        id: arrowUpIcon
+                        z: 9
+                        anchors {
+                            left: parent.left
+                            right: parent.right
+                            bottom: parent.bottom
+                            margins: -units.smallSpacing
                         }
+                        property real factor: Math.min(1, (appDrawer.contentY + appDrawer.originY + appDrawer.height*2) / (appDrawer.height / 2))
+
+                        height: units.iconSizes.medium
+                        onClicked: {
+                            if ((appDrawer.contentY + appDrawer.originY + appDrawer.height*2) >= mainFlickable.height/2) {
+                                scrollAnim.to = -mainFlickable.height;
+                            } else {
+                                scrollAnim.to = -mainFlickable.height/3
+                            }
+                            scrollAnim.restart();
+                        }
+                        Item {
+                            anchors.centerIn: parent
+
+                            width: units.iconSizes.medium
+                            height: width
+
+                            Rectangle {
+                                anchors {
+                                    verticalCenter: parent.verticalCenter
+                                    right: parent.horizontalCenter
+                                    left: parent.left
+                                    verticalCenterOffset: -arrowUpIcon.height/4 + (arrowUpIcon.height/4) * arrowUpIcon.factor
+                                }
+                                color: theme.backgroundColor
+                                transformOrigin: Item.Right
+                                rotation: -45 + 90 * arrowUpIcon.factor
+                                antialiasing: true
+                                height: 1
+                            }
+                            Rectangle {
+                                anchors {
+                                    verticalCenter: parent.verticalCenter
+                                    left: parent.horizontalCenter
+                                    right: parent.right
+                                    verticalCenterOffset: -arrowUpIcon.height/4 + (arrowUpIcon.height/4) * arrowUpIcon.factor
+                                }
+                                color: theme.backgroundColor
+                                transformOrigin: Item.Left
+                                rotation: 45 - 90 * arrowUpIcon.factor
+                                antialiasing: true
+                                height: 1
+                            }
+                        }
+                    }
+
+                    ContainmentLayoutManager.AppletsLayout {
+                        id: appletsLayout
+
+                        anchors.fill: parent
+
+                        cellWidth: Math.floor(width / launcher.columns)
+                        cellHeight: launcher.cellHeight
+
+                        configKey: width > height ? "ItemGeometriesHorizontal" : "ItemGeometriesVertical"
+                        containment: plasmoid
+                        editModeCondition: plasmoid.immutable
+                                ? ContainmentLayoutManager.AppletsLayout.Manual
+                                : ContainmentLayoutManager.AppletsLayout.AfterPressAndHold
+
+                        // Sets the containment in edit mode when we go in edit mode as well
+                        onEditModeChanged: plasmoid.editMode = editMode
+
+                        minimumItemWidth: units.gridUnit * 3
+                        minimumItemHeight: minimumItemWidth
+
+                        defaultItemWidth: units.gridUnit * 6
+                        defaultItemHeight: defaultItemWidth
+
+                        //cellWidth: units.iconSizes.small
+                        //cellHeight: cellWidth
+
+                        acceptsAppletCallback: function(applet, x, y) {
+                            print("Applet: "+applet+" "+x+" "+y)
+                            return true;
+                        }
+
+                        appletContainerComponent: ContainmentLayoutManager.BasicAppletContainer {
+                            id: appletContainer
+                            configOverlayComponent: ConfigOverlay {}
+
+                            onEditModeChanged: {
+                                launcherDragManager.active = dragActive || editMode;
+                            }
+                            onDragActiveChanged: {
+                                launcherDragManager.active = dragActive || editMode;
+                            }
+                        }
+
+                        placeHolder: ContainmentLayoutManager.PlaceHolder {}
+                    }
+                }
+
+                Launcher.LauncherGrid {
+                    id: launcher
+                    width: mainFlickable.width
+                    height: mainFlickable.height
+                    
+                    favoriteStrip: favoriteStrip
+                    appletsLayout: appletsLayout
+                }
+                Timer {
+                    id: scrollResetTimer
+                    interval: 1000
+                    onTriggered: {
+                        scrollAnim.to = 0;
                         scrollAnim.restart();
                     }
-                    Item {
-                        anchors.centerIn: parent
-
-                        width: units.iconSizes.medium
-                        height: width
-
-                        Rectangle {
-                            anchors {
-                                verticalCenter: parent.verticalCenter
-                                right: parent.horizontalCenter
-                                left: parent.left
-                                verticalCenterOffset: -arrowUpIcon.height/4 + (arrowUpIcon.height/4) * arrowUpIcon.factor
-                            }
-                            color: theme.backgroundColor
-                            transformOrigin: Item.Right
-                            rotation: -45 + 90 * arrowUpIcon.factor
-                            antialiasing: true
-                            height: 1
-                        }
-                        Rectangle {
-                            anchors {
-                                verticalCenter: parent.verticalCenter
-                                left: parent.horizontalCenter
-                                right: parent.right
-                                verticalCenterOffset: -arrowUpIcon.height/4 + (arrowUpIcon.height/4) * arrowUpIcon.factor
-                            }
-                            color: theme.backgroundColor
-                            transformOrigin: Item.Left
-                            rotation: 45 - 90 * arrowUpIcon.factor
-                            antialiasing: true
-                            height: 1
-                        }
-                    }
-                }
-
-                ContainmentLayoutManager.AppletsLayout {
-                    id: appletsLayout
-
-                    anchors.fill: parent
-
-                    cellWidth: Math.floor(width / launcher.columns)
-                    cellHeight: launcher.cellHeight
-
-                    configKey: width > height ? "ItemGeometriesHorizontal" : "ItemGeometriesVertical"
-                    containment: plasmoid
-                    editModeCondition: plasmoid.immutable
-                            ? ContainmentLayoutManager.AppletsLayout.Manual
-                            : ContainmentLayoutManager.AppletsLayout.AfterPressAndHold
-
-                    // Sets the containment in edit mode when we go in edit mode as well
-                    onEditModeChanged: plasmoid.editMode = editMode
-
-                    minimumItemWidth: units.gridUnit * 3
-                    minimumItemHeight: minimumItemWidth
-
-                    defaultItemWidth: units.gridUnit * 6
-                    defaultItemHeight: defaultItemWidth
-
-                    //cellWidth: units.iconSizes.small
-                    //cellHeight: cellWidth
-
-                    acceptsAppletCallback: function(applet, x, y) {
-                        print("Applet: "+applet+" "+x+" "+y)
-                        return true;
-                    }
-
-                    appletContainerComponent: ContainmentLayoutManager.BasicAppletContainer {
-                        id: appletContainer
-                        configOverlayComponent: ConfigOverlay {}
-
-                        onEditModeChanged: {
-                            launcherDragManager.active = dragActive || editMode;
-                        }
-                        onDragActiveChanged: {
-                            launcherDragManager.active = dragActive || editMode;
-                        }
-                    }
-
-                    placeHolder: ContainmentLayoutManager.PlaceHolder {}
-                }
-            }
-
-            Launcher.LauncherGrid {
-                id: launcher
-                width: mainFlickable.width
-                height: mainFlickable.height
-                onLaunched: scrollResetTimer.restart();
-                favoriteStrip: favoriteStrip
-                appletsLayout: appletsLayout
-            }
-            Timer {
-                id: scrollResetTimer
-                interval: 1000
-                onTriggered: {
-                    scrollAnim.to = 0;
-                    scrollAnim.restart();
                 }
             }
         }
-    }
     }
 
     ScrollIndicator {
