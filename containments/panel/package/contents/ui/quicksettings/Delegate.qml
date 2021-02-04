@@ -36,6 +36,7 @@ ColumnLayout {
     required property bool enabled
     required property string settingsCommand
     required property var toggleFunction
+    property alias labelOpacity: label.opacity
 
     Rectangle {
         Layout.preferredWidth: units.iconSizes.large + units.smallSpacing

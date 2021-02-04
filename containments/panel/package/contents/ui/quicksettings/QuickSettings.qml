@@ -335,8 +335,10 @@ Item {
                     id: delegateItem
 
                     //FIXME: why this is needed?
-                    width: flow.columnWidth
+                    width: flow.columnWidth - (y > 0 ? 0 : (flow.columnWidth/Math.floor(flow.width / flow.columnWidth)) * (1 - root.expandedRatio))
                     height: item ? item.implicitHeight : 0
+
+                    labelOpacity: y > 0  ? 1 : root.expandedRatio
 
                     opacity: y <= 0  ? 1 : root.expandedRatio
                     transform: Translate {
@@ -351,6 +353,15 @@ Item {
                         target: root
                         onClosed: delegateItem.panelClosed();
                     }
+                }
+            }
+
+            move: Transition {
+                NumberAnimation {
+                    duration: units.shortDuration
+                    //Here a linear easing actually looks better
+                    //easing.type: Easing.InOutQuad
+                    properties: "x,y"
                 }
             }
 
