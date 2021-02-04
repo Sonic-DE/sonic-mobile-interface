@@ -19,6 +19,7 @@
 
 #include "homescreen.h"
 #include "applicationlistmodel.h"
+#include "favoritesmodel.h"
 
 #include <QtQml>
 #include <QDebug>
@@ -27,7 +28,8 @@
 HomeScreen::HomeScreen(QObject *parent, const QVariantList &args)
     : Plasma::Containment(parent, args)
 {
-    qmlRegisterUncreatableType<ApplicationListModel>("org.kde.phone.homescreen", 1, 0, "ApplicationListModel", QStringLiteral("Cannot create item of type ApplicationListModel"));
+    qmlRegisterType<ApplicationListModel>("org.kde.phone.homescreen", 1, 0, "ApplicationListModel");
+    qmlRegisterType<FavoritesModel>("org.kde.phone.homescreen", 1, 0, "FavoritesModel");
 
     setHasConfigurationInterface(true);
 }
@@ -46,8 +48,18 @@ ApplicationListModel *HomeScreen::applicationListModel()
 {
     if (!m_applicationListModel) {
         m_applicationListModel = new ApplicationListModel(this);
+        m_applicationListModel->setApplet(this);
     }
     return m_applicationListModel;
+}
+
+FavoritesModel *HomeScreen::favoritesModel()
+{
+    if (!m_favoritesModel) {
+        m_favoritesModel = new FavoritesModel(this);
+        m_favoritesModel->setApplet(this);
+    }
+    return m_favoritesModel;
 }
 
 void HomeScreen::stackBefore(QQuickItem *item1, QQuickItem *item2)

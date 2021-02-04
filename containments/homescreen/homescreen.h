@@ -26,11 +26,13 @@
 
 class QQuickItem;
 class ApplicationListModel;
+class FavoritesModel;
 
 class HomeScreen : public Plasma::Containment
 {
     Q_OBJECT
     Q_PROPERTY(ApplicationListModel *applicationListModel READ applicationListModel CONSTANT)
+    Q_PROPERTY(FavoritesModel *favoritesModel READ favoritesModel CONSTANT)
 
 public:
     HomeScreen( QObject *parent, const QVariantList &args );
@@ -39,6 +41,7 @@ public:
     void configChanged() override;
 
     ApplicationListModel *applicationListModel();
+    FavoritesModel *favoritesModel();
 
     Q_INVOKABLE void stackBefore(QQuickItem *item1, QQuickItem *item2);
     Q_INVOKABLE void stackAfter(QQuickItem *item1, QQuickItem *item2);
@@ -48,6 +51,7 @@ protected:
 
 private:
     ApplicationListModel *m_applicationListModel = nullptr;
+    FavoritesModel *m_favoritesModel = nullptr;
 
 };
 

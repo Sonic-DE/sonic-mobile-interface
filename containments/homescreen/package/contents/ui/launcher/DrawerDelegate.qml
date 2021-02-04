@@ -39,6 +39,25 @@ MouseArea {
     property alias iconItem: icon
 
     signal launch(int x, int y, var source, string title)
+    signal dragStarted
+    Drag.active: delegate.longPressing
+    Drag.hotSpot.x: width/2
+    Drag.hotSpot.y: height/2
+    Drag.dragType: Drag.Automatic
+    Drag.mimeData: { "text/x-plasma-phone-homescreen-launcher":  model.applicationStorageId}
+
+    property bool longPressing: false
+
+    onReleased: longPressing = false;
+    onCanceled: longPressing = false;
+
+    onPressAndHold: {
+        delegate.grabToImage(function(result) {
+            delegate.Drag.imageSource = result.url
+            dragStarted()
+            longPressing = true;
+        })
+    }
 
     onClicked: {
         if (model.applicationRunning) {

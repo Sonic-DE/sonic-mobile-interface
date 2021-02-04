@@ -36,8 +36,10 @@ GridView {
     readonly property int columns: Math.floor(view.width / cellWidth)
     cellWidth: view.width / Math.floor(view.width / ((availableCellHeight - reservedSpaceForLabel) + units.smallSpacing*4))
     cellHeight: availableCellHeight
+    clip: true
 
     signal launched
+    signal dragStarted
 
     readonly property int reservedSpaceForLabel: metrics.height
     property int availableCellHeight: units.iconSizes.huge + reservedSpaceForLabel
@@ -49,13 +51,17 @@ GridView {
         font.pointSize: theme.defaultFont.pointSize * 0.9
     }
 
-    model: plasmoid.nativeInterface.applicationListModel
+    model: ApplicationListModel {
+        Component.onCompleted: loadApplications()
+    }
+
     delegate: DrawerDelegate {
         id: delegate
         width: view.cellWidth
         height: view.cellHeight
         reservedSpaceForLabel: view.reservedSpaceForLabel
 
+        onDragStarted: view.dragStarted()
         onLaunch: (x, y, icon, title) => {
             if (icon !== "") {
                 NanoShell.StartupFeedback.open(

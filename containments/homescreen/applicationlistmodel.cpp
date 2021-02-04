@@ -46,7 +46,7 @@ constexpr int MAX_FAVOURITES = 5;
 
 ApplicationListModel::ApplicationListModel(HomeScreen *parent)
     : QAbstractListModel(parent),
-      m_homeScreen(parent)
+      m_applet(parent)
 {
     connect(KSycoca::self(), qOverload<const QStringList &>(&KSycoca::databaseChanged),
             this, &ApplicationListModel::sycocaDbChanged);
@@ -59,15 +59,18 @@ ApplicationListModel::~ApplicationListModel() = default;
 
 void ApplicationListModel::loadSettings()
 {
-    m_favorites = m_homeScreen->config().readEntry("Favorites", QStringList());
+    if (!m_applet) {
+        return;
+    }
+    m_favorites = m_applet->config().readEntry("Favorites", QStringList());
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
-    const auto di = m_homeScreen->config().readEntry("DesktopItems", QStringList());
+    const auto di = m_applet->config().readEntry("DesktopItems", QStringList());
     m_desktopItems = QSet<QString>(di.begin(), di.end());
 #else
-    m_desktopItems = m_homeScreen->config().readEntry("DesktopItems", QStringList()).toSet();
+    m_desktopItems = m_applet->config().readEntry("DesktopItems", QStringList()).toSet();
 #endif
-    m_appOrder = m_homeScreen->config().readEntry("AppOrder", QStringList());
-    m_maxFavoriteCount = m_homeScreen->config().readEntry("MaxFavoriteCount", MAX_FAVOURITES);
+    m_appOrder = m_applet->config().readEntry("AppOrder", QStringList());
+    m_maxFavoriteCount = m_applet->config().readEntry("MaxFavoriteCount", MAX_FAVOURITES);
 
     int i = 0;
     for (const QString &app : qAsConst(m_appOrder)) {
@@ -75,7 +78,7 @@ void ApplicationListModel::loadSettings()
         ++i;
     }
 
-    loadApplications();
+    //loadApplications();
 }
 
 QHash<int, QByteArray> ApplicationListModel::roleNames() const
@@ -249,7 +252,9 @@ void ApplicationListModel::loadApplications()
         }
     }
     if (favChanged) {
-        m_homeScreen->config().writeEntry("Favorites", m_favorites);
+        if (m_applet) {
+            m_applet->config().writeEntry("Favorites", m_favorites);
+        }
         emit favoriteCountChanged();
     }
 }
@@ -325,29 +330,39 @@ void ApplicationListModel::setLocation(int row, LauncherLocation location)
 
         m_favorites.insert(row, data.storageId);
 
-        m_homeScreen->config().writeEntry("Favorites", m_favorites);
+        if (m_applet) {
+            m_applet->config().writeEntry("Favorites", m_favorites);
+        }
         emit favoriteCountChanged();
 
     // Out of favorites
     } else  if (data.location == Favorites) {
         m_favorites.removeAll(data.storageId);
-        m_homeScreen->config().writeEntry("Favorites", m_favorites);
+        if (m_applet) {
+            m_applet->config().writeEntry("Favorites", m_favorites);
+        }
         emit favoriteCountChanged();
     }
 
     // In Desktop
     if (location == Desktop) {
         m_desktopItems.insert(data.storageId);
-        m_homeScreen->config().writeEntry("DesktopItems", m_desktopItems.values());
+        if (m_applet) {
+            m_applet->config().writeEntry("DesktopItems", m_desktopItems.values());
+        }
 
     // Out of Desktop
     } else  if (data.location == Desktop) {
         m_desktopItems.remove(data.storageId);
-        m_homeScreen->config().writeEntry(QStringLiteral("DesktopItems"), m_desktopItems.values());
+        if (m_applet) {
+            m_applet->config().writeEntry(QStringLiteral("DesktopItems"), m_desktopItems.values());
+        }
     }
 
     data.location = location;
-    emit m_homeScreen->configNeedsSaving();
+    if (m_applet) {
+        emit m_applet->configNeedsSaving();
+    }
     emit dataChanged(index(row, 0), index(row, 0));
 }
 
@@ -382,7 +397,9 @@ void ApplicationListModel::moveItem(int row, int destination)
         ++i;
     }
 
-    m_homeScreen->config().writeEntry("AppOrder", m_appOrder);
+    if (m_applet) {
+        m_applet->config().writeEntry("AppOrder", m_appOrder);
+    }
 
     endMoveRows();
 }
@@ -434,9 +451,21 @@ void ApplicationListModel::setMaxFavoriteCount(int count)
     }
 
     m_maxFavoriteCount = count;
-    m_homeScreen->config().writeEntry("MaxFavoriteCount", m_maxFavoriteCount);
+    if (m_applet) {
+        m_applet->config().writeEntry("MaxFavoriteCount", m_maxFavoriteCount);
+    }
 
     emit maxFavoriteCountChanged();
+}
+
+Plasma::Applet *ApplicationListModel::applet() const
+{
+    return m_applet;
+}
+
+void ApplicationListModel::setApplet(Plasma::Applet *applet)
+{
+    m_applet = applet;
 }
 
 void ApplicationListModel::setMinimizedDelegate(int row, QQuickItem *delegate)

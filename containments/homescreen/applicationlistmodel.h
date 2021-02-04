@@ -92,6 +92,9 @@ public:
     int maxFavoriteCount() const;
     void setMaxFavoriteCount(int count);
 
+    void setApplet(Plasma::Applet *applet);
+    Plasma::Applet *applet() const;
+
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
 
     Qt::ItemFlags flags(const QModelIndex &index) const override;
@@ -104,7 +107,7 @@ public:
 
     Q_INVOKABLE void runApplication(const QString &storageId);
 
-    Q_INVOKABLE void loadApplications();
+    Q_INVOKABLE virtual void loadApplications();
 
     Q_INVOKABLE void setMinimizedDelegate(int row, QQuickItem *delegate);
     Q_INVOKABLE void unsetMinimizedDelegate(int row, QQuickItem *delegate);
@@ -117,13 +120,13 @@ Q_SIGNALS:
     void favoriteCountChanged();
     void maxFavoriteCountChanged();
 
-private:
+protected:
     void initWayland();
 
     QList<ApplicationData> m_applicationList;
 
     KWayland::Client::PlasmaWindowManagement *m_windowManagement = nullptr;
-    HomeScreen *m_homeScreen = nullptr;
+    Plasma::Applet *m_applet = nullptr;
     int m_maxFavoriteCount = 0;
     QStringList m_appOrder;
     QStringList m_favorites;
