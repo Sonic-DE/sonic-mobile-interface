@@ -41,22 +41,16 @@ MouseArea {
     property real factor: Math.min(1, (arrowUpIcon.flickable.contentY + arrowUpIcon.flickable.originY + arrowUpIcon.flickable.height*2) / (arrowUpIcon.flickable.height / 2))
 
     height: units.iconSizes.medium
+    signal openRequested
+    signal closeRequested
 
     onClicked: {
         if ((arrowUpIcon.flickable.contentY + arrowUpIcon.flickable.originY + arrowUpIcon.flickable.height*2) >= arrowUpIcon.flickable.height/2) {
-            scrollAnim.to = -arrowUpIcon.flickable.height;
+            closeRequested();
         } else {
-            scrollAnim.to = -arrowUpIcon.flickable.height/3
+            openRequested();
         }
         scrollAnim.restart();
-    }
-
-    NumberAnimation {
-        id: scrollAnim
-        target: arrowUpIcon.flickable
-        properties: "contentY"
-        duration: units.longDuration
-        easing.type: Easing.InOutQuad
     }
 
     Item {

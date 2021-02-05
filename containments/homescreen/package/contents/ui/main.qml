@@ -142,40 +142,6 @@ Item {
         favoriteStrip: favoriteStrip
     }
 
-    Launcher.AppDrawer {
-        id: appDrawer
-        anchors {
-            fill: parent
-            //topMargin: plasmoid.availableScreenRect.y
-           // bottomMargin: favoriteStrip.height + plasmoid.screenGeometry.height - plasmoid.availableScreenRect.height - plasmoid.availableScreenRect.y
-        }
-        z:9
-        bottomPadding: 100//favoriteStrip.height
-
-        onDragStarted: {
-            scrollAnim.to = -mainFlickable.height;
-            scrollAnim.restart();
-        }
-        PlasmaComponents.ScrollBar.vertical: PlasmaComponents.ScrollBar {
-            id: scrollabr
-            opacity: appDrawer.moving
-            interactive: false
-            enabled: false
-            Behavior on opacity {
-                OpacityAnimator {
-                    duration: units.longDuration * 2
-                    easing.type: Easing.InOutQuad
-                }
-            }
-            implicitWidth: Math.round(units.gridUnit/3)
-            contentItem: Rectangle {
-                radius: width/2
-                color: Qt.rgba(1, 1, 1, 0.3)
-                border.color: Qt.rgba(0, 0, 0, 0.4)
-            }
-        }
-    }
-
     Flickable {
         id: mainFlickable
 
@@ -185,6 +151,10 @@ Item {
             bottomMargin: favoriteStrip.height + plasmoid.screenGeometry.height - plasmoid.availableScreenRect.height - plasmoid.availableScreenRect.y
         }
 
+        opacity: 1 - appDrawer.openFactor
+        transform: Translate {
+            y: -mainFlickable.height/10 * appDrawer.openFactor
+        }
         //bottomMargin: favoriteStrip.height
         contentWidth: width*2
         contentHeight: height
@@ -198,6 +168,27 @@ Item {
 
         onContentYChanged: MobileShell.HomeScreenControls.homeScreenPosition = contentY
 
+        DragHandler {
+            target: mainFlickable
+            yAxis.enabled: true
+            enabled: appDrawer.status !== Launcher.AppDrawer.Status.Open
+            onTranslationChanged: {
+                if (active) {
+                    appDrawer.offset = translation.y
+                }
+            }
+            onActiveChanged: {
+                if (active) {
+                    return
+                }
+                print("$$$$"+appDrawer.offset)
+                if (appDrawer.offset < -200) {
+                    appDrawer.open()
+                } else {
+                    appDrawer.close()
+                }
+            }
+        }
         
         NumberAnimation {
             id: scrollAnim
@@ -206,8 +197,6 @@ Item {
             duration: units.longDuration
             easing.type: Easing.InOutQuad
         }
-
-
 
 
         DragDrop.DropArea {
@@ -330,6 +319,39 @@ Item {
         
     }
 
+    Launcher.AppDrawer {
+        id: appDrawer
+        anchors {
+            fill: parent
+           // topMargin: plasmoid.availableScreenRect.y
+           // bottomMargin: favoriteStrip.height + plasmoid.screenGeometry.height - plasmoid.availableScreenRect.height - plasmoid.availableScreenRect.y
+        }
+        topPadding: plasmoid.availableScreenRect.y
+        bottomPadding: favoriteStrip.height + plasmoid.screenGeometry.height - plasmoid.availableScreenRect.height - plasmoid.availableScreenRect.y
+
+        onDragStarted: {
+            scrollAnim.to = -mainFlickable.height;
+            scrollAnim.restart();
+        }
+        PlasmaComponents.ScrollBar.vertical: PlasmaComponents.ScrollBar {
+            id: scrollabr
+            opacity: appDrawer.moving
+            interactive: false
+            enabled: false
+            Behavior on opacity {
+                OpacityAnimator {
+                    duration: units.longDuration * 2
+                    easing.type: Easing.InOutQuad
+                }
+            }
+            implicitWidth: Math.round(units.gridUnit/3)
+            contentItem: Rectangle {
+                radius: width/2
+                color: Qt.rgba(1, 1, 1, 0.3)
+                border.color: Qt.rgba(0, 0, 0, 0.4)
+            }
+        }
+    }
 
     ScrollIndicator {
         id: scrollUpIndicator
