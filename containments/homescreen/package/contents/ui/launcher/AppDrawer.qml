@@ -18,7 +18,6 @@
 
 import QtQuick 2.14
 import QtQuick.Layouts 1.1
-import QtQuick.Controls 2.3 as Controls
 
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
@@ -41,6 +40,12 @@ Item {
         Open
     }
 
+    enum MovementDirection {
+        None = 0,
+        Up,
+        Down
+    }
+
     readonly property int status: {
         if (view.contentY >= -view.originY - view.height) {
             return AppDrawer.Status.Open;
@@ -51,7 +56,6 @@ Item {
         }
     }
 
-    //TODO: change sign
     property real offset: 0
 
     property real leftPadding: 0
@@ -86,8 +90,20 @@ Item {
         }
     }
 
+    function snapDrawerStatus() {
+        if (root.status !== AppDrawer.Status.Peeking) {
+            return;
+        }
+
+        if (view.movementDirection === AppDrawer.MovementDirection.Up) {
+            open();
+        } else {
+            close();
+        }
+    }
+
     onOffsetChanged: {
-        view.contentY = -offset - view.originY - view.height*2
+        view.contentY = Math.max(0, offset) - view.originY - view.height*2
     }
     NumberAnimation {
         id: scrollAnim
@@ -97,7 +113,7 @@ Item {
         easing.type: Easing.InOutQuad
     }
 
-    Controls.Label {
+    PC3.Label {
         id: metrics
         text: "M\nM"
         visible: false
@@ -146,6 +162,19 @@ Item {
         cellHeight: root.availableCellHeight
         clip: true
 
+        property real oldContentY: contentY
+        property int movementDirection: AppDrawer.MovementDirection.None
+        onContentYChanged: {
+            if (contentY > oldContentY) {
+                movementDirection = AppDrawer.MovementDirection.Up;
+            } else {
+                movementDirection = AppDrawer.MovementDirection.Down;
+            }
+            oldContentY = contentY;
+            root.offset = contentY + view.originY + view.height*2
+        }
+        onMovementEnded: root.snapDrawerStatus()
+        onFlickEnded: movementEnded()
 
         boundsBehavior: Flickable.StopAtBounds
 
@@ -177,6 +206,25 @@ Item {
                             Math.min(delegate.iconItem.width, delegate.iconItem.height));
                 }
                 root.launched();
+            }
+        }
+
+        PC3.ScrollBar.vertical: PC3.ScrollBar {
+            id: scrollabr
+            opacity: appDrawer.moving
+            interactive: false
+            enabled: false
+            Behavior on opacity {
+                OpacityAnimator {
+                    duration: units.longDuration * 2
+                    easing.type: Easing.InOutQuad
+                }
+            }
+            implicitWidth: Math.round(units.gridUnit/3)
+            contentItem: Rectangle {
+                radius: width/2
+                color: Qt.rgba(1, 1, 1, 0.3)
+                border.color: Qt.rgba(0, 0, 0, 0.4)
             }
         }
     }

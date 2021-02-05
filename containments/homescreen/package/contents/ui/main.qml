@@ -174,18 +174,12 @@ Item {
             enabled: appDrawer.status !== Launcher.AppDrawer.Status.Open
             onTranslationChanged: {
                 if (active) {
-                    appDrawer.offset = translation.y
+                    appDrawer.offset = -translation.y
                 }
             }
             onActiveChanged: {
-                if (active) {
-                    return
-                }
-                print("$$$$"+appDrawer.offset)
-                if (appDrawer.offset < -200) {
-                    appDrawer.open()
-                } else {
-                    appDrawer.close()
+                if (!active) {
+                    appDrawer.snapDrawerStatus();
                 }
             }
         }
@@ -321,35 +315,14 @@ Item {
 
     Launcher.AppDrawer {
         id: appDrawer
-        anchors {
-            fill: parent
-           // topMargin: plasmoid.availableScreenRect.y
-           // bottomMargin: favoriteStrip.height + plasmoid.screenGeometry.height - plasmoid.availableScreenRect.height - plasmoid.availableScreenRect.y
-        }
+        anchors.fill: parent
+
         topPadding: plasmoid.availableScreenRect.y
         bottomPadding: favoriteStrip.height + plasmoid.screenGeometry.height - plasmoid.availableScreenRect.height - plasmoid.availableScreenRect.y
 
         onDragStarted: {
             scrollAnim.to = -mainFlickable.height;
             scrollAnim.restart();
-        }
-        PlasmaComponents.ScrollBar.vertical: PlasmaComponents.ScrollBar {
-            id: scrollabr
-            opacity: appDrawer.moving
-            interactive: false
-            enabled: false
-            Behavior on opacity {
-                OpacityAnimator {
-                    duration: units.longDuration * 2
-                    easing.type: Easing.InOutQuad
-                }
-            }
-            implicitWidth: Math.round(units.gridUnit/3)
-            contentItem: Rectangle {
-                radius: width/2
-                color: Qt.rgba(1, 1, 1, 0.3)
-                border.color: Qt.rgba(0, 0, 0, 0.4)
-            }
         }
     }
 
@@ -375,11 +348,11 @@ Item {
         property real oldMouseY
         onPressed: oldMouseY = mouse.y
         onPositionChanged: {
-            appDrawer.contentY -= mouse.y - oldMouseY;
+            appDrawer.offset += oldMouseY - mouse.y;
             oldMouseY = mouse.y;
         }
         onReleased: {
-            appDrawer.flick(0, 1);
+            appDrawer.snapDrawerStatus();
         }
     }
     Launcher.FavoriteStrip {
