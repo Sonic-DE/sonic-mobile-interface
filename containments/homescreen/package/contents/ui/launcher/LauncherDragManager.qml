@@ -27,14 +27,14 @@ Item {
     id: root
 
     property ContainmentLayoutManager.AppletsLayout appletsLayout
-    property LauncherGrid launcherGrid
     property FavoriteStrip favoriteStrip
     property Delegate currentlyDraggedDelegate
     property bool active
+    property QtObject model: plasmoid.nativeInterface.favoritesModel
 
     readonly property Item spacer: Item {
-        width: launcherGrid.cellWidth
-        height: launcherGrid.cellHeight
+        width: favoriteStrip.cellWidth
+        height: favoriteStrip.cellHeight
     }
 
     function startDrag(item) {
@@ -46,34 +46,28 @@ Item {
         var newRow = 0;
 
         var newContainer = internal.containerForItem(delegate, dragCenterX, dragCenterY);
+        if (!newContainer) {
+            newContainer = appletsLayout;
+        }
 
         // Put it in the favorites strip
         if (newContainer == favoriteStrip) {
             var pos = favoriteStrip.flow.mapFromItem(delegate, 0, 0);
             newRow = Math.floor((pos.x + dragCenterX) / delegate.width);
 
-            //plasmoid.nativeInterface.applicationListModel.setLocation(delegate.modelData.index, ApplicationListModel.Favorites);
+            //root.model.setLocation(delegate.modelData.index, ApplicationListModel.Favorites);
 
             internal.showSpacer(delegate, dragCenterX, dragCenterY);
-            plasmoid.nativeInterface.applicationListModel.moveItem(delegate.modelData.index, newRow);
+            root.model.moveItem(delegate.modelData.index, newRow);
 
         // Put it on desktop
-        } else if (newContainer == appletsLayout) {
+        } else {
             var pos = appletsLayout.mapFromItem(delegate, 0, 0);
-            //plasmoid.nativeInterface.applicationListModel.setLocation(delegate.modelData.index, ApplicationListModel.Desktop);
+            //root.model.setLocation(delegate.modelData.index, ApplicationListModel.Desktop);
 
             internal.showSpacer(delegate, dragCenterX, dragCenterY);
             return;
     
-        // Put it in the general view
-        } else {
-            var pos = launcherGrid.flow.mapFromItem(delegate, 0, 0);
-            newRow = Math.floor(newContainer.flow.width / delegate.width) * Math.floor((pos.y + dragCenterY) / delegate.height) + Math.round((pos.x + dragCenterX) / delegate.width) + favoriteStrip.count;
-
-            //plasmoid.nativeInterface.applicationListModel.setLocation(delegate.modelData.index, ApplicationListModel.Grid);
-
-            internal.showSpacer(delegate, dragCenterX, dragCenterY);
-            plasmoid.nativeInterface.applicationListModel.moveItem(delegate.modelData.index, newRow);
         }
     }
 
@@ -88,11 +82,9 @@ Item {
             container.z = 1;
 
             if (container == appletsLayout) {
-                launcherGrid.z = 0;
                 favoriteStrip.z = 0;
             } else if (container == favoriteStrip) {
                 appletsLayout.z = 0;
-                launcherGrid.z = 0;
             } else {
                 appletsLayout.z = 0;
                 favoriteStrip.z = 0;
@@ -101,12 +93,10 @@ Item {
 
         function containerForItem(item, dragCenterX, dragCenterY) {
             if (favoriteStrip.contains(Qt.point(0,favoriteStrip.frame.mapFromItem(item, dragCenterX, dragCenterY).y))
-                && plasmoid.nativeInterface.applicationListModel.favoriteCount < plasmoid.nativeInterface.applicationListModel.maxFavoriteCount) {
+                && root.model.favoriteCount < root.model.maxFavoriteCount) {
                 return favoriteStrip;
-            } else if (appletsLayout.contains(appletsLayout.mapFromItem(item, dragCenterX, dragCenterY))) {
-                return appletsLayout;
             } else {
-                return launcherGrid;
+                return appletsLayout;
             }
         }
 
@@ -213,7 +203,7 @@ Item {
             raiseContainer(container);
 
             if (container == appletsLayout) {
-                plasmoid.nativeInterface.applicationListModel.setLocation(item.modelData.index, ApplicationListModel.Desktop);
+                root.model.setLocation(item.modelData.index, ApplicationListModel.Desktop);
                 var pos = appletsLayout.mapFromItem(item, 0, 0);
                 item.parent = appletsLayout;
                 item.x = pos.x;
@@ -223,9 +213,9 @@ Item {
                 
                 return;
             } else if (container == favoriteStrip) {
-                plasmoid.nativeInterface.applicationListModel.setLocation(item.modelData.index, ApplicationListModel.Favorites);
+                root.model.setLocation(item.modelData.index, ApplicationListModel.Favorites);
             } else {
-                plasmoid.nativeInterface.applicationListModel.setLocation(item.modelData.index, ApplicationListModel.Grid);
+                root.model.setLocation(item.modelData.index, ApplicationListModel.Grid);
             }
 
             var child = nearestChild(item, dragCenterX, dragCenterY, container);

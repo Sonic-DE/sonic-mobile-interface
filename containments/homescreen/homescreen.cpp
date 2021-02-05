@@ -49,6 +49,7 @@ ApplicationListModel *HomeScreen::applicationListModel()
     if (!m_applicationListModel) {
         m_applicationListModel = new ApplicationListModel(this);
         m_applicationListModel->setApplet(this);
+        m_applicationListModel->loadApplications();
     }
     return m_applicationListModel;
 }
@@ -58,6 +59,7 @@ FavoritesModel *HomeScreen::favoritesModel()
     if (!m_favoritesModel) {
         m_favoritesModel = new FavoritesModel(this);
         m_favoritesModel->setApplet(this);
+        m_favoritesModel->loadApplications();
     }
     return m_favoritesModel;
 }

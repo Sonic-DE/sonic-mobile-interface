@@ -37,12 +37,13 @@ ContainmentLayoutManager.ItemContainer {
 
     property var modelData: typeof model !== "undefined" ? model : null
 
-    Layout.minimumWidth: launcherGrid.cellWidth
-    Layout.minimumHeight: launcherGrid.cellHeight
+    Layout.minimumWidth: appletsLayout.cellWidth
+    Layout.minimumHeight: appletsLayout.cellHeight
 
     opacity: dragActive ? 0.4 : 1
 
     key: model.applicationStorageId
+    property int reservedSpaceForLabel
     property real dragCenterX
     property real dragCenterY
     property alias iconItem: icon
@@ -102,8 +103,8 @@ ContainmentLayoutManager.ItemContainer {
         dragCenterY = dragCenter.y;
         launcherDragManager.dragItem(delegate, dragCenter.x, dragCenter.y);
 
-        delegate.width = launcherGrid.cellWidth;
-        delegate.height = launcherGrid.cellHeight;
+        delegate.width = appletsLayout.cellWidth;
+        delegate.height = appletsLayout.cellHeight;
 
         var pos = plasmoid.fullRepresentationItem.mapFromItem(delegate, dragCenter.x, dragCenter.y);
         //SCROLL UP
@@ -145,7 +146,7 @@ ContainmentLayoutManager.ItemContainer {
 
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
                 Layout.fillWidth: true
-                Layout.minimumHeight: parent.height - root.reservedSpaceForLabel
+                Layout.minimumHeight: parent.height - delegate.reservedSpaceForLabel
                 Layout.preferredHeight: Layout.minimumHeight
 
                 usesPlasmaTheme: false
@@ -169,7 +170,7 @@ ContainmentLayoutManager.ItemContainer {
                 visible: text.length > 0
 
                 Layout.fillWidth: true
-                Layout.preferredHeight: root.reservedSpaceForLabel
+                Layout.preferredHeight: delegate.reservedSpaceForLabel
                 wrapMode: Text.WordWrap
                 Layout.leftMargin: -parent.anchors.leftMargin + units.smallSpacing
                 Layout.rightMargin: -parent.anchors.rightMargin + units.smallSpacing

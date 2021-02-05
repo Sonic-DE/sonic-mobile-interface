@@ -119,6 +119,7 @@ void FavoritesModel::addFavorite(const QString &storageId, int row, LauncherLoca
         beginInsertRows(QModelIndex(), row, row);
         m_applicationList.insert(row, data);
         m_appOrder.insert(row, storageId);
+        endInsertRows();
         if (favChanged) {
             emit favoriteCountChanged();
         }
