@@ -139,7 +139,6 @@ Item {
         anchors.fill: parent
         z: 2
         appletsLayout: appletsLayout
-        launcherGrid: launcher
         favoriteStrip: favoriteStrip
     }
 
@@ -318,15 +317,24 @@ Item {
                     onDrop: {
                         if (event.mimeData.formats[0] === "text/x-plasma-phone-homescreen-launcher") {
                             let storageId = event.mimeData.getDataAsByteArray("text/x-plasma-phone-homescreen-launcher");
-                            print("ASAAAAAAAAAAAAAAAAAAAA")
-                            
-                            print(storageId)
-                            plasmoid.nativeInterface.favoritesModel.addFavorite(storageId, 0, 2)
+
+                            plasmoid.nativeInterface.favoritesModel.addFavorite(storageId, 0, ApplicationListModel.Desktop)
+                            let item = launcherRepeater.itemAt(0);
+
+                            event.accept(event.proposedAction);
+                            if (item) {
+                                item.x = appletsLayout.placeHolder.x;
+                                item.y = appletsLayout.placeHolder.y;
+                                appletsLayout.hidePlaceHolder();
+                                launcherDragManager.dropItem(item, appletsLayout.placeHolder.x + appletsLayout.placeHolder.width/2, appletsLayout.placeHolder.y + appletsLayout.placeHolder.height/2);
+                            }
+                            appletsLayout.hidePlaceHolder();
+                        } else {
+                            plasmoid.processMimeData(event.mimeData,
+                                        event.x - appletsLayout.placeHolder.width / 2, event.y - appletsLayout.placeHolder.height / 2);
+                            event.accept(event.proposedAction);
+                            appletsLayout.hidePlaceHolder();
                         }
-                        plasmoid.processMimeData(event.mimeData,
-                                    event.x - appletsLayout.placeHolder.width / 2, event.y - appletsLayout.placeHolder.height / 2);
-                        event.accept(event.proposedAction);
-                        appletsLayout.hidePlaceHolder();
                     }
 
                     PlasmaCore.Svg {
@@ -340,8 +348,8 @@ Item {
 
                         anchors.fill: parent
 
-                        cellWidth: Math.floor(width / launcher.columns)
-                        cellHeight: launcher.cellHeight
+                        cellWidth: favoriteStrip.cellWidth
+                        cellHeight: favoriteStrip.cellHeight
 
                         configKey: width > height ? "ItemGeometriesHorizontal" : "ItemGeometriesVertical"
                         containment: plasmoid
@@ -380,14 +388,26 @@ Item {
 
                         placeHolder: ContainmentLayoutManager.PlaceHolder {}
 //FIXME: move
+PlasmaComponents.Label {
+            id: metrics
+            text: "M\nM"
+            visible: false
+            font.pointSize: theme.defaultFont.pointSize * 0.9
+        }
 Repeater {
+        id: launcherRepeater
         model: plasmoid.nativeInterface.favoritesModel
+        property var callback
+        onItemAdded: {
+            print("%%%%"+item.modelData.applicationStorageId)
+        }
         delegate: Launcher.Delegate {
             id: delegate
             width: 100//root.cellWidth
             height: 100//root.cellHeight
 
             parent: parentFromLocation
+            reservedSpaceForLabel: metrics.height
             property Item parentFromLocation: {
                 switch (model.applicationLocation) {
                 case ApplicationListModel.Desktop:
@@ -430,14 +450,6 @@ Repeater {
                     }
                 }
 
-                Launcher.LauncherGrid {
-                    id: launcher
-                    width: mainFlickable.width
-                    height: mainFlickable.height
-                    
-                    favoriteStrip: favoriteStrip
-                    appletsLayout: appletsLayout
-                }
                 Timer {
                     id: scrollResetTimer
                     interval: 1000
@@ -514,7 +526,6 @@ Repeater {
             bottomMargin: plasmoid.screenGeometry.height - plasmoid.availableScreenRect.height - plasmoid.availableScreenRect.y
         }
         appletsLayout: appletsLayout
-        launcherGrid: launcher
         //y: Math.max(krunner.inputHeight, root.height - height - mainFlickable.contentY)
     }
 }
