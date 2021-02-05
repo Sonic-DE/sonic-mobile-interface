@@ -16,7 +16,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  2.010-1301, USA.
  */
 
-import QtQuick 2.4
+import QtQuick 2.14
 import QtQuick.Layouts 1.1
 import QtQuick.Controls 2.3 as Controls
 
@@ -42,7 +42,7 @@ Item {
     }
 
     readonly property int status: {
-        if (view.contentY > -view.originY - view.height) {
+        if (view.contentY >= -view.originY - view.height) {
             return AppDrawer.Status.Open;
         } else if (view.contentY > -view.originY - view.height*2) {
             return AppDrawer.Status.Peeking;
@@ -50,6 +50,9 @@ Item {
             return AppDrawer.Status.Closed;
         }
     }
+
+    //TODO: change sign
+    property real offset: 0
 
     property real leftPadding: 0
     property real topPadding: 0
@@ -67,6 +70,8 @@ Item {
 
     property alias flickable: view
 
+    readonly property real openFactor: Math.max(0, Math.min(1, (view.contentY + view.originY + view.height*2) / (units.gridUnit * 10)))
+
     function open() {
         if (root.status !== AppDrawer.Status.Open) {
             scrollAnim.to = 0
@@ -81,6 +86,9 @@ Item {
         }
     }
 
+    onOffsetChanged: {
+        view.contentY = -offset - view.originY - view.height*2
+    }
     NumberAnimation {
         id: scrollAnim
         target: view
@@ -103,6 +111,8 @@ Item {
             bottom: scrim.top
         }
         flickable: view
+        onOpenRequested: root.open();
+        onCloseRequested: root.close();
     }
 
     Rectangle {
@@ -116,7 +126,7 @@ Item {
         border.color: Qt.rgba(1, 1, 1, 0.5)
         radius: units.gridUnit
         color: "black"
-        opacity: 0.4 * Math.min(1, (view.contentY + view.originY + view.height*2) / (units.gridUnit * 10))
+        opacity: 0.4 * root.openFactor
         height: root.height + radius * 2
         y: Math.max(-radius, -view.contentY - view.originY - root.height + root.topPadding + root.bottomPadding)
     }
@@ -167,6 +177,34 @@ Item {
                             Math.min(delegate.iconItem.width, delegate.iconItem.height));
                 }
                 root.launched();
+            }
+        }
+    }
+
+    Rectangle {
+        anchors {
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+            leftMargin: units.gridUnit + root.leftPadding
+            rightMargin: units.gridUnit + root.rightPadding
+            bottomMargin: root.bottomPadding - height
+        }
+        height: 1
+        visible: root.bottomPadding > 0
+        gradient: Gradient {
+            orientation: Gradient.Horizontal
+            GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, 0) }
+            GradientStop { position: 0.15; color: Qt.rgba(1, 1, 1, 0.5) }
+            GradientStop { position: 0.5; color: Qt.rgba(1, 1, 1, 1) }
+            GradientStop { position: 0.85; color: Qt.rgba(1, 1, 1, 0.5) }
+            GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, 0) }
+        }
+        opacity: root.status !== AppDrawer.Status.Closed ? 0.6 : 0
+        Behavior on opacity {
+            OpacityAnimator {
+                duration: units.longDuration * 2
+                easing.type: Easing.InOutQuad
             }
         }
     }
