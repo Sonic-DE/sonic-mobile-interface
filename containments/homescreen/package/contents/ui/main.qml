@@ -394,59 +394,11 @@ PlasmaComponents.Label {
             visible: false
             font.pointSize: theme.defaultFont.pointSize * 0.9
         }
-Repeater {
-        id: launcherRepeater
-        model: plasmoid.nativeInterface.favoritesModel
-        property var callback
-        onItemAdded: {
-            print("%%%%"+item.modelData.applicationStorageId)
-        }
-        delegate: Launcher.Delegate {
-            id: delegate
-            width: 100//root.cellWidth
-            height: 100//root.cellHeight
-
-            parent: parentFromLocation
-            reservedSpaceForLabel: metrics.height
-            property Item parentFromLocation: {
-                switch (model.applicationLocation) {
-                case ApplicationListModel.Desktop:
-                    return appletsLayout;
-                case ApplicationListModel.Favorites:
-                    return favoriteStrip.flow;
-                default:
-                    return appletsLayout;
-                }
-            }
-            Component.onCompleted: {
-                if (model.applicationLocation === ApplicationListModel.Desktop) {
-                    appletsLayout.restoreItem(delegate);
-                }
-            }
-            onLaunch: (x, y, icon, title) => {
-                if (icon !== "") {
-                    NanoShell.StartupFeedback.open(
-                            icon,
-                            title,
-                            delegate.iconItem.Kirigami.ScenePosition.x + delegate.iconItem.width/2,
-                            delegate.iconItem.Kirigami.ScenePosition.y + delegate.iconItem.height/2,
-                            Math.min(delegate.iconItem.width, delegate.iconItem.height));
-                }
-                root.launched();
-            }
-            onParentFromLocationChanged: {
-                if (!launcherDragManager.active && parent != parentFromLocation) {
-                    parent = parentFromLocation;
-                    if (model.applicationLocation === ApplicationListModel.Favorites) {
-                        plasmoid.nativeInterface.stackBefore(delegate, parentFromLocation.children[index]);
-
-                    } else if (model.applicationLocation === ApplicationListModel.Grid) {
-                        plasmoid.nativeInterface.stackBefore(delegate, parentFromLocation.children[Math.max(0, index - plasmoid.nativeInterface.applicationListModel.favoriteCount)]);
-                    }
-                }
-            }
-        }
-    }
+Launcher.LauncherRepeater {
+    id: launcherRepeater
+    cellWidth: appletsLayout.cellWidth
+    cellHeight: appletsLayout.cellHeight
+}
                     }
                 }
 
@@ -496,7 +448,7 @@ Repeater {
             GradientStop { position: 0.85; color: Qt.rgba(1, 1, 1, 0.5) }
             GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, 0) }
         }
-        opacity: mainFlickable.contentY > 0 ? 0.6 : 0
+        opacity: appDrawer.contentY > -appDrawer.originY - appDrawer.height*2 ? 0.6 : 0
         Behavior on opacity {
             OpacityAnimator {
                 duration: units.longDuration * 2
@@ -510,11 +462,11 @@ Repeater {
         property real oldMouseY
         onPressed: oldMouseY = mouse.y
         onPositionChanged: {
-            mainFlickable.contentY -= mouse.y - oldMouseY;
+            appDrawer.contentY -= mouse.y - oldMouseY;
             oldMouseY = mouse.y;
         }
         onReleased: {
-            mainFlickable.flick(0, 1);
+            appDrawer.flick(0, 1);
         }
     }
     Launcher.FavoriteStrip {
