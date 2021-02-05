@@ -30,19 +30,64 @@ import org.kde.plasma.private.nanoshell 2.0 as NanoShell
 
 import org.kde.phone.homescreen 1.0
 
-GridView {
-    id: view
+import "private"
+
+Item {
+    id: root
+
+    enum Status {
+        Closed,
+        Peeking,
+        Open
+    }
+
+    readonly property int status: {
+        if (view.contentY > -view.originY - view.height) {
+            return AppDrawer.Status.Open;
+        } else if (view.contentY > -view.originY - view.height*2) {
+            return AppDrawer.Status.Peeking;
+        } else {
+            return AppDrawer.Status.Closed;
+        }
+    }
+
+    property real leftPadding: 0
+    property real topPadding: 0
+    property real bottomPadding: 100
+    property real rightPadding: 0
 
     readonly property int columns: Math.floor(view.width / cellWidth)
-    cellWidth: view.width / Math.floor(view.width / ((availableCellHeight - reservedSpaceForLabel) + units.smallSpacing*4))
-    cellHeight: availableCellHeight
-    clip: true
-
+    property alias cellWidth: view.cellWidth
+    property alias cellHeight: view.cellHeight
     signal launched
     signal dragStarted
 
     readonly property int reservedSpaceForLabel: metrics.height
     property int availableCellHeight: units.iconSizes.huge + reservedSpaceForLabel
+
+    property alias flickable: view
+
+    function open() {
+        if (root.status !== AppDrawer.Status.Open) {
+            scrollAnim.to = 0
+            scrollAnim.restart();
+        }
+    }
+
+    function close() {
+        if (root.status !== AppDrawer.Status.Closed) {
+            scrollAnim.to = -view.height;
+            scrollAnim.restart();
+        }
+    }
+
+    NumberAnimation {
+        id: scrollAnim
+        target: view
+        properties: "contentY"
+        duration: units.longDuration
+        easing.type: Easing.InOutQuad
+    }
 
     Controls.Label {
         id: metrics
@@ -51,27 +96,78 @@ GridView {
         font.pointSize: theme.defaultFont.pointSize * 0.9
     }
 
-    model: ApplicationListModel {
-        Component.onCompleted: loadApplications()
+    OpenDrawerButton {
+        anchors {
+            left: parent.left
+            right: parent.right
+            bottom: scrim.top
+        }
+        flickable: view
     }
 
-    delegate: DrawerDelegate {
-        id: delegate
-        width: view.cellWidth
-        height: view.cellHeight
-        reservedSpaceForLabel: view.reservedSpaceForLabel
+    Rectangle {
+        id: scrim
+        anchors {
+            left: view.left
+            right: view.right
+            leftMargin: -1
+            rightMargin: -1
+        }
+        border.color: Qt.rgba(1, 1, 1, 0.5)
+        radius: units.gridUnit
+        color: "black"
+        opacity: 0.4 * Math.min(1, (view.contentY + view.originY + view.height*2) / (units.gridUnit * 10))
+        height: root.height + radius * 2
+        y: Math.max(-radius, -view.contentY - view.originY - root.height + root.topPadding + root.bottomPadding)
+    }
 
-        onDragStarted: view.dragStarted()
-        onLaunch: (x, y, icon, title) => {
-            if (icon !== "") {
-                NanoShell.StartupFeedback.open(
-                        icon,
-                        title,
-                        delegate.iconItem.Kirigami.ScenePosition.x + delegate.iconItem.width/2,
-                        delegate.iconItem.Kirigami.ScenePosition.y + delegate.iconItem.height/2,
-                        Math.min(delegate.iconItem.width, delegate.iconItem.height));
+    GridView {
+        id: view
+        anchors {
+            fill: parent
+            leftMargin: root.leftPadding
+            topMargin: root.topPadding
+            rightMargin: root.rightPadding
+            bottomMargin: root.bottomPadding
+        }
+
+        visible: root.status !== AppDrawer.Status.Closed
+        cellWidth: view.width / Math.floor(view.width / ((root.availableCellHeight - root.reservedSpaceForLabel) + units.smallSpacing*4))
+        cellHeight: root.availableCellHeight
+        clip: true
+
+
+        boundsBehavior: Flickable.StopAtBounds
+
+        model: ApplicationListModel {
+            Component.onCompleted: loadApplications()
+        }
+
+        header: Item {
+            height: root.height - root.topPadding - root.bottomPadding
+        }
+
+        delegate: DrawerDelegate {
+            id: delegate
+            width: view.cellWidth
+            height: view.cellHeight
+            reservedSpaceForLabel: root.reservedSpaceForLabel
+
+            onDragStarted: {
+                root.close()
+                root.dragStarted()
             }
-            view.launched();
+            onLaunch: (x, y, icon, title) => {
+                if (icon !== "") {
+                    NanoShell.StartupFeedback.open(
+                            icon,
+                            title,
+                            delegate.iconItem.Kirigami.ScenePosition.x + delegate.iconItem.width/2,
+                            delegate.iconItem.Kirigami.ScenePosition.y + delegate.iconItem.height/2,
+                            Math.min(delegate.iconItem.width, delegate.iconItem.height));
+                }
+                root.launched();
+            }
         }
     }
 }

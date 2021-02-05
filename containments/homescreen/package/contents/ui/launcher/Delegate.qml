@@ -43,6 +43,7 @@ ContainmentLayoutManager.ItemContainer {
     opacity: dragActive ? 0.4 : 1
 
     key: model.applicationStorageId
+    property ContainmentLayoutManager.AppletsLayout appletsLayout
     property int reservedSpaceForLabel
     property real dragCenterX
     property real dragCenterY
