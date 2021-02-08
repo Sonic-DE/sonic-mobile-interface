@@ -142,6 +142,7 @@ Item {
         favoriteStrip: favoriteStrip
     }
 
+    //TODO: this flickable does nothing for now, will be used for horizontal paging
     Flickable {
         id: mainFlickable
 
@@ -156,7 +157,7 @@ Item {
             y: -mainFlickable.height/10 * appDrawer.openFactor
         }
         //bottomMargin: favoriteStrip.height
-        contentWidth: width*2
+        contentWidth: width
         contentHeight: height
         interactive: !plasmoid.editMode && !launcherDragManager.active
 
@@ -194,20 +195,27 @@ Item {
 
 
         DragDrop.DropArea {
-            width: mainFlickable.width*2
-            height: mainFlickable.height
-        //  height: mainFlickable.height - plasmoid.availableScreenRect.y //TODO: multiple widgets pages
+            id: dropArea
+            width: mainFlickable.width
+            height: mainFlickable.height + favoriteStrip.height
 
             onDragEnter: {
                 event.accept(event.proposedAction);
             }
             onDragMove: {
-                appletsLayout.showPlaceHolderAt(
-                    Qt.rect(event.x - appletsLayout.defaultItemWidth / 2,
-                    event.y - appletsLayout.defaultItemHeight / 2,
-                    appletsLayout.defaultItemWidth,
-                    appletsLayout.defaultItemHeight)
-                );
+                let posInFavorites = favoriteStrip.mapFromItem(this, event.x, event.y);
+                if (posInFavorites.y > 0) {
+                    launcherDragManager.showSpacerAtPos(event.x, event.y, favoriteStrip);
+                    appletsLayout.hidePlaceHolder();
+                } else {
+                    appletsLayout.showPlaceHolderAt(
+                        Qt.rect(event.x - appletsLayout.defaultItemWidth / 2,
+                        event.y - appletsLayout.defaultItemHeight / 2,
+                        appletsLayout.defaultItemWidth,
+                        appletsLayout.defaultItemHeight)
+                    );
+                    launcherDragManager.hideSpacer();
+                }
             }
 
             onDragLeave: {
@@ -219,6 +227,23 @@ Item {
             onDrop: {
                 if (event.mimeData.formats[0] === "text/x-plasma-phone-homescreen-launcher") {
                     let storageId = event.mimeData.getDataAsByteArray("text/x-plasma-phone-homescreen-launcher");
+
+                    let posInFavorites = favoriteStrip.flow.mapFromItem(this, event.x, event.y);
+                    if (posInFavorites.y > 0) {
+                        plasmoid.nativeInterface.favoritesModel.addFavorite(storageId, 0, ApplicationListModel.Favorites)
+                        let item = launcherRepeater.itemAt(0);
+
+                        if (item) {
+                            item.x = posInFavorites.x;
+                            item.y = 0//posInFavorites.y;
+
+                            //launcherDragManager.showSpacer(item, item.width/2, item.height/2);
+                            launcherDragManager.dropItem(item, item.width/2, item.height/2);
+                        }
+
+                        return;
+                    }
+
 
                     plasmoid.nativeInterface.favoritesModel.addFavorite(storageId, 0, ApplicationListModel.Desktop)
                     let item = launcherRepeater.itemAt(0);
@@ -248,7 +273,10 @@ Item {
             ContainmentLayoutManager.AppletsLayout {
                 id: appletsLayout
 
-                anchors.fill: parent
+                anchors {
+                    fill: parent
+                    bottomMargin: favoriteStrip.height
+                }
 
                 cellWidth: favoriteStrip.cellWidth
                 cellHeight: height / Math.floor(height / favoriteStrip.cellHeight)
@@ -298,6 +326,7 @@ Item {
                     cellWidth: appletsLayout.cellWidth
                     cellHeight: appletsLayout.cellHeight
                     appletsLayout: appletsLayout
+                    favoriteStrip: favoriteStrip
                 }
             }
         }

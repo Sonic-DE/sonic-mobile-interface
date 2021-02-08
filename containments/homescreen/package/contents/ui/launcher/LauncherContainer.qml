@@ -61,6 +61,7 @@ Item {
         anchors.centerIn: parent
         implicitWidth: contentItem.implicitWidth
         implicitHeight: contentItem.implicitHeight
+        height: parent.height
 
         leftPadding: 0
         topPadding: 0
