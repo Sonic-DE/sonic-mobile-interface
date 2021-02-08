@@ -42,9 +42,10 @@ Repeater {
     delegate: Delegate {
         id: delegate
         width: launcherRepeater.cellWidth
-        height: launcherRepeater.cellHeight
+        height: Math.min(parent.height, launcherRepeater.cellHeight)
         appletsLayout: launcherRepeater.appletsLayout
 
+        onParentChanged: height = Math.min(parent.height, launcherRepeater.cellHeight)
         parent: parentFromLocation
         reservedSpaceForLabel: metrics.height
         property Item parentFromLocation: {
