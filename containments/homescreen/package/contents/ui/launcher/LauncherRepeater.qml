@@ -45,7 +45,16 @@ Repeater {
         height: Math.min(parent.height, launcherRepeater.cellHeight)
         appletsLayout: launcherRepeater.appletsLayout
 
-        onParentChanged: height = Math.min(parent.height, launcherRepeater.cellHeight)
+        Connections {
+            target: delegate.parent
+            onHeightChanged: delegate.height = Math.min(parent.height, launcherRepeater.cellHeight)
+        }
+        onParentChanged: {
+            if (parent) {
+                height = Math.min(parent.height, launcherRepeater.cellHeight)
+                print("booooh"+delegate+delegate.parent+ " "+height+" "+parent.height+" "+ launcherRepeater.cellHeight)
+            }
+        }
         parent: parentFromLocation
         reservedSpaceForLabel: metrics.height
         property Item parentFromLocation: {

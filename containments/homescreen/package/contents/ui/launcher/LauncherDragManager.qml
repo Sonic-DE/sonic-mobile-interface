@@ -57,7 +57,7 @@ Item {
 
             //root.model.setLocation(delegate.modelData.index, ApplicationListModel.Favorites);
 
-            internal.showSpacer(delegate, dragCenterX, dragCenterY);
+            showSpacer(delegate, dragCenterX, dragCenterY);
             root.model.moveItem(delegate.modelData.index, newRow);
 
         // Put it on desktop
@@ -65,7 +65,7 @@ Item {
             var pos = appletsLayout.mapFromItem(delegate, 0, 0);
             //root.model.setLocation(delegate.modelData.index, ApplicationListModel.Desktop);
 
-            internal.showSpacer(delegate, dragCenterX, dragCenterY);
+            showSpacer(delegate, dragCenterX, dragCenterY);
             return;
     
         }
@@ -73,6 +73,82 @@ Item {
 
     function dropItem(item, dragCenterX, dragCenterY) {
         internal.positionItem(item, dragCenterX, dragCenterY);
+    }
+
+    function showSpacer(item, dragCenterX, dragCenterY) {
+        var container = internal.containerForItem(item, dragCenterX, dragCenterY);
+
+        internal.raiseContainer(container);
+
+        appletsLayout.hidePlaceHolder();
+
+        if (container == appletsLayout) {
+            spacer.visible = false;
+            appletsLayout.releaseSpace(item);
+            internal.putItemInDragSpace(item);
+            var pos = appletsLayout.mapFromItem(item, 0, 0);
+            appletsLayout.showPlaceHolderAt(Qt.rect(pos.x, pos.y, item.width, item.height));
+            return;
+        }
+
+        var child = internal.nearestChild(item, dragCenterX, dragCenterY, container);
+
+        if (!child) {
+            spacer.visible = false;
+            spacer.parent = container.flow
+            return;
+        }
+
+        spacer.visible = false;
+        spacer.parent = container.flow
+
+        var pos = container.flow.mapFromItem(item, dragCenterX, dragCenterY);
+
+        if (pos.x < child.x + child.width / 2) {
+            plasmoid.nativeInterface.stackBefore(spacer, child);
+        } else {
+            plasmoid.nativeInterface.stackAfter(spacer, child);
+        }
+
+        internal.putItemInDragSpace(item);
+
+        spacer.visible = true;
+    }
+
+    function showSpacerAtPos(x, y, container) {
+        var pos = container.flow.mapFromGlobal(x, y);
+        internal.raiseContainer(container);
+
+        appletsLayout.hidePlaceHolder();
+
+        if (container == appletsLayout) {
+            spacer.visible = false;
+            appletsLayout.showPlaceHolderAt(Qt.rect(pos.x, pos.y, appletsLayout.cellWidth, appletsLayout.cellHeight));
+            return;
+        }
+
+        var child = internal.nearestChildFromPos(x, y, container);
+
+        if (!child) {
+            spacer.visible = false;
+            spacer.parent = container.flow
+            return;
+        }
+
+        spacer.visible = false;
+        spacer.parent = container.flow
+
+        if (pos.x < child.x + child.width / 2) {
+            plasmoid.nativeInterface.stackBefore(spacer, child);
+        } else {
+            plasmoid.nativeInterface.stackAfter(spacer, child);
+        }
+
+        spacer.visible = true;
+    }
+
+    function hideSpacer() {
+        spacer.visible = false;
     }
 
     // Those should never be accessed from outside
@@ -131,6 +207,7 @@ Item {
                 var candidate = container.flow.childAt(
                     Math.min(container.flow.width, Math.max(0, pos.x + i)),
                     Math.min(container.flow.height-1, Math.max(0, pos.y)));
+
                 if (candidate && i < distance) {
                     child = candidate;
                     break;
@@ -140,6 +217,7 @@ Item {
             // Search Left
             for (var i = 0; i < item.width * 2; i += item.width/2) {
                 var candidate = container.flow.childAt(Math.min(container.flow.width, Math.max(0, pos.x - i)), Math.min(container.flow.height-1, Math.max(0, pos.y)));
+
                 if (candidate && i < distance) {
                     child = candidate;
                     break;
@@ -157,45 +235,45 @@ Item {
             return child;
         }
 
-        function showSpacer(item, dragCenterX, dragCenterY) {
-            var container = containerForItem(item, dragCenterX, dragCenterY);
 
-            raiseContainer(container);
+        function nearestChildFromPos(x, y, container) {
+            var distance = Number.POSITIVE_INFINITY;
+            var child;
+            var pos = container.flow.mapFromGlobal(x, y);
+    
+            // Search Right
+            for (var i = 0; i < appletsLayout.cellWidth * 2; i += appletsLayout.cellWidth/2) {
+                var candidate = container.flow.childAt(
+                    Math.min(container.flow.width, Math.max(0, pos.x + i)),
+                    Math.min(container.flow.height-1, Math.max(0, pos.y)));
 
-            appletsLayout.hidePlaceHolder();
-
-            if (container == appletsLayout) {
-                spacer.visible = false;
-                appletsLayout.releaseSpace(item);
-                putItemInDragSpace(item);
-                var pos = appletsLayout.mapFromItem(item, 0, 0);
-                appletsLayout.showPlaceHolderAt(Qt.rect(pos.x, pos.y, item.width, item.height));
-                return;
+                if (candidate && i < distance) {
+                    child = candidate;
+                    break;
+                }
             }
 
-            var child = nearestChild(item, dragCenterX, dragCenterY, container);
+            // Search Left
+            for (var i = 0; i < appletsLayout.cellWidth * 2; i += appletsLayout.cellWidth/2) {
+                var candidate = container.flow.childAt(Math.min(container.flow.width, Math.max(0, pos.x - i)), Math.min(container.flow.height-1, Math.max(0, pos.y)));
+
+                if (candidate && i < distance) {
+                    child = candidate;
+                    break;
+                }
+            }
 
             if (!child) {
-                spacer.visible = false;
-                spacer.parent = container.flow
-                return;
+               /* if (item.y < container.flow.height/2) {
+                    child = container.flow.children[0];
+                } else {
+                    child = container.flow.children[container.flow.children.length - 1];
+                }*/
             }
 
-            spacer.visible = false;
-            spacer.parent = container.flow
-
-            var pos = container.flow.mapFromItem(item, dragCenterX, dragCenterY);
-
-            if (pos.x < child.x + child.width / 2) {
-                plasmoid.nativeInterface.stackBefore(spacer, child);
-            } else {
-                plasmoid.nativeInterface.stackAfter(spacer, child);
-            }
-
-            putItemInDragSpace(item);
-
-            spacer.visible = true;
+            return child;
         }
+
 
         function positionItem(item, dragCenterX, dragCenterY) {
             var container = containerForItem(item, dragCenterX, dragCenterY);
