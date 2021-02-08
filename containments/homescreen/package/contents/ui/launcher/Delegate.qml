@@ -147,7 +147,7 @@ ContainmentLayoutManager.ItemContainer {
 
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
                 Layout.fillWidth: true
-                Layout.minimumHeight: parent.height - delegate.reservedSpaceForLabel
+                Layout.minimumHeight: Math.min(units.iconSizes.large, parent.height - delegate.reservedSpaceForLabel)
                 Layout.preferredHeight: Layout.minimumHeight
 
                 usesPlasmaTheme: false
@@ -173,6 +173,7 @@ ContainmentLayoutManager.ItemContainer {
                 Layout.fillWidth: true
                 Layout.preferredHeight: delegate.reservedSpaceForLabel
                 wrapMode: Text.WordWrap
+                Layout.alignment: Qt.AlignTop
                 Layout.leftMargin: -parent.anchors.leftMargin + units.smallSpacing
                 Layout.rightMargin: -parent.anchors.rightMargin + units.smallSpacing
                 horizontalAlignment: Text.AlignHCenter
@@ -196,6 +197,7 @@ ContainmentLayoutManager.ItemContainer {
                     color: Qt.rgba(0, 0, 0, 1)
                 }
             }
+            Item {Layout.fillHeight:true}
         }
     }
 }
