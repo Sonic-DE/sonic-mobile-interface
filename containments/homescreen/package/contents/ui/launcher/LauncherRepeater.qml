@@ -45,6 +45,7 @@ Repeater {
         height: Math.min(parent.height, launcherRepeater.cellHeight)
         appletsLayout: launcherRepeater.appletsLayout
 
+        //just the normal inline binding in height: fails as it gets broken, make it explicit
         Binding {
             target: delegate
             property: "height"
@@ -62,9 +63,6 @@ Repeater {
             }
         }
         Component.onCompleted: {
-            //print("boooohua"+delegate.modelData.applicationName+delegate.parent+ " "+height+" "+parent.height+" "+ launcherRepeater.cellHeight)
-            //delegate.height = Math.min(parent.height, launcherRepeater.cellHeight)
-
             if (model.applicationLocation === ApplicationListModel.Desktop) {
                 appletsLayout.restoreItem(delegate);
             }
