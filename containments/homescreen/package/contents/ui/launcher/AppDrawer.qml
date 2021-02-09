@@ -162,6 +162,8 @@ Item {
         cellHeight: root.availableCellHeight
         clip: true
 
+        cacheBuffer: contentHeight
+
         property real oldContentY: contentY
         property int movementDirection: AppDrawer.MovementDirection.None
         onContentYChanged: {
