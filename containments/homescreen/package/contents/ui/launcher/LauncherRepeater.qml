@@ -16,7 +16,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  2.010-1301, USA.
  */
 
-import QtQuick 2.4
+import QtQuick 2.14
 import QtQuick.Layouts 1.1
 import QtQuick.Controls 2.3 as Controls
 import QtGraphicalEffects 1.6
@@ -45,15 +45,10 @@ Repeater {
         height: Math.min(parent.height, launcherRepeater.cellHeight)
         appletsLayout: launcherRepeater.appletsLayout
 
-        Connections {
-            target: delegate.parent
-            onHeightChanged: delegate.height = Math.min(parent.height, launcherRepeater.cellHeight)
-        }
-        onParentChanged: {
-            if (parent) {
-                height = Math.min(parent.height, launcherRepeater.cellHeight)
-                print("booooh"+delegate+delegate.parent+ " "+height+" "+parent.height+" "+ launcherRepeater.cellHeight)
-            }
+        Binding {
+            target: delegate
+            property: "height"
+            value: Math.min(parent.height, launcherRepeater.cellHeight)
         }
         parent: parentFromLocation
         reservedSpaceForLabel: metrics.height
@@ -67,6 +62,9 @@ Repeater {
             }
         }
         Component.onCompleted: {
+            //print("boooohua"+delegate.modelData.applicationName+delegate.parent+ " "+height+" "+parent.height+" "+ launcherRepeater.cellHeight)
+            //delegate.height = Math.min(parent.height, launcherRepeater.cellHeight)
+
             if (model.applicationLocation === ApplicationListModel.Desktop) {
                 appletsLayout.restoreItem(delegate);
             }
