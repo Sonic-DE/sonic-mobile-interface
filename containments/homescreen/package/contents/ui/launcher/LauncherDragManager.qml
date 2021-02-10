@@ -35,11 +35,6 @@ Item {
     readonly property Item spacer: Item {
         width: favoriteStrip.cellWidth
         height: favoriteStrip.cellHeight
-        onVisibleChanged: {
-            if (!visible) {
-                parent = root;
-            }
-        }
     }
 
     function startDrag(item) {
@@ -89,6 +84,7 @@ Item {
 
         if (container == appletsLayout) {
             spacer.visible = false;
+            spacer.parent = root;
             appletsLayout.releaseSpace(item);
             internal.putItemInDragSpace(item);
             var pos = appletsLayout.mapFromItem(item, 0, 0);
@@ -129,6 +125,7 @@ Item {
 
         if (container == appletsLayout) {
             spacer.visible = false;
+            spacer.parent = root;
             appletsLayout.showPlaceHolderAt(Qt.rect(pos.x, pos.y, appletsLayout.cellWidth, appletsLayout.cellHeight));
             return;
         }
@@ -138,7 +135,7 @@ Item {
         if (!child) {
             spacer.visible = false;
             spacer.parent = container.flow
-           // spacer.visible = true;
+            spacer.visible = true;
             return;
         }
 
@@ -154,8 +151,9 @@ Item {
         spacer.visible = true;
     }
 
-    function hideSpacer() {
+    function hideSpacer () {
         spacer.visible = false;
+        spacer.parent = root;
     }
 
     // Those should never be accessed from outside
@@ -214,10 +212,6 @@ Item {
                 var candidate = container.flow.childAt(
                     Math.min(container.flow.width, Math.max(0, pos.x + i)),
                     Math.min(container.flow.height-1, Math.max(0, pos.y)));
-/*
-                if (candidate === spacer) {
-                    continue;
-                }*/
 
                 if (candidate && i < distance) {
                     child = candidate;
@@ -228,10 +222,6 @@ Item {
             // Search Left
             for (var i = 0; i < item.width * 2; i += item.width/2) {
                 var candidate = container.flow.childAt(Math.min(container.flow.width, Math.max(0, pos.x - i)), Math.min(container.flow.height-1, Math.max(0, pos.y)));
-
-              /*  if (candidate === spacer) {
-                    continue;
-                }*/
 
                 if (candidate && i < distance) {
                     child = candidate;
@@ -316,7 +306,7 @@ Item {
             putInContainerLayout(item, container);
             plasmoid.nativeInterface.stackBefore(item, spacer);
             spacer.visible = false;
-            spacer.parent = container;
+            spacer.parent = root;
         }
     }
 }
