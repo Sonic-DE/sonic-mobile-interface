@@ -172,7 +172,7 @@ Item {
 
         DragHandler {
             target: mainFlickable
-            yAxis.enabled: true
+            yAxis.enabled: !appletsLayout.editMode
             enabled: appDrawer.status !== Launcher.AppDrawer.Status.Open
             onTranslationChanged: {
                 if (active) {
@@ -185,7 +185,7 @@ Item {
                 }
             }
         }
-        
+
         NumberAnimation {
             id: scrollAnim
             target: mainFlickable
@@ -277,6 +277,15 @@ Item {
                 anchors {
                     fill: parent
                     bottomMargin: favoriteStrip.height
+                }
+
+                TapHandler {
+                    target: mainFlickable
+                    onTapped: {
+                        //Hides icons close button
+                        root.forceActiveFocus()
+                        appletsLayout.editMode = false;
+                    }
                 }
 
                 cellWidth: favoriteStrip.cellWidth

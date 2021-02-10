@@ -23,7 +23,7 @@ import QtGraphicalEffects 1.6
 
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.components 2.0 as PlasmaComponents
+import org.kde.plasma.components 3.0 as PC3
 import org.kde.kquickcontrolsaddons 2.0
 
 import org.kde.plasma.private.containmentlayoutmanager 1.0 as ContainmentLayoutManager 
@@ -39,8 +39,6 @@ ContainmentLayoutManager.ItemContainer {
 
     Layout.minimumWidth: appletsLayout.cellWidth
     Layout.minimumHeight: appletsLayout.cellHeight
-
-    opacity: dragActive ? 0.4 : 1
 
     key: model.applicationStorageId
     property ContainmentLayoutManager.AppletsLayout appletsLayout
@@ -90,15 +88,23 @@ ContainmentLayoutManager.ItemContainer {
             // Must be 0, 0 as at this point dragCenterX and dragCenterY are on the drag before"
             launcherDragManager.startDrag(delegate);
             launcherDragManager.currentlyDraggedDelegate = delegate;
+            removeButton.visible = true;
+            mouseArea.enabled = true;
         } else {
             launcherDragManager.dropItem(delegate, dragCenterX, dragCenterY);
             plasmoid.editMode = false;
             editMode = false;
             plasmoid.fullRepresentationItem.stopScroll();
             launcherDragManager.currentlyDraggedDelegate = null;
+            forceActiveFocus();
         }
     }
 
+    onActiveFocusChanged: {
+        if (!activeFocus && !dragActive) {
+            removeButton.visible = false;
+        }
+    }
     onUserDrag: {
         dragCenterX = dragCenter.x;
         dragCenterY = dragCenter.y;
@@ -121,6 +127,7 @@ ContainmentLayoutManager.ItemContainer {
     }
 
     contentItem: MouseArea {
+        id: mouseArea
         onClicked: {
             if (modelData.applicationRunning) {
                 delegate.launch(0, 0, "", modelData.applicationName);
@@ -164,9 +171,20 @@ ContainmentLayoutManager.ItemContainer {
                     height: width
                     color: theme.highlightColor
                 }
+                PC3.ToolButton {
+                    id: removeButton
+                    anchors {
+                        horizontalCenter: parent.right
+                        verticalCenter: parent.top
+                    }
+                    visible: false
+                    background.visible: false
+                    icon.name: "window-close"
+                    onClicked: plasmoid.nativeInterface.favoritesModel.removeFavorite(index)
+                }
             }
 
-            PlasmaComponents.Label {
+            PC3.Label {
                 id: label
                 visible: text.length > 0
 
