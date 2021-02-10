@@ -102,9 +102,12 @@ Item {
         }
     }
 
+    Drag.dragType: Drag.Automatic
+
     onOffsetChanged: {
         view.contentY = Math.max(0, offset) - view.originY - view.height*2
     }
+
     NumberAnimation {
         id: scrollAnim
         target: view
@@ -178,7 +181,7 @@ Item {
         onMovementEnded: root.snapDrawerStatus()
         onFlickEnded: movementEnded()
 
-        boundsBehavior: Flickable.StopAtBounds
+       // boundsBehavior: Flickable.StopAtBounds
 
         model: ApplicationListModel {
             Component.onCompleted: loadApplications()
@@ -186,6 +189,13 @@ Item {
 
         header: Item {
             height: root.height - root.topPadding - root.bottomPadding
+            property real oldHeight: height
+            onHeightChanged: {
+                if (root.status !== AppDrawer.Status.Open) {
+                    view.contentY = -view.height;
+                }
+                oldHeight = height;
+            }
         }
 
         delegate: DrawerDelegate {
@@ -194,9 +204,16 @@ Item {
             height: view.cellHeight
             reservedSpaceForLabel: root.reservedSpaceForLabel
 
-            onDragStarted: {
+            onDragStarted: (imageSource, x, y, mimeData) => {
+                root.Drag.imageSource = imageSource;
+                root.Drag.hotSpot.x = x;
+                root.Drag.hotSpot.y = y;
+                root.Drag.mimeData = { "text/x-plasma-phone-homescreen-launcher": mimeData };
+
                 root.close()
+
                 root.dragStarted()
+                root.Drag.active = true;
             }
             onLaunch: (x, y, icon, title) => {
                 if (icon !== "") {
@@ -213,7 +230,7 @@ Item {
 
         PC3.ScrollBar.vertical: PC3.ScrollBar {
             id: scrollabr
-            opacity: appDrawer.moving
+            opacity: view.moving
             interactive: false
             enabled: false
             Behavior on opacity {

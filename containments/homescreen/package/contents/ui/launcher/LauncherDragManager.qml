@@ -35,6 +35,11 @@ Item {
     readonly property Item spacer: Item {
         width: favoriteStrip.cellWidth
         height: favoriteStrip.cellHeight
+        onVisibleChanged: {
+            if (!visible) {
+                parent = root;
+            }
+        }
     }
 
     function startDrag(item) {
@@ -96,6 +101,7 @@ Item {
         if (!child) {
             spacer.visible = false;
             spacer.parent = container.flow
+            spacer.visible = true;
             return;
         }
 
@@ -132,6 +138,7 @@ Item {
         if (!child) {
             spacer.visible = false;
             spacer.parent = container.flow
+           // spacer.visible = true;
             return;
         }
 
@@ -207,6 +214,10 @@ Item {
                 var candidate = container.flow.childAt(
                     Math.min(container.flow.width, Math.max(0, pos.x + i)),
                     Math.min(container.flow.height-1, Math.max(0, pos.y)));
+/*
+                if (candidate === spacer) {
+                    continue;
+                }*/
 
                 if (candidate && i < distance) {
                     child = candidate;
@@ -217,6 +228,10 @@ Item {
             // Search Left
             for (var i = 0; i < item.width * 2; i += item.width/2) {
                 var candidate = container.flow.childAt(Math.min(container.flow.width, Math.max(0, pos.x - i)), Math.min(container.flow.height-1, Math.max(0, pos.y)));
+
+              /*  if (candidate === spacer) {
+                    continue;
+                }*/
 
                 if (candidate && i < distance) {
                     child = candidate;

@@ -69,8 +69,9 @@ Item {
             return;
         }
 
-        plasmoid.nativeInterface.applicationListModel.maxFavoriteCount = Math.max(4, Math.floor(Math.min(width, height) / launcher.cellWidth));
+        plasmoid.nativeInterface.applicationListModel.maxFavoriteCount = Math.max(4, Math.floor(Math.min(width, height) / appletsLayout.cellWidth));
     }
+
 //END functions
 
     property bool componentComplete: false
@@ -113,15 +114,15 @@ Item {
 
     Timer {
         id: autoScrollTimer
-        property bool scrollDown: true
+        property bool scrollLeft: true
         repeat: true
         interval: 1500
         onTriggered: {
-            scrollAnim.to = scrollDown ?
+            scrollAnim.to = scrollLeft ?
             //Scroll down
-                Math.min(mainFlickable.contentItem.height - root.height, mainFlickable.contentY + root.height/2) :
+                Math.min(mainFlickable.contentItem.width - root.width, mainFlickable.contentX + root.width/2) :
             //Scroll up
-                Math.max(0, mainFlickable.contentY - root.height/2);
+                Math.max(0, mainFlickable.contentX - root.width/2);
 
             scrollAnim.running = true;
         }
@@ -187,8 +188,8 @@ Item {
         
         NumberAnimation {
             id: scrollAnim
-            target: appDrawer
-            properties: "contentY"
+            target: mainFlickable
+            properties: "contentX"
             duration: units.longDuration
             easing.type: Easing.InOutQuad
         }
@@ -279,7 +280,7 @@ Item {
                 }
 
                 cellWidth: favoriteStrip.cellWidth
-                cellHeight: height / Math.floor(height / favoriteStrip.cellHeight)
+                cellHeight: Math.round(height / Math.floor(height / favoriteStrip.cellHeight))
 
                 configKey: width > height ? "ItemGeometriesHorizontal" : "ItemGeometriesVertical"
                 containment: plasmoid
@@ -348,11 +349,6 @@ Item {
 
         topPadding: plasmoid.availableScreenRect.y
         bottomPadding: favoriteStrip.height + plasmoid.screenGeometry.height - plasmoid.availableScreenRect.height - plasmoid.availableScreenRect.y
-
-        onDragStarted: {
-            scrollAnim.to = -mainFlickable.height;
-            scrollAnim.restart();
-        }
     }
 
     ScrollIndicator {
