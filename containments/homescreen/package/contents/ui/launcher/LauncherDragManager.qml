@@ -38,7 +38,7 @@ Item {
     }
 
     function startDrag(item) {
-        internal.showSpacer(item, 0, 0);
+        showSpacer(item, 0, 0);
     }
 
     function dragItem(delegate, dragCenterX, dragCenterY) {
