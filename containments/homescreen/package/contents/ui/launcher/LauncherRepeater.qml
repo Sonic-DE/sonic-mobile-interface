@@ -67,6 +67,7 @@ Repeater {
                 appletsLayout.restoreItem(delegate);
             }
         }
+
         onLaunch: (x, y, icon, title) => {
             if (icon !== "") {
                 NanoShell.StartupFeedback.open(
