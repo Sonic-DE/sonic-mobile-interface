@@ -49,11 +49,11 @@ public:
     ~FavoritesModel() override;
 
 
+    QString storageToUniqueId(const QString &storageId) const;
+    QString uniqueToStorageId(const QString &uniqueId) const;
+
     Q_INVOKABLE void addFavorite(const QString &storageId, int row, LauncherLocation location);
     Q_INVOKABLE void removeFavorite(int row);
-
-    void removeMatchingFavorites(const QString &storageId);
-
 
     Q_INVOKABLE void loadApplications() override;
 

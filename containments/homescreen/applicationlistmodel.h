@@ -57,6 +57,7 @@ public:
     Q_ENUM(LauncherLocation)
 
     struct ApplicationData {
+        QString uniqueId;
         QString name;
         QString icon;
         QString storageId;
@@ -74,7 +75,8 @@ public:
         ApplicationOriginalRowRole,
         ApplicationStartupNotifyRole,
         ApplicationLocationRole,
-        ApplicationRunningRole
+        ApplicationRunningRole,
+        ApplicationUniqueIdRole
     };
 
     ApplicationListModel(HomeScreen *parent = nullptr);

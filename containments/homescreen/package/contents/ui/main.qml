@@ -241,7 +241,7 @@ Item {
 
                     let posInFavorites = favoriteStrip.flow.mapFromItem(this, event.x, event.y);
                     if (posInFavorites.y > 0) {
-                        plasmoid.nativeInterface.favoritesModel.addFavorite(storageId, 0, ApplicationListModel.Favorites)
+                        plasmoid.nativeInterface.applicationListModel.addFavorite(storageId, 0, ApplicationListModel.Favorites)
                         let item = launcherRepeater.itemAt(0);
 
                         if (item) {
@@ -256,7 +256,7 @@ Item {
                     }
 
 
-                    plasmoid.nativeInterface.favoritesModel.addFavorite(storageId, 0, ApplicationListModel.Desktop)
+                    plasmoid.nativeInterface.applicationListModel.addFavorite(storageId, 0, ApplicationListModel.Desktop)
                     let item = launcherRepeater.itemAt(0);
 
                     event.accept(event.proposedAction);

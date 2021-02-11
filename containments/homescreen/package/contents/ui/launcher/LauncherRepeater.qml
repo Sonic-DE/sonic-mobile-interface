@@ -33,7 +33,7 @@ import org.kde.phone.homescreen 1.0
 
 Repeater {
     id: launcherRepeater
-    model: plasmoid.nativeInterface.favoritesModel
+    model: plasmoid.nativeInterface.applicationListModel
     property ContainmentLayoutManager.AppletsLayout appletsLayout
     property FavoriteStrip favoriteStrip
     property int cellWidth

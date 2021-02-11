@@ -91,7 +91,8 @@ QHash<int, QByteArray> ApplicationListModel::roleNames() const
         {ApplicationOriginalRowRole, QByteArrayLiteral("applicationOriginalRow")},
         {ApplicationStartupNotifyRole, QByteArrayLiteral("applicationStartupNotify")},
         {ApplicationLocationRole, QByteArrayLiteral("applicationLocation")},
-        {ApplicationRunningRole, QByteArrayLiteral("applicationRunning")}
+        {ApplicationRunningRole, QByteArrayLiteral("applicationRunning")},
+        {ApplicationUniqueIdRole, QByteArrayLiteral("applicationUniqueId")}
     };
 }
 
@@ -211,17 +212,18 @@ void ApplicationListModel::loadApplications()
                             data.name = service->name();
                             data.icon = service->icon();
                             data.storageId = service->storageId();
+                            data.uniqueId = service->storageId();
                             data.entryPath = service->exec();
                             data.startupNotify = service->property(QStringLiteral("StartupNotify")).toBool();
 
-                            if (m_favorites.contains(data.storageId)) {
+                            if (m_favorites.contains(data.uniqueId)) {
                                 data.location = Favorites;
-                                foundFavorites.insert(data.storageId);
-                            } else if (m_desktopItems.contains(data.storageId)) {
+                                foundFavorites.insert(data.uniqueId);
+                            } else if (m_desktopItems.contains(data.uniqueId)) {
                                 data.location = Desktop;
                             }
 
-                            auto it = m_appPositions.constFind(service->storageId());
+                            auto it = m_appPositions.constFind(data.uniqueId);
                             if (it != m_appPositions.constEnd()) {
                                 orderedList[*it] = data;
                             } else {
@@ -283,6 +285,8 @@ QVariant ApplicationListModel::data(const QModelIndex &index, int role) const
         return m_applicationList.at(index.row()).location;
     case ApplicationRunningRole:
         return m_applicationList.at(index.row()).window != nullptr;
+    case ApplicationUniqueIdRole:
+        return m_applicationList.at(index.row()).uniqueId;
 
     default:
         return QVariant();
@@ -324,11 +328,12 @@ void ApplicationListModel::setLocation(int row, LauncherLocation location)
     if (location == Favorites) {
         qWarning() << "favoriting" << row << data.name;
         // Deny favorites when full
-        if (row >= m_maxFavoriteCount || m_favorites.count() >= m_maxFavoriteCount) {
+        if (row >= m_maxFavoriteCount || m_favorites.count() >= m_maxFavoriteCount ||
+            m_favorites.contains(data.uniqueId)) {
             return;
         }
 
-        m_favorites.insert(row, data.storageId);
+        m_favorites.insert(row, data.uniqueId);
 
         if (m_applet) {
             m_applet->config().writeEntry("Favorites", m_favorites);
@@ -337,7 +342,7 @@ void ApplicationListModel::setLocation(int row, LauncherLocation location)
 
     // Out of favorites
     } else  if (data.location == Favorites) {
-        m_favorites.removeAll(data.storageId);
+        m_favorites.removeAll(data.uniqueId);
         if (m_applet) {
             m_applet->config().writeEntry("Favorites", m_favorites);
         }
@@ -346,14 +351,14 @@ void ApplicationListModel::setLocation(int row, LauncherLocation location)
 
     // In Desktop
     if (location == Desktop) {
-        m_desktopItems.insert(data.storageId);
+        m_desktopItems.insert(data.uniqueId);
         if (m_applet) {
             m_applet->config().writeEntry("DesktopItems", m_desktopItems.values());
         }
 
     // Out of Desktop
     } else  if (data.location == Desktop) {
-        m_desktopItems.remove(data.storageId);
+        m_desktopItems.remove(data.uniqueId);
         if (m_applet) {
             m_applet->config().writeEntry(QStringLiteral("DesktopItems"), m_desktopItems.values());
         }
@@ -392,8 +397,8 @@ void ApplicationListModel::moveItem(int row, int destination)
     m_appPositions.clear();
     int i = 0;
     for (const ApplicationData &app : qAsConst(m_applicationList)) {
-        m_appOrder << app.storageId;
-        m_appPositions[app.storageId] = i;
+        m_appOrder << app.uniqueId;
+        m_appPositions[app.uniqueId] = i;
         ++i;
     }
 
