@@ -44,24 +44,30 @@ Item {
 
 //BEGIN functions
     //Autoscroll related functions
-    function scrollUp() {
-        autoScrollTimer.scrollDown = false;
+    function scrollLeft() {
+        if (mainFlickable.atXBeginning) {
+            return;
+        }
+        autoScrollTimer.scrollRight = false;
         autoScrollTimer.running = true;
-        scrollUpIndicator.opacity = 1;
-        scrollDownIndicator.opacity = 0;
+        scrollLeftIndicator.opacity = 1;
+        scrollRightIndicator.opacity = 0;
     }
 
-    function scrollDown() {
-        autoScrollTimer.scrollDown = true;
+    function scrollRight() {
+        if (mainFlickable.atXEnd) {
+            return;
+        }
+        autoScrollTimer.scrollRight = true;
         autoScrollTimer.running = true;
-        scrollUpIndicator.opacity = 0;
-        scrollDownIndicator.opacity = 1;
+        scrollLeftIndicator.opacity = 0;
+        scrollRightIndicator.opacity = 1;
     }
 
     function stopScroll() {
         autoScrollTimer.running = false;
-        scrollUpIndicator.opacity = 0;
-        scrollDownIndicator.opacity = 0;
+        scrollLeftIndicator.opacity = 0;
+        scrollRightIndicator.opacity = 0;
     }
 
     function recalculateMaxFavoriteCount() {
@@ -103,26 +109,27 @@ Item {
         function onResetHomeScreenPosition() {
             scrollAnim.to = 0;
             scrollAnim.restart();
+            appDrawer.close();
         }
         function onSnapHomeScreenPosition() {
-            mainFlickable.flick(0, 1);
+            mainFlickable.flick(1, 0);
         }
         function onRequestHomeScreenPosition(y) {
-            mainFlickable.contentY = y;
+            appDrawer.offset = y;
         }
     }
 
     Timer {
         id: autoScrollTimer
-        property bool scrollLeft: true
+        property bool scrollRight: true
         repeat: true
         interval: 1500
         onTriggered: {
-            scrollAnim.to = scrollLeft ?
-            //Scroll down
-                Math.min(mainFlickable.contentItem.width - root.width, mainFlickable.contentX + root.width/2) :
-            //Scroll up
-                Math.max(0, mainFlickable.contentX - root.width/2);
+            scrollAnim.to = scrollRight ?
+            //Scroll Right
+                Math.min(mainFlickable.contentItem.width - mainFlickable.width, mainFlickable.contentX + mainFlickable.width) :
+            //Scroll Left
+                Math.max(0, mainFlickable.contentX - mainFlickable.width);
 
             scrollAnim.running = true;
         }
@@ -160,7 +167,7 @@ Item {
         scale: (3 - appDrawer.openFactor) /3
 
         //bottomMargin: favoriteStrip.height
-        contentWidth: width
+        contentWidth: appletsLayout.width
         contentHeight: height
         interactive: !plasmoid.editMode && !launcherDragManager.active
 
@@ -197,6 +204,7 @@ Item {
         }
 
 
+        // TODO: span on multiple pages
         DragDrop.DropArea {
             id: dropArea
             width: mainFlickable.width
@@ -365,20 +373,20 @@ Item {
     }
 
     ScrollIndicator {
-        id: scrollUpIndicator
+        id: scrollLeftIndicator
         anchors {
-            top: parent.top
-            topMargin: units.gridUnit * 2
+            left: parent.left
+            leftMargin: units.smallSpacing
         }
-        elementId: "up-arrow"
+        elementId: "left-arrow"
     }
     ScrollIndicator {
-        id: scrollDownIndicator
+        id: scrollRightIndicator
         anchors {
-            bottom: favoriteStrip.top
-            bottomMargin: units.gridUnit
+            right: parent.right
+            rightMargin: units.smallSpacing
         }
-        elementId: "down-arrow"
+        elementId: "right-arrow"
     }
 
     MouseArea {
