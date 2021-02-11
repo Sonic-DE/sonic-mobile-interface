@@ -49,8 +49,9 @@ PC3.RoundButton {
         removeButtonAnim.running = true;
     }
     function hide() {
-        scale = 0;
-        visible = true;
+        if (!visible) {
+            return;
+        }
         removeButtonScaleAnim.from = 1;
         removeButtonScaleAnim.to = 0;
         removeButtonAnim.running = true;
@@ -78,10 +79,12 @@ PC3.RoundButton {
             duration: PlasmaCore.Units.longDuration
             easing.type: Easing.InOutQuad
         }
-        PropertyAnimation {
-            target: removeButton
-            property: "visible"
-            duration : 0
+        ScriptAction {
+            script: {
+                if (removeButton.scale === 0) {
+                    removeButton.visible = false;
+                }
+            }
         }
     }
 }
