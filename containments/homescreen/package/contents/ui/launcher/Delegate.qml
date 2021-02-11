@@ -174,59 +174,8 @@ ContainmentLayoutManager.ItemContainer {
                     color: theme.highlightColor
                 }
                 //TODO: in loader?
-                PC3.RoundButton {
+                DelegateRemoveButton {
                     id: removeButton
-                    anchors {
-                        right: parent.right
-                        top: parent.top
-                    }
-                    visible: false
-                    icon.name: "delete"
-                    onClicked: delegateDestructionAnim.restart()
-
-                    function show() {
-                        scale = 0;
-                        visible = true;
-                        removeButtonScaleAnim.from = 0;
-                        removeButtonScaleAnim.to = 1;
-                        removeButtonAnim.running = true;
-                    }
-                    function hide() {
-                        scale = 0;
-                        visible = true;
-                        removeButtonScaleAnim.from = 1;
-                        removeButtonScaleAnim.to = 0;
-                        removeButtonAnim.running = true;
-                    }
-                    SequentialAnimation {
-                        id: delegateDestructionAnim
-                        NumberAnimation {
-                            target: delegate
-                            property: "scale"
-                            from: 1
-                            to: 0
-                            duration: PlasmaCore.Units.longDuration
-                            easing.type: Easing.InOutQuad
-                        }
-                        ScriptAction {
-                            script: plasmoid.nativeInterface.favoritesModel.removeFavorite(index)
-                        }
-                    }
-                    SequentialAnimation {
-                        id: removeButtonAnim
-                        NumberAnimation {
-                            id: removeButtonScaleAnim
-                            target: removeButton
-                            property: "scale"
-                            duration: PlasmaCore.Units.longDuration
-                            easing.type: Easing.InOutQuad
-                        }
-                        PropertyAnimation {
-                            target: removeButton
-                            property: "visible"
-                            duration : 0
-                        }
-                    }
                 }
             }
 
