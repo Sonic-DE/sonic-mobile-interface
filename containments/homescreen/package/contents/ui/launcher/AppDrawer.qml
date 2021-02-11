@@ -105,7 +105,9 @@ Item {
     Drag.dragType: Drag.Automatic
 
     onOffsetChanged: {
-        view.contentY = Math.max(0, offset) - view.originY - view.height*2
+        if (!view.moving) {
+            view.contentY = Math.max(0, offset) - view.originY - view.height*2
+        }
     }
 
     NumberAnimation {
