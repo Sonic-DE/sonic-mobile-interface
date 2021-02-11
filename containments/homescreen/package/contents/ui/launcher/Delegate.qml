@@ -116,12 +116,12 @@ ContainmentLayoutManager.ItemContainer {
         delegate.height = appletsLayout.cellHeight;
 
         var pos = plasmoid.fullRepresentationItem.mapFromItem(delegate, dragCenter.x, dragCenter.y);
-        //SCROLL UP
-        if (pos.y < plasmoid.availableScreenRect.y + units.gridUnit) {
-            plasmoid.fullRepresentationItem.scrollUp();
-        //SCROLL DOWN
-        } else if (pos.y > plasmoid.availableScreenRect.y + plasmoid.availableScreenRect.height - units.gridUnit) {
-            plasmoid.fullRepresentationItem.scrollDown();
+        //SCROLL LEFT
+        if (pos.x < plasmoid.availableScreenRect.x + units.gridUnit) {
+            plasmoid.fullRepresentationItem.scrollLeft();
+        //SCROLL RIGHT
+        } else if (pos.x > plasmoid.availableScreenRect.x + plasmoid.availableScreenRect.width - units.gridUnit) {
+            plasmoid.fullRepresentationItem.scrollRight();
         //DON't SCROLL
         } else {
             plasmoid.fullRepresentationItem.stopScroll();
