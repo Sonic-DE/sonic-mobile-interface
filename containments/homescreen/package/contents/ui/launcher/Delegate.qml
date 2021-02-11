@@ -85,7 +85,7 @@ ContainmentLayoutManager.ItemContainer {
     Connections {
         target: appletsLayout
         function onAppletsLayoutInteracted() {
-            removeButton.visible = false;
+            removeButton.hide();
         }
     }
 
@@ -95,7 +95,7 @@ ContainmentLayoutManager.ItemContainer {
             // Must be 0, 0 as at this point dragCenterX and dragCenterY are on the drag before"
             launcherDragManager.startDrag(delegate);
             launcherDragManager.currentlyDraggedDelegate = delegate;
-            removeButton.visible = true;
+            removeButton.show();
             mouseArea.enabled = true;
         } else {
             launcherDragManager.dropItem(delegate, dragCenterX, dragCenterY);
@@ -173,16 +173,60 @@ ContainmentLayoutManager.ItemContainer {
                     height: width
                     color: theme.highlightColor
                 }
-                PC3.ToolButton {
+                //TODO: in loader?
+                PC3.RoundButton {
                     id: removeButton
                     anchors {
-                        horizontalCenter: parent.right
-                        verticalCenter: parent.top
+                        right: parent.right
+                        top: parent.top
                     }
                     visible: false
-                    background.visible: false
-                    icon.name: "window-close"
-                    onClicked: plasmoid.nativeInterface.favoritesModel.removeFavorite(index)
+                    icon.name: "delete"
+                    onClicked: delegateDestructionAnim.restart()
+
+                    function show() {
+                        scale = 0;
+                        visible = true;
+                        removeButtonScaleAnim.from = 0;
+                        removeButtonScaleAnim.to = 1;
+                        removeButtonAnim.running = true;
+                    }
+                    function hide() {
+                        scale = 0;
+                        visible = true;
+                        removeButtonScaleAnim.from = 1;
+                        removeButtonScaleAnim.to = 0;
+                        removeButtonAnim.running = true;
+                    }
+                    SequentialAnimation {
+                        id: delegateDestructionAnim
+                        NumberAnimation {
+                            target: delegate
+                            property: "scale"
+                            from: 1
+                            to: 0
+                            duration: PlasmaCore.Units.longDuration
+                            easing.type: Easing.InOutQuad
+                        }
+                        ScriptAction {
+                            script: plasmoid.nativeInterface.favoritesModel.removeFavorite(index)
+                        }
+                    }
+                    SequentialAnimation {
+                        id: removeButtonAnim
+                        NumberAnimation {
+                            id: removeButtonScaleAnim
+                            target: removeButton
+                            property: "scale"
+                            duration: PlasmaCore.Units.longDuration
+                            easing.type: Easing.InOutQuad
+                        }
+                        PropertyAnimation {
+                            target: removeButton
+                            property: "visible"
+                            duration : 0
+                        }
+                    }
                 }
             }
 
