@@ -39,6 +39,33 @@ FavoritesModel::FavoritesModel(HomeScreen *parent)
 
 FavoritesModel::~FavoritesModel() = default;
 
+
+QString FavoritesModel::storageToUniqueId(const QString &storageId) const
+{
+    if (storageId.isEmpty()) {
+        return storageId;
+    }
+
+    int id = 0;
+    QString uniqueId = storageId + QStringLiteral("-") + QString::number(id);
+
+    while (m_appOrder.contains(uniqueId)) {
+        uniqueId = storageId + QStringLiteral("-") + QString::number(++id);
+    }
+
+    return uniqueId;
+}
+
+QString FavoritesModel::uniqueToStorageId(const QString &uniqueId) const
+{
+    if (uniqueId.isEmpty()) {
+        return uniqueId;
+    }
+
+    return uniqueId.split(QLatin1Char('-')).first();
+}
+
+
 void FavoritesModel::loadApplications()
 {
 
@@ -46,51 +73,53 @@ void FavoritesModel::loadApplications()
 
     m_applicationList.clear();
 
-    QSet<QString> foundFavorites;
     QSet<QString> appsToRemove;
 
-    for (const auto &appId : m_appOrder) {
-        if (KService::Ptr service = KService::serviceByStorageId(appId)) {
+    for (const auto &uniqueId : m_appOrder) {
+        const QString storageId = uniqueToStorageId(uniqueId);
+        if (KService::Ptr service = KService::serviceByStorageId(storageId)) {
             ApplicationData data;
             data.name = service->name();
             data.icon = service->icon();
             data.storageId = service->storageId();
+            data.uniqueId = uniqueId;
             data.entryPath = service->exec();
             data.startupNotify = service->property(QStringLiteral("StartupNotify")).toBool();
-            
-            if (m_favorites.contains(data.storageId)) {
+
+            if (m_favorites.contains(uniqueId)) {
                 data.location = Favorites;
-                foundFavorites.insert(data.storageId);
-            } else if (m_desktopItems.contains(data.storageId)) {
+            } else if (m_desktopItems.contains(uniqueId)) {
                 data.location = Desktop;
             }
 
             m_applicationList << data;
         } else {
-            appsToRemove.insert(appId);
+            appsToRemove.insert(uniqueId);
         }
     }
 
-    for (const auto &appId : appsToRemove) {
-        m_appOrder.removeAll(appId);
+    bool favChanged = false;
+
+    for (const auto &uniqueId : appsToRemove) {
+        m_appOrder.removeAll(uniqueId);
+        if (m_favorites.contains(uniqueId)) {
+            favChanged = true;
+            m_favorites.removeAll(uniqueId);
+        }
+        m_desktopItems.remove(uniqueId);
     }
     
     endResetModel();
     emit countChanged();
 
-    bool favChanged = false;
-    for (const auto &item : m_favorites) {
-        if (!foundFavorites.contains(item)) {
-            favChanged = true;
-            m_favorites.removeAll(item);
-        }
+    if (m_applet) {
+        m_applet->config().writeEntry("Favorites", m_favorites);
+        m_applet->config().writeEntry("AppOrder", m_appOrder);
+        m_applet->config().writeEntry("DesktopItems", m_desktopItems.values());
+        emit m_applet->configNeedsSaving();
     }
+
     if (favChanged) {
-        if (m_applet) {
-            m_applet->config().writeEntry("Favorites", m_favorites);
-            m_applet->config().writeEntry("AppOrder", m_appOrder);
-            emit m_applet->configNeedsSaving();
-        }
         emit favoriteCountChanged();
     }
 }
@@ -102,25 +131,28 @@ void FavoritesModel::addFavorite(const QString &storageId, int row, LauncherLoca
     }
 
     if (KService::Ptr service = KService::serviceByStorageId(storageId)) {
+        const QString uniqueId = storageToUniqueId(service->storageId());
         ApplicationData data;
         data.name = service->name();
         data.icon = service->icon();
         data.storageId = service->storageId();
+        data.uniqueId = uniqueId;
         data.entryPath = service->exec();
         data.startupNotify = service->property(QStringLiteral("StartupNotify")).toBool();
 
         bool favChanged = false;
         if (location == Favorites) {
             data.location = Favorites;
-            m_favorites.insert(qMin(row, m_favorites.count()), storageId);
+            m_favorites.insert(qMin(row, m_favorites.count()), uniqueId);
             favChanged = true;
         } else {
             data.location = location;
+            m_desktopItems.insert(data.uniqueId);
         }
 
         beginInsertRows(QModelIndex(), row, row);
         m_applicationList.insert(row, data);
-        m_appOrder.insert(row, storageId);
+        m_appOrder.insert(row, uniqueId);
         endInsertRows();
         if (favChanged) {
             emit favoriteCountChanged();
@@ -129,6 +161,7 @@ void FavoritesModel::addFavorite(const QString &storageId, int row, LauncherLoca
         if (m_applet) {
             m_applet->config().writeEntry("Favorites", m_favorites);
             m_applet->config().writeEntry("AppOrder", m_appOrder);
+            m_applet->config().writeEntry("DesktopItems", m_desktopItems.values());
             emit m_applet->configNeedsSaving();
         }
     }
@@ -141,11 +174,12 @@ void FavoritesModel::removeFavorite(int row)
     }
 
     beginRemoveRows(QModelIndex(), row, row);
-    const QString storageId = m_applicationList[row].storageId;
-    m_appOrder.removeAll(storageId);
-    const bool favChanged = m_favorites.contains(storageId);
-    m_favorites.removeAll(storageId);
-    m_appPositions.remove(storageId);
+    const QString uniqueId = m_applicationList[row].uniqueId;
+    m_appOrder.removeAll(uniqueId);
+    const bool favChanged = m_favorites.contains(uniqueId);
+    m_favorites.removeAll(uniqueId);
+    m_desktopItems.remove(uniqueId);
+    m_appPositions.remove(uniqueId);
     m_applicationList.removeAt(row);
     endRemoveRows();
 
@@ -156,40 +190,8 @@ void FavoritesModel::removeFavorite(int row)
     if (m_applet) {
         m_applet->config().writeEntry("Favorites", m_favorites);
         m_applet->config().writeEntry("AppOrder", m_appOrder);
+        m_applet->config().writeEntry("DesktopItems", m_desktopItems.values());
         emit m_applet->configNeedsSaving();
-    }
-}
-
-void FavoritesModel::removeMatchingFavorites(const QString &storageId)
-{
-    QMutableListIterator<ApplicationListModel::ApplicationData> i(m_applicationList);
-    int row = 0;
-
-    while (i.hasNext()) {
-        i.next();
-        const QString sid = i.value().storageId;
-        
-        if (sid == storageId) {
-            beginRemoveRows(QModelIndex(), row, row);
-            m_appOrder.removeAll(sid);
-            const bool favChanged = m_favorites.contains(sid);
-            m_favorites.removeAll(sid);
-            m_appPositions.remove(sid);
-            i.remove();
-            endRemoveRows();
-
-            if (favChanged) {
-                emit favoriteCountChanged();
-            }
-
-            if (m_applet) {
-                m_applet->config().writeEntry("Favorites", m_favorites);
-                m_applet->config().writeEntry("AppOrder", m_appOrder);
-                emit m_applet->configNeedsSaving();
-            }
-        } else {
-            ++row;
-        }
     }
 }
 

@@ -40,7 +40,7 @@ ContainmentLayoutManager.ItemContainer {
     Layout.minimumWidth: appletsLayout.cellWidth
     Layout.minimumHeight: appletsLayout.cellHeight
 
-    key: model.applicationStorageId
+    key: model.applicationUniqueId
     property ContainmentLayoutManager.AppletsLayout appletsLayout
     property int reservedSpaceForLabel
     property real dragCenterX

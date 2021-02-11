@@ -30,7 +30,7 @@ Item {
     property FavoriteStrip favoriteStrip
     property Delegate currentlyDraggedDelegate
     property bool active
-    property QtObject model: plasmoid.nativeInterface.favoritesModel
+    property QtObject model: plasmoid.nativeInterface.applicationListModel
 
     readonly property Item spacer: Item {
         width: favoriteStrip.cellWidth
