@@ -384,7 +384,10 @@ Item {
     MouseArea {
         anchors.fill:favoriteStrip
         property real oldMouseY
-        onPressed: oldMouseY = mouse.y
+        onPressed: {
+            oldMouseY = mouse.y
+            appletsLayout.appletsLayoutInteracted();
+        }
         onPositionChanged: {
             appDrawer.offset += oldMouseY - mouse.y;
             oldMouseY = mouse.y;
