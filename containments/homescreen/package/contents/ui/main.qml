@@ -157,6 +157,8 @@ Item {
         transform: Translate {
             y: -mainFlickable.height/10 * appDrawer.openFactor
         }
+        scale: (3 - appDrawer.openFactor) /3
+
         //bottomMargin: favoriteStrip.height
         contentWidth: width
         contentHeight: height
