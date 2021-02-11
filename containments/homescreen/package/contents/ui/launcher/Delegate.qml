@@ -82,6 +82,13 @@ ContainmentLayoutManager.ItemContainer {
             syncDelegateGeometry();
         }
     }
+    Connections {
+        target: appletsLayout
+        function onAppletsLayoutInteracted() {
+            removeButton.visible = false;
+        }
+    }
+
     onDragActiveChanged: {
         launcherDragManager.active = dragActive
         if (dragActive) {
@@ -100,11 +107,6 @@ ContainmentLayoutManager.ItemContainer {
         }
     }
 
-    onActiveFocusChanged: {
-        if (!activeFocus && !dragActive) {
-            removeButton.visible = false;
-        }
-    }
     onUserDrag: {
         dragCenterX = dragCenter.x;
         dragCenterY = dragCenter.y;
