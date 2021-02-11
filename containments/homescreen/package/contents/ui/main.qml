@@ -352,16 +352,6 @@ Item {
                 }
             }
         }
-
-        Timer {
-            id: scrollResetTimer
-            interval: 1000
-            onTriggered: {
-                scrollAnim.to = 0;
-                scrollAnim.restart();
-            }
-        }
-        
     }
 
     Launcher.AppDrawer {

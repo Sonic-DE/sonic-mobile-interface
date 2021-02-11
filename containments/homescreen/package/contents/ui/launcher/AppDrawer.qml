@@ -152,6 +152,11 @@ Item {
         y: Math.max(-radius, -view.contentY - view.originY - root.height + root.topPadding + root.bottomPadding)
     }
 
+    Timer {
+        id: closeTimer
+        interval: 1000
+        onTriggered: root.close();
+    }
     GridView {
         id: view
         anchors {
@@ -227,6 +232,7 @@ Item {
                             Math.min(delegate.iconItem.width, delegate.iconItem.height));
                 }
                 root.launched();
+                closeTimer.restart();
             }
         }
 
