@@ -279,11 +279,13 @@ Item {
                     bottomMargin: favoriteStrip.height
                 }
 
+                signal appletsLayoutInteracted
+
                 TapHandler {
                     target: mainFlickable
                     onTapped: {
                         //Hides icons close button
-                        root.forceActiveFocus()
+                        appletsLayout.appletsLayoutInteracted();
                         appletsLayout.editMode = false;
                     }
                 }
