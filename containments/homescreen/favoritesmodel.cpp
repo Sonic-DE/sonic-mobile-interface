@@ -88,6 +88,8 @@ void FavoritesModel::loadApplications()
     if (favChanged) {
         if (m_applet) {
             m_applet->config().writeEntry("Favorites", m_favorites);
+            m_applet->config().writeEntry("AppOrder", m_appOrder);
+            emit m_applet->configNeedsSaving();
         }
         emit favoriteCountChanged();
     }
@@ -123,6 +125,12 @@ void FavoritesModel::addFavorite(const QString &storageId, int row, LauncherLoca
         if (favChanged) {
             emit favoriteCountChanged();
         }
+
+        if (m_applet) {
+            m_applet->config().writeEntry("Favorites", m_favorites);
+            m_applet->config().writeEntry("AppOrder", m_appOrder);
+            emit m_applet->configNeedsSaving();
+        }
     }
 }
 
@@ -140,8 +148,15 @@ void FavoritesModel::removeFavorite(int row)
     m_appPositions.remove(storageId);
     m_applicationList.removeAt(row);
     endRemoveRows();
+
     if (favChanged) {
         emit favoriteCountChanged();
+    }
+
+    if (m_applet) {
+        m_applet->config().writeEntry("Favorites", m_favorites);
+        m_applet->config().writeEntry("AppOrder", m_appOrder);
+        emit m_applet->configNeedsSaving();
     }
 }
 
@@ -162,8 +177,15 @@ void FavoritesModel::removeMatchingFavorites(const QString &storageId)
             m_appPositions.remove(sid);
             i.remove();
             endRemoveRows();
+
             if (favChanged) {
                 emit favoriteCountChanged();
+            }
+
+            if (m_applet) {
+                m_applet->config().writeEntry("Favorites", m_favorites);
+                m_applet->config().writeEntry("AppOrder", m_appOrder);
+                emit m_applet->configNeedsSaving();
             }
         } else {
             ++row;
