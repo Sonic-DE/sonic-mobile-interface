@@ -299,6 +299,7 @@ Item {
 
                 TapHandler {
                     target: mainFlickable
+                    enabled: appDrawer.status !== Launcher.AppDrawer.Status.Open
                     onTapped: {
                         //Hides icons close button
                         appletsLayout.appletsLayoutInteracted();
