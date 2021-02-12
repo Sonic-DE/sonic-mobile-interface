@@ -50,12 +50,10 @@ MouseArea {
 
     onClicked: {
         if (model.applicationRunning) {
-            delegate.launch(0, 0, "", model.applicationName);
+            delegate.launch(0, 0, "", model.applicationName, model.applicationStorageId);
         } else {
-            delegate.launch(delegate.x + (units.smallSpacing * 2), delegate.y + (units.smallSpacing * 2), icon.source, model.applicationName);
+            delegate.launch(delegate.x + (units.smallSpacing * 2), delegate.y + (units.smallSpacing * 2), icon.source, model.applicationName, model.applicationStorageId);
         }
-
-        root.model.runApplication(model.applicationStorageId);
     }
 
     //preventStealing: true
