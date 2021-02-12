@@ -55,7 +55,7 @@ MouseArea {
             delegate.launch(delegate.x + (units.smallSpacing * 2), delegate.y + (units.smallSpacing * 2), icon.source, model.applicationName);
         }
 
-        plasmoid.nativeInterface.applicationListModel.runApplication(model.applicationStorageId);
+        root.model.runApplication(model.applicationStorageId);
     }
 
     //preventStealing: true
