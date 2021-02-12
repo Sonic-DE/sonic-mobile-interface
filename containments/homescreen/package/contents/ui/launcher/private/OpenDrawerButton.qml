@@ -38,7 +38,7 @@ MouseArea {
     id: arrowUpIcon
     z: 9
     property Flickable flickable
-    property real factor: Math.min(1, (arrowUpIcon.flickable.contentY + arrowUpIcon.flickable.originY + arrowUpIcon.flickable.height*2) / (arrowUpIcon.flickable.height / 2))
+    property real factor: 0
 
     height: units.iconSizes.medium
     signal openRequested

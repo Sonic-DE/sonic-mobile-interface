@@ -74,7 +74,7 @@ Item {
 
     property alias flickable: view
 
-    readonly property real openFactor: Math.max(0, Math.min(1, (view.contentY + view.originY + view.height*2) / (units.gridUnit * 10)))
+    readonly property real openFactor: Math.min(1, Math.max(0, Math.min(1, (view.contentY + view.originY + view.height*2) / (units.gridUnit * 10))))
 
     function open() {
         if (root.status !== AppDrawer.Status.Open) {
@@ -131,6 +131,7 @@ Item {
             right: parent.right
             bottom: scrim.top
         }
+        factor: root.openFactor
         flickable: view
         onOpenRequested: root.open();
         onCloseRequested: root.close();
@@ -149,7 +150,7 @@ Item {
         color: "black"
         opacity: 0.4 * root.openFactor
         height: root.height + radius * 2
-        y: Math.max(-radius, -view.contentY - view.originY - root.height + root.topPadding + root.bottomPadding)
+        y: Math.min(view.height, Math.max(-radius, -view.contentY - view.originY - root.height + root.topPadding + root.bottomPadding))
     }
 
     Timer {
