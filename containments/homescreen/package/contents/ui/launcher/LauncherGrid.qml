@@ -45,7 +45,7 @@ LauncherContainer {
     Repeater {
         parent: root.flow
         model: plasmoid.nativeInterface.applicationListModel
-        delegate: Delegate {
+        delegate: HomeDelegate {
             id: delegate
             width: root.cellWidth
             height: root.cellHeight

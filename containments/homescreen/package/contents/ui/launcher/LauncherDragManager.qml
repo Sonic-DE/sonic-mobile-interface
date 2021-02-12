@@ -28,7 +28,7 @@ Item {
 
     property ContainmentLayoutManager.AppletsLayout appletsLayout
     property FavoriteStrip favoriteStrip
-    property Delegate currentlyDraggedDelegate
+    property HomeDelegate currentlyDraggedDelegate
     property bool active
     property QtObject model: plasmoid.nativeInterface.applicationListModel
 
