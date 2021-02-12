@@ -298,6 +298,7 @@ Item {
                         appletsLayout.appletsLayoutInteracted();
                         appletsLayout.editMode = false;
                     }
+                    onLongPressed: appletsLayout.editMode = true;
                 }
 
                 cellWidth: favoriteStrip.cellWidth
