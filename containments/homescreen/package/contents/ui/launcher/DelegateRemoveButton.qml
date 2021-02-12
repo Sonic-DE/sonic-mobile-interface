@@ -67,7 +67,10 @@ PC3.RoundButton {
             easing.type: Easing.InOutQuad
         }
         ScriptAction {
-            script: plasmoid.nativeInterface.applicationListModel.removeFavorite(index)
+            script: {
+                appletsLayout.releaseSpace(delegate);
+                plasmoid.nativeInterface.applicationListModel.removeFavorite(index);
+            }
         }
     }
     SequentialAnimation {
