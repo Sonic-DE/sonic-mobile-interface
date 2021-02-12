@@ -77,7 +77,9 @@ Item {
     readonly property real openFactor: Math.min(1, Math.max(0, Math.min(1, (view.contentY + view.originY + view.height*2) / (units.gridUnit * 10))))
 
     function open() {
-        if (root.status !== AppDrawer.Status.Open) {
+        if (root.status === AppDrawer.Status.Open) {
+            view.flick(0,1);
+        } else {
             scrollAnim.to = 0
             scrollAnim.restart();
         }
@@ -92,6 +94,9 @@ Item {
 
     function snapDrawerStatus() {
         if (root.status !== AppDrawer.Status.Peeking) {
+            if (root.status !== AppDrawer.Status.Open) {
+                view.flick(0,1);
+            }
             return;
         }
 
