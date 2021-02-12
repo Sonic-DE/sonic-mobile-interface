@@ -308,7 +308,7 @@ Item {
                 }
 
                 cellWidth: favoriteStrip.cellWidth
-                cellHeight: Math.round(height / Math.floor(height / favoriteStrip.cellHeight))
+                cellHeight: Math.floor(height / Math.floor(height / favoriteStrip.cellHeight))
 
                 configKey: width > height ? "ItemGeometriesHorizontal" : "ItemGeometriesVertical"
                 containment: plasmoid
