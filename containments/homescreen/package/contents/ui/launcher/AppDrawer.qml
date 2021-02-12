@@ -194,6 +194,7 @@ Item {
        // boundsBehavior: Flickable.StopAtBounds
 
         model: ApplicationListModel {
+            id: allApplicationsModel
             Component.onCompleted: loadApplications()
         }
 
@@ -225,7 +226,7 @@ Item {
                 root.dragStarted()
                 root.Drag.active = true;
             }
-            onLaunch: (x, y, icon, title) => {
+            onLaunch: (x, y, icon, title, storageId) => {
                 if (icon !== "") {
                     NanoShell.StartupFeedback.open(
                             icon,
@@ -234,6 +235,8 @@ Item {
                             delegate.iconItem.Kirigami.ScenePosition.y + delegate.iconItem.height/2,
                             Math.min(delegate.iconItem.width, delegate.iconItem.height));
                 }
+
+                allApplicationsModel.runApplication(storageId);
                 root.launched();
                 closeTimer.restart();
             }
