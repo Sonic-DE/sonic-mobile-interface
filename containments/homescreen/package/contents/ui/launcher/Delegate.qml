@@ -30,6 +30,8 @@ import org.kde.plasma.private.containmentlayoutmanager 1.0 as ContainmentLayoutM
 import org.kde.plasma.private.mobileshell 1.0 as MobileShell
 import org.kde.phone.homescreen 1.0
 
+import "private" as Private
+
 ContainmentLayoutManager.ItemContainer {
     id: delegate
 
@@ -175,7 +177,7 @@ ContainmentLayoutManager.ItemContainer {
                     color: theme.highlightColor
                 }
                 //TODO: in loader?
-                DelegateRemoveButton {
+                Private.DelegateRemoveButton {
                     id: removeButton
                 }
             }
