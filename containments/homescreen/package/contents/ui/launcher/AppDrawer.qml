@@ -94,9 +94,6 @@ Item {
 
     function snapDrawerStatus() {
         if (root.status !== AppDrawer.Status.Peeking) {
-            if (root.status !== AppDrawer.Status.Open) {
-                view.flick(0,1);
-            }
             return;
         }
 
