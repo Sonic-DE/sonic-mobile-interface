@@ -105,6 +105,7 @@ Item {
     }
 
     Connections {
+        property real lastRequestedPosition: 0
         target: MobileShell.HomeScreenControls
         function onResetHomeScreenPosition() {
             scrollAnim.to = 0;
@@ -112,10 +113,15 @@ Item {
             appDrawer.close();
         }
         function onSnapHomeScreenPosition() {
-            mainFlickable.flick(1, 0);
+            if (lastRequestedPosition > 0) {
+                appDrawer.open();
+            } else {
+                appDrawer.close();
+            }
         }
         function onRequestHomeScreenPosition(y) {
-            appDrawer.offset = y;
+            appDrawer.offset += y;
+            lastRequestedPosition = y;
         }
     }
 
