@@ -174,7 +174,8 @@ Item {
 
         function containerForItem(item, dragCenterX, dragCenterY) {
             if (favoriteStrip.contains(Qt.point(0,favoriteStrip.frame.mapFromItem(item, dragCenterX, dragCenterY).y))
-                && root.model.favoriteCount < root.model.maxFavoriteCount) {
+                && (item.modelData.location == ApplicationListModel.Favorites
+                    || root.model.favoriteCount < root.model.maxFavoriteCount)) {
                 return favoriteStrip;
             } else {
                 return appletsLayout;
