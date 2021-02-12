@@ -380,21 +380,6 @@ Item {
         elementId: "right-arrow"
     }
 
-    MouseArea {
-        anchors.fill:favoriteStrip
-        property real oldMouseY
-        onPressed: {
-            oldMouseY = mouse.y
-            appletsLayout.appletsLayoutInteracted();
-        }
-        onPositionChanged: {
-            appDrawer.offset += oldMouseY - mouse.y;
-            oldMouseY = mouse.y;
-        }
-        onReleased: {
-            appDrawer.snapDrawerStatus();
-        }
-    }
     Launcher.FavoriteStrip {
         id: favoriteStrip
         anchors {
@@ -404,7 +389,31 @@ Item {
             bottomMargin: plasmoid.screenGeometry.height - plasmoid.availableScreenRect.height - plasmoid.availableScreenRect.y
         }
         appletsLayout: appletsLayout
-        //y: Math.max(krunner.inputHeight, root.height - height - mainFlickable.contentY)
+
+        DragHandler {
+            target: favoriteStrip
+            yAxis.enabled: !appletsLayout.editMode
+            enabled: appDrawer.status !== Launcher.AppDrawer.Status.Open
+            onTranslationChanged: {
+                if (active) {
+                    appDrawer.offset = -translation.y
+                }
+            }
+            onActiveChanged: {
+                if (!active) {
+                    appDrawer.snapDrawerStatus();
+                }
+            }
+        }
+        TapHandler {
+            target: favoriteStrip
+            onTapped: {
+                //Hides icons close button
+                appletsLayout.appletsLayoutInteracted();
+                appletsLayout.editMode = false;
+            }
+            onLongPressed: appletsLayout.editMode = true;
+        }
     }
 }
 
