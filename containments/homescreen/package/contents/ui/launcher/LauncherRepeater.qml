@@ -40,7 +40,7 @@ Repeater {
     property int cellWidth
     property int cellHeight
 
-    delegate: Delegate {
+    delegate: HomeDelegate {
         id: delegate
         width: launcherRepeater.cellWidth
         height: Math.min(parent.height, launcherRepeater.cellHeight)
