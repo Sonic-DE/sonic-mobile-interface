@@ -30,6 +30,7 @@ import org.kde.plasma.private.containmentlayoutmanager 1.0 as ContainmentLayoutM
 import org.kde.plasma.private.mobileshell 1.0 as MobileShell
 import org.kde.plasma.private.nanoshell 2.0 as NanoShell
 import org.kde.phone.homescreen 1.0
+import org.kde.kirigami 2.14 as Kirigami
 
 Repeater {
     id: launcherRepeater
@@ -70,6 +71,7 @@ Repeater {
 
         onLaunch: (x, y, icon, title) => {
             if (icon !== "") {
+                print(delegate.iconItem)
                 NanoShell.StartupFeedback.open(
                         icon,
                         title,
