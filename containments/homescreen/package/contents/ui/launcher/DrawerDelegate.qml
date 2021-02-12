@@ -38,7 +38,7 @@ MouseArea {
     property int reservedSpaceForLabel
     property alias iconItem: icon
 
-    signal launch(int x, int y, var source, string title)
+    signal launch(int x, int y, var source, string title, string storageId)
     signal dragStarted(string imageSource, int x, int y, string mimeData)
 
     onPressAndHold: {
