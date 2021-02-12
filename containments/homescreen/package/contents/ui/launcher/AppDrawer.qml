@@ -236,6 +236,7 @@ Item {
                             Math.min(delegate.iconItem.width, delegate.iconItem.height));
                 }
 
+                allApplicationsModel.setMinimizedDelegate(index, delegate);
                 allApplicationsModel.runApplication(storageId);
                 root.launched();
                 closeTimer.restart();

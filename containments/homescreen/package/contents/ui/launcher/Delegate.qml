@@ -137,6 +137,7 @@ ContainmentLayoutManager.ItemContainer {
                 delegate.launch(delegate.x + (units.smallSpacing * 2), delegate.y + (units.smallSpacing * 2), icon.source, modelData.applicationName);
             }
 
+            plasmoid.nativeInterface.applicationListModel.setMinimizedDelegate(index, delegate);
             plasmoid.nativeInterface.applicationListModel.runApplication(modelData.applicationStorageId);
         }
 
