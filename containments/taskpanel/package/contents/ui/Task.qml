@@ -102,7 +102,6 @@ Item {
                 }
                 onPressed: delegate.z = 10;
                 onClicked: {
-                    delegate.syncDelegateGeometry();
                     window.setSingleActiveWindow(model.index, delegate);
                     if (!model.IsMinimized) {
                         window.visible = false;
