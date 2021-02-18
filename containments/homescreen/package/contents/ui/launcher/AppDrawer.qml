@@ -98,9 +98,17 @@ Item {
         }
 
         if (view.movementDirection === AppDrawer.MovementDirection.Up) {
-            open();
+            if (view.contentY > 7 * -view.height / 8) { // over one eighth of the screen
+                open();
+            } else {
+                close();
+            }
         } else {
-            close();
+            if (view.contentY < -view.height / 8) { // over one eighth of the screen 
+                close();
+            } else {
+                open();
+            }
         }
     }
 
@@ -116,8 +124,9 @@ Item {
         id: scrollAnim
         target: view
         properties: "contentY"
-        duration: units.longDuration
-        easing.type: Easing.InOutQuad
+        duration: units.longDuration * 2
+        easing.type: Easing.OutQuad
+        easing.amplitude: 2.0
     }
 
     PC3.Label {
@@ -148,9 +157,9 @@ Item {
             rightMargin: -1
         }
         border.color: Qt.rgba(1, 1, 1, 0.5)
-        radius: units.gridUnit
         color: "black"
         opacity: 0.4 * root.openFactor
+        
         height: root.height + radius * 2
         y: Math.min(view.height, Math.max(-radius, -view.contentY - view.originY - root.height + root.topPadding + root.bottomPadding))
     }
@@ -170,6 +179,16 @@ Item {
             bottomMargin: root.bottomPadding
         }
 
+        opacity: {
+            if (root.status == AppDrawer.Status.Open) {
+                return 1;
+            } else if (root.status == AppDrawer.Status.Closed) {
+                return 0;
+            } else { // peeking
+                return (1 - view.contentY / -view.height);
+            }
+        }
+        
         visible: root.status !== AppDrawer.Status.Closed
         cellWidth: view.width / Math.floor(view.width / ((root.availableCellHeight - root.reservedSpaceForLabel) + units.smallSpacing*4))
         cellHeight: root.availableCellHeight
