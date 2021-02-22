@@ -157,9 +157,9 @@ Item {
             rightMargin: -1
         }
         border.color: Qt.rgba(1, 1, 1, 0.5)
+        radius: units.gridUnit
         color: "black"
         opacity: 0.4 * root.openFactor
-        
         height: root.height + radius * 2
         y: Math.min(view.height, Math.max(-radius, -view.contentY - view.originY - root.height + root.topPadding + root.bottomPadding))
     }
