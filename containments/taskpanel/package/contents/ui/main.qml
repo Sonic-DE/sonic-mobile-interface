@@ -278,9 +278,13 @@ PlasmaCore.ColorScope {
                 height: parent.height
                 width: parent.width*0.8/3
                 mouseArea: mainMouseArea
-                enabled: plasmoid.nativeInterface.hasCloseableActiveWindow && !taskSwitcher.visible
+                enabled: vk.active || (plasmoid.nativeInterface.hasCloseableActiveWindow && !taskSwitcher.visible)
                 onClicked: {
                     if (!enabled) {
+                        return
+                    }
+                    if (vk.active) {
+                        vk.hide()
                         return;
                     }
                     if (!plasmoid.nativeInterface.hasCloseableActiveWindow) {
@@ -291,6 +295,9 @@ PlasmaCore.ColorScope {
                         taskSwitcher.model.requestClose(index);
                     }
                 }
+                KWinVirtualKeyboard {
+                    id: vk
+                }
 
                 PlasmaCore.SvgItem {
                     anchors.centerIn: parent
@@ -298,7 +305,7 @@ PlasmaCore.ColorScope {
                     implicitWidth: implicitHeight
                     opacity: parent.enabled ? 1 : 0.5
                     svg: panelSvg
-                    elementId: "mobile-close-app"
+                    elementId: vk.active ? "go-down" : "mobile-close-app"
                     
                     Behavior on opacity {
                         NumberAnimation { duration: units.shortDuration }

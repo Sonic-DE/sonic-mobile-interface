@@ -25,13 +25,14 @@
 #include <QQuickWindow>
 
 #include <Plasma/Package>
-
 #include <KWayland/Client/connection_thread.h>
 #include <KWayland/Client/plasmawindowmanagement.h>
 #include <KWayland/Client/plasmawindowmodel.h>
 #include <KWayland/Client/plasmashell.h>
 #include <KWayland/Client/registry.h>
 #include <KWayland/Client/surface.h>
+
+#include <virtualkeyboardinterface.h>
 
 static const QString s_kwinService = QStringLiteral("org.kde.KWin");
 constexpr int ACTIVE_WINDOW_UPDATE_INVERVAL = 250;
@@ -47,6 +48,10 @@ TaskPanel::TaskPanel(QObject *parent, const QVariantList &args)
     m_activeTimer->setInterval(ACTIVE_WINDOW_UPDATE_INVERVAL);
     connect(m_activeTimer, &QTimer::timeout, this, &TaskPanel::updateActiveWindow);
     initWayland();
+
+    qmlRegisterSingletonType<OrgKdeKwinVirtualKeyboardInterface>("org.kde.plasma.phone.taskpanel", 1, 0, "KWinVirtualKeyboard", [](QQmlEngine *, QJSEngine *) -> QObject * {
+        return new OrgKdeKwinVirtualKeyboardInterface(QStringLiteral("org.kde.KWin"), QStringLiteral("/VirtualKeyboard"), QDBusConnection::sessionBus());
+    });
 }
 
 TaskPanel::~TaskPanel() = default;
