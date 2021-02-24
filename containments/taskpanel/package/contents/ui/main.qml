@@ -28,8 +28,8 @@ import org.kde.plasma.components 2.0 as PlasmaComponents
 import org.kde.kquickcontrolsaddons 2.0
 
 import org.kde.plasma.private.nanoshell 2.0 as NanoShell
-
 import org.kde.plasma.private.mobileshell 1.0 as MobileShell
+import org.kde.plasma.phone.taskpanel 1.0 as TaskPanel
 
 PlasmaCore.ColorScope {
     id: root
@@ -278,9 +278,13 @@ PlasmaCore.ColorScope {
                 height: parent.height
                 width: parent.width*0.8/3
                 mouseArea: mainMouseArea
-                enabled: plasmoid.nativeInterface.hasCloseableActiveWindow && !taskSwitcher.visible
+                enabled: TaskPanel.KWinVirtualKeyboard.active || (plasmoid.nativeInterface.hasCloseableActiveWindow && !taskSwitcher.visible)
                 onClicked: {
                     if (!enabled) {
+                        return
+                    }
+                    if (TaskPanel.KWinVirtualKeyboard.active) {
+                        TaskPanel.KWinVirtualKeyboard.hide()
                         return;
                     }
                     if (!plasmoid.nativeInterface.hasCloseableActiveWindow) {
@@ -298,7 +302,7 @@ PlasmaCore.ColorScope {
                     implicitWidth: implicitHeight
                     opacity: parent.enabled ? 1 : 0.5
                     svg: panelSvg
-                    elementId: "mobile-close-app"
+                    elementId: TaskPanel.KWinVirtualKeyboard.active ? "go-down" : "mobile-close-app"
                     
                     Behavior on opacity {
                         NumberAnimation { duration: units.shortDuration }
