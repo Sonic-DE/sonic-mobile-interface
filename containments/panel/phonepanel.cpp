@@ -36,8 +36,6 @@
 #include <QProcess>
 #include <QtConcurrent/QtConcurrent>
 #include <QScreen>
-#include <QFileSystemWatcher>
-#include <QStandardPaths>
 
 #define FORMAT24H "HH:mm:ss"
 
@@ -93,10 +91,11 @@ PhonePanel::PhonePanel(QObject *parent, const QVariantList &args)
     m_screenshotInterface = new org::kde::kwin::Screenshot(QStringLiteral("org.kde.KWin"), QStringLiteral("/Screenshot"), QDBusConnection::sessionBus(), this);
     
     m_localeConfig = KSharedConfig::openConfig(QStringLiteral("kdeglobals"), KConfig::SimpleConfig);
-    m_localeConfigWatcher = new QFileSystemWatcher(QStandardPaths::displayName(QStandardPaths::ConfigLocation) + "/kdeglobals", this);
+    m_localeConfigWatcher = KConfigWatcher::create(m_localeConfig);
     
     // watch for changes to locale config, to update 12/24 hour time
-    connect(&m_localeConfigWatcher, QFileSystemWatcher::fileChanged, &this, [this]() -> void { Q_EMIT isSystem24HourFormatChanged(); });
+    connect(&m_localeConfigWatcher, KConfigWatcher::configChanged, 
+            &this, [this](const KConfigGroup &group, const QByteArrayList &names) -> void { Q_EMIT isSystem24HourFormatChanged(); });
 }
 
 PhonePanel::~PhonePanel() = default;
