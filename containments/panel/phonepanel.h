@@ -11,6 +11,7 @@
 #include <Plasma/Containment>
 
 #include <KSharedConfig>
+#include <KConfigWatcher>
 
 #include "kscreeninterface.h"
 #include "screenshotinterface.h"
@@ -45,7 +46,7 @@ signals:
 private:
     bool m_running = false;
     
-    QFileSystemWatcher *m_localeConfigWatcher;
+    KConfigWatcher *m_localeConfigWatcher;
     KSharedConfig::Ptr m_localeConfig;
 
     org::kde::KScreen *m_kscreenInterface;
