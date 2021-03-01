@@ -60,7 +60,7 @@ signals:
 private:
     bool m_running = false;
     
-    KConfigWatcher *m_localeConfigWatcher;
+    KConfigWatcher::Ptr m_localeConfigWatcher;
     KSharedConfig::Ptr m_localeConfig;
 
     org::kde::KScreen *m_kscreenInterface;
