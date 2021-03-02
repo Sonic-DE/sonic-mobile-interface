@@ -32,6 +32,7 @@ Item {
     property MouseArea mouseArea
     readonly property bool pressed: mouseArea.pressed && mouseArea.activeButton == button
     property alias iconSource: icon.source
+    property alias colorGroup: icon.colorGroup
     signal clicked()
 
     Rectangle {
