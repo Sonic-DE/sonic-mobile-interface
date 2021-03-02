@@ -94,7 +94,7 @@ PhonePanel::PhonePanel(QObject *parent, const QVariantList &args)
     m_localeConfigWatcher = KConfigWatcher::create(m_localeConfig);
     
     // watch for changes to locale config, to update 12/24 hour time
-    connect(m_localeConfigWatcher.data(), KConfigWatcher::configChanged, 
+    connect(m_localeConfigWatcher.data(), &KConfigWatcher::configChanged, 
             this, [this](const KConfigGroup &group, const QByteArrayList &names) -> void {
                 if (group.name() == "Locale") {
                     // we have to reparse for new changes (from system settings)
