@@ -28,7 +28,7 @@ constexpr int ACTIVE_WINDOW_UPDATE_INVERVAL = 250;
 class KwinVirtualKeyboardInterface : public OrgKdeKwinVirtualKeyboardInterface
 {
     Q_OBJECT
-    Q_PROPERTY(bool active READ active NOTIFY activeChanged)
+    Q_PROPERTY(bool active READ active WRITE setActive NOTIFY activeChanged)
     Q_PROPERTY(bool enabled READ enabled WRITE setEnabled NOTIFY enabledChanged)
 public:
     KwinVirtualKeyboardInterface() :
