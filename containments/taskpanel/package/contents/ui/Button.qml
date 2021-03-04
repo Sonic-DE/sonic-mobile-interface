@@ -65,7 +65,10 @@ Item {
     }
     PlasmaCore.IconItem {
         id: icon
-        anchors.fill: parent
+        anchors {
+            fill: parent
+            margins: parent.height * 0.4
+        }
         colorGroup: PlasmaCore.ColorScope.colorGroup
         //enabled: button.enabled && button.clickable
     }

@@ -52,7 +52,7 @@ Item {
     }
 
     PlasmaComponents.Label {
-        id: label
+        id: strengthLabel
         anchors.left: strengthIcon.right
         anchors.verticalCenter: parent.verticalCenter
 
