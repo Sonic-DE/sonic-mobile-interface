@@ -6,6 +6,8 @@
 
 import QtQuick 2.1
 import QtQuick.Layouts 1.1
+import QtFeedback 5.0
+
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.kirigami 2.12 as Kirigami
@@ -44,6 +46,17 @@ ColumnLayout {
             }
         }
 
+        // vibration
+        HapticsEffect {
+            id: vibrate
+            attackIntensity: 0.0
+            attackTime: 0
+            fadeTime: 0
+            fadeIntensity: 0.0
+            intensity: 0.5
+            duration: Kirigami.Units.shortDuration
+        }
+
         PlasmaCore.IconItem {
             id: icon
             colorGroup: PlasmaCore.ColorScope.colorGroup
@@ -55,6 +68,7 @@ ColumnLayout {
             MouseArea {
                 id: iconMouseArea
                 anchors.fill: parent
+                onPressed: vibrate.start()
                 onClicked: {
                     if (delegateRoot.toggle) {
                         delegateRoot.toggle();
@@ -72,6 +86,7 @@ ColumnLayout {
                     }
                 }
                 onPressAndHold: {
+                    vibrate.start();
                     if (delegateRoot.settingsCommand) {
                         NanoShell.StartupFeedback.open(
                             delegateRoot.icon,
