@@ -9,9 +9,11 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.8 as Controls
+import QtFeedback 5.0
 
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.kcoreaddons 1.0 as KCoreAddons
+import org.kde.kirigami 2.12 as Kirigami
 
 import "../components"
 
@@ -47,8 +49,23 @@ PlasmaCore.ColorScope {
             closeAnim.execute(root.cancelRequested);
         }
     }
+    
+    // vibration
+    HapticsEffect {
+        id: vibrate
+        attackIntensity: 0.0
+        attackTime: 0
+        fadeTime: 0
+        fadeIntensity: 0.0
+        intensity: 0.5
+        duration: Kirigami.Units.longDuration
+    }
 
-    Component.onCompleted: openAnim.restart()
+    Component.onCompleted: {
+        openAnim.restart();
+        vibrate.start();
+    }
+
     onVisibleChanged: {
         if (visible) {
             openAnim.restart()

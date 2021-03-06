@@ -8,6 +8,8 @@ import QtQuick 2.12
 import QtQuick.Controls 2.1
 import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.12
+import QtFeedback 5.0
+
 import org.kde.plasma.components 2.0 as PlasmaComponents
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.workspace.keyboardlayout 1.0
@@ -119,6 +121,17 @@ Rectangle {
                 keypadRoot.keyPress(event.text);
             }
         }
+    }
+    
+    // vibration
+    HapticsEffect {
+        id: vibrate
+        attackIntensity: 0.0
+        attackTime: 0
+        fadeTime: 0
+        fadeIntensity: 0.0
+        intensity: 0.5
+        duration: Kirigami.Units.shortDuration
     }
     
     // trigger turning letter into dot after 500 milliseconds
@@ -242,6 +255,7 @@ Rectangle {
                             anchors.fill: parent
                             onPressedChanged: {
                                 if (pressed) {
+                                    vibrate.start();
                                     parent.color = keypadRoot.buttonPressedColor;
                                 } else {
                                     parent.color = keypadRoot.buttonColor;
