@@ -30,7 +30,7 @@ RowLayout {
         source: "low-brightness"
     }
 
-    Slider {
+    PC3.Slider {
         id: brightnessSlider
         Layout.fillWidth: true
         Layout.alignment: Qt.AlignVCenter
