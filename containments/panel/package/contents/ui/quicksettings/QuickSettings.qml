@@ -287,7 +287,7 @@ Item {
             Layout.margins: Kirigami.Units.largeSpacing
             Layout.fillWidth: true
             value: root.screenBrightness
-            maximumValue: root.maximumScreenBrightness            
+            maximumValue: root.maximumScreenBrightness
             Connections {
                 target: root
                 onScreenBrightnessChanged: brightnessSlider.value = root.screenBrightness
