@@ -15,8 +15,8 @@ import org.kde.colorcorrect 0.1 as CC
 Item {
     id: root
 
-    implicitWidth: flow.implicitWidth + units.smallSpacing * 6
-    implicitHeight: flow.implicitHeight + units.smallSpacing * 6
+    implicitWidth: column.implicitWidth + units.smallSpacing * 6
+    implicitHeight: column.implicitHeight + units.smallSpacing * 2
 
     signal closeRequested
     signal closed
@@ -249,41 +249,45 @@ Item {
         id: settingsModel
     }
 
-    Flow {
-        id: flow
-        anchors {
-            fill: parent
-            margins: units.smallSpacing
-        }
-        readonly property real cellSizeHint: units.iconSizes.large + units.smallSpacing * 6
-        readonly property real columnWidth: Math.floor(width / Math.floor(width / cellSizeHint))
-        spacing: 0
-        Repeater {
-            model: settingsModel
-            delegate: Delegate {
-                id: delegateItem
+    ColumnLayout {
+        id: column
+        anchors.fill: parent
+        
+        Flow {
+            id: flow
+            anchors {
+                fill: parent
+                margins: units.smallSpacing
+            }
+            readonly property real cellSizeHint: units.iconSizes.large + units.smallSpacing * 6
+            readonly property real columnWidth: Math.floor(width / Math.floor(width / cellSizeHint))
+            spacing: 0
+            Repeater {
+                model: settingsModel
+                delegate: Delegate {
+                    id: delegateItem
 
-                //FIXME: why this is needed?
-                width: flow.columnWidth
+                    //FIXME: why this is needed?
+                    width: flow.columnWidth
 
-                Connections {
-                    target: delegateItem
-                    onCloseRequested: root.closeRequested();
-                }
-                Connections {
-                    target: root
-                    onClosed: delegateItem.panelClosed();
+                    Connections {
+                        target: delegateItem
+                        onCloseRequested: root.closeRequested();
+                    }
+                    Connections {
+                        target: root
+                        onClosed: delegateItem.panelClosed();
+                    }
                 }
             }
         }
-
+        
         BrightnessItem {
             id: brightnessSlider
-            width: flow.width
-            icon: "video-display-brightness"
-            label: i18n("Display Brightness")
+            Layout.margins: Kirigami.Units.largeSpacing
+            Layout.fillWidth: true
             value: root.screenBrightness
-            maximumValue: root.maximumScreenBrightness
+            maximumValue: root.maximumScreenBrightness            
             Connections {
                 target: root
                 onScreenBrightnessChanged: brightnessSlider.value = root.screenBrightness
