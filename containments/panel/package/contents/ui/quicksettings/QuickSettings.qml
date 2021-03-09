@@ -308,19 +308,6 @@ Item {
 
         readonly property real cellSizeHint: units.iconSizes.large + units.smallSpacing * 6
         readonly property real columnWidth: Math.floor(width / Math.floor(width / cellSizeHint))
-        spacing: 0
-        Repeater {
-            model: settingsModel
-            delegate: Delegate {
-                id: delegateItem
-
-                //FIXME: why this is needed?
-                width: flow.columnWidth
-
-                opacity: y <= 0  ? 1 : root.expandedRatio
-                transform: Translate {
-                    y: (flow.height - flow.children[0].height) * (1 - root.expandedRatio)
-                }
 
         Flow {
             id: flow
@@ -328,6 +315,7 @@ Item {
                 fill: parent
                 margins: units.largeSpacing
             }
+
             readonly property real cellSizeHint: units.iconSizes.large + units.smallSpacing * 6
             readonly property real columnWidth: Math.floor(width / Math.floor(width / cellSizeHint))
             spacing: 0

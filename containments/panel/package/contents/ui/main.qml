@@ -318,11 +318,9 @@ Item {
                     z: 1
                     interactive: width < contentWidth
                     //parent: slidingPanel.wideScreen ? slidingPanel.flickable.contentItem : panelContents
-<<<<<<< HEAD
-                    Layout.preferredWidth: slidingPanel.wideScreen ? Math.min(slidingPanel.width - quickSettingsParent.width, quickSettingsParent.width*fullRepresentationModel.count) : panelContents.width 
-=======
+
                     Layout.preferredWidth: slidingPanel.wideScreen ? Math.min(slidingPanel.width/2, quickSettings.width*fullRepresentationModel.count) : panelContents.width 
->>>>>>> 8f5a946... 2 stage opening working
+
                     //Layout.fillWidth: true
                     clip: slidingPanel.wideScreen
                     y: slidingPanel.wideScreen ? 0 : quickSettings.height - (quickSettings.height + height) * (1-opacity)
