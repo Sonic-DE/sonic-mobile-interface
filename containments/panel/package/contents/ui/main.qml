@@ -304,7 +304,7 @@ Item {
                 QuickSettings {
                     id: quickSettings
                     Layout.alignment: Qt.AlignTop
-                    Layout.preferredWidth: 300//slidingPanel.wideScreen ? Math.min(slidingPanel.width/2, units.gridUnit * 25) : panelContents.width
+                    Layout.preferredWidth: slidingPanel.wideScreen ? Math.min(slidingPanel.width/2, units.gridUnit * 25) : panelContents.width
                     z: 4
                     parentSlidingPanel: slidingPanel
                     onCloseRequested: {
