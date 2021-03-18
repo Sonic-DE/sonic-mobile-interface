@@ -102,21 +102,260 @@ FocusScope {
         anchors {
             fill: parent
             topMargin: plasmoid.availableScreenRect.y
-            bottomMargin: plasmoid.screenGeometry.height - plasmoid.availableScreenRect.height - plasmoid.availableScreenRect.y
+
+            bottomMargin: favoriteStrip.height + plasmoid.screenGeometry.height - plasmoid.availableScreenRect.height - plasmoid.availableScreenRect.y
+        }
+
+        opacity: 1 - appDrawer.openFactor
+        transform: Translate {
+            y: -mainFlickable.height/10 * appDrawer.openFactor
+        }
+        scale: (3 - appDrawer.openFactor) /3
+
+        //bottomMargin: favoriteStrip.height
+        contentWidth: appletsLayout.width
+        contentHeight: height
+        //interactive: !plasmoid.editMode && !launcherDragManager.active
+        interactive: false
+
+        signal cancelEditModeForItemsRequested
+        onDragStarted: cancelEditModeForItemsRequested()
+        onDragEnded: cancelEditModeForItemsRequested()
+        onFlickStarted: cancelEditModeForItemsRequested()
+        onFlickEnded: cancelEditModeForItemsRequested()
+
+        onContentYChanged: MobileShell.HomeScreenControls.homeScreenPosition = contentY
+
+        LauncherPrivate.DragGestureHandler {
+            appDrawer: appDrawer
+            mainFlickable: mainFlickable
+            enabled: root.focus && appDrawer.status !== Launcher.AppDrawer.Status.Open && !appletsLayout.editMode && !plasmoid.editMode && !launcherDragManager.active
+        }
+/*
+        DragHandler {
+            target: mainFlickable
+            yAxis.enabled: !appletsLayout.editMode && !plasmoid.editMode && !launcherDragManager.active
+            xAxis.enabled: yAxis.enabled
+            enabled: root.focus && appDrawer.status !== Launcher.AppDrawer.Status.Open
+            property real initialMainFlickableX
+            enum ScrollDirection {
+                None,
+                Horizontal,
+                Vertical
+            }
+            property int scrollDirection: None
+            onTranslationChanged: {print(translation.x)
+                if (active) {
+                    if (appDrawer.offset > PlasmaCore.Units.gridUnit) {
+                        scrollDirection = Vertical;
+                    } else if (Math.abs(mainFlickable.contentX - initialMainFlickableX) > PlasmaCore.Units.gridUnit) {
+                        scrollDirection = Horizontal;
+                    }
+                    if (scrollDirection !== Horizontal) {
+                        appDrawer.offset = -translation.y;
+                    }
+                    if (scrollDirection !== Vertical) {
+                        mainFlickable.contentX = Math.max(0, initialMainFlickableX - translation.x);
+                    }
+                }
+            }
+            onActiveChanged: {
+                if (active) {
+                    initialMainFlickableX = mainFlickable.contentX;
+                } else {
+                    appDrawer.snapDrawerStatus();
+                }
+            }
+        }
+*/
+        NumberAnimation {
+            id: scrollAnim
+            target: mainFlickable
+            properties: "contentX"
+            duration: units.longDuration
+            easing.type: Easing.InOutQuad
         }
 
         //TODO: favorite strip disappearing with everything else
         footer: favoriteStrip
         appletsLayout: homeScreenContents.appletsLayout
 
-        appDrawer: appDrawer
-        contentWidth: Math.max(width, width * Math.ceil(homeScreenContents.itemsBoundingRect.width/width)) + (launcherDragManager.active ? width : 0)
-        showAddPageIndicator: launcherDragManager.active
+        // TODO: span on multiple pages
+        DragDrop.DropArea {
+            id: dropArea
+            width: Math.max(mainFlickable.width, mainFlickable.width * Math.ceil(appletsLayout.childrenRect.width/mainFlickable.width))
+            height: mainFlickable.height + favoriteStrip.height
 
-        Launcher.HomeScreenContents {
-            id: homeScreenContents
-            width: mainFlickable.width * 100
-            favoriteStrip: favoriteStrip
+            onDragEnter: {
+                event.accept(event.proposedAction);
+                launcherDragManager.active = true;
+            }
+            onDragMove: {
+                let posInFavorites = favoriteStrip.mapFromItem(this, event.x, event.y);
+                if (posInFavorites.y > 0) {
+                    if (plasmoid.nativeInterface.applicationListModel.favoriteCount >= plasmoid.nativeInterface.applicationListModel.maxFavoriteCount ) {
+                        launcherDragManager.hideSpacer();
+                    } else {
+                        launcherDragManager.showSpacerAtPos(event.x, event.y, favoriteStrip);
+                    }
+                    appletsLayout.hidePlaceHolder();
+                } else {
+                    appletsLayout.showPlaceHolderAt(
+                        Qt.rect(event.x - appletsLayout.defaultItemWidth / 2,
+                        event.y - appletsLayout.defaultItemHeight / 2,
+                        appletsLayout.defaultItemWidth,
+                        appletsLayout.defaultItemHeight)
+                    );
+                    launcherDragManager.hideSpacer();
+                }
+            }
+
+            onDragLeave: {
+                appletsLayout.hidePlaceHolder();
+                launcherDragManager.active = false;
+            }
+
+            preventStealing: true
+
+            onDrop: {
+                launcherDragManager.active = false;
+                if (event.mimeData.formats[0] === "text/x-plasma-phone-homescreen-launcher") {
+                    let storageId = event.mimeData.getDataAsByteArray("text/x-plasma-phone-homescreen-launcher");
+
+                    let posInFavorites = favoriteStrip.flow.mapFromItem(this, event.x, event.y);
+                    if (posInFavorites.y > 0) {
+                        if (plasmoid.nativeInterface.applicationListModel.favoriteCount >= plasmoid.nativeInterface.applicationListModel.maxFavoriteCount ) {
+                            return;
+                        }
+
+                        let pos = Math.min(plasmoid.nativeInterface.applicationListModel.count, Math.floor(posInFavorites.x/favoriteStrip.cellWidth))
+                        plasmoid.nativeInterface.applicationListModel.addFavorite(storageId, pos, ApplicationListModel.Favorites)
+                        let item = launcherRepeater.itemAt(pos);
+
+                        if (item) {
+                            item.x = posInFavorites.x;
+                            item.y = 0//posInFavorites.y;
+
+                            //launcherDragManager.showSpacer(item, item.width/2, item.height/2);
+                            launcherDragManager.dropItem(item, item.width/2, item.height/2);
+                        }
+
+                        return;
+                    }
+
+
+                    let pos = plasmoid.nativeInterface.applicationListModel.count;
+                    plasmoid.nativeInterface.applicationListModel.addFavorite(storageId, pos, ApplicationListModel.Desktop)
+                    let item = launcherRepeater.itemAt(pos);
+
+                    event.accept(event.proposedAction);
+                    if (item) {
+                        item.x = appletsLayout.placeHolder.x;
+                        item.y = appletsLayout.placeHolder.y;
+                        appletsLayout.hidePlaceHolder();
+                        launcherDragManager.dropItem(item, appletsLayout.placeHolder.x + appletsLayout.placeHolder.width/2, appletsLayout.placeHolder.y + appletsLayout.placeHolder.height/2);
+                    }
+                    appletsLayout.hidePlaceHolder();
+                } else {
+                    plasmoid.processMimeData(event.mimeData,
+                                event.x - appletsLayout.placeHolder.width / 2, event.y - appletsLayout.placeHolder.height / 2);
+                    event.accept(event.proposedAction);
+                    appletsLayout.hidePlaceHolder();
+                }
+            }
+
+            PlasmaCore.Svg {
+                id: arrowsSvg
+                imagePath: "widgets/arrows"
+                colorGroup: PlasmaCore.Theme.ComplementaryColorGroup
+            }
+
+            ContainmentLayoutManager.AppletsLayout {
+                id: appletsLayout
+
+                anchors {
+                    fill: parent
+                    bottomMargin: favoriteStrip.height
+                }
+
+                signal appletsLayoutInteracted
+onChildrenRectChanged: print("AAAAAA"+childrenRect.width)
+                TapHandler {
+                    target: mainFlickable
+                    enabled: appDrawer.status !== Launcher.AppDrawer.Status.Open
+                    onTapped: {
+                        //Hides icons close button
+                        appletsLayout.appletsLayoutInteracted();
+                        appletsLayout.editMode = false;
+                    }
+                    onLongPressed: appletsLayout.editMode = true;
+                    onPressedChanged: root.focus = true;
+                }
+
+                cellWidth: favoriteStrip.cellWidth
+                cellHeight: Math.floor(height / Math.floor(height / favoriteStrip.cellHeight))
+
+                configKey: width > height ? "ItemGeometriesHorizontal" : "ItemGeometriesVertical"
+                containment: plasmoid
+                editModeCondition: plasmoid.immutable
+                        ? ContainmentLayoutManager.AppletsLayout.Manual
+                        : ContainmentLayoutManager.AppletsLayout.AfterPressAndHold
+
+                // Sets the containment in edit mode when we go in edit mode as well
+                onEditModeChanged: plasmoid.editMode = editMode
+
+                minimumItemWidth: units.gridUnit * 3
+                minimumItemHeight: minimumItemWidth
+
+                defaultItemWidth: units.gridUnit * 6
+                defaultItemHeight: defaultItemWidth
+
+                acceptsAppletCallback: function(applet, x, y) {
+                    print("Applet: "+applet+" "+x+" "+y)
+                    return true;
+                }
+
+                appletContainerComponent: ContainmentLayoutManager.BasicAppletContainer {
+                    id: appletContainer
+                    configOverlayComponent: ConfigOverlay {}
+
+                    onEditModeChanged: {
+                        launcherDragManager.active = dragActive || editMode;
+                    }
+                    onDragActiveChanged: {
+                        launcherDragManager.active = dragActive || editMode;
+                    }
+                }
+
+                placeHolder: ContainmentLayoutManager.PlaceHolder {}
+                //FIXME: move
+                PlasmaComponents.Label {
+                        id: metrics
+                        text: "M\nM"
+                        visible: false
+                        font.pointSize: theme.defaultFont.pointSize * 0.9
+                    }
+                Launcher.LauncherRepeater {
+                    id: launcherRepeater
+                    cellWidth: appletsLayout.cellWidth
+                    cellHeight: appletsLayout.cellHeight
+                    appletsLayout: appletsLayout
+                    favoriteStrip: favoriteStrip
+                }
+            }
+        }
+        PlasmaComponents.PageIndicator {
+            anchors {
+                bottom: parent.bottom
+                horizontalCenter: parent.horizontalCenter
+                bottomMargin: PlasmaCore.Units.gridUnit * 2
+            }
+            PlasmaCore.ColorScope.inherit: false
+            PlasmaCore.ColorScope.colorGroup: PlasmaCore.Theme.ComplementaryColorGroup
+            parent: mainFlickable
+            count: Math.ceil(dropArea.width / mainFlickable.width)
+            visible: count > 1
+            currentIndex: Math.round(mainFlickable.contentX / mainFlickable.width)
         }
     }
 
