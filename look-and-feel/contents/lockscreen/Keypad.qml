@@ -129,10 +129,6 @@ Rectangle {
     // vibration
     HapticsEffect {
         id: vibrate
-        attackIntensity: 0.0
-        attackTime: 0
-        fadeTime: 0
-        fadeIntensity: 0.0
         intensity: 0.5
         duration: Kirigami.Units.shortDuration
     }
