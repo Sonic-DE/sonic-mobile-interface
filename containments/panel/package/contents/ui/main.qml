@@ -138,10 +138,10 @@ Item {
         z: 1
     }
     
-    // screen background (background for the rest of the screen in SlidingPanel.qml)
+    // top panel background (background for the rest of the screen in SlidingPanel.qml)
     Rectangle {
         anchors.fill: parent
-        color: "black"
+        color: PlasmaCore.Theme.backgroundColor
         opacity: 0.6 * Math.min(1, slidingPanel.offset/panelContents.height)
     }
     
@@ -155,7 +155,7 @@ Item {
             slidingPanel.cancelAnimations();
             slidingPanel.drawerX = Math.min(Math.max(0, mouse.x - slidingPanel.drawerWidth/2), slidingPanel.width - slidingPanel.contentItem.width)
             slidingPanel.userInteracting = true;
-            slidingPanel.updateOffset(-slidingPanel.offset);
+            slidingPanel.flickable.contentY = slidingPanel.flickable.contentHeight
             oldMouseY = mouse.y;
             slidingPanel.showFullScreen();
         }
