@@ -59,15 +59,16 @@ Item {
     
     RowLayout {
         id: brightnessRow
-        spacing: PlasmaCore.Units.smallSpacing
+        spacing: PlasmaCore.Units.smallSpacing * 2
         
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
         
         PlasmaCore.IconItem {
+            colorGroup: PlasmaCore.ColorScope.colorGroup
             Layout.alignment: Qt.AlignVCenter
-            Layout.leftMargin: PlasmaCore.Units.largeSpacing
+            Layout.leftMargin: PlasmaCore.Units.smallSpacing
             Layout.preferredWidth: units.iconSizes.medium
             Layout.preferredHeight: width
             source: "low-brightness"
@@ -83,8 +84,9 @@ Item {
         }
         
         PlasmaCore.IconItem {
+            colorGroup: PlasmaCore.ColorScope.colorGroup
             Layout.alignment: Qt.AlignVCenter
-            Layout.rightMargin: PlasmaCore.Units.largeSpacing
+            Layout.rightMargin: PlasmaCore.Units.smallSpacing
             Layout.preferredWidth: units.iconSizes.medium
             Layout.preferredHeight: width
             source: "high-brightness"
