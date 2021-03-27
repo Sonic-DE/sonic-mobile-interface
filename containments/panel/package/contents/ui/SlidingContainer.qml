@@ -122,52 +122,14 @@ NanoShell.FullScreenOverlay {
     }
 
     Rectangle {
-        anchors {
-            left: parent.left
-            right: parent.right
-            bottom: parent.bottom
-        }
-        height: parent.height - topPanelHeight // don't layer on top panel indicators (area is darkened separately)
-        color: "black"
-        opacity: 0.6 * Math.min(1, offset/contentArea.height)
-    
-        Rectangle {
-            height: topPanelHeight
-            anchors {
-                left: parent.left
-                right: parent.right
-                bottom: parent.top
-            }
-            color: "black"
-            opacity: 0.2
-        }
-        Rectangle {
-            height: units.smallSpacing
-            anchors {
-                left: parent.left
-                right: parent.right
-                top: parent.top
-            }
-            gradient: Gradient {
-                GradientStop {
-                    position: 1.0
-                    color: Qt.rgba(0, 0, 0, 0.0)
-                }
-                GradientStop {
-                    position: 0.5
-                    color: Qt.rgba(0, 0, 0, 0.4)
-                }
-                GradientStop {
-                    position: 1.0
-                    color: "transparent"
-                }
-            }
-        }
+        anchors.fill: parent
+        color: PlasmaCore.Theme.backgroundColor
+        opacity: 0.6 * Math.min(1, offset/(topEmptyAreaHeight + contentItem.height))
     }
     
     PlasmaCore.ColorScope {
         id: mainScope
-        colorGroup: PlasmaCore.ColorGroup.ViewColorGroup
+        colorGroup: PlasmaCore.Theme.ViewColorGroup
         anchors.fill: parent
 
         Flickable {
