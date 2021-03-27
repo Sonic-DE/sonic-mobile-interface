@@ -25,34 +25,34 @@ ColumnLayout {
     required property string settingsCommand
     required property var toggleFunction
     property alias labelOpacity: label.opacity
+    
+    property color disabledButtonColor: Qt.lighter(PlasmaCore.Theme.backgroundColor, 1.1)
+    property color disabledPressedButtonColor: Qt.darker(disabledButtonColor, 1.1)
+    property color enabledButtonColor: Kirigami.ColorUtils.adjustColor(PlasmaCore.ColorScope.highlightColor, {"alpha": 0.4*255})
+    property color enabledPressedButtonColor: Kirigami.ColorUtils.adjustColor(PlasmaCore.ColorScope.highlightColor, {"alpha": 0.6*255});
 
     Rectangle {
-        Layout.preferredWidth: units.iconSizes.large + units.smallSpacing
+        Layout.preferredWidth: PlasmaCore.Units.iconSizes.large + PlasmaCore.Units.smallSpacing
         Layout.minimumHeight: width
         Layout.alignment: Qt.AlignHCenter
-        radius: units.smallSpacing
+        radius: PlasmaCore.Units.smallSpacing
         border.color: delegateRoot.enabled ?
             Qt.darker(Kirigami.ColorUtils.adjustColor(PlasmaCore.ColorScope.highlightColor, {}), 1.25) :
             Kirigami.ColorUtils.adjustColor(PlasmaCore.ColorScope.textColor, {"alpha": 0.2*255})
         color: {
             if (delegateRoot.enabled) {
-                return Kirigami.ColorUtils.adjustColor(PlasmaCore.ColorScope.highlightColor, {"alpha": iconMouseArea.pressed ? 0.5*255 : 0.3*255});
+                return iconMouseArea.pressed ? enabledPressedButtonColor : enabledButtonColor
             } else {
-                if (iconMouseArea.pressed) {
-                    return Qt.darker(Kirigami.ColorUtils.adjustColor(PlasmaCore.ColorScope.backgroundColor, {"alpha": 0.9*255}), 1.25);
-                } else {
-                    return Kirigami.ColorUtils.adjustColor(PlasmaCore.ColorScope.backgroundColor, {"alpha": 0.3*255});
-                }
+                return iconMouseArea.pressed ? disabledPressedButtonColor : disabledButtonColor
             }
         }
 
-        PlasmaCore.IconItem {
+        Kirigami.Icon {
             id: icon
-            colorGroup: PlasmaCore.ColorScope.colorGroup
-            anchors {
-                fill: parent
-                margins: units.smallSpacing
-            }
+            color: PlasmaCore.Theme.textColor
+            anchors.centerIn: parent
+            implicitWidth: Math.round(parent.width * 0.6)
+            implicitHeight: width
             source: delegateRoot.icon
             MouseArea {
                 id: iconMouseArea
