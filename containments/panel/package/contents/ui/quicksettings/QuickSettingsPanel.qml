@@ -8,6 +8,7 @@
 import QtQuick 2.14
 import QtQuick.Layouts 1.1
 import QtQuick.Window 2.2
+import QtGraphicalEffects 1.12
 import org.kde.kirigami 2.12 as Kirigami
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 2.0 as PlasmaComponents
@@ -27,7 +28,9 @@ Item {
     signal closed
 
     property bool expandedMode: parentSlidingPanel.wideScreen
-    readonly property real expandedRatio: expandedMode ? 1 : Math.max(0, Math.min(1, (parentSlidingPanel.offset - firstRowHeight - parentSlidingPanel.topPanelHeight) / otherRowsHeight))
+    readonly property real expandedRatio: expandedMode ? 1 : Math.max(0, Math.min(1, (parentSlidingPanel.offset - firstRowHeight - parentSlidingPanel.topPanelHeight) / otherRowsHeight + 0.05)) // HACK: add 0.05 to prevent jumping since this height isn't exact
+
+    //onExpandedRatioChanged: console.log("expanded: " + expandedRatio + " " + parentSlidingPanel.offset + " " + parentSlidingPanel.topPanelHeight + " " + otherRowsHeight)
     
     readonly property real topEmptyAreaHeight: parentSlidingPanel.userInteracting
         ? (root.height - collapsedHeight) * (1 - expandedRatio)
@@ -66,9 +69,56 @@ Item {
         id: quickSettingsModel
     }
     
+    // shadow
+    Rectangle {
+        anchors.top: bottomBar.bottom
+        anchors.left: background.left
+        anchors.right: background.right
+        height: PlasmaCore.Units.gridUnit
+        gradient: Gradient {
+            GradientStop {
+                position: 1.0
+                color: showingApp ? root.backgroundColor : "transparent"
+            }
+            GradientStop {
+                position: 0.0
+                color: showingApp ? root.backgroundColor : Qt.rgba(0, 0, 0, 0.1)
+            }
+        }
+    }
+    
+    RectangularGlow {
+        z: 1
+        anchors.topMargin: 1
+        anchors.fill: bottomBar
+        cached: true
+        glowRadius: 4
+        spread: 0.2
+        color: Qt.rgba(0, 0, 0, 0.1)
+    }
+    
+    // bottom "bar"
+    Rectangle {
+        id: bottomBar
+        anchors.top: background.bottom
+        anchors.left: background.left
+        anchors.right: background.right
+        color: Qt.lighter(PlasmaCore.Theme.backgroundColor, 1.15)
+        height: Math.round(PlasmaCore.Units.gridUnit * 1.3)
+        z: 1
+        
+        Kirigami.Icon {
+            color: PlasmaCore.Theme.disabledTextColor
+            source: expandedRatio >= 1 ? "go-up-symbolic" : "go-down-symbolic"
+            implicitWidth: PlasmaCore.Units.gridUnit
+            implicitHeight: width
+            anchors.centerIn: parent
+        }
+    }
+    
     Rectangle {
         id: background
-        color: Kirigami.ColorUtils.adjustColor(PlasmaCore.Theme.backgroundColor, {"alpha": 0.9*255})
+        color: Qt.lighter(PlasmaCore.Theme.backgroundColor, 1.1) // Kirigami.ColorUtils.adjustColor(PlasmaCore.Theme.backgroundColor, {"alpha": 0.9*255})
         anchors.fill: parent
         
         ColumnLayout {
@@ -86,7 +136,6 @@ Item {
             Flow {
                 id: flow
                 Layout.alignment: Qt.AlignHCenter
-                Layout.maximumWidth: Kirigami.Units.gridUnit * 20 // TODO
                 Layout.fillWidth: true
                 Layout.leftMargin: units.smallSpacing + (units.largeSpacing - units.smallSpacing) //* root.expandedRatio
                 Layout.rightMargin: units.largeSpacing
@@ -129,7 +178,6 @@ Item {
             BrightnessItem {
                 id: brightnessSlider
                 Layout.alignment: Qt.AlignHCenter
-                Layout.maximumWidth: Kirigami.Units.gridUnit * 20 // TODO
                 Layout.bottomMargin: units.largeSpacing
                 Layout.leftMargin: units.largeSpacing
                 Layout.rightMargin: units.largeSpacing
