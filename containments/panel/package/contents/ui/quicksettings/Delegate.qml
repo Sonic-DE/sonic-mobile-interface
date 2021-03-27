@@ -1,5 +1,6 @@
 /*
  *   SPDX-FileCopyrightText: 2015 Marco Martin <notmart@gmail.com>
+ *   SPDX-FileCopyrightText: 2021 Devin Lin <espidev@gmail.com>
  *
  *   SPDX-License-Identifier: LGPL-2.0-or-later
  */
