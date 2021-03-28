@@ -24,7 +24,7 @@ QQC2.Control {
         }
         Rectangle {
             id: container
-            color: Kirigami.ColorUtils.adjustColor(PlasmaCore.ColorScope.backgroundColor, {"alpha": 0.85*255})
+            color: "transparent"
             anchors {
                 fill: parent
                 leftMargin: PlasmaCore.Units.smallSpacing

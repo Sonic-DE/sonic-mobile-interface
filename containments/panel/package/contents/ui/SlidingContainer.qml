@@ -9,7 +9,6 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.1
 import QtQuick.Window 2.2
-import QtQml 2.15
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.plasma.private.nanoshell 2.0 as NanoShell
@@ -22,11 +21,14 @@ NanoShell.FullScreenOverlay {
     property bool userInteracting: false
     property bool initiallyOpened: false // whether the panel is already open after a touch release (then don't restrict to collapsed height)
     
+    // height when quicksettings is fully open
     required property int fullyOpenHeight
-    readonly property int openedContentY: offset > (collapsedHeight + openThreshold) ? -topEmptyAreaHeight : offsetToContentY(collapsedHeight)
+    
+    // flickable contentY
+    readonly property int openedContentY: wideScreen || offset > (collapsedHeight + openThreshold) ? -topEmptyAreaHeight : offsetToContentY(collapsedHeight)
     readonly property int closedContentY: mainFlickable.contentHeight
     
-    readonly property bool wideScreen: false // width > height || width > units.gridUnit * 45
+    readonly property bool wideScreen: width > height || width > units.gridUnit * 45
     readonly property int drawerWidth: wideScreen ? contentItem.implicitWidth : width
     
     property int drawerX: 0
@@ -38,6 +40,8 @@ NanoShell.FullScreenOverlay {
     property int topPanelHeight
     property int collapsedHeight
     property real topEmptyAreaHeight
+    
+    property bool appletsShown: false // whether notifications or media player applets are shown
 
     signal closed
 
@@ -53,10 +57,11 @@ NanoShell.FullScreenOverlay {
     
     // avoids binding loops
     function updateOffset(delta) {
-        offset = Math.max(0, Math.min(collapsedHeight + openThreshold / 2, offset + delta));
+        // only go to collapsed height for mousearea when not widescreen
+        let maximum = window.wideScreen ? window.fullyOpenHeight : collapsedHeight + openThreshold / 2;
+        offset = Math.max(0, Math.min(maximum, offset + delta));
         if (!mainFlickable.moving && !mainFlickable.dragging && !mainFlickable.flicking) {
             mainFlickable.contentY = offsetToContentY(window.offset);
-            //console.log("calc - contentY: " + mainFlickable.contentY + " offset: " + offset + " contentItem: " + window.fullyOpenHeight);
         }
     }
     
@@ -138,7 +143,10 @@ NanoShell.FullScreenOverlay {
     Rectangle {
         anchors.fill: parent
         color: PlasmaCore.Theme.backgroundColor
-        opacity: 0.6 * Math.min(1, offset/(topEmptyAreaHeight + window.fullyOpenHeight))
+        opacity: (appletsShown ? 0.85 : 0.6) * Math.max(0, Math.min(1, offset / window.collapsedHeight))
+        Behavior on opacity { // smooth opacity changes
+            NumberAnimation { duration: 70 }
+        }
     }
     
     PlasmaCore.ColorScope {
@@ -154,7 +162,6 @@ NanoShell.FullScreenOverlay {
             contentY: contentHeight
 
             onContentYChanged: {
-                //console.log("contentY: " + contentY + " offset: " + offset + " close: " + slidingPanel.closedContentY + " open: " + slidingPanel.openedContentY + " contentItem: " + window.fullyOpenHeight);
                 if (contentY === oldContentY) {
                     window.direction = SlidingContainer.MovementDirection.None;
                 } else {
@@ -194,6 +201,8 @@ NanoShell.FullScreenOverlay {
                 width: parent.width
                 height: mainFlickable.contentHeight
                 onClicked: window.close();
+                
+                // actual sliding contents
                 PlasmaComponents.Control {
                     id: contentArea
                     z: 1
