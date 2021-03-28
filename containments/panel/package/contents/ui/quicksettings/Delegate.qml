@@ -57,38 +57,39 @@ ColumnLayout {
             implicitWidth: Math.round(parent.width * 0.6)
             implicitHeight: width
             source: delegateRoot.icon
-            MouseArea {
-                id: iconMouseArea
-                anchors.fill: parent
-                onClicked: {
-                    if (delegateRoot.toggle) {
-                        delegateRoot.toggle();
-                    } else if (delegateRoot.toggleFunction) {
-                        settingsModel[delegateRoot.toggleFunction]();
-                    } else if (delegateRoot.settingsCommand) {
-                        NanoShell.StartupFeedback.open(
-                            delegateRoot.icon,
-                            delegateRoot.text,
-                            icon.Kirigami.ScenePosition.x + icon.width/2,
-                            icon.Kirigami.ScenePosition.y + icon.height/2,
-                            Math.min(icon.width, icon.height))
-                        plasmoid.nativeInterface.executeCommand(delegateRoot.settingsCommand);
-                        root.closeRequested();
-                    }
+        }
+        
+        MouseArea {
+            id: iconMouseArea
+            anchors.fill: parent
+            onClicked: {
+                if (delegateRoot.toggle) {
+                    delegateRoot.toggle();
+                } else if (delegateRoot.toggleFunction) {
+                    settingsModel[delegateRoot.toggleFunction]();
+                } else if (delegateRoot.settingsCommand) {
+                    NanoShell.StartupFeedback.open(
+                        delegateRoot.icon,
+                        delegateRoot.text,
+                        icon.Kirigami.ScenePosition.x + icon.width/2,
+                        icon.Kirigami.ScenePosition.y + icon.height/2,
+                        Math.min(icon.width, icon.height))
+                    plasmoid.nativeInterface.executeCommand(delegateRoot.settingsCommand);
+                    root.closeRequested();
                 }
-                onPressAndHold: {
-                    if (delegateRoot.settingsCommand) {
-                        NanoShell.StartupFeedback.open(
-                            delegateRoot.icon,
-                            delegateRoot.text,
-                            icon.Kirigami.ScenePosition.x + icon.width/2,
-                            icon.Kirigami.ScenePosition.y + icon.height/2,
-                            Math.min(icon.width, icon.height))
-                        closeRequested();
-                        plasmoid.nativeInterface.executeCommand(delegateRoot.settingsCommand);
-                    } else if (delegateRoot.toggleFunction) {
-                        root[delegateRoot.toggleFunction]();
-                    }
+            }
+            onPressAndHold: {
+                if (delegateRoot.settingsCommand) {
+                    NanoShell.StartupFeedback.open(
+                        delegateRoot.icon,
+                        delegateRoot.text,
+                        icon.Kirigami.ScenePosition.x + icon.width/2,
+                        icon.Kirigami.ScenePosition.y + icon.height/2,
+                        Math.min(icon.width, icon.height))
+                    closeRequested();
+                    plasmoid.nativeInterface.executeCommand(delegateRoot.settingsCommand);
+                } else if (delegateRoot.toggleFunction) {
+                    root[delegateRoot.toggleFunction]();
                 }
             }
         }
