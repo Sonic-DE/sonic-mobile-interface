@@ -30,15 +30,15 @@ Item {
     signal closed
 
     property bool expandedMode: parentSlidingPanel.wideScreen
-    readonly property real expandedRatio: expandedMode ? 1 : Math.max(0, Math.min(1, (parentSlidingPanel.offset - firstRowHeight - parentSlidingPanel.topPanelHeight) / otherRowsHeight + 0.05)) // HACK: add 0.05 to prevent jumping since this height isn't exact
+    readonly property real expandedRatio: expandedMode ? 1 : Math.max(0, Math.min(1, (parentSlidingPanel.offset - (parentSlidingPanel.topPanelHeight + firstRowHeight) - parentSlidingPanel.topPanelHeight) / otherRowsHeight + 0.05)) // HACK: add 0.05 to prevent jumping since this height isn't exact
 
     readonly property real topEmptyAreaHeight: parentSlidingPanel.userInteracting
         ? (root.height - collapsedHeight) * (1 - expandedRatio)
         : (expandedMode ? 0 : root.height - collapsedHeight)
      
-    readonly property real collapsedHeight: firstRowHeight + PlasmaCore.Units.smallSpacing * 2
+    readonly property real collapsedHeight: parentSlidingPanel.topPanelHeight + firstRowHeight + PlasmaCore.Units.smallSpacing * 2
     readonly property real firstRowHeight: flow.children[0].height
-    readonly property real otherRowsHeight: column.implicitHeight - firstRowHeight
+    readonly property real otherRowsHeight: column.implicitHeight - firstRowHeight - parentSlidingPanel.topPanelHeight
     
     Connections {
         target: root.parentSlidingPanel
@@ -138,7 +138,6 @@ Item {
         ColumnLayout {
             id: column
             anchors.margins: PlasmaCore.Units.smallSpacing
-            anchors.top: topPanel.bottom
             anchors.left: parent.left
             anchors.right: parent.right
             spacing: 0
@@ -146,6 +145,20 @@ Item {
             
             readonly property real cellSizeHint: units.iconSizes.large + units.smallSpacing * 6
             readonly property real columnWidth: Math.floor(width / Math.floor(width / cellSizeHint))
+            
+            IndicatorsRow {
+                id: indicatorsRow
+                z: 1
+                Layout.fillWidth: true
+                Layout.preferredHeight: parentSlidingPanel.topPanelHeight
+                colorGroup: PlasmaCore.Theme.NormalColorGroup
+                backgroundColor: "transparent"
+                showGradientBackground: false
+                showDropShadow: false
+                transform: Translate {
+                    y: otherRowsHeight * (1 - root.expandedRatio) + PlasmaCore.Units.smallSpacing
+                }
+            }
             
             Flow {
                 id: flow
