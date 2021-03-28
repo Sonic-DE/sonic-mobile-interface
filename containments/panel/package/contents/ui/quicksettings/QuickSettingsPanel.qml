@@ -69,23 +69,25 @@ Item {
         id: quickSettingsModel
     }
     
-    // shadow
+    // shadow below panel (only if not widescreen)
     Rectangle {
-        anchors.top: bottomBar.bottom
+        visible: !parentSlidingPanel.wideScreen
+        anchors.bottom: background.bottom
         anchors.left: background.left
         anchors.right: background.right
         height: PlasmaCore.Units.gridUnit
         gradient: Gradient {
             GradientStop {
-                position: 1.0
-                color: "transparent"
-            }
-            GradientStop {
                 position: 0.0
                 color: Qt.rgba(0, 0, 0, 0.05)
             }
+            GradientStop {
+                position: 1.0
+                color: "transparent"
+            }
         }
     }
+    // shadow for bottom bar
     RectangularGlow {
         z: 1
         anchors.topMargin: 1
@@ -95,8 +97,21 @@ Item {
         spread: 0.2
         color: Qt.rgba(0, 0, 0, 0.1)
     }
+    // shadow for whole panel (only if widescreen)
+    RectangularGlow {
+        visible: parentSlidingPanel.wideScreen
+        anchors.topMargin: 1
+        anchors.top: background.top
+        anchors.left: background.left
+        anchors.right: background.right
+        anchors.bottom: bottomBar.bottom
+        cached: true
+        glowRadius: 4
+        spread: 0.2
+        color: Qt.rgba(0, 0, 0, 0.1)
+    }
     
-    // bottom "bar"
+    // bottom "handle bar"
     Rectangle {
         id: bottomBar
         anchors.top: background.bottom
