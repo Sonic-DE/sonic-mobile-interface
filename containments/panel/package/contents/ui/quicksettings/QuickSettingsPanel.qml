@@ -151,19 +151,22 @@ Item {
                 id: flow
                 Layout.alignment: Qt.AlignHCenter
                 Layout.fillWidth: true
-                Layout.leftMargin: units.smallSpacing + (units.largeSpacing - units.smallSpacing) //* root.expandedRatio
-                Layout.rightMargin: units.largeSpacing
+                Layout.leftMargin: units.smallSpacing + (units.largeSpacing - units.smallSpacing) * root.expandedRatio
+                Layout.rightMargin: units.smallSpacing + (units.largeSpacing - units.smallSpacing) * root.expandedRatio
                 Layout.topMargin: units.largeSpacing
                 
                 readonly property real cellSizeHint: units.iconSizes.large + units.smallSpacing * 6
-                readonly property real columnWidth: Math.floor(width / Math.floor(width / cellSizeHint))
+                readonly property real columns: Math.floor(width / cellSizeHint)
+                readonly property real columnsWhenCollapsed: 1.05 // .05 to account for the fact that we have an overshoot on the panel on first flick, we don't want the movement to be jarring
+                readonly property real columnWidth: Math.floor(width / (columns + (columnsWhenCollapsed - columnsWhenCollapsed * root.expandedRatio)))
+                
                 spacing: 0
                 Repeater {
                     model: quickSettingsModel.model
                     delegate: Delegate {
                         id: delegateItem
                         settingsModel: quickSettingsModel
-                        width: flow.columnWidth - (y > 0 ? 0 : (flow.columnWidth / Math.floor(flow.width / flow.columnWidth)) * (1 - 1/*root.expandedRatio*/))
+                        width: flow.columnWidth
                         
                         labelOpacity: y > 0  ? 1 : root.expandedRatio
                         opacity: y <= 0 ? 1 : root.expandedRatio
@@ -193,7 +196,8 @@ Item {
             BrightnessItem {
                 id: brightnessSlider
                 Layout.alignment: Qt.AlignHCenter
-                Layout.bottomMargin: units.largeSpacing
+                Layout.topMargin: units.smallSpacing
+                Layout.bottomMargin: units.smallSpacing
                 Layout.leftMargin: units.largeSpacing
                 Layout.rightMargin: units.largeSpacing
                 Layout.fillWidth: true
