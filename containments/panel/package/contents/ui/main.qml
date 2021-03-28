@@ -10,6 +10,8 @@ import QtQuick.Layouts 1.3
 import QtQml.Models 2.12
 import QtGraphicalEffects 1.12
 
+import org.kde.kirigami 2.12 as Kirigami
+
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
@@ -152,7 +154,6 @@ Item {
 
         anchors.fill: parent
         onPressed: {
-            console.log("press. close: " + slidingPanel.closedContentY + " open: " + slidingPanel.openedContentY);
             slidingPanel.cancelAnimations();
             slidingPanel.drawerX = Math.min(Math.max(0, mouse.x - slidingPanel.drawerWidth/2), slidingPanel.width - slidingPanel.contentItem.width)
             slidingPanel.userInteracting = true;
@@ -184,6 +185,8 @@ Item {
         collapsedHeight: quickSettings.collapsedHeight
         fullyOpenHeight: quickSettings.implicitHeight
         
+        appletsShown: fullRepresentationView.count > 0
+        
         offset: quickSettings.height
         
         onClosed: quickSettings.closed()
@@ -198,6 +201,7 @@ Item {
             
             QuickSettingsPanel {
                 id: quickSettings
+                property int trueHeight: height + Math.round(Kirigami.Units.gridUnit * 1.5) // add height of bottom bar
                 z: 4
                 Layout.alignment: Qt.AlignTop
                 Layout.preferredWidth: slidingPanel.wideScreen ? Math.min(slidingPanel.width/2, units.gridUnit * 25) : panelContents.width
@@ -209,18 +213,19 @@ Item {
             ListView {
                 id: fullRepresentationView
                 implicitHeight: units.gridUnit * 20
+                Layout.topMargin: slidingPanel.wideScreen ? 0 : Math.round(Kirigami.Units.gridUnit * 1.5) // add height of bottom bar
                 Layout.preferredWidth: slidingPanel.wideScreen ? Math.min(slidingPanel.width/2, quickSettings.width*fullRepresentationModel.count) : panelContents.width 
                 Layout.preferredHeight: Math.min(plasmoid.screenGeometry.height - quickSettings.implicitHeight - bottomBar.height + slidingPanel.topEmptyAreaHeight, implicitHeight)
                 z: 1
-                interactive: width < contentWidth
+                interactive: count > 0 && width < contentWidth
 
                 clip: slidingPanel.wideScreen
-                y: slidingPanel.wideScreen ? 0 : quickSettings.height - (quickSettings.height + height) * (1-opacity)
+                y: slidingPanel.wideScreen ? 0 : quickSettings.trueHeight
                 opacity: {
                     if (slidingPanel.wideScreen) {
                         return 1;
                     } else {
-                        return fullRepresentationModel.count > 0 && slidingPanel.offset/(quickSettings.height -slidingPanel.topEmptyAreaHeight);
+                        return fullRepresentationModel.count > 0 && slidingPanel.offset / slidingPanel.collapsedHeight;
                     }
                 }
                 preferredHighlightBegin: slidingPanel.drawerX
