@@ -78,15 +78,14 @@ Item {
         gradient: Gradient {
             GradientStop {
                 position: 1.0
-                color: showingApp ? root.backgroundColor : "transparent"
+                color: "transparent"
             }
             GradientStop {
                 position: 0.0
-                color: showingApp ? root.backgroundColor : Qt.rgba(0, 0, 0, 0.1)
+                color: Qt.rgba(0, 0, 0, 0.05)
             }
         }
     }
-    
     RectangularGlow {
         z: 1
         anchors.topMargin: 1
@@ -118,7 +117,7 @@ Item {
     
     Rectangle {
         id: background
-        color: Qt.lighter(PlasmaCore.Theme.backgroundColor, 1.1) // Kirigami.ColorUtils.adjustColor(PlasmaCore.Theme.backgroundColor, {"alpha": 0.9*255})
+        color: Qt.lighter(PlasmaCore.Theme.backgroundColor, 1.1)
         anchors.fill: parent
         
         ColumnLayout {
@@ -128,7 +127,7 @@ Item {
             anchors.left: parent.left
             anchors.right: parent.right
             spacing: 0
-            clip: true
+            clip: expandedRatio > 0 && expandedRatio < 1 // only clip when necessary to improve performance
             
             readonly property real cellSizeHint: units.iconSizes.large + units.smallSpacing * 6
             readonly property real columnWidth: Math.floor(width / Math.floor(width / cellSizeHint))
@@ -148,6 +147,7 @@ Item {
                     model: quickSettingsModel.model
                     delegate: Delegate {
                         id: delegateItem
+                        settingsModel: quickSettingsModel
                         width: flow.columnWidth - (y > 0 ? 0 : (flow.columnWidth / Math.floor(flow.width / flow.columnWidth)) * (1 - 1/*root.expandedRatio*/))
                         
                         labelOpacity: y > 0  ? 1 : root.expandedRatio

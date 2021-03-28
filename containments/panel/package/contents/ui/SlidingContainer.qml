@@ -20,6 +20,11 @@ NanoShell.FullScreenOverlay {
     property int offset: 0 // slide progress
     property int openThreshold: PlasmaCore.Units.gridUnit * 2
     property bool userInteracting: false
+    property bool initiallyOpened: false // whether the panel is already open after a touch release (then don't restrict to collapsed height)
+    
+    required property int fullyOpenHeight
+    readonly property int openedContentY: offset > (collapsedHeight + openThreshold) ? -topEmptyAreaHeight : offsetToContentY(collapsedHeight)
+    readonly property int closedContentY: mainFlickable.contentHeight
     
     readonly property bool wideScreen: false // width > height || width > units.gridUnit * 45
     readonly property int drawerWidth: wideScreen ? contentItem.implicitWidth : width
@@ -31,6 +36,7 @@ NanoShell.FullScreenOverlay {
     color: "transparent"
     property alias contentItem: contentArea.contentItem
     property int topPanelHeight
+    property int collapsedHeight
     property real topEmptyAreaHeight
 
     signal closed
@@ -38,11 +44,19 @@ NanoShell.FullScreenOverlay {
     width: Screen.width
     height: Screen.height
 
+    onInitiallyOpenedChanged: {
+        if (initiallyOpened) mainFlickable.focus = true;
+    }
+    
+    function offsetToContentY(num) { return -num + window.fullyOpenHeight; }
+    function contentYToOffset(num) { return offsetToContentY(num); }
+    
     // avoids binding loops
     function updateOffset(delta) {
-        offset = Math.max(0, Math.min(contentItem.height, offset + delta));
+        offset = Math.max(0, Math.min(collapsedHeight + openThreshold / 2, offset + delta));
         if (!mainFlickable.moving && !mainFlickable.dragging && !mainFlickable.flicking) {
-            mainFlickable.contentY = -window.offset + contentItem.height;
+            mainFlickable.contentY = offsetToContentY(window.offset);
+            //console.log("calc - contentY: " + mainFlickable.contentY + " offset: " + offset + " contentItem: " + window.fullyOpenHeight);
         }
     }
     
@@ -51,7 +65,7 @@ NanoShell.FullScreenOverlay {
         Up,
         Down
     }
-    property int direction: SlidingPanel.MovementDirection.None
+    property int direction: SlidingContainer.MovementDirection.None
 
     function cancelAnimations() {
         closeAnim.stop();
@@ -60,25 +74,27 @@ NanoShell.FullScreenOverlay {
     function open() {
         cancelAnimations();
         openAnim.restart();
+        initiallyOpened = true;
     }
     function close() {
         cancelAnimations();
         closeAnim.restart();
+        initiallyOpened = false;
     }
     function updateState() {
         cancelAnimations();
-        if (window.offset <= -topPanelHeight) {
-            close();
+        if (window.offset <= 0) {
             // close immediately, so that we don't have to wait units.longDuration 
             window.visible = false;
             window.closed();
-        } else if (window.direction === SlidingPanel.MovementDirection.None) {
+            close();
+        } else if (window.direction === SlidingContainer.MovementDirection.None) {
             if (window.offset < openThreshold) {
                 close();
             } else {
                 open();
             }
-        } else if (offset > openThreshold && window.direction === SlidingPanel.MovementDirection.Down) {
+        } else if (offset > openThreshold && window.direction === SlidingContainer.MovementDirection.Down) {
             open();
         } else if (mainFlickable.contentY > openThreshold) {
             close();
@@ -104,8 +120,7 @@ NanoShell.FullScreenOverlay {
         properties: "contentY"
         duration: PlasmaCore.Units.longDuration
         easing.type: Easing.InOutQuad
-        from: mainFlickable.contentY
-        to: mainFlickable.contentHeight
+        to: window.closedContentY
         onFinished: {
             window.visible = false;
             window.closed();
@@ -117,14 +132,13 @@ NanoShell.FullScreenOverlay {
         properties: "contentY"
         duration: PlasmaCore.Units.longDuration
         easing.type: Easing.InOutQuad
-        from: mainFlickable.contentY
-        to: -topEmptyAreaHeight
+        to: window.openedContentY
     }
 
     Rectangle {
         anchors.fill: parent
         color: PlasmaCore.Theme.backgroundColor
-        opacity: 0.6 * Math.min(1, offset/(topEmptyAreaHeight + contentItem.height))
+        opacity: 0.6 * Math.min(1, offset/(topEmptyAreaHeight + window.fullyOpenHeight))
     }
     
     PlasmaCore.ColorScope {
@@ -140,13 +154,20 @@ NanoShell.FullScreenOverlay {
             contentY: contentHeight
 
             onContentYChanged: {
+                //console.log("contentY: " + contentY + " offset: " + offset + " close: " + slidingPanel.closedContentY + " open: " + slidingPanel.openedContentY + " contentItem: " + window.fullyOpenHeight);
                 if (contentY === oldContentY) {
-                    window.direction = SlidingPanel.MovementDirection.None;
+                    window.direction = SlidingContainer.MovementDirection.None;
                 } else {
-                    window.direction = contentY > oldContentY ? SlidingPanel.MovementDirection.Up : SlidingPanel.MovementDirection.Down;
+                    window.direction = contentY > oldContentY ? SlidingContainer.MovementDirection.Up : SlidingContainer.MovementDirection.Down;
                 }
-                window.offset = -contentY + contentArea.height;
+                window.offset = contentYToOffset(contentY);
                 oldContentY = contentY;
+                
+                // close panel immediately after panel is not shown, and the flickable is not being dragged
+                if (initiallyOpened && window.offset <= 0 && !mainFlickable.dragging && !closeAnim.running && !openAnim.running) {
+                    window.updateState();
+                    focus = false;
+                }
             }
             
             boundsMovement: Flickable.StopAtBounds

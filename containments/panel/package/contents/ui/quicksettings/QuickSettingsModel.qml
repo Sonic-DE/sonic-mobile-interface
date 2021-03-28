@@ -34,12 +34,6 @@ Item {
         id: settingsModel
     }
     
-    // components needed for quick settings
-    function requestScreenshot() {
-        screenshotRequested = true;
-        root.closeRequested();
-    }
-    
     PlasmaNM.Handler {
         id: nmHandler
     }
@@ -104,6 +98,12 @@ Item {
         }
         compositorAdaptor.sendConfigurationAll();
         settingsModel.get(10).enabled = compositorAdaptor.active;
+    }
+    
+    // components needed for quick settings
+    function requestScreenshot() {
+        screenshotRequested = true;
+        root.closeRequested();
     }
     
     // initialize quick settings
