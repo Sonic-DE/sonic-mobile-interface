@@ -19,6 +19,8 @@ import org.kde.plasma.private.nanoshell 2.0 as NanoShell
 
 import org.kde.plasma.components 3.0 as PC3
 
+import "../"
+
 Item {
     id: root
     implicitWidth: column.implicitWidth + PlasmaCore.Units.smallSpacing * 6
@@ -30,8 +32,6 @@ Item {
     property bool expandedMode: parentSlidingPanel.wideScreen
     readonly property real expandedRatio: expandedMode ? 1 : Math.max(0, Math.min(1, (parentSlidingPanel.offset - firstRowHeight - parentSlidingPanel.topPanelHeight) / otherRowsHeight + 0.05)) // HACK: add 0.05 to prevent jumping since this height isn't exact
 
-    //onExpandedRatioChanged: console.log("expanded: " + expandedRatio + " " + parentSlidingPanel.offset + " " + parentSlidingPanel.topPanelHeight + " " + otherRowsHeight)
-    
     readonly property real topEmptyAreaHeight: parentSlidingPanel.userInteracting
         ? (root.height - collapsedHeight) * (1 - expandedRatio)
         : (expandedMode ? 0 : root.height - collapsedHeight)
@@ -123,7 +123,7 @@ Item {
         ColumnLayout {
             id: column
             anchors.margins: PlasmaCore.Units.smallSpacing
-            anchors.top: parent.top
+            anchors.top: topPanel.bottom
             anchors.left: parent.left
             anchors.right: parent.right
             spacing: 0
