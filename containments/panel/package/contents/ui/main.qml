@@ -1,6 +1,6 @@
 /*
- *  SPDX-FileCopyrightText: 2015 Marco Martin <mart@kde.org>
  *  SPDX-FileCopyrightText: 2021 Devin Lin <espidev@gmail.com>
+ *  SPDX-FileCopyrightText: 2015 Marco Martin <mart@kde.org>
  *
  *  SPDX-License-Identifier: GPL-2.0-or-later
  */
@@ -26,7 +26,7 @@ import "LayoutManager.js" as LayoutManager
 
 import "quicksettings"
 import "indicators" as Indicators
-
+import "indicators/providers" as IndicatorProviders
 
 Item {
     id: root
@@ -40,7 +40,7 @@ Item {
     property bool reorderingApps: false
     property var layoutManager: LayoutManager
 
-    readonly property color backgroundColor: NanoShell.StartupFeedback.visible ? NanoShell.StartupFeedback.backgroundColor : topPanel.backgroundColor
+    readonly property color backgroundColor: NanoShell.StartupFeedback.visible ? NanoShell.StartupFeedback.backgroundColor : topPanel.colorScopeColor
     readonly property bool showingApp: !MobileShell.HomeScreenControls.homeScreenVisible
 
     readonly property bool hasTasks: tasksModel.count > 0
@@ -133,11 +133,34 @@ Item {
         FullNotificationsContainer {}
     }
 
+    // indicator providers
+    IndicatorProviders.BatteryProvider {
+        id: batteryProvider
+    }
+    IndicatorProviders.BluetoothProvider {
+        id: bluetoothProvider
+    }
+    property alias signalStrengthProvider: signalStrengthProviderLoader.item
+    Loader {
+        id: signalStrengthProviderLoader
+        source: Qt.resolvedUrl("indicators/providers/SignalStrengthProvider.qml")
+    }
+    IndicatorProviders.VolumeProvider {
+        id: volumeProvider
+    }
+    IndicatorProviders.WifiProvider {
+        id: wifiProvider
+    }
+    
     // top panel component
-    Panel {
+    IndicatorsRow {
         id: topPanel
         anchors.fill: parent
         z: 1
+        colorGroup: showingApp ? PlasmaCore.Theme.HeaderColorGroup : PlasmaCore.Theme.ComplementaryColorGroup
+        backgroundColor: !showingApp ? "transparent" : root.backgroundColor
+        showGradientBackground: !showingApp
+        showDropShadow: !showingApp
     }
     
     // top panel background (background for the rest of the screen in SlidingPanel.qml)
