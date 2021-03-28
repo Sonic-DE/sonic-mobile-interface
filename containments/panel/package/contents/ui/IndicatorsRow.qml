@@ -26,9 +26,14 @@ import "LayoutManager.js" as LayoutManager
 import "indicators" as Indicators
 
 Item {
+    id: indicatorsRow
+    required property var colorGroup
+    required property bool showGradientBackground
+    required property bool showDropShadow
+    required property color backgroundColor
     
+    property alias colorScopeColor: icons.backgroundColor
     property alias applets: appletIconsRow
-    property alias backgroundColor: icons.backgroundColor
     
     PlasmaCore.DataSource {
         id: timeSource
@@ -39,7 +44,7 @@ Item {
 
     DropShadow {
         anchors.fill: icons
-        visible: !showingApp
+        visible: showDropShadow
         cached: true
         horizontalOffset: 0
         verticalOffset: 1
@@ -53,25 +58,25 @@ Item {
     PlasmaCore.ColorScope {
         id: icons
         z: 1
-        colorGroup: showingApp ? PlasmaCore.Theme.HeaderColorGroup : PlasmaCore.Theme.ComplementaryColorGroup
-        anchors {
-            left: parent.left
-            right: parent.right
-            bottom: parent.bottom
-        }
-        height: root.height
+        colorGroup: indicatorsRow.colorGroup
+        anchors.fill: parent
         
-        // gradient background
+        // background
         Rectangle {
+            anchors.fill: parent
+            color: backgroundColor
+        }
+        Rectangle {
+            visible: showGradientBackground
             anchors.fill: parent
             gradient: Gradient {
                 GradientStop {
                     position: 1.0
-                    color: showingApp ? root.backgroundColor : "transparent"
+                    color: "transparent"
                 }
                 GradientStop {
                     position: 0.0
-                    color: showingApp ? root.backgroundColor : Qt.rgba(0, 0, 0, 0.1)
+                    color: Qt.rgba(0, 0, 0, 0.1)
                 }
             }
         }
@@ -80,7 +85,7 @@ Item {
             id: strengthLoader
             height: parent.height
             width: item ? item.width : 0
-            source: Qt.resolvedUrl("indicators/SignalStrength.qml")
+            Component.onCompleted: setSource("indicators/SignalStrength.qml", {"provider": signalStrengthProvider})
         }
 
         Row {
@@ -122,7 +127,6 @@ Item {
             height: parent.height
         }
 
-        //TODO: pluggable
         RowLayout {
             id: simpleIndicatorsLayout
             anchors {
@@ -131,10 +135,10 @@ Item {
                 right: parent.right
                 rightMargin: units.smallSpacing
             }
-            Indicators.Bluetooth {}
-            Indicators.Wifi {}
-            Indicators.Volume {}
-            Indicators.Battery {}
+            Indicators.Bluetooth { provider: bluetoothProvider }
+            Indicators.Wifi { provider: wifiProvider }
+            Indicators.Volume { provider: volumeProvider }
+            Indicators.Battery { provider: batteryProvider }
         }
     }
 }
