@@ -9,6 +9,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.1
+import org.kde.kirigami 2.12 as Kirigami
 
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PC3
@@ -65,11 +66,11 @@ Item {
         anchors.right: parent.right
         anchors.top: parent.top
         
-        PlasmaCore.IconItem {
-            colorGroup: PlasmaCore.ColorScope.colorGroup
+        Kirigami.Icon {
+            color: PlasmaCore.Theme.textColor
             Layout.alignment: Qt.AlignVCenter
             Layout.leftMargin: PlasmaCore.Units.smallSpacing
-            Layout.preferredWidth: units.iconSizes.medium
+            Layout.preferredWidth: Math.round(PlasmaCore.Units.gridUnit * 1.75)
             Layout.preferredHeight: width
             source: "low-brightness"
         }
@@ -83,11 +84,12 @@ Item {
             to: maximumScreenBrightness
         }
         
-        PlasmaCore.IconItem {
-            colorGroup: PlasmaCore.ColorScope.colorGroup
+        Kirigami.Icon {
+            color: PlasmaCore.Theme.textColor
+            isMask: true
             Layout.alignment: Qt.AlignVCenter
             Layout.rightMargin: PlasmaCore.Units.smallSpacing
-            Layout.preferredWidth: units.iconSizes.medium
+            Layout.preferredWidth: Math.round(PlasmaCore.Units.gridUnit * 1.75)
             Layout.preferredHeight: width
             source: "high-brightness"
         }
