@@ -38,7 +38,7 @@ Item {
     property bool reorderingApps: false
     property var layoutManager: LayoutManager
 
-    readonly property color backgroundColor: NanoShell.StartupFeedback.visible ? NanoShell.StartupFeedback.backgroundColor : topPanel.backgroundColorGroup.backgroundColor
+    readonly property color backgroundColor: NanoShell.StartupFeedback.visible ? NanoShell.StartupFeedback.backgroundColor : topPanel.backgroundColor
     readonly property bool showingApp: !MobileShell.HomeScreenControls.homeScreenVisible
 
     readonly property bool hasTasks: tasksModel.count > 0
@@ -152,10 +152,11 @@ Item {
 
         anchors.fill: parent
         onPressed: {
+            console.log("press. close: " + slidingPanel.closedContentY + " open: " + slidingPanel.openedContentY);
             slidingPanel.cancelAnimations();
             slidingPanel.drawerX = Math.min(Math.max(0, mouse.x - slidingPanel.drawerWidth/2), slidingPanel.width - slidingPanel.contentItem.width)
             slidingPanel.userInteracting = true;
-            slidingPanel.flickable.contentY = slidingPanel.flickable.contentHeight
+            slidingPanel.flickable.contentY = slidingPanel.closedContentY;
             oldMouseY = mouse.y;
             slidingPanel.showFullScreen();
         }
@@ -180,7 +181,9 @@ Item {
         height: plasmoid.availableScreenRect.height
         topPanelHeight: topPanel.height
         topEmptyAreaHeight: quickSettings.topEmptyAreaHeight
-
+        collapsedHeight: quickSettings.collapsedHeight
+        fullyOpenHeight: quickSettings.implicitHeight
+        
         offset: quickSettings.height
         
         onClosed: quickSettings.closed()
@@ -207,7 +210,7 @@ Item {
                 id: fullRepresentationView
                 implicitHeight: units.gridUnit * 20
                 Layout.preferredWidth: slidingPanel.wideScreen ? Math.min(slidingPanel.width/2, quickSettings.width*fullRepresentationModel.count) : panelContents.width 
-                Layout.preferredHeight: Math.min(plasmoid.screenGeometry.height - slidingPanel.headerHeight - quickSettings.height - bottomBar.height + slidingPanel.topEmptyAreaHeight, implicitHeight)
+                Layout.preferredHeight: Math.min(plasmoid.screenGeometry.height - quickSettings.implicitHeight - bottomBar.height + slidingPanel.topEmptyAreaHeight, implicitHeight)
                 z: 1
                 interactive: width < contentWidth
 
@@ -217,7 +220,7 @@ Item {
                     if (slidingPanel.wideScreen) {
                         return 1;
                     } else {
-                        return fullRepresentationModel.count > 0 && (slidingPanel.offset + slidingPanel.headerHeight)/(quickSettings.height -slidingPanel.topEmptyAreaHeight);
+                        return fullRepresentationModel.count > 0 && slidingPanel.offset/(quickSettings.height -slidingPanel.topEmptyAreaHeight);
                     }
                 }
                 preferredHighlightBegin: slidingPanel.drawerX

@@ -15,6 +15,9 @@ import org.kde.plasma.private.nanoshell 2.0 as NanoShell
 ColumnLayout {
     id: delegateRoot
     spacing: units.smallSpacing
+    
+    required property var settingsModel
+    
     signal closeRequested
     signal panelClosed
 
@@ -61,7 +64,7 @@ ColumnLayout {
                     if (delegateRoot.toggle) {
                         delegateRoot.toggle();
                     } else if (delegateRoot.toggleFunction) {
-                        root[delegateRoot.toggleFunction]();
+                        settingsModel[delegateRoot.toggleFunction]();
                     } else if (delegateRoot.settingsCommand) {
                         NanoShell.StartupFeedback.open(
                             delegateRoot.icon,
@@ -132,7 +135,7 @@ ColumnLayout {
                     plasmoid.nativeInterface.executeCommand(delegateRoot.settingsCommand);
                     closeRequested();
                 } else if (delegateRoot.toggleFunction) {
-                    root[delegateRoot.toggleFunction]();
+                    settingsModel[delegateRoot.toggleFunction]();
                 }
             }
         }

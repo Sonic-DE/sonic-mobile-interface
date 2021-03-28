@@ -28,7 +28,7 @@ import "indicators" as Indicators
 Item {
     
     property alias applets: appletIconsRow
-    property alias backgroundColorGroup: icons.colorGroup
+    property alias backgroundColor: icons.backgroundColor
     
     PlasmaCore.DataSource {
         id: timeSource
