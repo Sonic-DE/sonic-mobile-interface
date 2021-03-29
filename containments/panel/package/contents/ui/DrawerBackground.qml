@@ -33,7 +33,7 @@ QQC2.Control {
         }
         Rectangle {
             id: container
-            color: Kirigami.ColorUtils.adjustColor(Qt.lighter(PlasmaCore.Theme.backgroundColor, 1.1), {"alpha": 0.7*255})
+            color: Kirigami.ColorUtils.adjustColor(PlasmaCore.Theme.backgroundColor, {"alpha": 0.7*255})
             anchors {
                 fill: parent
                 leftMargin: PlasmaCore.Units.smallSpacing
