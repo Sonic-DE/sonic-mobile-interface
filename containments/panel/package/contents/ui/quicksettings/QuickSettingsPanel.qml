@@ -117,7 +117,7 @@ Item {
         anchors.top: background.bottom
         anchors.left: background.left
         anchors.right: background.right
-        color: Qt.lighter(PlasmaCore.Theme.backgroundColor, 1.15)
+        color: PlasmaCore.Theme.backgroundColor
         height: Math.round(PlasmaCore.Units.gridUnit * 1.3)
         z: 1
         
@@ -132,7 +132,7 @@ Item {
     
     Rectangle {
         id: background
-        color: Qt.lighter(PlasmaCore.Theme.backgroundColor, 1.1)
+        color: PlasmaCore.Theme.backgroundColor
         anchors.fill: parent
         
         ColumnLayout {
