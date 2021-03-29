@@ -140,9 +140,10 @@ NanoShell.FullScreenOverlay {
         to: window.openedContentY
     }
 
+    // fullscreen background
     Rectangle {
         anchors.fill: parent
-        color: PlasmaCore.Theme.backgroundColor
+        color: Qt.rgba(0, 0, 0, 0.75)
         opacity: (appletsShown ? 0.85 : 0.6) * Math.max(0, Math.min(1, offset / window.collapsedHeight))
         Behavior on opacity { // smooth opacity changes
             NumberAnimation { duration: 70 }
