@@ -29,7 +29,7 @@ ColumnLayout {
     required property var toggleFunction
     property alias labelOpacity: label.opacity
     
-    property color disabledButtonColor: Qt.lighter(PlasmaCore.Theme.backgroundColor, 1.1)
+    property color disabledButtonColor: PlasmaCore.Theme.backgroundColor
     property color disabledPressedButtonColor: Qt.darker(disabledButtonColor, 1.1)
     property color enabledButtonColor: Kirigami.ColorUtils.adjustColor(PlasmaCore.ColorScope.highlightColor, {"alpha": 0.4*255})
     property color enabledPressedButtonColor: Kirigami.ColorUtils.adjustColor(PlasmaCore.ColorScope.highlightColor, {"alpha": 0.6*255});
