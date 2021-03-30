@@ -17,7 +17,7 @@ DrawerBackground {
     property ObjectModel fullRepresentationModel
     property ListView fullRepresentationView
 
-    backgroundColor: (applet.backgroundHints === PlasmaCore.Types.NoBackground) ? "transparent" : Kirigami.ColorUtils.adjustColor(PlasmaCore.Theme.backgroundColor, {"alpha": 0.7*255})
+    backgroundColor: (applet.backgroundHints === PlasmaCore.Types.NoBackground) ? "transparent" : Kirigami.ColorUtils.adjustColor(PlasmaCore.Theme.backgroundColor, {"alpha": 0.8*255})
     visible: shouldBeVisible
 
     property bool shouldBeVisible: applet && (applet.status != PlasmaCore.Types.HiddenStatus && applet.status != PlasmaCore.Types.PassiveStatus)
