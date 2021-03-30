@@ -137,9 +137,11 @@ Item {
         
         ColumnLayout {
             id: column
-            anchors.margins: PlasmaCore.Units.smallSpacing
+            anchors.leftMargin: PlasmaCore.Units.smallSpacing
+            anchors.rightMargin: PlasmaCore.Units.smallSpacing
             anchors.left: parent.left
             anchors.right: parent.right
+            anchors.bottom: parent.bottom
             spacing: 0
             clip: expandedRatio > 0 && expandedRatio < 1 // only clip when necessary to improve performance
             
@@ -156,7 +158,7 @@ Item {
                 showGradientBackground: false
                 showDropShadow: false
                 transform: Translate {
-                    y: otherRowsHeight * (1 - root.expandedRatio) + PlasmaCore.Units.smallSpacing
+                    y: otherRowsHeight * (1 - root.expandedRatio) - PlasmaCore.Units.smallSpacing
                 }
             }
             
@@ -184,7 +186,7 @@ Item {
                         labelOpacity: y > 0  ? 1 : root.expandedRatio
                         opacity: y <= 0 ? 1 : root.expandedRatio
                         transform: Translate {
-                            y: otherRowsHeight * (1 - root.expandedRatio)
+                            y: otherRowsHeight * (1 - root.expandedRatio) - PlasmaCore.Units.smallSpacing * 2
                         }
 
                         Connections {
