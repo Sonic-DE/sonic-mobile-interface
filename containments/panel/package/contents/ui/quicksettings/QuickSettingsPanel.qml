@@ -219,7 +219,7 @@ Item {
                 
                 opacity: root.expandedRatio
                 transform: Translate {
-                    y: otherRowsHeight * (1 - root.expandedRatio)
+                    y: otherRowsHeight * (1 - root.expandedRatio) - PlasmaCore.Units.smallSpacing * 2
                 }
             }
         }
