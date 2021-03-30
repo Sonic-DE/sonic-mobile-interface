@@ -278,6 +278,7 @@ Item {
                 right: parent.right
                 bottom: parent.bottom
             }
+            backgroundColor: Kirigami.ColorUtils.adjustColor(PlasmaCore.Theme.backgroundColor, {"alpha": 0.7*255})
 
             parent: slidingPanel.fixedArea
             opacity: fullRepresentationView.opacity

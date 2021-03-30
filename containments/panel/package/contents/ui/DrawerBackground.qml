@@ -14,6 +14,9 @@ import org.kde.kirigami 2.12 as Kirigami
 
 QQC2.Control {
     id: root
+    
+    required property color backgroundColor 
+    
     leftPadding: units.largeSpacing
     topPadding: units.largeSpacing
     rightPadding: units.largeSpacing
@@ -33,7 +36,7 @@ QQC2.Control {
         }
         Rectangle {
             id: container
-            color: Kirigami.ColorUtils.adjustColor(PlasmaCore.Theme.backgroundColor, {"alpha": 0.7*255})
+            color: backgroundColor
             anchors {
                 fill: parent
                 leftMargin: PlasmaCore.Units.smallSpacing
