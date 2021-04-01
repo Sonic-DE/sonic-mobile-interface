@@ -122,6 +122,7 @@ Item {
         z: 1
         
         Kirigami.Icon {
+            visible: !parentSlidingPanel.wideScreen
             color: PlasmaCore.Theme.disabledTextColor
             source: expandedRatio >= 1 ? "go-up-symbolic" : "go-down-symbolic"
             implicitWidth: PlasmaCore.Units.gridUnit
