@@ -12,8 +12,7 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 2.0 as PlasmaComponents
 import org.kde.bluezqt 1.0 as BluezQt
 
-Item {
-    visible: false
+QtObject {
     property bool isVisible: BluezQt.Manager.bluetoothOperational
     property string icon: deviceConnected ? "preferences-system-bluetooth-activated" : "preferences-system-bluetooth"
     
