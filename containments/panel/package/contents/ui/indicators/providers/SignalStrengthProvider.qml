@@ -14,8 +14,7 @@ import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 2.0 as PlasmaComponents
 
-Item {
-    visible: false
+QtObject {
     property string icon: netreg.strength == 100 ? "network-mobile-100"
                         : netreg.strength >= 80 ? "network-mobile-80"
                         : netreg.strength >= 60 ? "network-mobile-60"
@@ -25,12 +24,9 @@ Item {
     
     property string label: simManager.pinRequired !== OfonoSimManager.NoPin ? i18n("Sim locked") : netreg.name
 
-    OfonoManager {
-        id: ofonoManager
-    }
+    property OfonoManager ofonoManager: OfonoManager {}
 
-    OfonoNetworkRegistration {
-        id: netreg
+    property OfonoNetworkRegistration netreg: OfonoNetworkRegistration {
         Component.onCompleted: {
             netreg.scan()
         }
@@ -38,8 +34,7 @@ Item {
         modemPath: ofonoManager.modems.length ? ofonoManager.modems[0] : ""
     }
 
-    OfonoSimManager {
-        id: simManager
+    property OfonoSimManager simManager: OfonoSimManager {
         modemPath: ofonoManager.modems.length ? ofonoManager.modems[0] : ""
     }
 }
