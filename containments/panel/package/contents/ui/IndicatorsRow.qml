@@ -85,7 +85,9 @@ Item {
             id: strengthLoader
             height: parent.height
             width: item ? item.width : 0
-            Component.onCompleted: setSource("indicators/SignalStrength.qml", {"provider": signalStrengthProvider})
+            sourceComponent: SignalStrength {
+                provider: signalStrengthProvider
+            }
         }
 
         Row {
