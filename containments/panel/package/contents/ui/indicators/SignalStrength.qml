@@ -8,8 +8,6 @@
 import QtQuick 2.1
 import QtQuick.Layouts 1.1
 
-import MeeGo.QOfono 0.2
-
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 2.0 as PlasmaComponents
@@ -17,7 +15,8 @@ import org.kde.plasma.components 2.0 as PlasmaComponents
 import "providers"
 
 Item {
-    required property SignalStrengthProvider provider
+    // we can't use SignalStrengthProvider as the var type as it would import ofono (which may cause it to break if ofono is not installed)
+    required property var provider
     
     width: strengthIcon.height + strengthLabel.width
     Layout.minimumWidth: strengthIcon.height + strengthLabel.width
