@@ -13,6 +13,7 @@ import org.kde.plasma.components 2.0 as PlasmaComponents
 import org.kde.plasma.networkmanagement 0.2 as PlasmaNM
 
 Item {
+    visible: false
     property string icon: connectionIconProvider.connectionIcon
     property bool indicatorRunning: connectionIconProvider.connecting
     

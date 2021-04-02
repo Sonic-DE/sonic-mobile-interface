@@ -15,6 +15,7 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 2.0 as PlasmaComponents
 
 Item {
+    visible: false
     property string icon: netreg.strength == 100 ? "network-mobile-100"
                         : netreg.strength >= 80 ? "network-mobile-80"
                         : netreg.strength >= 60 ? "network-mobile-60"
