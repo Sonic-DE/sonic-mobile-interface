@@ -65,9 +65,7 @@ Item {
     
     onClosed: quickSettingsModel.panelClosed()
 
-    QuickSettingsModel {
-        id: quickSettingsModel
-    }
+    property QuickSettingsModel quickSettingsModel: QuickSettingsModel {}
     
     // shadow below panel (only if not widescreen)
     Rectangle {

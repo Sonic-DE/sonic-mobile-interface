@@ -16,7 +16,7 @@ import "providers"
 
 Item {
     // we can't use SignalStrengthProvider as the var type as it would import ofono (which may cause it to break if ofono is not installed)
-    required property var provider
+    required property QtObject provider
     
     width: strengthIcon.height + strengthLabel.width
     Layout.minimumWidth: strengthIcon.height + strengthLabel.width

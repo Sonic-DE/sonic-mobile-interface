@@ -214,60 +214,65 @@ Item {
         
         onClosed: quickSettings.closed()
 
-        contentItem: GridLayout {
-            id: panelContents
+        contentItem: MouseArea {
+            // mousearea captures touch presses so that the flickable picks them up for swiping
             implicitWidth: slidingPanel.width
             implicitHeight: Math.min(slidingPanel.height, quickSettings.implicitHeight)
-            
-            columns: slidingPanel.wideScreen ? 2 : 1
-            rows: slidingPanel.wideScreen ? 1 : 2
-            
-            QuickSettingsPanel {
-                id: quickSettings
-                property int trueHeight: height + Math.round(Kirigami.Units.gridUnit * 1.5) // add height of bottom bar
-                z: 4
-                Layout.alignment: Qt.AlignTop
-                Layout.preferredWidth: slidingPanel.wideScreen ? Math.min(slidingPanel.width/2, units.gridUnit * 25) : panelContents.width
-                parentSlidingPanel: slidingPanel
-                onCloseRequested: slidingPanel.hide()
-            }
 
-            // notifications
-            ListView {
-                id: fullRepresentationView
-                implicitHeight: units.gridUnit * 20
-                Layout.topMargin: slidingPanel.wideScreen ? 0 : Math.round(Kirigami.Units.gridUnit * 1.5) // add height of bottom bar
-                Layout.preferredWidth: slidingPanel.wideScreen ? Math.min(slidingPanel.width/2, quickSettings.width*fullRepresentationModel.count) : panelContents.width 
-                Layout.preferredHeight: Math.min(plasmoid.screenGeometry.height - quickSettings.implicitHeight - bottomBar.height + slidingPanel.topEmptyAreaHeight, implicitHeight)
-                z: 1
-                interactive: count > 0 && width < contentWidth
+            GridLayout {
+                id: panelContents
+                anchors.fill: parent
+                
+                columns: slidingPanel.wideScreen ? 2 : 1
+                rows: slidingPanel.wideScreen ? 1 : 2
+                
+                QuickSettingsPanel {
+                    id: quickSettings
+                    property int trueHeight: height + Math.round(Kirigami.Units.gridUnit * 1.5) // add height of bottom bar
+                    z: 4
+                    Layout.alignment: Qt.AlignTop
+                    Layout.preferredWidth: slidingPanel.wideScreen ? Math.min(slidingPanel.width/2, units.gridUnit * 25) : panelContents.width
+                    parentSlidingPanel: slidingPanel
+                    onCloseRequested: slidingPanel.hide()
+                }
 
-                clip: slidingPanel.wideScreen
-                y: slidingPanel.wideScreen ? 0 : quickSettings.trueHeight
-                opacity: {
-                    if (slidingPanel.wideScreen) {
-                        return 1;
-                    } else {
-                        return fullRepresentationModel.count > 0 && slidingPanel.offset / slidingPanel.collapsedHeight;
+                // notifications
+                ListView {
+                    id: fullRepresentationView
+                    implicitHeight: units.gridUnit * 20
+                    Layout.topMargin: slidingPanel.wideScreen ? 0 : Math.round(Kirigami.Units.gridUnit * 1.5) // add height of bottom bar
+                    Layout.preferredWidth: slidingPanel.wideScreen ? Math.min(slidingPanel.width/2, quickSettings.width*fullRepresentationModel.count) : panelContents.width 
+                    Layout.preferredHeight: Math.min(plasmoid.screenGeometry.height - quickSettings.implicitHeight - bottomBar.height + slidingPanel.topEmptyAreaHeight, implicitHeight)
+                    z: 1
+                    interactive: count > 0 && width < contentWidth
+
+                    clip: slidingPanel.wideScreen
+                    y: slidingPanel.wideScreen ? 0 : quickSettings.trueHeight
+                    opacity: {
+                        if (slidingPanel.wideScreen) {
+                            return 1;
+                        } else {
+                            return fullRepresentationModel.count > 0 && slidingPanel.offset / slidingPanel.collapsedHeight;
+                        }
                     }
-                }
-                preferredHighlightBegin: slidingPanel.drawerX
+                    preferredHighlightBegin: slidingPanel.drawerX
 
-                cacheBuffer: width * 100
-                highlightFollowsCurrentItem: true
-                highlightRangeMode: ListView.StrictlyEnforceRange
-                highlightMoveDuration: units.longDuration
-                snapMode: slidingPanel.wideScreen ? ListView.NoSnap : ListView.SnapOneItem
-                model: ObjectModel {
-                    id: fullRepresentationModel
-                }
-                orientation: ListView.Horizontal
+                    cacheBuffer: width * 100
+                    highlightFollowsCurrentItem: true
+                    highlightRangeMode: ListView.StrictlyEnforceRange
+                    highlightMoveDuration: units.longDuration
+                    snapMode: slidingPanel.wideScreen ? ListView.NoSnap : ListView.SnapOneItem
+                    model: ObjectModel {
+                        id: fullRepresentationModel
+                    }
+                    orientation: ListView.Horizontal
 
-                MouseArea {
-                    parent: fullRepresentationView.contentItem
-                    anchors.fill: parent
-                    z: -1
-                    onClicked: slidingPanel.close()
+                    MouseArea {
+                        parent: fullRepresentationView.contentItem
+                        anchors.fill: parent
+                        z: -1
+                        onClicked: slidingPanel.close()
+                    }
                 }
             }
         }
