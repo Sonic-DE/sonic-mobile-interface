@@ -85,7 +85,8 @@ Item {
             id: strengthLoader
             height: parent.height
             width: item ? item.width : 0
-            sourceComponent: SignalStrength {
+            active: signalStrengthProvider
+            sourceComponent: Indicators.SignalStrength {
                 provider: signalStrengthProvider
             }
         }

@@ -13,13 +13,11 @@ import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.plasma.workspace.components 2.0 as PW
 
 Item {
-    visible: false
     property bool isVisible: pmSource.data["Battery"]["Has Cumulative"]
     property int percent: pmSource.data["Battery"]["Percent"]
     property bool pluggedIn: pmSource.data["AC Adapter"] ? pmSource.data["AC Adapter"]["Plugged in"] : false
     
-    PlasmaCore.DataSource {
-        id: pmSource
+    property PlasmaCore.DataSource pmSource: PlasmaCore.DataSource {
         engine: "powermanagement"
         connectedSources: ["Battery", "AC Adapter"]
     }

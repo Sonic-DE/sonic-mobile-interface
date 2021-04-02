@@ -12,14 +12,11 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 2.0 as PlasmaComponents
 import org.kde.plasma.private.volume 0.1
 
-Item {
-    visible: false
+QtObject {
     property bool isVisible: paSinkModel.preferredSink && paSinkModel.preferredSink.muted
     property string icon: paSinkModel.preferredSink && !isDummyOutput(paSinkModel.preferredSink)
                           ? iconName(paSinkModel.preferredSink.volume, paSinkModel.preferredSink.muted)
                           : iconName(0, true)
-    
-    id: paIcon
     
     property bool volumeFeedback: true
     property int maxVolumeValue: Math.round(100 * PulseAudio.NormalVolume / 100.0)
@@ -111,19 +108,13 @@ Item {
         }
     }
 
-    SinkModel {
-        id: paSinkModel
-    }
+    property SinkModel paSinkModel: SinkModel {}
 
-    VolumeOSD {
-        id: osd
-    }
+    property VolumeOSD osd: VolumeOSD {}
 
-    VolumeFeedback {
-        id: feedback
-    }
+    property VolumeFeedback feedback: VolumeFeedback {}
 
-    GlobalActionCollection {
+    property GlobalActionCollection actionCollection: GlobalActionCollection {
         // KGlobalAccel cannot transition from kmix to something else, so if
         // the user had a custom shortcut set for kmix those would get lost.
         // To avoid this we hijack kmix name and actions. Entirely mental but
