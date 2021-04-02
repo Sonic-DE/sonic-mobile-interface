@@ -13,6 +13,7 @@ import org.kde.plasma.components 2.0 as PlasmaComponents
 import org.kde.plasma.private.volume 0.1
 
 Item {
+    visible: false
     property bool isVisible: paSinkModel.preferredSink && paSinkModel.preferredSink.muted
     property string icon: paSinkModel.preferredSink && !isDummyOutput(paSinkModel.preferredSink)
                           ? iconName(paSinkModel.preferredSink.volume, paSinkModel.preferredSink.muted)
