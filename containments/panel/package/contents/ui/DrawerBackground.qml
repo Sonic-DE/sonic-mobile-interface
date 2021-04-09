@@ -26,13 +26,11 @@ QQC2.Control {
         MouseArea {
             anchors.fill: parent
         }
-        RectangularGlow {
-            anchors.topMargin: 1
+        PlasmaCore.FrameSvgItem {
+            imagePath: "widgets/panel-background"
+            prefix: "shadow"
             anchors.fill: container
-            cached: true
-            glowRadius: PlasmaCore.Units.smallSpacing * 2
-            spread: 0.2
-            color: Qt.rgba(0, 0, 0, 0.05)
+            anchors.margins: -PlasmaCore.Units.smallSpacing
         }
         Rectangle {
             id: container
