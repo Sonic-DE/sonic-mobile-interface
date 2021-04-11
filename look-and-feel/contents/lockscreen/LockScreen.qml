@@ -253,8 +253,6 @@ PlasmaCore.ColorScope {
                 focus: passwordFlickable.contentY === passwordFlickable.columnHeight
                 swipeProgress: passwordFlickable.contentY / passwordFlickable.columnHeight
                 Layout.fillWidth: true
-                Layout.minimumHeight: units.gridUnit * 17
-                Layout.maximumWidth: root.width
             }
         }
     }
