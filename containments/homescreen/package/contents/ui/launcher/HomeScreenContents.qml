@@ -226,6 +226,13 @@ DragDrop.DropArea {
 
                 appletContainer.x = Math.max(0, Math.min(mainFlickable.width - appletContainer.width, appletContainer.x));
             }
+            onWidthChanged: {
+                if (appletContainer.x + appletContainer.width > mainFlickable.width * Math.max(1, Math.ceil(appletContainer.x / mainFlickable.width))) {
+                    appletsLayout.releaseSpace(appletContainer);
+                    appletContainer.width = (mainFlickable.width * Math.max(1, Math.ceil(appletContainer.x / mainFlickable.width)) - appletContainer.x);
+                    appletsLayout.positionItem(appletContainer);
+                }
+            }
             Connections {
                 target: appletsLayout
                 function onAppletsLayoutInteracted() {
@@ -237,6 +244,7 @@ DragDrop.DropArea {
                 function onWidthChanged () {
                     let spaceReleased = false;
                     if (appletContainer.width > mainFlickable.width || appletContainer.height > mainFlickable.height) {
+                        appletsLayout.releaseSpace(appletContainer);
                         appletContainer.width = Math.min(appletContainer.width, mainFlickable.width);
                         appletContainer.height = Math.min(appletContainer.height, mainFlickable.height);
                         spaceReleased = true;
