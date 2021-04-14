@@ -26,7 +26,7 @@ DragDrop.DropArea {
     id: dropArea
     width: mainFlickable.width * 100
     //width: Math.max(mainFlickable.width, mainFlickable.width * Math.ceil(appletsLayout.childrenRect.width/mainFlickable.width))
-    height: mainFlickable.height + favoriteStrip.height + units.gridUnit
+    height: mainFlickable.height
 
     property alias itemsBoundingRect: appletsLayout.childrenRect
 
@@ -136,7 +136,7 @@ DragDrop.DropArea {
 
         anchors {
             fill: parent
-            bottomMargin: favoriteStrip.height
+            bottomMargin: dropArea.favoriteStrip ? dropArea.favoriteStrip.height : 0
         }
 
         signal appletsLayoutInteracted
