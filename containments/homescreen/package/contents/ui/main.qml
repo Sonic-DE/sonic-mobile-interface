@@ -88,14 +88,6 @@ FocusScope {
         }
     }
 
-    Launcher.LauncherDragManager {
-        id: launcherDragManager
-        anchors.fill: parent
-        z: 2
-        appletsLayout: homeScreenContents.appletsLayout
-        favoriteStrip: favoriteStrip
-    }
-
     Launcher.FlickablePages {
         id: mainFlickable
 
@@ -180,6 +172,7 @@ FocusScope {
         footer: favoriteStrip
         appletsLayout: homeScreenContents.appletsLayout
 
+<<<<<<< HEAD
         // TODO: span on multiple pages
         DragDrop.DropArea {
             id: dropArea
@@ -227,6 +220,13 @@ FocusScope {
                         if (plasmoid.nativeInterface.applicationListModel.favoriteCount >= plasmoid.nativeInterface.applicationListModel.maxFavoriteCount ) {
                             return;
                         }
+=======
+        appDrawer: appDrawer
+        contentWidth: Math.max(width, width * Math.ceil(homeScreenContents.itemsBoundingRect.width/width)) + (homeScreenContents.launcherDragManager.active ? width : 0)
+        showAddPageIndicator: homeScreenContents.launcherDragManager.active
+
+        dragGestureEnabled: root.focus && appDrawer.status !== Launcher.AppDrawer.Status.Open && !appletsLayout.editMode && !plasmoid.editMode && !homeScreenContents.launcherDragManager.active
+>>>>>>> move MobileAppletContainer in own component
 
                         let pos = Math.min(plasmoid.nativeInterface.applicationListModel.count, Math.floor(posInFavorites.x/favoriteStrip.cellWidth))
                         plasmoid.nativeInterface.applicationListModel.addFavorite(storageId, pos, ApplicationListModel.Favorites)
@@ -373,13 +373,13 @@ onChildrenRectChanged: print("AAAAAA"+childrenRect.width)
 
         appletsLayout: homeScreenContents.appletsLayout
 
-        visible: flow.children.length > 0 || launcherDragManager.active || homeScreenContents.containsDrag
+        visible: flow.children.length > 0 || homeScreenContents.launcherDragManager.active || homeScreenContents.containsDrag
 
         LauncherPrivate.DragGestureHandler {
             target: favoriteStrip
             appDrawer: appDrawer
             mainFlickable: mainFlickable
-            enabled: root.focus && appDrawer.status !== Launcher.AppDrawer.Status.Open && !homeScreenContents.appletsLayout.editMode && !plasmoid.editMode && !launcherDragManager.active
+            enabled: root.focus && appDrawer.status !== Launcher.AppDrawer.Status.Open && !homeScreenContents.appletsLayout.editMode && !plasmoid.editMode && !homeScreenContents.launcherDragManager.active
             onSnapPage: mainFlickable.snapPage();
         }
         TapHandler {
