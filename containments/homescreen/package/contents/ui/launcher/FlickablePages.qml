@@ -183,23 +183,34 @@ Flickable {
         }
     }
 
-    Private.ScrollIndicator {
-        id: scrollLeftIndicator
-        parent: mainFlickable
-        anchors {
-            left: parent.left
-            leftMargin: units.smallSpacing
+    Item {
+        z: 9999999
+        anchors.fill: parent
+        parent: {
+            let candidate = mainFlickable;
+            while (candidate.parent) {
+                candidate = candidate.parent;
+            }
+            print("££££££££££££"+candidate)
+            return candidate;
         }
-        elementId: "left-arrow"
-    }
-    Private.ScrollIndicator {
-        id: scrollRightIndicator
-        parent: mainFlickable
-        anchors {
-            right: parent.right
-            rightMargin: units.smallSpacing
+
+        Private.ScrollIndicator {
+            id: scrollLeftIndicator
+            anchors {
+                left: parent.left
+                leftMargin: units.smallSpacing
+            }
+            elementId: "left-arrow"
         }
-        elementId: "right-arrow"
+        Private.ScrollIndicator {
+            id: scrollRightIndicator
+            anchors {
+                right: parent.right
+                rightMargin: units.smallSpacing
+            }
+            elementId: "right-arrow"
+        }
     }
 }
 
