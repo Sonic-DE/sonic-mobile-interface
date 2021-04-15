@@ -88,14 +88,6 @@ FocusScope {
         }
     }
 
-    Launcher.LauncherDragManager {
-        id: launcherDragManager
-        anchors.fill: parent
-        z: 2
-        appletsLayout: homeScreenContents.appletsLayout
-        favoriteStrip: favoriteStrip
-    }
-
     Launcher.FlickablePages {
         id: mainFlickable
 
@@ -110,8 +102,10 @@ FocusScope {
         appletsLayout: homeScreenContents.appletsLayout
 
         appDrawer: appDrawer
-        contentWidth: Math.max(width, width * Math.ceil(homeScreenContents.itemsBoundingRect.width/width)) + (launcherDragManager.active ? width : 0)
-        showAddPageIndicator: launcherDragManager.active
+        contentWidth: Math.max(width, width * Math.ceil(homeScreenContents.itemsBoundingRect.width/width)) + (homeScreenContents.launcherDragManager.active ? width : 0)
+        showAddPageIndicator: homeScreenContents.launcherDragManager.active
+
+        dragGestureEnabled: root.focus && appDrawer.status !== Launcher.AppDrawer.Status.Open && !appletsLayout.editMode && !plasmoid.editMode && !homeScreenContents.launcherDragManager.active
 
         Launcher.HomeScreenContents {
             id: homeScreenContents
@@ -134,13 +128,13 @@ FocusScope {
 
         appletsLayout: homeScreenContents.appletsLayout
 
-        visible: flow.children.length > 0 || launcherDragManager.active || homeScreenContents.containsDrag
+        visible: flow.children.length > 0 || homeScreenContents.launcherDragManager.active || homeScreenContents.containsDrag
 
         LauncherPrivate.DragGestureHandler {
             target: favoriteStrip
             appDrawer: appDrawer
             mainFlickable: mainFlickable
-            enabled: root.focus && appDrawer.status !== Launcher.AppDrawer.Status.Open && !homeScreenContents.appletsLayout.editMode && !plasmoid.editMode && !launcherDragManager.active
+            enabled: root.focus && appDrawer.status !== Launcher.AppDrawer.Status.Open && !homeScreenContents.appletsLayout.editMode && !plasmoid.editMode && !homeScreenContents.launcherDragManager.active
             onSnapPage: mainFlickable.snapPage();
         }
         TapHandler {

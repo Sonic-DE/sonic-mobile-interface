@@ -33,6 +33,7 @@ Flickable {
     property ContainmentLayoutManager.AppletsLayout appletsLayout: null
     property Item footer
 
+    property alias dragGestureEnabled: gestureHandler.enabled
     opacity: 1 - appDrawer.openFactor
     transform: Translate {
         y: -mainFlickable.height/10 * appDrawer.openFactor
@@ -41,9 +42,7 @@ Flickable {
     clip: true
 
     property bool showAddPageIndicator: false
-    //bottomMargin: favoriteStrip.height
     contentHeight: height
-    //interactive: !plasmoid.editMode && !launcherDragManager.active
     interactive: false
 
     signal cancelEditModeForItemsRequested
@@ -133,7 +132,6 @@ Flickable {
         target: appletsLayout
         appDrawer: mainFlickable.appDrawer
         mainFlickable: mainFlickable
-        enabled: root.focus && appDrawer.status !== AppDrawer.Status.Open && !appletsLayout.editMode && !plasmoid.editMode && !launcherDragManager.active
         onSnapPage: mainFlickable.snapPage();
         onSnapNextPage: mainFlickable.snapNextPage();
         onSnapPrevPage: mainFlickable.snapPrevPage();
