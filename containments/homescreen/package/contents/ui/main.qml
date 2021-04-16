@@ -14,10 +14,7 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.draganddrop 2.0 as DragDrop
 
-import "launcher" as Launcher
-//TODO: everything using this will eventually move in Launcher
-import "launcher/private" as LauncherPrivate
-
+import org.kde.plasma.private.mobilehomescreencomponents 0.1 as HomeScreenComponents
 import org.kde.plasma.private.containmentlayoutmanager 1.0 as ContainmentLayoutManager 
 
 import org.kde.phone.homescreen 1.0
@@ -88,7 +85,7 @@ FocusScope {
         }
     }
 
-    Launcher.FlickablePages {
+    HomeScreenComponents.FlickablePages {
         id: mainFlickable
 
         anchors {
@@ -105,16 +102,16 @@ FocusScope {
         contentWidth: Math.max(width, width * Math.ceil(homeScreenContents.itemsBoundingRect.width/width)) + (homeScreenContents.launcherDragManager.active ? width : 0)
         showAddPageIndicator: homeScreenContents.launcherDragManager.active
 
-        dragGestureEnabled: root.focus && appDrawer.status !== Launcher.AppDrawer.Status.Open && !appletsLayout.editMode && !plasmoid.editMode && !homeScreenContents.launcherDragManager.active
+        dragGestureEnabled: root.focus && appDrawer.status !== HomeScreenComponents.AppDrawer.Status.Open && !appletsLayout.editMode && !plasmoid.editMode && !homeScreenContents.launcherDragManager.active
 
-        Launcher.HomeScreenContents {
+        HomeScreenComponents.HomeScreenContents {
             id: homeScreenContents
             width: mainFlickable.width * 100
             favoriteStrip: favoriteStrip
         }
     }
 
-    Launcher.AppDrawer {
+    HomeScreenComponents.AppDrawer {
         id: appDrawer
         anchors.fill: parent
 
@@ -123,20 +120,15 @@ FocusScope {
         closedPositionOffset: favoriteStrip.height
     }
 
-    Launcher.FavoriteStrip {
+    HomeScreenComponents.FavoriteStrip {
         id: favoriteStrip
 
         appletsLayout: homeScreenContents.appletsLayout
 
         visible: flow.children.length > 0 || homeScreenContents.launcherDragManager.active || homeScreenContents.containsDrag
 
-        LauncherPrivate.DragGestureHandler {
-            target: favoriteStrip
-            appDrawer: appDrawer
-            mainFlickable: mainFlickable
-            enabled: root.focus && appDrawer.status !== Launcher.AppDrawer.Status.Open && !homeScreenContents.appletsLayout.editMode && !plasmoid.editMode && !homeScreenContents.launcherDragManager.active
-            onSnapPage: mainFlickable.snapPage();
-        }
+        opacity: homeScreenContents.launcherDragManager.active && plasmoid.nativeInterface.applicationListModel.favoriteCount >= plasmoid.nativeInterface.applicationListModel.maxFavoriteCount ? 0.3 : 1
+
         TapHandler {
             target: favoriteStrip
             onTapped: {

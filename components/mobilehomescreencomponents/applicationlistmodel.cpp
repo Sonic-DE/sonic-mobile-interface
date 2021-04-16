@@ -29,11 +29,14 @@
 #include <KWayland/Client/registry.h>
 #include <KWayland/Client/surface.h>
 
+#include <Plasma/Applet>
+#include <PlasmaQuick/AppletQuickItem>
+
 constexpr int MAX_FAVOURITES = 5;
 
-ApplicationListModel::ApplicationListModel(HomeScreen *parent)
-    : QAbstractListModel(parent),
-      m_applet(parent)
+ApplicationListModel::ApplicationListModel(QObject *parent)
+    : QAbstractListModel(parent)
+      //m_applet(parent)
 {
     connect(KSycoca::self(), qOverload<const QStringList &>(&KSycoca::databaseChanged),
             this, &ApplicationListModel::sycocaDbChanged);
@@ -49,15 +52,15 @@ void ApplicationListModel::loadSettings()
     if (!m_applet) {
         return;
     }
-    m_favorites = m_applet->config().readEntry("Favorites", QStringList());
+    m_favorites = m_applet->applet()->config().readEntry("Favorites", QStringList());
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
-    const auto di = m_applet->config().readEntry("DesktopItems", QStringList());
+    const auto di = m_applet->applet()->config().readEntry("DesktopItems", QStringList());
     m_desktopItems = QSet<QString>(di.begin(), di.end());
 #else
-    m_desktopItems = m_applet->config().readEntry("DesktopItems", QStringList()).toSet();
+    m_desktopItems = m_applet->applet()->config().readEntry("DesktopItems", QStringList()).toSet();
 #endif
-    m_appOrder = m_applet->config().readEntry("AppOrder", QStringList());
-    m_maxFavoriteCount = m_applet->config().readEntry("MaxFavoriteCount", MAX_FAVOURITES);
+    m_appOrder = m_applet->applet()->config().readEntry("AppOrder", QStringList());
+    m_maxFavoriteCount = m_applet->applet()->config().readEntry("MaxFavoriteCount", MAX_FAVOURITES);
 
     int i = 0;
     for (const QString &app : qAsConst(m_appOrder)) {
@@ -242,7 +245,7 @@ void ApplicationListModel::loadApplications()
     }
     if (favChanged) {
         if (m_applet) {
-            m_applet->config().writeEntry("Favorites", m_favorites);
+            m_applet->applet()->config().writeEntry("Favorites", m_favorites);
         }
         emit favoriteCountChanged();
     }
@@ -323,7 +326,7 @@ void ApplicationListModel::setLocation(int row, LauncherLocation location)
         m_favorites.insert(row, data.uniqueId);
 
         if (m_applet) {
-            m_applet->config().writeEntry("Favorites", m_favorites);
+            m_applet->applet()->config().writeEntry("Favorites", m_favorites);
         }
         emit favoriteCountChanged();
 
@@ -331,7 +334,7 @@ void ApplicationListModel::setLocation(int row, LauncherLocation location)
     } else  if (data.location == Favorites) {
         m_favorites.removeAll(data.uniqueId);
         if (m_applet) {
-            m_applet->config().writeEntry("Favorites", m_favorites);
+            m_applet->applet()->config().writeEntry("Favorites", m_favorites);
         }
         emit favoriteCountChanged();
     }
@@ -340,20 +343,20 @@ void ApplicationListModel::setLocation(int row, LauncherLocation location)
     if (location == Desktop) {
         m_desktopItems.insert(data.uniqueId);
         if (m_applet) {
-            m_applet->config().writeEntry("DesktopItems", m_desktopItems.values());
+            m_applet->applet()->config().writeEntry("DesktopItems", m_desktopItems.values());
         }
 
     // Out of Desktop
     } else  if (data.location == Desktop) {
         m_desktopItems.remove(data.uniqueId);
         if (m_applet) {
-            m_applet->config().writeEntry(QStringLiteral("DesktopItems"), m_desktopItems.values());
+            m_applet->applet()->config().writeEntry(QStringLiteral("DesktopItems"), m_desktopItems.values());
         }
     }
 
     data.location = location;
     if (m_applet) {
-        emit m_applet->configNeedsSaving();
+        emit m_applet->applet()->configNeedsSaving();
     }
     emit dataChanged(index(row, 0), index(row, 0));
 }
@@ -390,7 +393,7 @@ void ApplicationListModel::moveItem(int row, int destination)
     }
 
     if (m_applet) {
-        m_applet->config().writeEntry("AppOrder", m_appOrder);
+        m_applet->applet()->config().writeEntry("AppOrder", m_appOrder);
     }
 
     endMoveRows();
@@ -444,18 +447,18 @@ void ApplicationListModel::setMaxFavoriteCount(int count)
 
     m_maxFavoriteCount = count;
     if (m_applet) {
-        m_applet->config().writeEntry("MaxFavoriteCount", m_maxFavoriteCount);
+        m_applet->applet()->config().writeEntry("MaxFavoriteCount", m_maxFavoriteCount);
     }
 
     emit maxFavoriteCountChanged();
 }
 
-Plasma::Applet *ApplicationListModel::applet() const
+PlasmaQuick::AppletQuickItem *ApplicationListModel::applet() const
 {
     return m_applet;
 }
 
-void ApplicationListModel::setApplet(Plasma::Applet *applet)
+void ApplicationListModel::setApplet(PlasmaQuick::AppletQuickItem *applet)
 {
     m_applet = applet;
 }

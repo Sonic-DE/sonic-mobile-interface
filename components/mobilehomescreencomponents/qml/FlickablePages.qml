@@ -191,7 +191,6 @@ Flickable {
             while (candidate.parent) {
                 candidate = candidate.parent;
             }
-            print("££££££££££££"+candidate)
             return candidate;
         }
 

@@ -13,7 +13,7 @@
 #include <QList>
 #include <QSet>
 
-#include "homescreen.h"
+#include "homescreenutils.h"
 
 class QString;
 
@@ -26,10 +26,17 @@ class PlasmaWindow;
 }
 }
 
+namespace PlasmaQuick
+{
+class AppletQuickItem;
+}
+
 class ApplicationListModel;
 
 class ApplicationListModel : public QAbstractListModel {
     Q_OBJECT
+
+    Q_PROPERTY(PlasmaQuick::AppletQuickItem *applet READ applet NOTIFY appletChanged)
 
     Q_PROPERTY(int count READ count NOTIFY countChanged)
     Q_PROPERTY(int favoriteCount READ favoriteCount NOTIFY favoriteCountChanged)
@@ -66,7 +73,7 @@ public:
         ApplicationUniqueIdRole
     };
 
-    ApplicationListModel(HomeScreen *parent = nullptr);
+    ApplicationListModel(QObject *parent = nullptr);
     ~ApplicationListModel() override;
 
     void loadSettings();
@@ -81,8 +88,8 @@ public:
     int maxFavoriteCount() const;
     void setMaxFavoriteCount(int count);
 
-    void setApplet(Plasma::Applet *applet);
-    Plasma::Applet *applet() const;
+    void setApplet(PlasmaQuick::AppletQuickItem *applet);
+    PlasmaQuick::AppletQuickItem *applet() const;
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
 
@@ -108,6 +115,7 @@ Q_SIGNALS:
     void countChanged();
     void favoriteCountChanged();
     void maxFavoriteCountChanged();
+    void appletChanged();
 
 protected:
     void initWayland();
@@ -115,7 +123,7 @@ protected:
     QList<ApplicationData> m_applicationList;
 
     KWayland::Client::PlasmaWindowManagement *m_windowManagement = nullptr;
-    Plasma::Applet *m_applet = nullptr;
+    PlasmaQuick::AppletQuickItem *m_applet = nullptr;
     int m_maxFavoriteCount = 0;
     QStringList m_appOrder;
     QStringList m_favorites;

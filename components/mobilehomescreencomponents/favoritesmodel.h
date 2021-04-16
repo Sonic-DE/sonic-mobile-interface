@@ -12,7 +12,7 @@
 #include <QList>
 #include <QSet>
 
-#include "homescreen.h"
+#include "homescreenutils.h"
 #include "applicationlistmodel.h"
 
 class QString;
@@ -32,7 +32,7 @@ class FavoritesModel : public ApplicationListModel {
     Q_OBJECT
 
 public:
-    FavoritesModel(HomeScreen *parent = nullptr);
+    FavoritesModel(QObject *parent = nullptr);
     ~FavoritesModel() override;
 
 
