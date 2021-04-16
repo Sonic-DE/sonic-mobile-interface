@@ -16,9 +16,12 @@
 #include <KService>
 #include <KSharedConfig>
 
+#include <Plasma/Applet>
+#include <PlasmaQuick/AppletQuickItem>
+
 constexpr int MAX_FAVOURITES = 5;
 
-FavoritesModel::FavoritesModel(HomeScreen *parent)
+FavoritesModel::FavoritesModel(QObject *parent)
     : ApplicationListModel(parent)
 {
 }
@@ -96,10 +99,10 @@ void FavoritesModel::loadApplications()
     emit countChanged();
 
     if (m_applet) {
-        m_applet->config().writeEntry("Favorites", m_favorites);
-        m_applet->config().writeEntry("AppOrder", m_appOrder);
-        m_applet->config().writeEntry("DesktopItems", m_desktopItems.values());
-        emit m_applet->configNeedsSaving();
+        m_applet->applet()->config().writeEntry("Favorites", m_favorites);
+        m_applet->applet()->config().writeEntry("AppOrder", m_appOrder);
+        m_applet->applet()->config().writeEntry("DesktopItems", m_desktopItems.values());
+        emit m_applet->applet()->configNeedsSaving();
     }
 
     if (favChanged) {
@@ -142,10 +145,10 @@ void FavoritesModel::addFavorite(const QString &storageId, int row, LauncherLoca
         }
 
         if (m_applet) {
-            m_applet->config().writeEntry("Favorites", m_favorites);
-            m_applet->config().writeEntry("AppOrder", m_appOrder);
-            m_applet->config().writeEntry("DesktopItems", m_desktopItems.values());
-            emit m_applet->configNeedsSaving();
+            m_applet->applet()->config().writeEntry("Favorites", m_favorites);
+            m_applet->applet()->config().writeEntry("AppOrder", m_appOrder);
+            m_applet->applet()->config().writeEntry("DesktopItems", m_desktopItems.values());
+            emit m_applet->applet()->configNeedsSaving();
         }
     }
 }
@@ -171,10 +174,10 @@ void FavoritesModel::removeFavorite(int row)
     }
 
     if (m_applet) {
-        m_applet->config().writeEntry("Favorites", m_favorites);
-        m_applet->config().writeEntry("AppOrder", m_appOrder);
-        m_applet->config().writeEntry("DesktopItems", m_desktopItems.values());
-        emit m_applet->configNeedsSaving();
+        m_applet->applet()->config().writeEntry("Favorites", m_favorites);
+        m_applet->applet()->config().writeEntry("AppOrder", m_appOrder);
+        m_applet->applet()->config().writeEntry("DesktopItems", m_desktopItems.values());
+        emit m_applet->applet()->configNeedsSaving();
     }
 }
 

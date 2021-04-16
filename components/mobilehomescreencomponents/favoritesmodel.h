@@ -12,6 +12,7 @@
 #include <QObject>
 #include <QSet>
 
+#include "homescreenutils.h"
 #include "applicationlistmodel.h"
 #include "homescreen.h"
 
@@ -33,7 +34,7 @@ class FavoritesModel : public ApplicationListModel
     Q_OBJECT
 
 public:
-    FavoritesModel(HomeScreen *parent = nullptr);
+    FavoritesModel(QObject *parent = nullptr);
     ~FavoritesModel() override;
 
     QString storageToUniqueId(const QString &storageId) const;
