@@ -36,7 +36,7 @@ class ApplicationListModel;
 class ApplicationListModel : public QAbstractListModel {
     Q_OBJECT
 
-    Q_PROPERTY(PlasmaQuick::AppletQuickItem *applet READ applet NOTIFY appletChanged)
+    Q_PROPERTY(PlasmaQuick::AppletQuickItem *applet READ applet WRITE setApplet NOTIFY appletChanged)
 
     Q_PROPERTY(int count READ count NOTIFY countChanged)
     Q_PROPERTY(int favoriteCount READ favoriteCount NOTIFY favoriteCountChanged)

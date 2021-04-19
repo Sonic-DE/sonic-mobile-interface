@@ -17,8 +17,6 @@ import org.kde.draganddrop 2.0 as DragDrop
 import org.kde.plasma.private.mobilehomescreencomponents 0.1 as HomeScreenComponents
 import org.kde.plasma.private.containmentlayoutmanager 1.0 as ContainmentLayoutManager 
 
-import org.kde.phone.homescreen 1.0
-
 import org.kde.plasma.private.mobileshell 1.0 as MobileShell
 
 FocusScope {
@@ -35,16 +33,18 @@ FocusScope {
             return;
         }
 
-        plasmoid.nativeInterface.applicationListModel.maxFavoriteCount = Math.max(4, Math.floor(Math.min(width, height) / homeScreenContents.appletsLayout.cellWidth));
+        HomeScreenComponents.ApplicationListModel.maxFavoriteCount = Math.max(4, Math.floor(Math.min(width, height) / homeScreenContents.appletsLayout.cellWidth));
     }
 
 //END functions
-
 
     property bool componentComplete: false
     onWidthChanged: recalculateMaxFavoriteCount()
     onHeightChanged:recalculateMaxFavoriteCount()
     Component.onCompleted: {
+        HomeScreenComponents.ApplicationListModel.applet = plasmoid
+        HomeScreenComponents.ApplicationListModel.loadApplications();
+
         if (plasmoid.screen == 0) {
             MobileShell.HomeScreenControls.homeScreen = root
             MobileShell.HomeScreenControls.homeScreenWindow = root.Window.window
@@ -127,7 +127,7 @@ FocusScope {
 
         visible: flow.children.length > 0 || homeScreenContents.launcherDragManager.active || homeScreenContents.containsDrag
 
-        opacity: homeScreenContents.launcherDragManager.active && plasmoid.nativeInterface.applicationListModel.favoriteCount >= plasmoid.nativeInterface.applicationListModel.maxFavoriteCount ? 0.3 : 1
+        opacity: homeScreenContents.launcherDragManager.active && HomeScreenComponents.ApplicationListModel.favoriteCount >= HomeScreenComponents.ApplicationListModel.maxFavoriteCount ? 0.3 : 1
 
         TapHandler {
             target: favoriteStrip
