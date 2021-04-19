@@ -32,7 +32,7 @@ void MobileHomeScreenComponentsPlugin::registerTypes(const char *uri)
 
     qmlRegisterSingletonType<HomeScreenUtils>(uri, 0, 1, "HomeScreenUtils",
                                               [](QQmlEngine *, QJSEngine *) {
-        return new ApplicationListModel{};
+        return new HomeScreenUtils{};
     });
 
     qmlRegisterSingletonType<ApplicationListModel>(uri, 0, 1, "ApplicationListModel", 
@@ -40,7 +40,10 @@ void MobileHomeScreenComponentsPlugin::registerTypes(const char *uri)
         return new ApplicationListModel{};
     });
 
-    qmlRegisterType<FavoritesModel>(uri, 0, 1, "FavoritesModel");
+    qmlRegisterSingletonType<FavoritesModel>(uri, 0, 1, "FavoritesModel", 
+                                                   [](QQmlEngine *, QJSEngine *) {
+        return new FavoritesModel{};
+    });
 
     //  qmlProtectModule(uri, 1);
 }

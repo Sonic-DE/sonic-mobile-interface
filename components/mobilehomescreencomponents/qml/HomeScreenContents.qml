@@ -16,9 +16,9 @@ import org.kde.draganddrop 2.0 as DragDrop
 
 import org.kde.plasma.private.containmentlayoutmanager 1.0 as ContainmentLayoutManager 
 
-import org.kde.phone.homescreen 1.0
-
 import org.kde.plasma.private.mobileshell 1.0 as MobileShell
+
+import org.kde.plasma.private.mobilehomescreencomponents 0.1 as HomeScreenComponents
 
 import "private" as Private
 
@@ -63,7 +63,7 @@ DragDrop.DropArea {
     onDragMove: {
         let posInFavorites = favoriteStrip.mapFromItem(this, event.x, event.y);
         if (posInFavorites.y > 0) {
-            if (plasmoid.nativeInterface.applicationListModel.favoriteCount >= plasmoid.nativeInterface.applicationListModel.maxFavoriteCount ) {
+            if (HomeScreenComponents.ApplicationListModel.favoriteCount >= HomeScreenComponents.ApplicationListModel.maxFavoriteCount ) {
                 launcherDragManager.hideSpacer();
             } else {
                 launcherDragManager.showSpacerAtPos(event.x, event.y, favoriteStrip);
@@ -106,12 +106,12 @@ DragDrop.DropArea {
 
             let posInFavorites = favoriteStrip.flow.mapFromItem(this, event.x, event.y);
             if (posInFavorites.y > 0) {
-                if (plasmoid.nativeInterface.applicationListModel.favoriteCount >= plasmoid.nativeInterface.applicationListModel.maxFavoriteCount ) {
+                if (HomeScreenComponents.ApplicationListModel.favoriteCount >= HomeScreenComponents.ApplicationListModel.maxFavoriteCount ) {
                     return;
                 }
 
-                let pos = Math.min(plasmoid.nativeInterface.applicationListModel.count, Math.floor(posInFavorites.x/favoriteStrip.cellWidth))
-                plasmoid.nativeInterface.applicationListModel.addFavorite(storageId, pos, ApplicationListModel.Favorites)
+                let pos = Math.min(HomeScreenComponents.FavoritesModel.count, Math.floor(posInFavorites.x/favoriteStrip.cellWidth))
+                HomeScreenComponents.FavoritesModel.addFavorite(storageId, pos, HomeScreenComponents.ApplicationListModel.Favorites)
                 let item = launcherRepeater.itemAt(pos);
 
                 if (item) {
@@ -125,9 +125,8 @@ DragDrop.DropArea {
                 return;
             }
 
-
-            let pos = plasmoid.nativeInterface.applicationListModel.count;
-            plasmoid.nativeInterface.applicationListModel.addFavorite(storageId, pos, ApplicationListModel.Desktop)
+            let pos = HomeScreenComponents.FavoritesModel.count;
+            HomeScreenComponents.FavoritesModel.addFavorite(storageId, pos, HomeScreenComponents.ApplicationListModel.Desktop)
             let item = launcherRepeater.itemAt(pos);
 
             event.accept(event.proposedAction);
