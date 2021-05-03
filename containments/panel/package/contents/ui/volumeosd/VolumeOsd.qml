@@ -26,19 +26,14 @@ NanoShell.FullScreenOverlay {
     height: Screen.height
     
     property int volume: 0
-    property int maxVolume: 0
     
     function showOverlay() {
         window.visible = true;
-        opacityAnimation.to = 1;
-        opacityAnimation.restart();
         hideTimer.restart();
     }
     
     Component.onCompleted: {// TODO
         window.visible = true;
-        opacityAnimation.to = 1;
-        opacityAnimation.restart();
     }
     
     Timer {
@@ -46,8 +41,7 @@ NanoShell.FullScreenOverlay {
         interval: 3000
         running: false
         onTriggered: {
-            opacityAnimation.to = 0;
-            opacityAnimation.restart();
+            window.close();
         }
     }
     
@@ -56,18 +50,6 @@ NanoShell.FullScreenOverlay {
         onClicked: {
             hideTimer.stop();
             hideTimer.triggered();
-        }
-        
-        opacity: 0
-        NumberAnimation on opacity {
-            id: opacityAnimation
-            easing.type: Easing.InOutQuad
-            duration: PlasmaCore.Units.shortDuration
-            onFinished: {
-                if (window.opacity === 0) {
-                    window.visible = false;
-                }
-            }
         }
         
         RectangularGlow {
@@ -79,16 +61,15 @@ NanoShell.FullScreenOverlay {
             color: Qt.rgba(0, 0, 0, 0.15)
         }
         
+        // capture presses on the audio applet so it doesn't close the overlay
         MouseArea {
             id: content
-            
-            // capture presses on the audio applet so it doesn't close the overlay
             anchors.top: parent.top
             anchors.topMargin: PlasmaCore.Units.largeSpacing * 2
             anchors.horizontalCenter: parent.horizontalCenter
             
-            implicitWidth: Math.min(PlasmaCore.Units.gridUnit * 20, parent.width - PlasmaCore.Units.largeSpacing * 4)
-            implicitHeight: Math.min(containerLayout.implicitHeight + PlasmaCore.Units.smallSpacing * 4, parent.height - PlasmaCore.Units.largeSpacing * 4)
+            implicitWidth: Math.min(PlasmaCore.Units.gridUnit * 20, parent.width - PlasmaCore.Units.largeSpacing * 2)
+            implicitHeight: containerLayout.implicitHeight + PlasmaCore.Units.smallSpacing * 4
             
             Rectangle {
                 anchors.fill: parent
@@ -113,14 +94,14 @@ NanoShell.FullScreenOverlay {
                         source: "audio-volume-high-symbolic"
                     }
                     
-                    Controls.Slider {
+                    PlasmaComponents.ProgressBar {
                         id: volumeSlider
                         Layout.fillWidth: true
                         Layout.alignment: Qt.AlignVCenter
                         Layout.rightMargin: PlasmaCore.Units.smallSpacing
                         value: window.volume
                         from: 0
-                        to: window.maxVolume
+                        to: 100
                     }
                     
                     // Get the width of a three-digit number so we can size the label
@@ -132,6 +113,7 @@ NanoShell.FullScreenOverlay {
                     }
 
                     PlasmaExtra.Heading {
+                        id: percentageLabel
                         Layout.preferredWidth: widestLabelSize.width
                         Layout.alignment: Qt.AlignVCenter
                         Layout.rightMargin: PlasmaCore.Units.smallSpacing
@@ -159,6 +141,7 @@ NanoShell.FullScreenOverlay {
                         Layout.alignment: Qt.AlignVCenter
                         Layout.preferredWidth: PlasmaCore.Units.iconSizes.medium
                         Layout.preferredHeight: PlasmaCore.Units.iconSizes.medium
+                        onClicked: audioApplet.showOverlay()
                     }
                 }
             }
