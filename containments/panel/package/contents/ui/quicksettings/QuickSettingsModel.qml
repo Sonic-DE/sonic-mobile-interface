@@ -114,14 +114,16 @@ Item {
             "icon": "configure",
             "enabled": false,
             "settingsCommand": "plasma-settings",
-            "toggleFunction": ""
+            "toggleFunction": "",
+            "applet": ""
         });
         settingsModel.append({
             "text": i18n("Wifi"),
             "icon": "network-wireless-signal",
             "settingsCommand": "plasma-settings -m kcm_mobile_wifi",
             "toggleFunction": "toggleWifi",
-            "enabled": enabledConnections.wirelessEnabled
+            "enabled": enabledConnections.wirelessEnabled,
+            "applet": "org.kde.plasma.networkmanagement"
         });
         settingsModel.append({
             "text": i18n("Bluetooth"),
@@ -129,62 +131,71 @@ Item {
             "settingsCommand": "plasma-settings -m kcm_bluetooth",
             "toggleFunction": "toggleBluetooth",
             "delegate": "",
-            "enabled": BluezQt.Manager.bluetoothOperational
+            "enabled": BluezQt.Manager.bluetoothOperational,
+            "applet": "org.kde.plasma.bluetooth"
         });
         settingsModel.append({
             "text": i18n("Mobile Data"),
             "icon": "network-modem",
             "settingsCommand": "plasma-settings -m kcm_mobile_broadband",
             "toggleFunction": "toggleWwan",
-            "enabled": enabledConnections.wwanEnabled
+            "enabled": enabledConnections.wwanEnabled,
+            "applet": ""
         });
         settingsModel.append({
             "text": i18n("Battery"),
             "icon": "battery-full",
             "enabled": false,
             "settingsCommand": "plasma-settings -m kcm_mobile_power",
-            "toggleFunction": ""
+            "toggleFunction": "",
+            "applet": ""
         });
         settingsModel.append({
             "text": i18n("Sound"),
             "icon": "audio-speakers-symbolic",
             "enabled": false,
             "settingsCommand": "plasma-settings -m kcm_pulseaudio",
-            "toggleFunction": ""
+            "toggleFunction": "org.kde.plasma.volume",
+            "applet": ""
         });
         settingsModel.append({
             "text": i18n("Flashlight"),
             "icon": "flashlight-on",
             "enabled": plasmoid.nativeInterface.torchEnabled,
             "settingsCommand": "",
-            "toggleFunction": "toggleTorch"
+            "toggleFunction": "toggleTorch",
+            "applet": ""
         });
         settingsModel.append({
             "text": i18n("Location"),
             "icon": "gps",
             "enabled": false,
-            "settingsCommand": ""
+            "settingsCommand": "",
+            "applet": ""
         });
         settingsModel.append({
             "text": i18n("Screenshot"),
             "icon": "spectacle",
             "enabled": false,
             "settingsCommand": "",
-            "toggleFunction": "requestScreenshot"
+            "toggleFunction": "requestScreenshot",
+            "applet": ""
         });
         settingsModel.append({
             "text": i18n("Auto-rotate"),
             "icon": "rotation-allowed",
             "enabled": plasmoid.nativeInterface.autoRotateEnabled,
             "settingsCommand": "",
-            "toggleFunction": "toggleRotation"
+            "toggleFunction": "toggleRotation",
+            "applet": ""
         });
         settingsModel.append({
             "text": i18n("Night Color"),
             "icon": "redshift-status-on",
             "enabled": compositorAdaptor.active,
             "settingsCommand": "", // change once night color kcm is added
-            "toggleFunction": "toggleNightColor"
+            "toggleFunction": "toggleNightColor",
+            "applet": ""
         });
     }
 }
