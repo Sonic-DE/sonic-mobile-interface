@@ -15,6 +15,9 @@ if (!topFound) {
     let topPanel = new Panel("org.kde.phone.panel")
     topPanel.addWidget("org.kde.plasma.notifications");
     topPanel.addWidget("org.kde.plasma.mediacontroller");
+    topPanel.addWidget("org.kde.plasma.volume");
+    topPanel.addWidget("org.kde.plasma.bluetooth");
+    topPanel.addWidget("org.kde.plasma.networkmanagement");
     topPanel.location = "top";
 }
 if (!bottomFound) {
