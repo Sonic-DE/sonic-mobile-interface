@@ -117,9 +117,7 @@ QtObject {
 
     property SinkModel paSinkModel: SinkModel {}
 
-    property VolumeOsd osd: VolumeOsd {
-        maxVolume: maxVolumeValue
-    }
+    property VolumeOsd osd: VolumeOsd {}
 
     property VolumeFeedback feedback: VolumeFeedback {}
 
