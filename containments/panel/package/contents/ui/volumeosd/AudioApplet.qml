@@ -123,7 +123,7 @@ ColumnLayout {
             
             PlasmaExtra.Heading {
                 level: 2
-                text: i18n("Applications")
+                text: i18n("Playback Streams")
             }
             
             Repeater {
