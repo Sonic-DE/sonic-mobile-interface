@@ -50,24 +50,6 @@ Item {
         LayoutManager.save();
     }
 
-    // TODO
-    property var audioApplet
-    property var networkApplet
-    property var bluetoothApplet
-    
-    function getPopupApplet(name) {
-        console.log(name);
-        if (name === "org.kde.plasma.volume") {
-            return audioApplet;
-        } else if (name === "org.kde.plasma.networkmanagement") {
-            return networkApplet;
-        } else if (name === "org.kde.plasma.bluetooth") {
-            return bluetoothApplet;
-        } else {
-            return null;
-        }
-    }
-    
     function addApplet(applet, x, y) {
         var compactContainer = compactContainerComponent.createObject(topPanel.applets)
         print("Applet added: " + applet + " " + applet.title)
@@ -82,42 +64,17 @@ Item {
         applet.expanded = false
 
         var fullContainer = null;
-        var newContainer = null;
         if (applet.pluginName == "org.kde.plasma.notifications") {
             fullContainer = fullNotificationsContainerComponent.createObject(fullRepresentationView.contentItem, {"fullRepresentationModel": fullRepresentationModel, "fullRepresentationView": fullRepresentationView});
-            
-            applet.fullRepresentationItem.parent = fullContainer;
-            fullContainer.contentItem = applet.fullRepresentationItem;
-        } else if (applet.pluginName == "org.kde.plasma.mediacontroller") {
+        } else {
             fullContainer = fullContainerComponent.createObject(fullRepresentationView.contentItem, {"fullRepresentationModel": fullRepresentationModel, "fullRepresentationView": fullRepresentationView});
-            
-            applet.fullRepresentationItem.parent = fullContainer;
-            fullContainer.contentItem = applet.fullRepresentationItem;
-        } else { // popup applets
-//             fullContainer = fullPopupContainerComponent.createObject();
-//             
-//             applet.fullRepresentationItem.parent = fullContainer.contents;
-//             fullContainer.contents.contentItem = applet.fullRepresentationItem;
-            fullContainer = fullContainerComponent.createObject();
-            applet.fullRepresentationItem.parent = fullContainer;
-            fullContainer.contentItem = applet.fullRepresentationItem;
-            
-            newContainer = fullPopupContainerComponent.createObject();
-            newContainer.contents.contentItem = fullContainer;
-            fullContainer.parent = newContainer.contents.contentItem;
         }
 
+        applet.fullRepresentationItem.parent = fullContainer;
         fullContainer.applet = applet;
+        fullContainer.contentItem = applet.fullRepresentationItem;
         //applet.fullRepresentationItem.anchors.fill = fullContainer;
         
-        // TODO
-        if (applet.pluginName == "org.kde.plasma.volume") {
-            audioApplet = newContainer;
-        } else if (applet.pluginName == "org.kde.plasma.bluetooth") {
-            bluetoothApplet = newContainer;
-        } else if (applet.pluginName == "org.kde.plasma.networkmanagement") {
-            networkApplet = newContainer;
-        }
     }
 
     Component.onCompleted: {
@@ -155,10 +112,6 @@ Item {
         Layout.minimumHeight: Math.max(root.height, Math.round(Layout.preferredHeight / root.height) * root.height)
     }
  
-    ObjectModel {
-        id: popupAppletModel
-    }
- 
     //todo: REMOVE?
     Component {
         id: compactContainerComponent
@@ -174,11 +127,6 @@ Item {
     Component {
         id: fullContainerComponent
         FullContainer {}
-    }
-    
-    Component {
-        id: fullPopupContainerComponent
-        FullPopupContainer {}
     }
 
     Component {
