@@ -19,15 +19,7 @@ MouseArea {
     implicitWidth: Math.min(PlasmaCore.Units.gridUnit * 20, parent.width - PlasmaCore.Units.largeSpacing * 2)
     implicitHeight: control.implicitHeight
     
-    property alias contentItem: control.contentItem
-    
-    // allow flickables to pickup on swipes
-    propagateComposedEvents: false
-    onReleased: {
-        if (!propagateComposedEvents) {
-            propagateComposedEvents = true
-        }
-    }
+    property alias childItem: control.contentItem
     
     RectangularGlow {
         anchors.topMargin: 1
