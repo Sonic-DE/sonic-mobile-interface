@@ -9,6 +9,7 @@ import QtQuick 2.0
 
 import org.kde.plasma.private.volume 0.1
 
+// adapted from https://invent.kde.org/plasma/plasma-pa/-/blob/master/applet/contents/ui/StreamListItem.qml
 ListItemBase {
     id: item
 
