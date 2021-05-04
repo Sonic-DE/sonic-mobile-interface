@@ -23,7 +23,7 @@ import org.kde.kirigami 2.12 as Kirigami
 Kirigami.AbstractApplicationWindow {
     id: window
     visible: false
-    color: showFullApplet ? Qt.rgba(0, 0, 0, 0.3) : "transparent"
+    color: showFullApplet ? Qt.rgba(0, 0, 0, 0.6) : "transparent"
     
     Behavior on color {
         ColorAnimation {}
@@ -70,6 +70,8 @@ Kirigami.AbstractApplicationWindow {
         contentHeight: cards.implicitHeight
         boundsBehavior: window.showFullApplet ? Flickable.DragAndOvershootBounds : Flickable.StopAtBounds
         
+        pressDelay: 200
+        
         MouseArea {
             // capture taps behind cards to close
             anchors.left: parent.left
@@ -86,14 +88,15 @@ Kirigami.AbstractApplicationWindow {
                 width: parent.width
                 anchors.left: parent.left
                 anchors.right: parent.right
+                spacing: 0
                 
                 // osd card
                 PopupCard {
                     id: osd
-                    Layout.topMargin: PlasmaCore.Units.largeSpacing * 2
+                    Layout.topMargin: PlasmaCore.Units.largeSpacing
                     Layout.alignment: Qt.AlignHCenter
                     
-                    contentItem: RowLayout {
+                    childItem: RowLayout {
                         id: containerLayout
                         spacing: PlasmaCore.Units.smallSpacing
 
