@@ -31,8 +31,8 @@ Kirigami.SwipeListItem {
     property alias iconUsesPlasmaTheme: clientIcon.usesPlasmaTheme
     property string type // sink, source, source-output
     
-    topPadding: PlasmaCore.Units.largeSpacing
-    bottomPadding: PlasmaCore.Units.largeSpacing
+    topPadding: PlasmaCore.Units.smallSpacing
+    bottomPadding: PlasmaCore.Units.smallSpacing
     leftPadding: PlasmaCore.Units.smallSpacing
     rightPadding: PlasmaCore.Units.smallSpacing
 
@@ -47,11 +47,13 @@ Kirigami.SwipeListItem {
     }
     
     contentItem: RowLayout {
+        id: row
         spacing: PlasmaCore.Units.smallSpacing
         
         PlasmaComponents.RadioButton {
             id: selectButton
-            Layout.alignment: Qt.AlignVCenter
+            Layout.alignment: Qt.AlignTop
+            Layout.topMargin: Math.round(row.height / 2 - implicitHeight - PlasmaCore.Units.smallSpacing / 2) // align with text
             checked: model.PulseObject.hasOwnProperty("default") ? model.PulseObject.default : false
             visible: (baseItem.type == "sink" && sinkView.model.count > 1) || (baseItem.type == "source" && sourceView.model.count > 1)
             onClicked: model.PulseObject.default = true
@@ -78,11 +80,60 @@ Kirigami.SwipeListItem {
             Layout.fillWidth: true
             spacing: PlasmaCore.Units.smallSpacing
             
-            PlasmaComponents.Label {
-                text: baseItem.label
+            RowLayout {
                 Layout.fillWidth: true
+                spacing: PlasmaCore.Units.smallSpacing
                 Layout.alignment: Qt.AlignBottom
-                elide: Text.ElideRight
+                
+                PlasmaComponents.Label {
+                    id: mainLabel
+                    text: baseItem.label
+                    Layout.alignment: Qt.AlignBottom
+                    Layout.fillWidth: true
+                    elide: Text.ElideRight
+                }
+                
+                PlasmaComponents.ToolButton {
+                    Layout.alignment: Qt.AlignBottom
+                    Layout.bottomMargin: -PlasmaCore.Units.smallSpacing
+                    icon.name: "application-menu"
+                    checkable: true
+                    checked: contextMenu.visible && contextMenu.visualParent === this
+                    visible: contextMenu.hasContent
+                    onClicked: {
+                        contextMenu.visualParent = this;
+                        contextMenu.openRelative();
+                    }
+                    PlasmaComponents.ToolTip {
+                        text: i18n("Show additional options for %1", baseItem.label)
+                    }
+                    
+                    ListItemMenu {
+                        id: contextMenu
+                        pulseObject: model.PulseObject
+                        cardModel: paCardModel
+                        itemType: {
+                            switch (baseItem.type) {
+                            case "sink":
+                                return ListItemMenu.Sink;
+                            case "sink-input":
+                                return ListItemMenu.SinkInput;
+                            case "source":
+                                return ListItemMenu.Source;
+                            case "source-output":
+                                return ListItemMenu.SourceOutput;
+                            }
+                        }
+                        sourceModel: {
+                            if (baseItem.type.includes("sink")) {
+                                return sinkView.model;
+                            } else if (baseItem.type.includes("source")) {
+                                return sourceView.model;
+                            }
+                        }
+                        onVisibleChanged: window.suppressActiveClose = visible
+                    }
+                }
             }
             
             RowLayout {
@@ -209,48 +260,6 @@ Kirigami.SwipeListItem {
                     font: percentText.font
                     text: i18nc("only used for sizing, should be widest possible string", "100%")
                 }
-            }
-        }
-        
-        Item { Layout.fillWidth: true }
-        
-        PlasmaComponents.ToolButton {
-            icon.name: "application-menu"
-            checkable: true
-            checked: contextMenu.visible && contextMenu.visualParent === this
-            visible: contextMenu.hasContent
-            onClicked: {
-                contextMenu.visualParent = this;
-                contextMenu.openRelative();
-            }
-            PlasmaComponents.ToolTip {
-                text: i18n("Show additional options for %1", baseItem.label)
-            }
-            
-            ListItemMenu {
-                id: contextMenu
-                pulseObject: model.PulseObject
-                cardModel: paCardModel
-                itemType: {
-                    switch (baseItem.type) {
-                    case "sink":
-                        return ListItemMenu.Sink;
-                    case "sink-input":
-                        return ListItemMenu.SinkInput;
-                    case "source":
-                        return ListItemMenu.Source;
-                    case "source-output":
-                        return ListItemMenu.SourceOutput;
-                    }
-                }
-                sourceModel: {
-                    if (baseItem.type.includes("sink")) {
-                        return sinkView.model;
-                    } else if (baseItem.type.includes("source")) {
-                        return sourceView.model;
-                    }
-                }
-                onVisibleChanged: window.suppressActiveClose = visible
             }
         }
     }
