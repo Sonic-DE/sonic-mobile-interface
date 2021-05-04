@@ -18,22 +18,38 @@ import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.plasma.extras 2.0 as PlasmaExtra
 import org.kde.plasma.private.nanoshell 2.0 as NanoShell
 
-NanoShell.FullScreenOverlay {
+import org.kde.kirigami 2.12 as Kirigami
+
+Kirigami.AbstractApplicationWindow {
     id: window
+    visible: false
+    color: showFullApplet ? Qt.rgba(0, 0, 0, 0.3) : "transparent"
     
-    color: "transparent"
-    width: Screen.width
-    height: Screen.height
+    Behavior on color {
+        ColorAnimation {}
+    }
     
     property int volume: 0
+    property bool showFullApplet: false
     
     function showOverlay() {
-        window.visible = true;
-        hideTimer.restart();
+        if (!window.visible) {
+            window.showFullApplet = false;
+            window.showMaximized();
+            hideTimer.restart();
+        } else if (!window.showFullApplet) { // don't autohide applet when the full applet is showing
+            hideTimer.restart();
+        }
+    }
+    
+    onActiveChanged: {
+        if (!active) {
+            close();
+        }
     }
     
     Component.onCompleted: {// TODO
-        window.visible = true;
+        window.showMaximized();
     }
     
     Timer {
@@ -42,6 +58,7 @@ NanoShell.FullScreenOverlay {
         running: false
         onTriggered: {
             window.close();
+            window.showFullApplet = false;
         }
     }
     
@@ -52,99 +69,103 @@ NanoShell.FullScreenOverlay {
             hideTimer.triggered();
         }
         
-        RectangularGlow {
-            anchors.topMargin: 1
-            anchors.fill: content
-            cached: true
-            glowRadius: 4
-            spread: 0.2
-            color: Qt.rgba(0, 0, 0, 0.15)
-        }
-        
-        // capture presses on the audio applet so it doesn't close the overlay
-        MouseArea {
-            id: content
+        PopupCard {
+            id: osd
             anchors.top: parent.top
             anchors.topMargin: PlasmaCore.Units.largeSpacing * 2
             anchors.horizontalCenter: parent.horizontalCenter
             
-            implicitWidth: Math.min(PlasmaCore.Units.gridUnit * 20, parent.width - PlasmaCore.Units.largeSpacing * 2)
-            implicitHeight: containerLayout.implicitHeight + PlasmaCore.Units.smallSpacing * 4
-            
-            Rectangle {
-                anchors.fill: parent
-                radius: PlasmaCore.Units.smallSpacing
-                color: PlasmaCore.Theme.backgroundColor
-                
-                RowLayout {
-                    id: containerLayout
-                    spacing: PlasmaCore.Units.smallSpacing
-                    
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.leftMargin: PlasmaCore.Units.smallSpacing * 2
-                    anchors.rightMargin: PlasmaCore.Units.smallSpacing
-                    
-                    PlasmaCore.IconItem {
-                        Layout.alignment: Qt.AlignVCenter
-                        Layout.preferredWidth: PlasmaCore.Units.iconSizes.medium
-                        Layout.preferredHeight: PlasmaCore.Units.iconSizes.medium
-                        Layout.rightMargin: PlasmaCore.Units.smallSpacing
-                        source: "audio-volume-high-symbolic"
-                    }
-                    
-                    PlasmaComponents.ProgressBar {
-                        id: volumeSlider
-                        Layout.fillWidth: true
-                        Layout.alignment: Qt.AlignVCenter
-                        Layout.rightMargin: PlasmaCore.Units.smallSpacing
-                        value: window.volume
-                        from: 0
-                        to: 100
-                    }
-                    
-                    // Get the width of a three-digit number so we can size the label
-                    // to the maximum width to avoid the progress bar resizing itself
-                    TextMetrics {
-                        id: widestLabelSize
-                        text: i18n("100%")
-                        font: percentageLabel.font
-                    }
+            contentItem: RowLayout {
+                id: containerLayout
+                spacing: PlasmaCore.Units.smallSpacing
 
-                    PlasmaExtra.Heading {
-                        id: percentageLabel
-                        Layout.preferredWidth: widestLabelSize.width
-                        Layout.alignment: Qt.AlignVCenter
-                        Layout.rightMargin: PlasmaCore.Units.smallSpacing
-                        level: 3
-                        text: i18nc("Percentage value", "%1%", window.volume)
-                        
-                        // Display a subtle visual indication that the volume might be
-                        // dangerously high
-                        // ------------------------------------------------
-                        // Keep this in sync with the copies in plasma-pa:ListItemBase.qml
-                        // and plasma-pa:VolumeSlider.qml
-                        color: {
-                            if (volumeSlider.value <= 100) {
-                                return PlasmaCore.Theme.textColor
-                            } else if (volumeSlider.value > 100 && volumeSlider.value <= 125) {
-                                return PlasmaCore.Theme.neutralTextColor
-                            } else {
-                                return PlasmaCore.Theme.negativeTextColor
-                            }
+                anchors.leftMargin: PlasmaCore.Units.smallSpacing * 2
+                anchors.rightMargin: PlasmaCore.Units.smallSpacing
+                
+                PlasmaCore.IconItem {
+                    Layout.alignment: Qt.AlignVCenter
+                    Layout.preferredWidth: PlasmaCore.Units.iconSizes.medium
+                    Layout.preferredHeight: PlasmaCore.Units.iconSizes.medium
+                    Layout.rightMargin: PlasmaCore.Units.smallSpacing
+                    source: "audio-volume-high-symbolic"
+                }
+                
+                PlasmaComponents.ProgressBar {
+                    id: volumeSlider
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignVCenter
+                    Layout.rightMargin: PlasmaCore.Units.smallSpacing * 2
+                    value: window.volume
+                    from: 0
+                    to: 100
+                }
+                
+                // Get the width of a three-digit number so we can size the label
+                // to the maximum width to avoid the progress bar resizing itself
+                TextMetrics {
+                    id: widestLabelSize
+                    text: i18n("100%")
+                    font: percentageLabel.font
+                }
+
+                PlasmaExtra.Heading {
+                    id: percentageLabel
+                    Layout.preferredWidth: widestLabelSize.width
+                    Layout.alignment: Qt.AlignVCenter
+                    Layout.rightMargin: PlasmaCore.Units.smallSpacing
+                    level: 3
+                    text: i18nc("Percentage value", "%1%", window.volume)
+                    
+                    // Display a subtle visual indication that the volume might be
+                    // dangerously high
+                    // ------------------------------------------------
+                    // Keep this in sync with the copies in plasma-pa:ListItemBase.qml
+                    // and plasma-pa:VolumeSlider.qml
+                    color: {
+                        if (volumeSlider.value <= 100) {
+                            return PlasmaCore.Theme.textColor
+                        } else if (volumeSlider.value > 100 && volumeSlider.value <= 125) {
+                            return PlasmaCore.Theme.neutralTextColor
+                        } else {
+                            return PlasmaCore.Theme.negativeTextColor
                         }
                     }
-                    
-                    PlasmaComponents.ToolButton {
-                        icon.name: "configure"
-                        Layout.alignment: Qt.AlignVCenter
-                        Layout.preferredWidth: PlasmaCore.Units.iconSizes.medium
-                        Layout.preferredHeight: PlasmaCore.Units.iconSizes.medium
-                        onClicked: audioApplet.showOverlay()
+                }
+                
+                PlasmaComponents.ToolButton {
+                    icon.name: "configure"
+                    Layout.alignment: Qt.AlignVCenter
+                    Layout.preferredWidth: PlasmaCore.Units.iconSizes.medium
+                    Layout.preferredHeight: PlasmaCore.Units.iconSizes.medium
+                    onClicked: {
+                        window.showFullApplet = !window.showFullApplet
+                        // don't autohide applet when full applet is shown
+                        if (window.showFullApplet) {
+                            hideTimer.stop();
+                        } else {
+                            hideTimer.restart();
+                        }
                     }
                 }
             }
+        }
+
+        
+        AudioApplet {
+            id: applet
+            anchors.top: osd.bottom
+            anchors.topMargin: PlasmaCore.Units.largeSpacing
+            anchors.left: parent.left
+            anchors.right: parent.right
+            
+            opacity: window.showFullApplet ? 1 : 0
+            visible: opacity !== 0
+            transform: Translate { 
+                y: window.showFullApplet ? 0 : -PlasmaCore.Units.gridUnit
+                Behavior on y { NumberAnimation {} }
+            }
+            
+            Behavior on opacity { NumberAnimation {} }
         }
     }
 }
