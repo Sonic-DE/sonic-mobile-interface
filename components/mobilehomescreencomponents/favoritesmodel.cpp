@@ -63,7 +63,7 @@ void FavoritesModel::loadApplications()
     m_applicationList.clear();
 
     QSet<QString> appsToRemove;
-qWarning()<<"AAAAAAAAAAAAA"<<m_appOrder;
+
     for (const auto &uniqueId : m_appOrder) {
         const QString storageId = uniqueToStorageId(uniqueId);
         if (KService::Ptr service = KService::serviceByStorageId(storageId)) {
