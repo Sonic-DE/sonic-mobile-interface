@@ -70,7 +70,7 @@ Kirigami.AbstractApplicationWindow {
         contentHeight: cards.implicitHeight
         boundsBehavior: window.showFullApplet ? Flickable.DragAndOvershootBounds : Flickable.StopAtBounds
         
-        pressDelay: 200
+        pressDelay: 50
         
         MouseArea {
             // capture taps behind cards to close
@@ -175,7 +175,7 @@ Kirigami.AbstractApplicationWindow {
                         }
                         
                         PlasmaComponents.ToolButton {
-                            icon.name: "adjustlevels"
+                            icon.name: "overflow-menu"
                             text: i18n("Toggle showing audio streams")
                             display: Controls.AbstractButton.IconOnly
                             Layout.alignment: Qt.AlignVCenter
