@@ -131,7 +131,6 @@ QtObject {
             if (paSinkModel.preferredSink) {
                 var percent = volumePercent(paSinkModel.preferredSink.volume, maxVolumeValue);
                 osd.volume = percent;
-                osd.showOverlay();
             }
         }
     }
