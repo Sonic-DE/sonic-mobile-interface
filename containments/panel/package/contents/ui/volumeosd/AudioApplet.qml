@@ -65,13 +65,15 @@ ColumnLayout {
     PopupCard {
         Layout.alignment: Qt.AlignHCenter
         Layout.bottomMargin: PlasmaCore.Units.largeSpacing
-        contentItem: ColumnLayout {
+        childItem: ColumnLayout {
             anchors.rightMargin: PlasmaCore.Units.smallSpacing
             anchors.leftMargin: PlasmaCore.Units.smallSpacing
             
             PlasmaExtra.Heading {
                 level: 2
                 text: i18n("Outputs")
+                Layout.fillWidth: true
+                Layout.leftMargin: PlasmaCore.Units.smallSpacing
             }
             
             Repeater {
@@ -91,13 +93,15 @@ ColumnLayout {
     PopupCard {
         Layout.alignment: Qt.AlignHCenter
         Layout.bottomMargin: PlasmaCore.Units.largeSpacing
-        contentItem: ColumnLayout {
+        childItem: ColumnLayout {
             anchors.rightMargin: PlasmaCore.Units.smallSpacing
             anchors.leftMargin: PlasmaCore.Units.smallSpacing
             
             PlasmaExtra.Heading {
                 level: 2
                 text: i18n("Inputs")
+                Layout.fillWidth: true
+                Layout.leftMargin: PlasmaCore.Units.smallSpacing
             }
             
             Repeater {
@@ -118,13 +122,15 @@ ColumnLayout {
         visible: sourceInputView.model.count + sourceMediaInputView.model.count !== 0
         Layout.alignment: Qt.AlignHCenter
         Layout.bottomMargin: PlasmaCore.Units.largeSpacing
-        contentItem: ColumnLayout {
+        childItem: ColumnLayout {
             anchors.rightMargin: PlasmaCore.Units.smallSpacing
             anchors.leftMargin: PlasmaCore.Units.smallSpacing
             
             PlasmaExtra.Heading {
                 level: 2
                 text: i18n("Playback Streams")
+                Layout.fillWidth: true
+                Layout.leftMargin: PlasmaCore.Units.smallSpacing
             }
             
             Repeater {
@@ -166,13 +172,15 @@ ColumnLayout {
         visible: sourceOutputView.model.count !== 0
         Layout.alignment: Qt.AlignHCenter
         Layout.bottomMargin: PlasmaCore.Units.largeSpacing
-        contentItem: ColumnLayout {
+        childItem: ColumnLayout {
             anchors.rightMargin: PlasmaCore.Units.smallSpacing
             anchors.leftMargin: PlasmaCore.Units.smallSpacing
             
             PlasmaExtra.Heading {
                 level: 2
                 text: i18n("Recording Streams")
+                Layout.fillWidth: true
+                Layout.leftMargin: PlasmaCore.Units.smallSpacing
             }
             
             Repeater {
