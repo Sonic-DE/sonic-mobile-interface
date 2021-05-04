@@ -42,8 +42,10 @@ FocusScope {
     onWidthChanged: recalculateMaxFavoriteCount()
     onHeightChanged:recalculateMaxFavoriteCount()
     Component.onCompleted: {
-        HomeScreenComponents.ApplicationListModel.applet = plasmoid
+        // ApplicationListModel doesn't have a plasmoid as is not the one that should be doing writing
         HomeScreenComponents.ApplicationListModel.loadApplications();
+        HomeScreenComponents.FavoritesModel.applet = plasmoid;
+        HomeScreenComponents.FavoritesModel.loadApplications();
 
         if (plasmoid.screen == 0) {
             MobileShell.HomeScreenControls.homeScreen = root

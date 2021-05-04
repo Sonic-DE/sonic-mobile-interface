@@ -460,7 +460,12 @@ PlasmaQuick::AppletQuickItem *ApplicationListModel::applet() const
 
 void ApplicationListModel::setApplet(PlasmaQuick::AppletQuickItem *applet)
 {
+    if (m_applet == applet) {
+        return;
+    }
     m_applet = applet;
+    loadSettings();
+    emit appletChanged();
 }
 
 void ApplicationListModel::setMinimizedDelegate(int row, QQuickItem *delegate)
