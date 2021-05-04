@@ -33,6 +33,7 @@ Kirigami.SwipeListItem {
     
     topPadding: Kirigami.Units.largeSpacing
     bottomPadding: Kirigami.Units.largeSpacing
+    leftPadding: Kirigami.Units.smallSpacing
 
     alwaysVisibleActions: true
     
@@ -64,6 +65,7 @@ Kirigami.SwipeListItem {
         PlasmaCore.IconItem {
             id: clientIcon
             Layout.alignment: Qt.AlignVCenter
+            Layout.rightMargin: PlasmaCore.Units.smallSpacing
             Layout.preferredWidth: PlasmaCore.Units.iconSizes.smallMedium
             Layout.preferredHeight: PlasmaCore.Units.iconSizes.smallMedium
             visible: type === "sink-input" || type === "source-output"
@@ -104,8 +106,6 @@ Kirigami.SwipeListItem {
                     property int volume: Volume
                     property bool ignoreValueChange: true
                     readonly property bool forceRaiseMaxVolume: volume >= PulseAudio.NormalVolume * 1.01 // TODO raise maximum volume checkbox
-                    
-                    value: window.volume
                     
                     from: PulseAudio.MinimalVolume
                     to: PulseAudio.NormalVolume
@@ -220,7 +220,7 @@ Kirigami.SwipeListItem {
     actions: [
         Kirigami.Action {
             checkable: true
-            icon.name: Icon.name(Volume, Muted, type === "source" ? "microphone-sensitivity" : "audio-volume")
+            icon.name: Icon.name(Volume, Muted, type === "source" || type === "source-output" ? "microphone-sensitivity" : "audio-volume")
             tooltip: i18n("Mute %1", baseItem.label)
             onTriggered: Muted = !Muted
             checked: Muted
