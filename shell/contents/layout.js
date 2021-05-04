@@ -12,9 +12,6 @@ desktopsArray[0].addWidget("org.kde.phone.krunner", 0, 0, screenGeometry(0).widt
 var panel = new Panel("org.kde.phone.panel");
 panel.addWidget("org.kde.plasma.notifications");
 panel.addWidget("org.kde.plasma.mediacontroller");
-panel.addWidget("org.kde.plasma.volume");
-panel.addWidget("org.kde.plasma.bluetooth");
-panel.addWidget("org.kde.plasma.networkmanagement");
 panel.height = 1 * gridUnit;
 
 
