@@ -14,10 +14,14 @@ ListItemBase {
     id: item
 
     property QtObject devicesModel
+    readonly property bool isEventStream: Name == "sink-input-by-media-role:event"
 
     label: {
+        if (isEventStream) {
+            return i18n("Notification Sounds");
+        }
         if (Client && Client.name) {
-            return Client.name;
+            return i18nc("label of stream items", "%1: %2", Client.name, Name);
         }
         if (Name) {
             return Name;

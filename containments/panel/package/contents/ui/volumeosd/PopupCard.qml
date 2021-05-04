@@ -21,6 +21,14 @@ MouseArea {
     
     property alias contentItem: control.contentItem
     
+    // allow flickables to pickup on swipes
+    propagateComposedEvents: false
+    onReleased: {
+        if (!propagateComposedEvents) {
+            propagateComposedEvents = true
+        }
+    }
+    
     RectangularGlow {
         anchors.topMargin: 1
         anchors.fill: parent
