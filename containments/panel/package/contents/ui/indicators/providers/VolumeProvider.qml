@@ -114,6 +114,16 @@ QtObject {
             playFeedback();
         }
     }
+    
+    property var updateVolume: Connections {
+        target: paSinkModel.preferredSink
+        
+        function onVolumeChanged() {
+            var percent = volumePercent(paSinkModel.preferredSink.volume, maxVolumeValue);
+            osd.volume = percent;
+            osd.showOverlay();
+        }
+    }
 
     property SinkModel paSinkModel: SinkModel {}
 
