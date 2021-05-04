@@ -26,8 +26,6 @@ import "icon.js" as Icon
 Kirigami.SwipeListItem {
     id: baseItem
     
-    property bool isPlayback: true // TODO REMOVE
-    
     property string label
     property alias listIcon: clientIcon.source
     property alias iconUsesPlasmaTheme: clientIcon.usesPlasmaTheme
