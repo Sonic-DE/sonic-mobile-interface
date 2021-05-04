@@ -115,6 +115,7 @@ ColumnLayout {
     }
     
     PopupCard {
+        visible: sourceInputView.model.count + sourceMediaInputView.model.count !== 0
         Layout.alignment: Qt.AlignHCenter
         Layout.bottomMargin: PlasmaCore.Units.largeSpacing
         contentItem: ColumnLayout {
@@ -124,6 +125,54 @@ ColumnLayout {
             PlasmaExtra.Heading {
                 level: 2
                 text: i18n("Playback Streams")
+            }
+            
+            Repeater {
+                id: sourceMediaInputView
+                Layout.fillWidth: true
+                
+                model: PulseObjectFilterModel {
+                    filters: [ { role: "Name", value: "sink-input-by-media-role:event" } ]
+                    sourceModel: StreamRestoreModel {}
+                }
+                delegate: StreamListItem {
+                    Layout.fillWidth: true
+                    width: sourceOutputView.width
+                    type: "sink-input"
+                    devicesModel: sourceView.model
+                }
+            }
+            
+            Repeater {
+                id: sourceInputView
+                Layout.fillWidth: true
+                
+                model: PulseObjectFilterModel {
+                    filters: [ { role: "VirtualStream", value: false } ]
+                    sourceModel: SinkInputModel {}
+                }
+
+                delegate: StreamListItem {
+                    Layout.fillWidth: true
+                    width: sourceOutputView.width
+                    type: "sink-input"
+                    devicesModel: sourceView.model
+                }
+            }
+        }
+    }
+    
+    PopupCard {
+        visible: sourceOutputView.model.count !== 0
+        Layout.alignment: Qt.AlignHCenter
+        Layout.bottomMargin: PlasmaCore.Units.largeSpacing
+        contentItem: ColumnLayout {
+            anchors.rightMargin: PlasmaCore.Units.smallSpacing
+            anchors.leftMargin: PlasmaCore.Units.smallSpacing
+            
+            PlasmaExtra.Heading {
+                level: 2
+                text: i18n("Recording Streams")
             }
             
             Repeater {
