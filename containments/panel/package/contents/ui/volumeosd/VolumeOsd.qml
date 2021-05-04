@@ -34,7 +34,6 @@ NanoShell.FullScreenOverlay {
     property int volume: 0
     property bool showFullApplet: false
     
-    Component.onCompleted: console.log("BRUHHHHHHHHHHHHH")
     function showOverlay() {
         console.log("showOverlay");
         if (!window.visible) {
