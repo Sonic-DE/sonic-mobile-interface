@@ -27,7 +27,6 @@ ColumnLayout {
     required property bool enabled
     required property string settingsCommand
     required property var toggleFunction
-    required property string applet
     property alias labelOpacity: label.opacity
     
     property color disabledButtonColor: PlasmaCore.Theme.backgroundColor
@@ -80,9 +79,7 @@ ColumnLayout {
                 }
             }
             onPressAndHold: {
-                if (getPopupApplet(delegateRoot.applet)) {
-                    getPopupApplet(delegateRoot.applet).showOverlay();
-                } else if (delegateRoot.settingsCommand) {
+                if (delegateRoot.settingsCommand) {
                     NanoShell.StartupFeedback.open(
                         delegateRoot.icon,
                         delegateRoot.text,
@@ -129,9 +126,7 @@ ColumnLayout {
             id: labelMouseArea
             anchors.fill: parent
             onClicked: {
-                if (getPopupApplet(delegateRoot.applet)) {
-                    getPopupApplet(delegateRoot.applet).showOverlay();
-                } else if (delegateRoot.settingsCommand) {
+                if (delegateRoot.settingsCommand) {
                     NanoShell.StartupFeedback.open(
                         delegateRoot.icon,
                         delegateRoot.text,
