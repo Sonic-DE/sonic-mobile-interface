@@ -8,9 +8,9 @@
 #define APPLICATIONLISTMODEL_H
 
 // Qt
+#include <QObject>
 #include <QAbstractListModel>
 #include <QList>
-#include <QObject>
 #include <QSet>
 
 #include "homescreenutils.h"
@@ -33,8 +33,7 @@ class AppletQuickItem;
 
 class ApplicationListModel;
 
-class ApplicationListModel : public QAbstractListModel
-{
+class ApplicationListModel : public QAbstractListModel {
     Q_OBJECT
 
     Q_PROPERTY(PlasmaQuick::AppletQuickItem *applet READ applet WRITE setApplet NOTIFY appletChanged)
@@ -47,7 +46,7 @@ public:
     enum LauncherLocation {
         Grid = 0,
         Favorites,
-        Desktop,
+        Desktop
     };
     Q_ENUM(LauncherLocation)
 
@@ -71,7 +70,7 @@ public:
         ApplicationStartupNotifyRole,
         ApplicationLocationRole,
         ApplicationRunningRole,
-        ApplicationUniqueIdRole,
+        ApplicationUniqueIdRole
     };
 
     ApplicationListModel(QObject *parent = nullptr);
@@ -83,14 +82,8 @@ public:
 
     void moveRow(const QModelIndex &sourceParent, int sourceRow, const QModelIndex &destinationParent, int destinationChild);
 
-    int count() const
-    {
-        return m_applicationList.count();
-    }
-    int favoriteCount() const
-    {
-        return m_favorites.count();
-    }
+    int count() const { return m_applicationList.count(); }
+    int favoriteCount() const { return m_favorites.count();}
 
     int maxFavoriteCount() const;
     void setMaxFavoriteCount(int count);
@@ -116,7 +109,7 @@ public:
     Q_INVOKABLE void unsetMinimizedDelegate(int row, QQuickItem *delegate);
 
 public Q_SLOTS:
-    void sycocaDbChanged(const QStringList &change);
+     void sycocaDbChanged(const QStringList &change);
 
 Q_SIGNALS:
     void countChanged();

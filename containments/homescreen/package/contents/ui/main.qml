@@ -91,84 +91,12 @@ FocusScope {
         anchors {
             fill: parent
             topMargin: plasmoid.availableScreenRect.y
-
-            bottomMargin: favoriteStrip.height + plasmoid.screenGeometry.height - plasmoid.availableScreenRect.height - plasmoid.availableScreenRect.y
-        }
-
-        opacity: 1 - appDrawer.openFactor
-        transform: Translate {
-            y: -mainFlickable.height/10 * appDrawer.openFactor
-        }
-        scale: (3 - appDrawer.openFactor) /3
-
-        //bottomMargin: favoriteStrip.height
-        contentWidth: appletsLayout.width
-        contentHeight: height
-        //interactive: !plasmoid.editMode && !launcherDragManager.active
-        interactive: false
-
-        signal cancelEditModeForItemsRequested
-        onDragStarted: cancelEditModeForItemsRequested()
-        onDragEnded: cancelEditModeForItemsRequested()
-        onFlickStarted: cancelEditModeForItemsRequested()
-        onFlickEnded: cancelEditModeForItemsRequested()
-
-        onContentYChanged: MobileShell.HomeScreenControls.homeScreenPosition = contentY
-
-        LauncherPrivate.DragGestureHandler {
-            appDrawer: appDrawer
-            mainFlickable: mainFlickable
-            enabled: root.focus && appDrawer.status !== Launcher.AppDrawer.Status.Open && !appletsLayout.editMode && !plasmoid.editMode && !launcherDragManager.active
-        }
-/*
-        DragHandler {
-            target: mainFlickable
-            yAxis.enabled: !appletsLayout.editMode && !plasmoid.editMode && !launcherDragManager.active
-            xAxis.enabled: yAxis.enabled
-            enabled: root.focus && appDrawer.status !== Launcher.AppDrawer.Status.Open
-            property real initialMainFlickableX
-            enum ScrollDirection {
-                None,
-                Horizontal,
-                Vertical
-            }
-            property int scrollDirection: None
-            onTranslationChanged: {print(translation.x)
-                if (active) {
-                    if (appDrawer.offset > PlasmaCore.Units.gridUnit) {
-                        scrollDirection = Vertical;
-                    } else if (Math.abs(mainFlickable.contentX - initialMainFlickableX) > PlasmaCore.Units.gridUnit) {
-                        scrollDirection = Horizontal;
-                    }
-                    if (scrollDirection !== Horizontal) {
-                        appDrawer.offset = -translation.y;
-                    }
-                    if (scrollDirection !== Vertical) {
-                        mainFlickable.contentX = Math.max(0, initialMainFlickableX - translation.x);
-                    }
-                }
-            }
-            onActiveChanged: {
-                if (active) {
-                    initialMainFlickableX = mainFlickable.contentX;
-                } else {
-                    appDrawer.snapDrawerStatus();
-                }
-            }
-        }
-*/
-        NumberAnimation {
-            id: scrollAnim
-            target: mainFlickable
-            properties: "contentX"
-            duration: units.longDuration
-            easing.type: Easing.InOutQuad
+            bottomMargin: plasmoid.screenGeometry.height - plasmoid.availableScreenRect.height - plasmoid.availableScreenRect.y
         }
 
         //TODO: favorite strip disappearing with everything else
         footer: favoriteStrip
         appletsLayout: homeScreenContents.appletsLayout
-
 
         appDrawer: appDrawer
         contentWidth: Math.max(width, width * Math.ceil(homeScreenContents.itemsBoundingRect.width/width)) + (homeScreenContents.launcherDragManager.active ? width : 0)
