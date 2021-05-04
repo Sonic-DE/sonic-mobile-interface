@@ -31,10 +31,10 @@ Kirigami.SwipeListItem {
     property alias iconUsesPlasmaTheme: clientIcon.usesPlasmaTheme
     property string type // sink, source, source-output
     
-    topPadding: Kirigami.Units.largeSpacing
-    bottomPadding: Kirigami.Units.largeSpacing
-    leftPadding: Kirigami.Units.smallSpacing
-    rightPadding: Kirigami.Units.smallSpacing
+    topPadding: PlasmaCore.Units.largeSpacing
+    bottomPadding: PlasmaCore.Units.largeSpacing
+    leftPadding: PlasmaCore.Units.smallSpacing
+    rightPadding: PlasmaCore.Units.smallSpacing
 
     alwaysVisibleActions: true
     

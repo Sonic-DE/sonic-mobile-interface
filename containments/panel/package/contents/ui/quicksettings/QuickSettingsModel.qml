@@ -106,6 +106,10 @@ Item {
         root.closeRequested();
     }
     
+    function openVolumeOsd() {
+        volumeProvider.showVolumeOverlay();
+    }
+    
     // initialize quick settings
     Component.onCompleted: {
         //NOTE: add all in javascript as the static decl of listelements can't have scripts
@@ -114,16 +118,14 @@ Item {
             "icon": "configure",
             "enabled": false,
             "settingsCommand": "plasma-settings",
-            "toggleFunction": "",
-            "applet": ""
+            "toggleFunction": ""
         });
         settingsModel.append({
             "text": i18n("Wifi"),
             "icon": "network-wireless-signal",
             "settingsCommand": "plasma-settings -m kcm_mobile_wifi",
             "toggleFunction": "toggleWifi",
-            "enabled": enabledConnections.wirelessEnabled,
-            "applet": "org.kde.plasma.networkmanagement"
+            "enabled": enabledConnections.wirelessEnabled
         });
         settingsModel.append({
             "text": i18n("Bluetooth"),
@@ -131,71 +133,62 @@ Item {
             "settingsCommand": "plasma-settings -m kcm_bluetooth",
             "toggleFunction": "toggleBluetooth",
             "delegate": "",
-            "enabled": BluezQt.Manager.bluetoothOperational,
-            "applet": "org.kde.plasma.bluetooth"
+            "enabled": BluezQt.Manager.bluetoothOperational
         });
         settingsModel.append({
             "text": i18n("Mobile Data"),
             "icon": "network-modem",
             "settingsCommand": "plasma-settings -m kcm_mobile_broadband",
             "toggleFunction": "toggleWwan",
-            "enabled": enabledConnections.wwanEnabled,
-            "applet": ""
+            "enabled": enabledConnections.wwanEnabled
         });
         settingsModel.append({
             "text": i18n("Battery"),
             "icon": "battery-full",
             "enabled": false,
             "settingsCommand": "plasma-settings -m kcm_mobile_power",
-            "toggleFunction": "",
-            "applet": ""
+            "toggleFunction": ""
         });
         settingsModel.append({
             "text": i18n("Sound"),
             "icon": "audio-speakers-symbolic",
             "enabled": false,
             "settingsCommand": "plasma-settings -m kcm_pulseaudio",
-            "toggleFunction": "org.kde.plasma.volume",
-            "applet": ""
+            "toggleFunction": "openVolumeOsd"
         });
         settingsModel.append({
             "text": i18n("Flashlight"),
             "icon": "flashlight-on",
             "enabled": plasmoid.nativeInterface.torchEnabled,
             "settingsCommand": "",
-            "toggleFunction": "toggleTorch",
-            "applet": ""
+            "toggleFunction": "toggleTorch"
         });
         settingsModel.append({
             "text": i18n("Location"),
             "icon": "gps",
             "enabled": false,
-            "settingsCommand": "",
-            "applet": ""
+            "settingsCommand": ""
         });
         settingsModel.append({
             "text": i18n("Screenshot"),
             "icon": "spectacle",
             "enabled": false,
             "settingsCommand": "",
-            "toggleFunction": "requestScreenshot",
-            "applet": ""
+            "toggleFunction": "requestScreenshot"
         });
         settingsModel.append({
             "text": i18n("Auto-rotate"),
             "icon": "rotation-allowed",
             "enabled": plasmoid.nativeInterface.autoRotateEnabled,
             "settingsCommand": "",
-            "toggleFunction": "toggleRotation",
-            "applet": ""
+            "toggleFunction": "toggleRotation"
         });
         settingsModel.append({
             "text": i18n("Night Color"),
             "icon": "redshift-status-on",
             "enabled": compositorAdaptor.active,
             "settingsCommand": "", // change once night color kcm is added
-            "toggleFunction": "toggleNightColor",
-            "applet": ""
+            "toggleFunction": "toggleNightColor"
         });
     }
 }

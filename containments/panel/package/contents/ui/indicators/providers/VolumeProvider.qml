@@ -25,6 +25,10 @@ QtObject {
     property int volumeStep: Math.round(5 * PulseAudio.NormalVolume / 100.0)
     readonly property string dummyOutputName: "auto_null"
 
+    function showVolumeOverlay() {
+        osd.showOverlay();
+    }
+    
     function iconName(volume, muted, prefix) {
         if (!prefix) {
             prefix = "audio-volume";
@@ -121,7 +125,6 @@ QtObject {
         function onVolumeChanged() {
             var percent = volumePercent(paSinkModel.preferredSink.volume, maxVolumeValue);
             osd.volume = percent;
-            osd.showOverlay();
         }
     }
     property var updateVolumeOnSinkChange: Connections {
