@@ -34,19 +34,15 @@ Kirigami.SwipeListItem {
     topPadding: Kirigami.Units.largeSpacing
     bottomPadding: Kirigami.Units.largeSpacing
     leftPadding: Kirigami.Units.smallSpacing
+    rightPadding: Kirigami.Units.smallSpacing
 
     alwaysVisibleActions: true
     
     activeBackgroundColor: selectButton.visible ? PlasmaCore.Theme.highlightColor : "transparent"
-    Component.onCompleted: {
-        if (!selectButton.visible) { // clickable colour
-            baseItem.activeBackgroundColor = "transparent"
-        }
-    }
     
     onClicked: {
         if (selectButton.visible) {
-            model.pulseObject.default = true;
+            model.PulseObject.default = true;
         }
     }
     
@@ -105,7 +101,7 @@ Kirigami.SwipeListItem {
                     // changes trigger volume changes trigger value changes.
                     property int volume: Volume
                     property bool ignoreValueChange: true
-                    readonly property bool forceRaiseMaxVolume: volume >= PulseAudio.NormalVolume * 1.01 // TODO raise maximum volume checkbox
+                    readonly property bool forceRaiseMaxVolume: volume >= PulseAudio.NormalVolume * 1.01
                     
                     from: PulseAudio.MinimalVolume
                     to: PulseAudio.NormalVolume
@@ -116,7 +112,7 @@ Kirigami.SwipeListItem {
                     
                     Accessible.name: i18nc("Accessibility data on volume slider", "Adjust volume for %1", baseItem.label)
 
-                    background:  PlasmaCore.FrameSvgItem {
+                    background: PlasmaCore.FrameSvgItem {
                         imagePath: "widgets/slider"
                         prefix: "groove"
                         width: parent.availableWidth
@@ -215,52 +211,48 @@ Kirigami.SwipeListItem {
                 }
             }
         }
-    }
-    
-    actions: [
-        Kirigami.Action {
+        
+        Item { Layout.fillWidth: true }
+        
+        PlasmaComponents.ToolButton {
+            icon.name: "application-menu"
             checkable: true
-            icon.name: Icon.name(Volume, Muted, type === "source" || type === "source-output" ? "microphone-sensitivity" : "audio-volume")
-            tooltip: i18n("Mute %1", baseItem.label)
-            onTriggered: Muted = !Muted
-            checked: Muted
-        }//,
-        //Kirigami.Action {
-            //icon.name: "application-menu"
-            //checked: contextMenu.visible && contextMenu.visualParent === this
-            //visible: contextMenu.hasContent
-            //tooltip: i18n("Show additional options for %1", baseItem.label)
-            //onClicked: {
-                //contextMenu.visualParent = this;
-                //contextMenu.openRelative();
-            //}
-        //}
-    ]
-    
-//     ListItemMenu {
-//         id: contextMenu
-//         pulseObject: model.PulseObject
-//         cardModel: paCardModel
-//         itemType: {
-//             switch (item.type) {
-//             case "sink":
-//                 return ListItemMenu.Sink;
-//             case "sink-input":
-//                 return ListItemMenu.SinkInput;
-//             case "source":
-//                 return ListItemMenu.Source;
-//             case "source-output":
-//                 return ListItemMenu.SourceOutput;
-//             }
-//         }
-//         sourceModel: {
-//             if (item.type.includes("sink")) {
-//                 return sinkView.model;
-//             } else if (item.type.includes("source")) {
-//                 return sourceView.model;
-//             }
-//         }
-//     }
+            checked: contextMenu.visible && contextMenu.visualParent === this
+            visible: contextMenu.hasContent
+            onClicked: {
+                contextMenu.visualParent = this;
+                contextMenu.openRelative();
+            }
+            PlasmaComponents.ToolTip {
+                text: i18n("Show additional options for %1", baseItem.label)
+            }
+            
+            ListItemMenu {
+                id: contextMenu
+                pulseObject: model.PulseObject
+                cardModel: paCardModel
+                itemType: {
+                    switch (baseItem.type) {
+                    case "sink":
+                        return ListItemMenu.Sink;
+                    case "sink-input":
+                        return ListItemMenu.SinkInput;
+                    case "source":
+                        return ListItemMenu.Source;
+                    case "source-output":
+                        return ListItemMenu.SourceOutput;
+                    }
+                }
+                sourceModel: {
+                    if (baseItem.type.includes("sink")) {
+                        return sinkView.model;
+                    } else if (baseItem.type.includes("source")) {
+                        return sourceView.model;
+                    }
+                }
+            }
+        }
+    }
     
     function setVolumeByPercent(targetPercent) {
         model.PulseObject.volume = Math.round(PulseAudio.NormalVolume * (targetPercent/100));
