@@ -20,10 +20,12 @@ import org.kde.plasma.private.nanoshell 2.0 as NanoShell
 
 import org.kde.kirigami 2.12 as Kirigami
 
-Kirigami.AbstractApplicationWindow {
+NanoShell.FullScreenOverlay {
     id: window
     visible: false
     color: showFullApplet ? Qt.rgba(0, 0, 0, 0.6) : "transparent"
+    
+    property bool suppressActiveClose: false // used by context menus opened in the applet to not autoclose the osd
     
     Behavior on color {
         ColorAnimation {}
@@ -32,7 +34,9 @@ Kirigami.AbstractApplicationWindow {
     property int volume: 0
     property bool showFullApplet: false
     
+    Component.onCompleted: console.log("BRUHHHHHHHHHHHHH")
     function showOverlay() {
+        console.log("showOverlay");
         if (!window.visible) {
             window.showFullApplet = false;
             window.showMaximized();
@@ -42,16 +46,11 @@ Kirigami.AbstractApplicationWindow {
         }
     }
 
-    // TODO
-    //onActiveChanged: {
-        //if (!active) {
-            //hideTimer.stop();
-            //hideTimer.triggered();
-        //}
-    //}
-    
-    Component.onCompleted: {// TODO
-        window.showMaximized();
+    onActiveChanged: {
+        if (!active && !suppressActiveClose) {
+            hideTimer.stop();
+            hideTimer.triggered();
+        }
     }
     
     Timer {

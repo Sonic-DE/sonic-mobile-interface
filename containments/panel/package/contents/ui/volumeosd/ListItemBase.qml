@@ -250,6 +250,7 @@ Kirigami.SwipeListItem {
                         return sourceView.model;
                     }
                 }
+                onVisibleChanged: window.suppressActiveClose = visible
             }
         }
     }
