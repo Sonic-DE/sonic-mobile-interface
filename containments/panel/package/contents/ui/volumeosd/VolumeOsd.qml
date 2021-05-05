@@ -100,12 +100,15 @@ NanoShell.FullScreenOverlay {
                         anchors.leftMargin: PlasmaCore.Units.smallSpacing * 2
                         anchors.rightMargin: PlasmaCore.Units.smallSpacing
                         
-                        PlasmaCore.IconItem {
+                        PlasmaComponents.ToolButton {
+                            icon.name: paSinkModel.preferredSink.muted ? "audio-volume-muted" : "audio-volume-high"
+                            text: paSinkModel.preferredSink.muted ? i18n("Unmute") : i18n("Mute")
+                            display: Controls.AbstractButton.IconOnly
                             Layout.alignment: Qt.AlignVCenter
                             Layout.preferredWidth: PlasmaCore.Units.iconSizes.medium
                             Layout.preferredHeight: PlasmaCore.Units.iconSizes.medium
                             Layout.rightMargin: PlasmaCore.Units.smallSpacing
-                            source: "audio-volume-high-symbolic"
+                            onClicked: muteVolume()
                         }
                         
                         PlasmaComponents.ProgressBar {
