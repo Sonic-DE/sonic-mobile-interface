@@ -20,6 +20,7 @@ import org.kde.plasma.private.nanoshell 2.0 as NanoShell
 
 import org.kde.kirigami 2.12 as Kirigami
 
+// this is loaded and managed by indicators/providers/VolumeProvider.qml
 NanoShell.FullScreenOverlay {
     id: window
     visible: false
@@ -101,8 +102,8 @@ NanoShell.FullScreenOverlay {
                         anchors.rightMargin: PlasmaCore.Units.smallSpacing
                         
                         PlasmaComponents.ToolButton {
-                            icon.name: paSinkModel.preferredSink.muted ? "audio-volume-muted" : "audio-volume-high"
-                            text: paSinkModel.preferredSink.muted ? i18n("Unmute") : i18n("Mute")
+                            icon.name: !paSinkModel.preferredSink || paSinkModel.preferredSink.muted ? "audio-volume-muted" : "audio-volume-high"
+                            text: !paSinkModel.preferredSink || paSinkModel.preferredSink.muted ? i18n("Unmute") : i18n("Mute")
                             display: Controls.AbstractButton.IconOnly
                             Layout.alignment: Qt.AlignVCenter
                             Layout.preferredWidth: PlasmaCore.Units.iconSizes.medium
@@ -175,7 +176,7 @@ NanoShell.FullScreenOverlay {
                         }
                         
                         PlasmaComponents.ToolButton {
-                            icon.name: "overflow-menu"
+                            icon.name: window.showFullApplet ? "arrow-up" : "arrow-down"
                             text: i18n("Toggle showing audio streams")
                             display: Controls.AbstractButton.IconOnly
                             Layout.alignment: Qt.AlignVCenter
