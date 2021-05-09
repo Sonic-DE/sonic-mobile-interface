@@ -7,6 +7,8 @@
 
 import QtQuick 2.1
 import QtQuick.Layouts 1.1
+import QtFeedback 5.0
+
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.kirigami 2.12 as Kirigami
@@ -34,6 +36,13 @@ ColumnLayout {
     property color enabledButtonColor: Kirigami.ColorUtils.adjustColor(PlasmaCore.ColorScope.highlightColor, {"alpha": 0.4*255})
     property color enabledPressedButtonColor: Kirigami.ColorUtils.adjustColor(PlasmaCore.ColorScope.highlightColor, {"alpha": 0.6*255});
 
+    // vibration
+    HapticsEffect {
+        id: vibrate
+        intensity: 0.5
+        duration: Kirigami.Units.shortDuration
+    }
+    
     Rectangle {
         Layout.preferredWidth: PlasmaCore.Units.iconSizes.large + PlasmaCore.Units.smallSpacing
         Layout.minimumHeight: width
@@ -62,6 +71,7 @@ ColumnLayout {
         MouseArea {
             id: iconMouseArea
             anchors.fill: parent
+            onPressed: vibrate.start()
             onClicked: {
                 if (delegateRoot.toggle) {
                     delegateRoot.toggle();
@@ -80,6 +90,7 @@ ColumnLayout {
             }
             onPressAndHold: {
                 if (delegateRoot.settingsCommand) {
+                    vibrate.start();
                     NanoShell.StartupFeedback.open(
                         delegateRoot.icon,
                         delegateRoot.text,
@@ -89,6 +100,7 @@ ColumnLayout {
                     closeRequested();
                     plasmoid.nativeInterface.executeCommand(delegateRoot.settingsCommand);
                 } else if (delegateRoot.toggleFunction) {
+                    vibrate.start();
                     root[delegateRoot.toggleFunction]();
                 }
             }
