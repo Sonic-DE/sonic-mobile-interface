@@ -70,7 +70,7 @@ Item {
             fullContainer = fullContainerComponent.createObject(fullRepresentationView.contentItem, {"fullRepresentationModel": fullRepresentationModel, "fullRepresentationView": fullRepresentationView});
         }
 
-        applet.fullRepresentationItem.parent = fullContainer;
+       // applet.fullRepresentationItem.parent = fullContainer;
         fullContainer.applet = applet;
         fullContainer.contentItem = applet.fullRepresentationItem;
         //applet.fullRepresentationItem.anchors.fill = fullContainer;
@@ -236,7 +236,6 @@ Item {
                 ListView {
                     id: fullRepresentationView
                     implicitHeight: units.gridUnit * 20
-                    Layout.topMargin: slidingPanel.wideScreen ? 0 : Math.round(Kirigami.Units.gridUnit * 1.5) // add height of bottom bar
                     Layout.preferredWidth: slidingPanel.wideScreen ? Math.min(slidingPanel.width/2, quickSettings.width*fullRepresentationModel.count) : panelContents.width 
                     Layout.preferredHeight: Math.min(plasmoid.screenGeometry.height - quickSettings.implicitHeight - bottomBar.height + slidingPanel.topEmptyAreaHeight, implicitHeight)
                     z: 1
@@ -279,8 +278,6 @@ Item {
                 right: parent.right
                 bottom: parent.bottom
             }
-            backgroundColor: Kirigami.ColorUtils.adjustColor(PlasmaCore.Theme.backgroundColor, {"alpha": 0.8*255})
-
             parent: slidingPanel.fixedArea
             opacity: fullRepresentationView.opacity
             visible: !slidingPanel.wideScreen && fullRepresentationModel.count > 1
