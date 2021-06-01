@@ -38,6 +38,7 @@ Kirigami.SwipeListItem {
 
     alwaysVisibleActions: true
     
+    backgroundColor: "transparent" // we use panel background, no need for the same colour to be on top
     activeBackgroundColor: selectButton.visible ? PlasmaCore.Theme.highlightColor : "transparent"
     
     onClicked: {
