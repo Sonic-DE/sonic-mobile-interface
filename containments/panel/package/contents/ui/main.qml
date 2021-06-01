@@ -214,7 +214,7 @@ Item {
 
             GridLayout {
                 id: panelContents
-                anchors.fill: parent
+                width: slidingPanel.wideScreen ? Math.min(parent.width, implicitWidth) : parent.width
                 
                 columns: slidingPanel.wideScreen ? 2 : 1
                 rows: slidingPanel.wideScreen ? 1 : 2
@@ -239,7 +239,7 @@ Item {
                     Layout.preferredWidth: slidingPanel.wideScreen ? Math.min(slidingPanel.width/2, quickSettings.width*fullRepresentationModel.count) : panelContents.width 
                     Layout.preferredHeight: Math.min(plasmoid.screenGeometry.height - quickSettings.implicitHeight - bottomBar.height + slidingPanel.topEmptyAreaHeight, implicitHeight)
                     z: 1
-                    interactive: count > 0 && width < contentWidth
+                    interactive: true//count > 0 && width < contentWidth
 
                     clip: slidingPanel.wideScreen
                     y: slidingPanel.wideScreen ? 0 : quickSettings.trueHeight
