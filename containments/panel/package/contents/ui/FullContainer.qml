@@ -34,7 +34,12 @@ DrawerBackground {
                     return;
                 }
             }
-            fullRepresentationModel.append(this);
+            if (applet && applet.pluginName == "org.kde.plasma.notifications") {
+                fullRepresentationModel.insert(0, this);
+            } else {
+                fullRepresentationModel.append(this);
+            }
+
             fullRepresentationView.forceLayout();
 
             fullRepresentationView.currentIndex = ObjectModel.index;

@@ -26,6 +26,7 @@ Item {
     implicitWidth: column.implicitWidth + PlasmaCore.Units.smallSpacing * 6
     implicitHeight: background.implicitHeight
 
+    signal expandRequested
     signal closeRequested
     signal closed
 
@@ -100,7 +101,14 @@ Item {
             anchors.centerIn: parent
         }
         TapHandler {
-            onTapped: root.expandedMode = !root.expandedMode;
+            onTapped: {
+                if (root.expandedMode) {
+                    root.closeRequested();
+                } else {
+                    root.expandRequested();
+                    root.expandedMode = true;
+                }
+            }
         }
     }
     

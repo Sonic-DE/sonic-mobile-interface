@@ -216,7 +216,7 @@ Item {
 
         contentItem: MouseArea {
             // mousearea captures touch presses so that the flickable picks them up for swiping
-            implicitWidth: slidingPanel.width
+            implicitWidth: slidingPanel.wideScreen ? panelContents.implicitWidth : slidingPanel.width
             implicitHeight: Math.min(slidingPanel.height, quickSettings.implicitHeight)
 
             GridLayout {
@@ -236,7 +236,8 @@ Item {
                     Layout.preferredWidth: slidingPanel.wideScreen ? Math.min(slidingPanel.width/2, units.gridUnit * 25) : panelContents.width
 
                     parentSlidingPanel: slidingPanel
-                    onCloseRequested: slidingPanel.hide()
+                    onExpandRequested: slidingPanel.expand()
+                    onCloseRequested: slidingPanel.close()
                 }
 
                 // notifications
@@ -244,7 +245,10 @@ Item {
                     id: fullRepresentationView
                     implicitHeight: units.gridUnit * 20
                     Layout.preferredWidth: slidingPanel.wideScreen ? Math.min(slidingPanel.width/2, quickSettings.width*fullRepresentationModel.count) : panelContents.width 
-                    Layout.preferredHeight: Math.min(plasmoid.screenGeometry.height - quickSettings.implicitHeight - bottomBar.height + slidingPanel.topEmptyAreaHeight, implicitHeight)
+                    Layout.preferredHeight: slidingPanel.wideScreen
+                            ? Math.min(units.gridUnit * 20, Math.max(units.gridUnit * 15, quickSettings.implicitHeight))
+                            : Math.min(plasmoid.screenGeometry.height - quickSettings.implicitHeight - bottomBar.height + slidingPanel.topEmptyAreaHeight, implicitHeight)
+
                     z: 1
                     interactive: true//count > 0 && width < contentWidth
 
@@ -257,11 +261,11 @@ Item {
                             return fullRepresentationModel.count > 0 && slidingPanel.offset / slidingPanel.collapsedHeight;
                         }
                     }
-                    preferredHighlightBegin: slidingPanel.drawerX
+                    //preferredHighlightBegin: slidingPanel.drawerX
 
                     cacheBuffer: width * 100
                     highlightFollowsCurrentItem: true
-                    highlightRangeMode: ListView.StrictlyEnforceRange
+                    highlightRangeMode: ListView.ApplyRange
                     highlightMoveDuration: units.longDuration
                     snapMode: slidingPanel.wideScreen ? ListView.NoSnap : ListView.SnapOneItem
                     model: ObjectModel {
