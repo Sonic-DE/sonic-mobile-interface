@@ -94,7 +94,7 @@ NanoShell.FullScreenOverlay {
                     Layout.topMargin: PlasmaCore.Units.largeSpacing
                     Layout.alignment: Qt.AlignHCenter
                     
-                    childItem: RowLayout {
+                    contentItem: RowLayout {
                         id: containerLayout
                         spacing: PlasmaCore.Units.smallSpacing
 

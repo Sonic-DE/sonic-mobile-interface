@@ -65,7 +65,7 @@ ColumnLayout {
     PopupCard {
         Layout.alignment: Qt.AlignHCenter
         Layout.bottomMargin: PlasmaCore.Units.largeSpacing
-        childItem: ColumnLayout {
+        contentItem: ColumnLayout {
             anchors.rightMargin: PlasmaCore.Units.smallSpacing
             anchors.leftMargin: PlasmaCore.Units.smallSpacing
             
@@ -93,7 +93,7 @@ ColumnLayout {
     PopupCard {
         Layout.alignment: Qt.AlignHCenter
         Layout.bottomMargin: PlasmaCore.Units.largeSpacing
-        childItem: ColumnLayout {
+        contentItem: ColumnLayout {
             anchors.rightMargin: PlasmaCore.Units.smallSpacing
             anchors.leftMargin: PlasmaCore.Units.smallSpacing
             
@@ -122,7 +122,7 @@ ColumnLayout {
         visible: sourceInputView.model.count + sourceMediaInputView.model.count !== 0
         Layout.alignment: Qt.AlignHCenter
         Layout.bottomMargin: PlasmaCore.Units.largeSpacing
-        childItem: ColumnLayout {
+        contentItem: ColumnLayout {
             anchors.rightMargin: PlasmaCore.Units.smallSpacing
             anchors.leftMargin: PlasmaCore.Units.smallSpacing
             
@@ -172,7 +172,7 @@ ColumnLayout {
         visible: sourceOutputView.model.count !== 0
         Layout.alignment: Qt.AlignHCenter
         Layout.bottomMargin: PlasmaCore.Units.largeSpacing
-        childItem: ColumnLayout {
+        contentItem: ColumnLayout {
             anchors.rightMargin: PlasmaCore.Units.smallSpacing
             anchors.leftMargin: PlasmaCore.Units.smallSpacing
             
