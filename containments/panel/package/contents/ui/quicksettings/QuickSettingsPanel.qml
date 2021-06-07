@@ -33,13 +33,14 @@ Item {
     property bool expandedMode: parentSlidingPanel.wideScreen
     readonly property real expandedRatio: expandedMode
                     ? 1
-                    : Math.max(0, Math.min(1, (parentSlidingPanel.offset - firstRowHeight - parentSlidingPanel.topPanelHeight - bottomBar.height - background.margins.bottom -background.fixedMargins.bottom) / otherRowsHeight + 0.05)) // HACK: add 0.05 to prevent jumping since this height isn't exact
+                    // This counts also all spacings in form of Lyout.topMargin that some elements has
+                    : Math.max(0, Math.min(1, (parentSlidingPanel.offset - firstRowHeight - indicatorsRow.height - Kirigami.Units.largeSpacing - Kirigami.Units.smallSpacing * 2 - bottomBar.height - background.margins.top -background.fixedMargins.bottom) / otherRowsHeight + 0.05)) // HACK: add 0.05 to prevent jumping since this height isn't exact
 
     readonly property real topEmptyAreaHeight: parentSlidingPanel.userInteracting
         ? (root.height - collapsedHeight) * (1 - expandedRatio)
         : (expandedMode ? 0 : root.height - collapsedHeight)
      
-    readonly property real collapsedHeight: parentSlidingPanel.topPanelHeight + firstRowHeight + bottomBar.height + background.margins.top + background.fixedMargins.bottom+10
+    readonly property real collapsedHeight: parentSlidingPanel.topPanelHeight + firstRowHeight + bottomBar.height + background.margins.top + background.fixedMargins.bottom
     readonly property real firstRowHeight: flow.children[0].height
     readonly property real otherRowsHeight: column.implicitHeight - firstRowHeight - parentSlidingPanel.topPanelHeight
     
@@ -145,7 +146,7 @@ Item {
                 showGradientBackground: false
                 showDropShadow: false
                 transform: Translate {
-                    y: otherRowsHeight * (1 - root.expandedRatio) - PlasmaCore.Units.smallSpacing
+                    y: otherRowsHeight * (1 - root.expandedRatio)
                 }
             }
             
