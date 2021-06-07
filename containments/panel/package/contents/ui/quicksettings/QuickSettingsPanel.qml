@@ -154,8 +154,8 @@ Item {
                 id: flow
                 Layout.alignment: Qt.AlignHCenter
                 Layout.fillWidth: true
-                Layout.leftMargin: root.expandedRatio < 0.3 ? (units.largeSpacing - units.smallSpacing) * root.expandedRatio : (units.largeSpacing - units.smallSpacing)
-                Layout.rightMargin: Layout.leftMargin
+                Layout.leftMargin: root.expandedRatio < 0.4 ? -background.fixedMargins.left * (1 - root.expandedRatio) : 0
+                Layout.rightMargin: root.expandedRatio < 0.4 ? -background.fixedMargins.right * (1 - root.expandedRatio) : 0
                 Layout.topMargin: units.largeSpacing
                 
                 readonly property real cellSizeHint: units.iconSizes.large + units.smallSpacing * 6
