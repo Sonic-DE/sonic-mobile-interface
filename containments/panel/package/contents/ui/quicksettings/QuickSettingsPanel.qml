@@ -42,9 +42,9 @@ Item {
 
     readonly property real firstRowHeight: flow.children[0].height
 
-    readonly property real collapsedHeight: parentSlidingPanel.topPanelHeight + firstRowHeight + bottomBar.implicitHeight + background.margins.top + background.fixedMargins.bottom
+    readonly property real collapsedHeight: column.Layout.minimumHeight + background.margins.top + background.fixedMargins.bottom
 
-    readonly property real expandedHeight: parentSlidingPanel.topPanelHeight + flow.implicitHeight + brightnessSlider.implicitHeight + bottomBar.implicitHeight + background.margins.top + background.fixedMargins.bottom
+    readonly property real expandedHeight: column.Layout.maximumHeight + background.margins.top + background.fixedMargins.bottom
 
     Connections {
         target: root.parentSlidingPanel
@@ -91,7 +91,7 @@ Item {
                 bottom: parent.bottom
             }
             spacing: 0
-           // height: Math.max(Layout.minimumHeight, Layout.maximumHeight * root.expandedRatio)
+            height: Layout.minimumHeight * (1 - root.expandedRatio) + (Layout.maximumHeight * root.expandedRatio)
            // clip: expandedRatio > 0 && expandedRatio < 1 // only clip when necessary to improve performance
             
             readonly property real cellSizeHint: units.iconSizes.large + units.smallSpacing * 6
@@ -110,14 +110,17 @@ Item {
             ColumnLayout {
                 clip: expandedRatio > 0 && expandedRatio < 1 // only clip when necessary to improve performance
                 Layout.fillWidth: true
-                Layout.preferredHeight: flow.Layout.minimumHeight * (1 - root.expandedRatio) + implicitHeight * root.expandedRatio
+                Layout.fillHeight: true
+                Layout.minimumHeight: flow.Layout.minimumHeight
+
                 spacing: 0
                 Layout.topMargin: PlasmaCore.Units.smallSpacing
                 Flow {
                     id: flow
                     Layout.fillWidth: true
                     Layout.minimumHeight: cellSizeHint
-                    Layout.maximumHeight:  (flow.cellSizeHint * Math.ceil((flow.children.length - 1) / flow.columns))
+                    Layout.preferredHeight: implicitHeight
+                    Layout.maximumHeight: (flow.cellSizeHint * Math.ceil((flow.children.length - 1) / flow.columns))
                     
                     readonly property real cellSizeHint: units.iconSizes.large + units.smallSpacing * 6
                     readonly property real columns: Math.floor(width / cellSizeHint)
@@ -155,7 +158,6 @@ Item {
                 }
                 BrightnessItem {
                     id: brightnessSlider
-                    Layout.alignment: Qt.AlignHCenter
                     Layout.topMargin: units.smallSpacing
                     Layout.bottomMargin: units.smallSpacing
                     Layout.leftMargin: units.largeSpacing
@@ -198,9 +200,6 @@ Item {
                         }
                     }
                 }
-Text {
-    text: root.collapsedHeight+" "+root.expandedHeight+"///"+column.Layout.minimumHeight+" "+column.Layout.maximumHeight
-}
             }
         }
     }
