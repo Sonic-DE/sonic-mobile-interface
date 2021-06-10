@@ -24,13 +24,14 @@ import "../"
 Item {
     id: root
     implicitWidth: column.implicitWidth + PlasmaCore.Units.smallSpacing * 6
-    implicitHeight: background.implicitHeight
+    implicitHeight: expandedHeight
 
     signal expandRequested
     signal closeRequested
     signal closed
 
     property bool expandedMode: parentSlidingPanel.wideScreen
+
     readonly property real expandedRatio: expandedMode
                     ? 1
                     : Math.max(0, Math.min(1, (parentSlidingPanel.offset - collapsedHeight) /(expandedHeight-collapsedHeight)))
@@ -39,8 +40,6 @@ Item {
         ? (root.height - collapsedHeight) * (1 - expandedRatio)
         : (expandedMode ? 0 : root.height - collapsedHeight)
 
-
-    readonly property real firstRowHeight: flow.children[0].height
 
     readonly property real collapsedHeight: column.Layout.minimumHeight + background.margins.top + background.fixedMargins.bottom
 
@@ -121,19 +120,23 @@ Item {
                     Layout.minimumHeight: cellSizeHint
                     Layout.preferredHeight: implicitHeight
                     Layout.maximumHeight: (flow.cellSizeHint * Math.ceil((flow.children.length - 1) / flow.columns))
-                    
+
                     readonly property real cellSizeHint: units.iconSizes.large + units.smallSpacing * 6
                     readonly property real columns: Math.floor(width / cellSizeHint)
                     readonly property real columnWidth: Math.floor(width / columns)
-                    
+
                     spacing: 0
+
                     Repeater {
                         model: quickSettingsModel.model
                         delegate: Delegate {
                             id: delegateItem
                             settingsModel: quickSettingsModel
-                            width: flow.columnWidth
-                            
+                            width: root.expandedRatio < 0.4
+                                    ? Math.max(implicitWidth + PlasmaCore.Units.smallSpacing * 2, flow.width / (flow.columns + 1))
+                                    : Math.max(implicitWidth + PlasmaCore.Units.smallSpacing * 2,
+                                            (flow.width / (flow.columns + 1)) * (1 - root.expandedRatio) + (flow.width / flow.columns) * root.expandedRatio)
+
                             labelOpacity: y > 0  ? 1 : root.expandedRatio
                             opacity: y <= 0 ? 1 : root.expandedRatio
 
