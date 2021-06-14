@@ -41,9 +41,9 @@ Item {
         : (expandedMode ? 0 : root.height - collapsedHeight)
 
 
-    readonly property real collapsedHeight: column.Layout.minimumHeight + background.margins.top + background.fixedMargins.bottom
+    readonly property real collapsedHeight: column.Layout.minimumHeight + background.fixedMargins.top + background.fixedMargins.bottom
 
-    readonly property real expandedHeight: column.Layout.maximumHeight + background.margins.top + background.fixedMargins.bottom
+    readonly property real expandedHeight: column.Layout.maximumHeight + background.fixedMargins.top + background.fixedMargins.bottom
 
     Connections {
         target: root.parentSlidingPanel
@@ -113,7 +113,7 @@ Item {
                 Layout.minimumHeight: flow.Layout.minimumHeight
 
                 spacing: 0
-                Layout.topMargin: PlasmaCore.Units.smallSpacing
+                Layout.topMargin: PlasmaCore.Units.largeSpacing
                 Flow {
                     id: flow
                     Layout.fillWidth: true
@@ -161,7 +161,7 @@ Item {
                 }
                 BrightnessItem {
                     id: brightnessSlider
-                    Layout.topMargin: units.smallSpacing
+                    Layout.topMargin: units.largeSpacing
                     Layout.bottomMargin: units.smallSpacing
                     Layout.leftMargin: units.largeSpacing
                     Layout.rightMargin: units.largeSpacing
