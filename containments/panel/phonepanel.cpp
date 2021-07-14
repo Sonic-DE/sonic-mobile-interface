@@ -11,7 +11,9 @@
 #include <qplatformdefs.h>
 #include <unistd.h>
 
+#include <KApplicationTrader>
 #include <KConfigGroup>
+#include <KIO/ApplicationLauncherJob>
 #include <KLocalizedString>
 #include <KNotification>
 
@@ -200,6 +202,24 @@ bool PhonePanel::isSystem24HourFormat()
 
     QString timeFormat = localeSettings.readEntry("TimeFormat", QStringLiteral(FORMAT24H));
     return timeFormat == QStringLiteral(FORMAT24H);
+}
+
+void PhonePanel::launchApp(const QString &app)
+{
+    auto filter = [&app](const KService::Ptr &service) {
+        return service->storageId() == app;
+    };
+    const KService::List apps = KApplicationTrader::query(filter);
+    if (apps.isEmpty()) {
+        qWarning() << "Could not find" << app;
+        return;
+    }
+    if (apps.count() > 1) {
+        qDebug() << "Found several" << app << apps.count();
+    }
+
+    auto job = new KIO::ApplicationLauncherJob(apps.first(), this);
+    job->start();
 }
 
 K_PLUGIN_CLASS_WITH_JSON(PhonePanel, "metadata.json")
