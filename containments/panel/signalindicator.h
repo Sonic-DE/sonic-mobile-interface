@@ -1,0 +1,31 @@
+// SPDX-FileCopyrightText: 2021 Tobias Fella <fella@posteo.de>
+// SPDX-License-Identifier: GPL-2.0-or-later
+
+#pragma once
+
+#include <QObject>
+#include <ModemManagerQt/Manager>
+
+class SignalIndicator : public QObject
+{
+    Q_OBJECT
+
+    Q_PROPERTY(int strength READ strength NOTIFY strengthChanged)
+    Q_PROPERTY(QString name READ name NOTIFY nameChanged)
+    Q_PROPERTY(bool simLocked READ simLocked NOTIFY simLockedChanged)
+
+public:
+    SignalIndicator();
+
+    int strength() const;
+    QString name() const;
+    bool simLocked() const;
+
+Q_SIGNALS:
+    void strengthChanged();
+    void nameChanged();
+    void simLockedChanged();
+
+private:
+    ModemManager::Modem::Ptr m_modem;
+};
