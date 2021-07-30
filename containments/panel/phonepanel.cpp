@@ -25,6 +25,9 @@
 #include <QScreen>
 #include <QStandardPaths>
 #include <QtConcurrent/QtConcurrent>
+#include <QQmlEngine>
+
+#include "signalindicator.h"
 
 #define FORMAT24H "HH:mm:ss"
 
@@ -94,6 +97,8 @@ PhonePanel::PhonePanel(QObject *parent, const QVariantList &args)
             Q_EMIT isSystem24HourFormatChanged();
         }
     });
+
+    qmlRegisterSingletonInstance("org.kde.plasma.phone", 1, 0, "SignalIndicator", new SignalIndicator());
 }
 
 PhonePanel::~PhonePanel() = default;
