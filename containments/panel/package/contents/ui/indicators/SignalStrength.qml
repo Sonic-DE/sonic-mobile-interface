@@ -37,7 +37,7 @@ Item {
         anchors.left: strengthIcon.right
         anchors.verticalCenter: parent.verticalCenter
 
-        text: provider.label
+        text: "" //provider.label
         color: PlasmaCore.ColorScope.textColor
         font.pixelSize: parent.height / 2
     }
