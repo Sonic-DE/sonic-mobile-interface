@@ -60,6 +60,13 @@ add_subdirectory(applets)
 add_subdirectory(containments)
 add_subdirectory(components)
 
+find_program(PlasmaOpenSettings plasma-open-settingsa)
+set_package_properties(PlasmaOpenSettingsa PROPERTIES
+                                          URL https://invent.kde.org/plasma/kde-cli-tools/
+                                          DESCRIPTION "Opens KCMs properly"
+                                          TYPE RUNTIME
+                                          PURPOSE "Used on the top panel")
+
 feature_summary(WHAT ALL INCLUDE_QUIET_PACKAGES FATAL_ON_MISSING_REQUIRED_PACKAGES)
 
 # add clang-format target for all our real source files
