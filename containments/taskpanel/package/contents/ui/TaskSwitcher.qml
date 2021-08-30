@@ -76,12 +76,18 @@ NanoShell.FullScreenOverlay {
         if (id < 0) {
             return;
         }
+
+        var newActiveIdx = window.model.index(id, 0)
+        var newActiveGeo = tasksModel.data(newActiveIdx, TaskManager.AbstractTasksModel.ScreenGeometry)
         for (var i = 0 ; i < tasksModel.count; i++) {
             var idx = window.model.index(i, 0)
             if (i == id) {
                 window.model.requestActivate(idx);
             } else if (!tasksModel.data(idx, TaskManager.AbstractTasksModel.IsMinimized)) {
-                tasksModel.requestToggleMinimized(idx);
+                var geo = tasksModel.data(idx, TaskManager.AbstractTasksModel.ScreenGeometry)
+                if (geo === newActiveGeo) {
+                    tasksModel.requestToggleMinimized(idx);
+                }
             }
         }
         activateAnim.delegate = delegate;
