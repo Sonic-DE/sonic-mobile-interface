@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include <QObject>
 #include <ModemManagerQt/Manager>
+#include <QObject>
 
 class SignalIndicator : public QObject
 {
