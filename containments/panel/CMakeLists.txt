@@ -3,7 +3,6 @@ qt_add_dbus_interfaces(DBUS_SRCS dbus/org.kde.KWin.ScreenShot2.xml
 
 set(phonepanel_SRCS
     phonepanel.cpp
-    signalindicator.cpp
     ${DBUS_SRCS}
 )
 
@@ -14,14 +13,12 @@ kcoreaddons_desktop_to_json(plasma_applet_phonepanel package/metadata.desktop)
 target_link_libraries(plasma_applet_phonepanel
                       Qt::Gui
                       Qt::DBus
-                      Qt5::Qml
                       KF5::Plasma
                       KF5::I18n
                       KF5::Notifications
                       KF5::KIOGui
                       KF5::Service
-                      KF5::ModemManagerQt
-                      )
+                     )
 
 install(TARGETS plasma_applet_phonepanel DESTINATION ${KDE_INSTALL_PLUGINDIR}/plasma/applets)
 #install(FILES plasma-phonepanel-default.desktop DESTINATION ${SERVICES_INSTALL_DIR})
