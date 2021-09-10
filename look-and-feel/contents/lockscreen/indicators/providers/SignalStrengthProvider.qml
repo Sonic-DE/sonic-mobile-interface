@@ -1,18 +1,14 @@
 /*
- *  SPDX-FileCopyrightText: 2021 Devin Lin <espidev@gmail.com>
  *  SPDX-FileCopyrightText: 2015 Marco Martin <mart@kde.org>
+ *  SPDX-FileCopyrightText: 2021 Devin Lin <espidev@gmail.com>
+ *  SPDX-FileCopyrightText: 2021 Tobias Fella <fella@posteo.de>
  *
  *  SPDX-License-Identifier: GPL-2.0-or-later
  */
 
 import QtQuick 2.1
-import QtQuick.Layouts 1.1
 
 import org.kde.plasma.mm 1.0
-
-import org.kde.plasma.plasmoid 2.0
-import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.components 2.0 as PlasmaComponents
 
 QtObject {
 
@@ -26,7 +22,7 @@ QtObject {
                         : signalIndicator.strength >= 40 ? "network-mobile-40"
                         : signalIndicator.strength >= 20 ? "network-mobile-20"
                         : "network-mobile-0"
-    
+
     property string label: signalIndicator.simLocked ? i18n("Sim locked") : signalIndicator.name
 }
 
