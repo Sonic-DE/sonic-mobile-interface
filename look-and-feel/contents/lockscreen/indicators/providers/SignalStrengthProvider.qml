@@ -21,7 +21,7 @@ QtObject {
                         : SignalIndicator.strength >= 40 ? "network-mobile-40"
                         : SignalIndicator.strength >= 20 ? "network-mobile-20"
                         : "network-mobile-0"
-    
+
     property string label: SignalIndicator.simLocked ? i18n("Sim locked") : SignalIndicator.name
 }
 
