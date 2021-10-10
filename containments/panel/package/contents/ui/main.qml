@@ -32,7 +32,14 @@ import "indicators/providers" as IndicatorProviders
 Item {
     id: root
     width: 480
-    height: 30
+    height: PlasmaCore.Units.gridUnit + PlasmaCore.Units.smallSpacing * 2
+    
+    // set height binding to top panel API
+    Binding {
+        target: MobileShell.TopPanelControls
+        property: "panelHeight"
+        value: root.height
+    }
 
     // set height binding to top panel API
     Binding {
@@ -182,7 +189,10 @@ Item {
     // top panel component
     IndicatorsRow {
         id: topPanel
-        anchors.fill: parent
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        implicitHeight: PlasmaCore.Units.gridUnit
         z: 1
         colorGroup: showingApp ? PlasmaCore.Theme.HeaderColorGroup : PlasmaCore.Theme.ComplementaryColorGroup
         backgroundColor: !showingApp ? "transparent" : root.backgroundColor
