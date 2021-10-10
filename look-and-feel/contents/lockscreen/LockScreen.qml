@@ -79,7 +79,7 @@ PlasmaCore.ColorScope {
             left: parent.left
             right: parent.right
         }
-        height: PlasmaCore.Units.gridUnit
+        height: PlasmaCore.Units.gridUnit + PlasmaCore.Units.smallSpacing * 2
         opacity: 1 - (passwordFlickable.contentY / passwordFlickable.columnHeight)
         sourceComponent: SimpleHeaderBar {}
     }
