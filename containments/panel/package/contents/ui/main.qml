@@ -189,10 +189,7 @@ Item {
     // top panel component
     IndicatorsRow {
         id: topPanel
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        implicitHeight: PlasmaCore.Units.gridUnit
+        anchors.fill: parent
         z: 1
         colorGroup: showingApp ? PlasmaCore.Theme.HeaderColorGroup : PlasmaCore.Theme.ComplementaryColorGroup
         backgroundColor: !showingApp ? "transparent" : root.backgroundColor

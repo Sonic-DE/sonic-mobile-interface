@@ -75,7 +75,7 @@ Item {
             
             anchors.fill: parent
             background: Rectangle {
-                color: "darkblue" // backgroundColor
+                color: backgroundColor
             }
             
             contentItem: ColumnLayout {
