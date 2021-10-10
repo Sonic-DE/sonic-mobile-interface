@@ -29,7 +29,6 @@ import "indicators" as Indicators
 Item {
     id: indicatorsRow
     required property var colorGroup
-    required property bool showGradientBackground
     required property bool showDropShadow
     required property color backgroundColor
     
@@ -39,6 +38,7 @@ Item {
     property alias applets: appletIconsRow
     
     property real textPixelSize: PlasmaCore.Units.gridUnit * 0.6
+    property real elementSpacing: PlasmaCore.Units.smallSpacing * 1.5
     
     PlasmaCore.DataSource {
         id: timeSource
@@ -66,11 +66,6 @@ Item {
         colorGroup: indicatorsRow.colorGroup
         anchors.fill: parent
         
-        Rectangle {
-            anchors.fill: parent
-            color: backgroundColor
-        }
-        
         Controls.Control {
             id: control
             topPadding: PlasmaCore.Units.smallSpacing
@@ -80,7 +75,7 @@ Item {
             
             anchors.fill: parent
             background: Rectangle {
-                color: backgroundColor
+                color: "darkblue" // backgroundColor
             }
             
             contentItem: ColumnLayout {
@@ -115,35 +110,37 @@ Item {
                         Layout.fillWidth: true
                     }
                     
-                    RowLayout {
-                        id: appletIconsRow
-                        Layout.fillHeight: true
-                        spacing: PlasmaCore.Units.smallSpacing
-                    }
-                    
                     // system tray
-                    RowLayout {
-                        id: statusNotifierIndicatorsRow
-                        Layout.fillHeight: true
-                        
-                        Repeater {
-                            id: statusNotifierRepeater
-                            model: PlasmaCore.SortFilterModel {
-                                id: filteredStatusNotifiers
-                                filterRole: "Title"
-                                sourceModel: PlasmaCore.DataModel {
-                                    dataSource: statusNotifierSource
-                                }
+                    Repeater {
+                        id: statusNotifierRepeater
+                        model: PlasmaCore.SortFilterModel {
+                            id: filteredStatusNotifiers
+                            filterRole: "Title"
+                            sourceModel: PlasmaCore.DataModel {
+                                dataSource: statusNotifierSource
                             }
+                        }
 
-                            delegate: TaskWidget {}
+                        delegate: TaskWidget {
+                            Layout.leftMargin: indicatorsRow.elementSpacing
                         }
                     }
                     
+                    // applet indicators
+                    RowLayout {
+                        id: appletIconsRow
+                        Layout.leftMargin: indicatorsRow.elementSpacing
+                        Layout.fillHeight: true
+                        spacing: indicatorsRow.elementSpacing
+                        visible: children.length > 0
+                    }
+                    
+                    // system indicators
                     RowLayout {
                         id: indicators
-                        spacing: PlasmaCore.Units.smallSpacing * 1.5
+                        Layout.leftMargin: PlasmaCore.Units.smallSpacing // applets have different spacing needs
                         Layout.fillHeight: true
+                        spacing: indicatorsRow.elementSpacing
 
                         Indicators.SignalStrength {
                             provider: signalStrengthProvider
@@ -163,7 +160,7 @@ Item {
                         }
                         Indicators.Battery {
                             provider: batteryProvider
-                            spacing: PlasmaCore.Units.smallSpacing * 1.5
+                            spacing: indicatorsRow.elementSpacing
                             labelHeight: textPixelSize
                             Layout.fillHeight: true
                         }

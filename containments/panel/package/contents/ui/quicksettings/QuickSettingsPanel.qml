@@ -110,7 +110,6 @@ Item {
                 showSecondRow: true
                 colorGroup: PlasmaCore.Theme.NormalColorGroup
                 backgroundColor: "transparent"
-                showGradientBackground: false
                 showDropShadow: false
             }
             
