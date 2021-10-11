@@ -202,6 +202,9 @@ PlasmaCore.ColorScope {
                 iconSizeFactor: 0.75
                 iconSource: "mobile-task-switcher"
                 colorGroup: root.showingApp ? PlasmaCore.Theme.NormalColorGroup : PlasmaCore.Theme.ComplementaryColorGroup
+                
+                opacity: TaskPanel.KWinVirtualKeyboard.visible ? 0 : 1
+                Behavior on opacity { NumberAnimation { duration: Kirigami.Units.shortDuration } }
             }
 
             Button {
@@ -212,12 +215,16 @@ PlasmaCore.ColorScope {
                     if (!enabled) {
                         return;
                     }
+                    if (TaskPanel.KWinVirtualKeyboard.active) {
+                        TaskPanel.KWinVirtualKeyboard.active = false
+                        return;
+                    }
                     root.minimizeAll();
                     MobileShell.HomeScreenControls.resetHomeScreenPosition();
                     plasmoid.nativeInterface.allMinimizedChanged();
                 }
                 iconSizeFactor: 1
-                iconSource: "start-here-kde"
+                iconSource: TaskPanel.KWinVirtualKeyboard.visible ? "go-down-symbolic" : "start-here-kde"
                 colorGroup: root.showingApp ? PlasmaCore.Theme.NormalColorGroup : PlasmaCore.Theme.ComplementaryColorGroup
             }
 
@@ -228,10 +235,6 @@ PlasmaCore.ColorScope {
                 onClicked: {
                     if (!enabled) {
                         return
-                    }
-                    if (TaskPanel.KWinVirtualKeyboard.active) {
-                        TaskPanel.KWinVirtualKeyboard.active = false
-                        return;
                     }
                     if (!plasmoid.nativeInterface.hasCloseableActiveWindow) {
                         return;
@@ -244,8 +247,11 @@ PlasmaCore.ColorScope {
 
                 // mobile-close-app (from plasma-frameworks) seems to have less margins than icons from breeze-icons
                 iconSizeFactor: TaskPanel.KWinVirtualKeyboard.visible ? 1 : 0.75
-                iconSource: TaskPanel.KWinVirtualKeyboard.visible ? "go-down-symbolic" : "mobile-close-app"
+                iconSource: "mobile-close-app"
                 colorGroup: root.showingApp ? PlasmaCore.Theme.NormalColorGroup : PlasmaCore.Theme.ComplementaryColorGroup
+                
+                opacity: TaskPanel.KWinVirtualKeyboard.visible ? 0 : 1
+                Behavior on opacity { NumberAnimation { duration: Kirigami.Units.shortDuration } }
             }
         }
 
