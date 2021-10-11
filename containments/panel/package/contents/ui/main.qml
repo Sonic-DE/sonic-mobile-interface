@@ -32,7 +32,7 @@ import "indicators/providers" as IndicatorProviders
 Item {
     id: root
     width: 480
-    height: PlasmaCore.Units.gridUnit + PlasmaCore.Units.smallSpacing * 2
+    height: PlasmaCore.Units.gridUnit
     
     // set height binding to top panel API
     Binding {
