@@ -133,7 +133,7 @@ FocusScope {
                 
                 PlasmaExtra.Heading {
                     color: "white"
-                    level: 2
+                    level: 1
                     text: i18n("Applications")
                 }
                 Item { Layout.fillWidth: true }
