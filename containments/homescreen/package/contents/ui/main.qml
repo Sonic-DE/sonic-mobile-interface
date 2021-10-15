@@ -54,6 +54,9 @@ FocusScope {
         }
         componentComplete = true;
         recalculateMaxFavoriteCount()
+        
+        // ensure the gestures work immediately on load
+        forceActiveFocus();
     }
 
     Plasmoid.onScreenChanged: {
@@ -97,20 +100,37 @@ FocusScope {
             bottomMargin: plasmoid.screenGeometry.height - plasmoid.availableScreenRect.height - plasmoid.availableScreenRect.y
         }
 
-        //TODO: favorite strip disappearing with everything else
-        footer: favoriteStrip
         appletsLayout: homeScreenContents.appletsLayout
 
         appDrawer: root.appDrawer
         contentWidth: Math.max(width, width * Math.ceil(homeScreenContents.itemsBoundingRect.width/width)) + (homeScreenContents.launcherDragManager.active ? width : 0)
         showAddPageIndicator: homeScreenContents.launcherDragManager.active
 
-        dragGestureEnabled: (!appDrawer || appDrawer.status !== HomeScreenComponents.AbstractAppDrawer.Status.Open) && !appletsLayout.editMode && !plasmoid.editMode && !homeScreenContents.launcherDragManager.active
+        dragGestureEnabled: root.focus && (!appDrawer || appDrawer.status !== HomeScreenComponents.AbstractAppDrawer.Status.Open) && !appletsLayout.editMode && !plasmoid.editMode && !homeScreenContents.launcherDragManager.active
 
         HomeScreenComponents.HomeScreenContents {
             id: homeScreenContents
             width: mainFlickable.width * 100
             favoriteStrip: favoriteStrip
+        }
+        
+        footer: HomeScreenComponents.FavoriteStrip {
+            id: favoriteStrip
+
+            appletsLayout: homeScreenContents.appletsLayout
+            visible: flow.children.length > 0 || homeScreenContents.launcherDragManager.active || homeScreenContents.containsDrag
+            opacity: homeScreenContents.launcherDragManager.active && HomeScreenComponents.ApplicationListModel.favoriteCount >= HomeScreenComponents.ApplicationListModel.maxFavoriteCount ? 0.3 : 1
+
+            TapHandler {
+                target: favoriteStrip
+                onTapped: {
+                    //Hides icons close button
+                    homeScreenContents.appletsLayout.appletsLayoutInteracted();
+                    homeScreenContents.appletsLayout.editMode = false;
+                }
+                onLongPressed: homeScreenContents.appletsLayout.editMode = true;
+                onPressedChanged: root.focus = true;
+            }
         }
     }
 
@@ -196,27 +216,6 @@ FocusScope {
         id: appDrawerLoader
         anchors.fill: parent
         sourceComponent: appDrawerType === "gridview" ? gridViewDrawer : listViewDrawer
-    }
-
-    HomeScreenComponents.FavoriteStrip {
-        id: favoriteStrip
-
-        appletsLayout: homeScreenContents.appletsLayout
-
-        visible: flow.children.length > 0 || homeScreenContents.launcherDragManager.active || homeScreenContents.containsDrag
-
-        opacity: homeScreenContents.launcherDragManager.active && HomeScreenComponents.ApplicationListModel.favoriteCount >= HomeScreenComponents.ApplicationListModel.maxFavoriteCount ? 0.3 : 1
-
-        TapHandler {
-            target: favoriteStrip
-            onTapped: {
-                //Hides icons close button
-                homeScreenContents.appletsLayout.appletsLayoutInteracted();
-                homeScreenContents.appletsLayout.editMode = false;
-            }
-            onLongPressed: homeScreenContents.appletsLayout.editMode = true;
-            onPressedChanged: root.focus = true;
-        }
     }
 }
 

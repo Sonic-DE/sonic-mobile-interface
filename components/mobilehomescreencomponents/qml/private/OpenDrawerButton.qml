@@ -28,13 +28,9 @@ MouseArea {
     height: PlasmaCore.Units.iconSizes.smallMedium
     signal openRequested
     signal closeRequested
-
+    
     onClicked: {
-        if ((arrowUpIcon.flickable.contentY + arrowUpIcon.flickable.originY + arrowUpIcon.flickable.height*2) >= arrowUpIcon.flickable.height/2) {
-            closeRequested();
-        } else {
-            openRequested();
-        }
+        openRequested();
         scrollAnim.restart();
     }
 
