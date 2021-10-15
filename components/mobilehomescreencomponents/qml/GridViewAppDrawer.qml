@@ -35,13 +35,21 @@ AbstractAppDrawer {
         
         // move drawer down when at the top of the app list
         property real oldContentY
+        property bool movingDrawerDown: false
         onContentYChanged: {
             let candidateContentY = root.flickable.contentY - (oldContentY - contentY);
             if (dragging && startDragContentY <= 0 && oldContentY <= 0 && candidateContentY <= root.drawerTopMargin) {
                 root.flickable.contentY = candidateContentY;
                 contentY = 0;
+                movingDrawerDown = true;
             }
             oldContentY = contentY;
+        }
+        onMovementEnded: {
+            if (movingDrawerDown) {
+                root.snapDrawerStatus();
+                movingDrawerDown = false;
+            }
         }
         
         cellWidth: root.contentWidth / Math.floor(root.contentWidth / ((root.availableCellHeight - root.reservedSpaceForLabel) + PlasmaCore.Units.smallSpacing*4))

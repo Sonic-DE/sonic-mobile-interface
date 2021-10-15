@@ -105,7 +105,7 @@ FocusScope {
         contentWidth: Math.max(width, width * Math.ceil(homeScreenContents.itemsBoundingRect.width/width)) + (homeScreenContents.launcherDragManager.active ? width : 0)
         showAddPageIndicator: homeScreenContents.launcherDragManager.active
 
-        dragGestureEnabled: root.focus && appDrawer && appDrawer.status !== HomeScreenComponents.AbstractAppDrawer.Status.Open && !appletsLayout.editMode && !plasmoid.editMode && !homeScreenContents.launcherDragManager.active
+        dragGestureEnabled: (!appDrawer || appDrawer.status !== HomeScreenComponents.AbstractAppDrawer.Status.Open) && !appletsLayout.editMode && !plasmoid.editMode && !homeScreenContents.launcherDragManager.active
 
         HomeScreenComponents.HomeScreenContents {
             id: homeScreenContents

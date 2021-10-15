@@ -33,7 +33,7 @@ DragHandler {
         if (active) {
             if (root.appDrawer) {
                 if (__scrollDirection === DragGestureHandler.None) {
-                    if (root.appDrawer.contentY > PlasmaCore.Units.gridUnit * 2) {
+                    if (root.appDrawer.flickable.contentY > PlasmaCore.Units.gridUnit * 2) {
 
                         __scrollDirection = DragGestureHandler.Vertical;
                         snapPage();
