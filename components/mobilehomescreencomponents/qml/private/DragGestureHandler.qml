@@ -33,7 +33,7 @@ DragHandler {
         if (active) {
             if (root.appDrawer) {
                 if (__scrollDirection === DragGestureHandler.None) {
-                    if (root.appDrawer.offset > PlasmaCore.Units.gridUnit * 2) {
+                    if (root.appDrawer.contentY > PlasmaCore.Units.gridUnit * 2) {
 
                         __scrollDirection = DragGestureHandler.Vertical;
                         snapPage();
@@ -49,7 +49,7 @@ DragHandler {
                 }
 
                 if (__scrollDirection !== DragGestureHandler.Left && __scrollDirection !== DragGestureHandler.Right) {
-                    root.appDrawer.flickable.contentY = -translation.y;
+                    root.appDrawer.flickable.contentY = Math.max(0, -translation.y);
                 }
             }
             if (__scrollDirection !== DragGestureHandler.Vertical) {
