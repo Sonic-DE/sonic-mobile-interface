@@ -24,69 +24,35 @@ import "private"
 
 AbstractAppDrawer {
     id: root
-    required property int headerHeight
-    required property var headerItem
     
-    flickable: ListView {
+    contentItem: ListView {
         id: listView
-        anchors.fill: parent
-        
-        header: Item {
-            id: offsetRect
-            anchors.left: parent.left
-            anchors.right: parent.right
-            height: root.height - root.topPadding - root.bottomPadding - root.closedPositionOffset
-            property real oldHeight: height
-            onHeightChanged: {
-                if (root.status !== AppDrawer.Status.Open) {
-                    listView.contentY = -root.flickableParent.height + root.closedPositionOffset;
-                }
-                oldHeight = height;
-            }
-            
-            Controls.Control {
-                id: headerControl
-                padding: 0
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: parent.bottom
-                contentItem: root.headerItem
-            }
-        }
-        footer: Item { height: root.headerHeight } // account for header translate
-        
         clip: true
         reuseItems: true
         cacheBuffer: model.count * delegateHeight // delegate height
         
-        property int delegateHeight: PlasmaCore.Units.gridUnit * 3
+        // start location of dragging
+        property real startDragContentY
+        onFlickStarted: startDragContentY = contentY;
         
-        property bool offsetUpdatedContentY: false
-        property real oldContentY: contentY
-        property int movementDirection: AppDrawer.MovementDirection.None
+        // move drawer down when at the top of the app list
+        property real oldContentY
         onContentYChanged: {
-            if (contentY > oldContentY) {
-                movementDirection = AppDrawer.MovementDirection.Up;
-            } else {
-                movementDirection = AppDrawer.MovementDirection.Down;
+            let candidateContentY = root.flickable.contentY - (oldContentY - contentY);
+            if (dragging && startDragContentY <= 0 && oldContentY <= 0 && candidateContentY <= root.drawerTopMargin) {
+                root.flickable.contentY = candidateContentY;
+                contentY = 0;
             }
-
             oldContentY = contentY;
-            let newOffset = contentY + listView.originY + root.flickableParent.height*2 - root.closedPositionOffset*2;
-            if (offsetUpdatedContentY && newOffset !== root.offset) { // prevent infinite loop of constantly updating offsets and contentY
-                root.offset = newOffset;
-            }
-            offsetUpdatedContentY = false;
         }
-        onMovementEnded: root.snapDrawerStatus()
-        onFlickEnded: movementEnded()
+        
+        
+        property int delegateHeight: PlasmaCore.Units.gridUnit * 3
 
         model: HomeScreenComponents.ApplicationListModel
 
         delegate: DrawerListDelegate {
             id: delegate
-            // offset for header
-            transform: Translate { y: root.headerHeight }
             
             width: listView.width
             height: listView.delegateHeight
@@ -122,20 +88,18 @@ AbstractAppDrawer {
         
         PC3.ScrollBar.vertical: PC3.ScrollBar {
             id: scrollBar
-            opacity: root.flickable.moving
-            interactive: false
-            enabled: false
+            interactive: true
+            enabled: true
             Behavior on opacity {
                 OpacityAnimator {
                     duration: PlasmaCore.Units.longDuration * 2
                     easing.type: Easing.InOutQuad
                 }
             }
-            implicitWidth: Math.round(PlasmaCore.Units.gridUnit/3)
+            implicitWidth: PlasmaCore.Units.smallSpacing
             contentItem: Rectangle {
                 radius: width/2
                 color: Qt.rgba(1, 1, 1, 0.3)
-                border.color: Qt.rgba(0, 0, 0, 0.4)
             }
         }
     }

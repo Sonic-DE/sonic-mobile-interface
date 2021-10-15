@@ -144,7 +144,7 @@ FocusScope {
                     onClicked: {
                         if (root.appDrawerType !== "listview") {
                             root.appDrawerType = "listview";
-                            appDrawer.flickable.contentY = 0; // jump to top
+                            appDrawer.flickable.goToBeginning(); // jump to top
                         }
                     }
                 }
@@ -155,7 +155,7 @@ FocusScope {
                     onClicked: {
                         if (root.appDrawerType !== "gridview") {
                             root.appDrawerType = "gridview";
-                            appDrawer.flickable.contentY = 0; // jump to top
+                            appDrawer.flickable.goToBeginning(); // jump to top
                         }
                     }
                 }
@@ -191,7 +191,7 @@ FocusScope {
             headerHeight: root.headerHeight
         }
     }
-    
+
     Loader {
         id: appDrawerLoader
         anchors.fill: parent

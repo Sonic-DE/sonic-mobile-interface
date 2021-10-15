@@ -49,7 +49,7 @@ DragHandler {
                 }
 
                 if (__scrollDirection !== DragGestureHandler.Left && __scrollDirection !== DragGestureHandler.Right) {
-                    root.appDrawer.offset = -translation.y;
+                    root.appDrawer.flickable.contentY = -translation.y;
                 }
             }
             if (__scrollDirection !== DragGestureHandler.Vertical) {

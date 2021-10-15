@@ -24,71 +24,37 @@ import "private"
 
 AbstractAppDrawer {
     id: root
-    required property int headerHeight
-    required property var headerItem
     
-    flickable: GridView {
+    contentItem: GridView {
         id: gridView
-        anchors.fill: parent
-        
-        header: Item {
-            id: offsetRect
-            anchors.left: parent.left
-            anchors.right: parent.right
-            height: root.height - root.topPadding - root.bottomPadding - root.closedPositionOffset
-            property real oldHeight: height
-            onHeightChanged: {
-                if (root.status !== AppDrawer.Status.Open) {
-                    gridView.contentY = -root.flickableParent.height + root.closedPositionOffset;
-                }
-                oldHeight = height;
-            }
-            
-            Controls.Control {
-                id: headerControl
-                padding: 0
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: parent.bottom
-                contentItem: root.headerItem
-            }
-        }
-        footer: Item { height: root.headerHeight } // account for header translate
-        
-        cellWidth: root.flickableParent.width / Math.floor(root.flickableParent.width / ((root.availableCellHeight - root.reservedSpaceForLabel) + PlasmaCore.Units.smallSpacing*4))
-        cellHeight: root.availableCellHeight
         clip: true
+        
+        // start location of dragging
+        property real startDragContentY
+        onFlickStarted: startDragContentY = contentY;
+        
+        // move drawer down when at the top of the app list
+        property real oldContentY
+        onContentYChanged: {
+            let candidateContentY = root.flickable.contentY - (oldContentY - contentY);
+            if (dragging && startDragContentY <= 0 && oldContentY <= 0 && candidateContentY <= root.drawerTopMargin) {
+                root.flickable.contentY = candidateContentY;
+                contentY = 0;
+            }
+            oldContentY = contentY;
+        }
+        
+        cellWidth: root.contentWidth / Math.floor(root.contentWidth / ((root.availableCellHeight - root.reservedSpaceForLabel) + PlasmaCore.Units.smallSpacing*4))
+        cellHeight: root.availableCellHeight
 
-        property int columns: Math.floor(root.flickableParent.width / cellWidth)
+        property int columns: Math.floor(root.contentWidth / cellWidth)
         property int rows: Math.ceil(model.count / columns)
         cacheBuffer: rows * cellHeight
-
-        property bool offsetUpdatedContentY: false
-        property real oldContentY: contentY
-        property int movementDirection: AppDrawer.MovementDirection.None
-        onContentYChanged: {
-            if (contentY > oldContentY) {
-                movementDirection = AppDrawer.MovementDirection.Up;
-            } else {
-                movementDirection = AppDrawer.MovementDirection.Down;
-            }
-
-            oldContentY = contentY;
-            let newOffset = contentY + gridView.originY + root.flickableParent.height*2 - root.closedPositionOffset*2;
-            if (offsetUpdatedContentY && newOffset !== root.offset) { // prevent infinite loop of constantly updating offsets and contentY
-                root.offset = newOffset;
-            }
-            offsetUpdatedContentY = false;
-        }
-        onMovementEnded: root.snapDrawerStatus()
-        onFlickEnded: movementEnded()
 
         model: HomeScreenComponents.ApplicationListModel
 
         delegate: DrawerGridDelegate {
             id: delegate
-            // offset for header
-            transform: Translate { y: root.headerHeight }
             
             width: gridView.cellWidth
             height: gridView.cellHeight
@@ -124,20 +90,18 @@ AbstractAppDrawer {
 
         PC3.ScrollBar.vertical: PC3.ScrollBar {
             id: scrollBar
-            opacity: root.flickable.moving
-            interactive: false
-            enabled: false
+            interactive: true
+            enabled: true
             Behavior on opacity {
                 OpacityAnimator {
                     duration: PlasmaCore.Units.longDuration * 2
                     easing.type: Easing.InOutQuad
                 }
             }
-            implicitWidth: Math.round(PlasmaCore.Units.gridUnit/3)
+            implicitWidth: PlasmaCore.Units.smallSpacing
             contentItem: Rectangle {
                 radius: width/2
                 color: Qt.rgba(1, 1, 1, 0.3)
-                border.color: Qt.rgba(0, 0, 0, 0.4)
             }
         }
     }
