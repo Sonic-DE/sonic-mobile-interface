@@ -159,7 +159,7 @@ Item {
         // We have a situation where this vertical flickable conflicts with the horizontal flickable used for homescreen pages.
         // This flickable is on top of the other, so we disable it when it isn't open.
         // We do the initial open gesture in private/DragGestureHandler.qml
-        interactive: contentY > 0
+        interactive: contentY > PlasmaCore.Units.gridUnit
         
         contentHeight: column.implicitHeight
         contentWidth: -1
