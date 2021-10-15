@@ -33,7 +33,10 @@ AbstractAppDrawer {
         
         // start location of dragging
         property real startDragContentY
-        onFlickStarted: startDragContentY = contentY;
+        onMovementStarted: {
+            oldContentY = contentY;
+            startDragContentY = contentY;
+        }
         
         // move drawer down when at the top of the app list
         property real oldContentY
@@ -53,7 +56,6 @@ AbstractAppDrawer {
                 movingDrawerDown = false;
             }
         }
-        
         
         property int delegateHeight: PlasmaCore.Units.gridUnit * 3
 

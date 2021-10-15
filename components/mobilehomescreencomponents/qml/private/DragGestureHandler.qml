@@ -49,7 +49,7 @@ DragHandler {
                 }
 
                 if (__scrollDirection !== DragGestureHandler.Left && __scrollDirection !== DragGestureHandler.Right) {
-                    root.appDrawer.flickable.contentY = Math.max(0, -translation.y);
+                    root.appDrawer.flickable.contentY = Math.min(root.appDrawer.drawerTopMargin, Math.max(0, -translation.y));
                 }
             }
             if (__scrollDirection !== DragGestureHandler.Vertical) {
