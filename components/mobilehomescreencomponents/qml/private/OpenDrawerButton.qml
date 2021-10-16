@@ -25,6 +25,7 @@ MouseArea {
     property Flickable flickable
     property real factor: 0
 
+    cursorShape: Qt.PointingHandCursor
     height: PlasmaCore.Units.iconSizes.smallMedium
     signal openRequested
     signal closeRequested

@@ -207,6 +207,7 @@ Item {
                 Layout.fillWidth: true
                 Layout.preferredHeight: root.height
                 
+                visible: view.interactive // this is so that the favourites strip can be interacted with
                 leftPadding: root.leftPadding; topPadding: root.topPadding
                 rightPadding: root.rightPadding; bottomPadding: root.bottomPadding
                 
