@@ -48,7 +48,10 @@ PlasmaCore.ColorScope {
         running: true
         interval: 200
         onTriggered: {
-            taskSwitcherLoader.setSource(Qt.resolvedUrl("TaskSwitcher.qml"), {"model": tasksModel, "panelHeight": root.height, "gestureDragging": mainMouseArea.pressed});
+            taskSwitcherLoader.setSource(Qt.resolvedUrl("TaskSwitcher.qml"), {
+                "model": tasksModel, 
+                "panelHeight": root.height
+            });
         }
     }
 
@@ -118,12 +121,13 @@ PlasmaCore.ColorScope {
                 isDragging = true;
             }
 
+            taskSwitcher.oldOffset = taskSwitcher.offset
             taskSwitcher.offset = Math.max(0, taskSwitcher.offset - (mouse.y - oldMouseY));
             opening = oldMouseY > mouse.y;
 
             if (taskSwitcher.visibility == Window.Hidden && Math.abs(startMouseY - mouse.y) > PlasmaCore.Units.gridUnit && taskSwitcher.tasksCount) {
                 activeButton = null;
-                taskSwitcher.show();
+                taskSwitcher.show(false);
             } else if (taskSwitcher.tasksCount === 0) {
                 //no tasks, let's scroll up the homescreen instead
                 MobileShell.HomeScreenControls.requestRelativeScroll(Qt.point(mouse.x - oldMouseX, mouse.y - oldMouseY));
@@ -143,15 +147,10 @@ PlasmaCore.ColorScope {
                 return;
             }
 
-            if (!isDragging) {
-                return;
+            if (isDragging) {
+                taskSwitcher.snapOffset();
             }
-
-            if (opening) {
-                taskSwitcher.show();
-            } else {
-                taskSwitcher.hide();
-            }
+            
         }
 
         DropShadow {
@@ -187,7 +186,7 @@ PlasmaCore.ColorScope {
                         return;
                     }
                     plasmoid.nativeInterface.showDesktop = false;
-                    taskSwitcher.visible ? taskSwitcher.hide() : taskSwitcher.show();
+                    taskSwitcher.visible ? taskSwitcher.hide() : taskSwitcher.show(true);
                 }
                 iconSizeFactor: 0.75
                 iconSource: "mobile-task-switcher"
