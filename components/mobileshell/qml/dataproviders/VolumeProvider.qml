@@ -11,7 +11,9 @@ import QtQuick.Layouts 1.4
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.private.volume 0.1
 
-import "../../volumeosd"
+import "../osd/volume"
+
+pragma Singleton
 
 QtObject {
     property bool isVisible: paSinkModel.preferredSink && paSinkModel.preferredSink.muted
@@ -139,7 +141,7 @@ QtObject {
 
     property SinkModel paSinkModel: SinkModel {}
 
-    property VolumeOsd osd: VolumeOsd {}
+    property VolumeOSD osd: VolumeOSD {}
 
     property VolumeFeedback feedback: VolumeFeedback {}
 
