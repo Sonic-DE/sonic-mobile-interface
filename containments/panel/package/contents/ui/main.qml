@@ -65,15 +65,12 @@ Item {
 
     Plasmoid.backgroundHints: showingApp ? PlasmaCore.Types.StandardBackground : PlasmaCore.Types.NoBackground
 
-    property Item toolBox
     property int buttonHeight: width/4
     property bool reorderingApps: false
     property var layoutManager: LayoutManager
 
     readonly property color backgroundColor: NanoShell.StartupFeedback.visible ? NanoShell.StartupFeedback.backgroundColor : topPanel.colorScopeColor
     readonly property bool showingApp: !MobileShell.HomeScreenControls.homeScreenVisible
-
-    readonly property bool hasTasks: tasksModel.count > 0
 
     Containment.onAppletAdded: {
         addApplet(applet, x, y);
@@ -162,89 +159,15 @@ Item {
         id: fullNotificationsContainerComponent
         FullNotificationsContainer {}
     }
-
-    // indicator providers
-    IndicatorProviders.BatteryProvider {
-        id: batteryProvider
-
-        readonly property var setting: HomeScreenComponents.QuickSetting {
-            text: i18n("Battery")
-            icon: "battery-full" + (batteryProvider.pluggedIn ? "-charging" : "")
-            enabled: false
-            settingsCommand: "plasma-open-settings kcm_mobile_power"
-        }
-        Component.onCompleted: quickSettings.quickSettingsModel.include(setting)
-    }
-    IndicatorProviders.BluetoothProvider {
-        id: bluetoothProvider
-    }
-    property alias signalStrengthProvider: signalStrengthProviderLoader.item
-    Loader {
-        id: signalStrengthProviderLoader
-        source: Qt.resolvedUrl("indicators/providers/SignalStrengthProvider.qml")
-    }
-    IndicatorProviders.VolumeProvider {
-        id: volumeProvider
-
-        readonly property var setting: HomeScreenComponents.QuickSetting {
-            text: i18n("Sound")
-            icon: "audio-speakers-symbolic"
-            enabled: false
-            settingsCommand: "plasma-open-settings kcm_pulseaudio"
-            function toggle() {
-                volumeProvider.showVolumeOverlay()
-            }
-        }
-        Component.onCompleted: quickSettings.quickSettingsModel.include(setting)
-    }
-    IndicatorProviders.WifiProvider {
-        id: wifiProvider
-    }
     
     // top panel component
-    IndicatorsRow {
+    StatusBar {
         id: topPanel
         anchors.fill: parent
         z: 1
         colorGroup: showingApp ? PlasmaCore.Theme.HeaderColorGroup : PlasmaCore.Theme.ComplementaryColorGroup
         backgroundColor: !showingApp ? "transparent" : root.backgroundColor
         showDropShadow: !showingApp
-    }
-    
-    // initial swipe down gesture
-    MouseArea {
-        id: swipeMouseArea
-        z: 99
-        property int oldMouseY: 0
-
-        function startSwipe(mouseX) {
-            slidingPanel.cancelAnimations();
-            slidingPanel.drawerX = Math.min(Math.max(0, mouseX - slidingPanel.drawerWidth/2), slidingPanel.width - slidingPanel.contentItem.width)
-            slidingPanel.userInteracting = true;
-            slidingPanel.flickable.contentY = slidingPanel.closedContentY;
-            slidingPanel.visible = true;
-        }
-        
-        function endSwipe() {
-            slidingPanel.userInteracting = false;
-            slidingPanel.updateState();
-        }
-        
-        function updateOffset(offsetY) {
-            slidingPanel.updateOffset(offsetY);
-        }
-        
-        anchors.fill: parent
-        onPressed: {
-            oldMouseY = mouse.y;
-            startSwipe(mouse.x);
-        }
-        onReleased: endSwipe()
-        onCanceled: endSwipe()
-        onPositionChanged: {
-            updateOffset(mouse.y - oldMouseY);
-            oldMouseY = mouse.y;
-        }
     }
 
     // sliding component
@@ -328,44 +251,6 @@ Item {
                         z: -1
                         onClicked: slidingPanel.close()
                     }
-                }
-            }
-        }
-        DrawerBackground {
-            id: bottomBar
-            anchors {
-                left: parent.left
-                right: parent.right
-                bottom: parent.bottom
-            }
-            parent: slidingPanel.fixedArea
-            opacity: fullRepresentationView.opacity
-            visible: !slidingPanel.wideScreen && fullRepresentationModel.count > 1
-            z: 100
-            contentItem: RowLayout {
-                PlasmaComponents.TabBar {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    position: PlasmaComponents.TabBar.Footer
-                    Text {
-                        text:fullRepresentationModel.count
-                    }
-                    Repeater {
-                        model: fullRepresentationView.count
-                        delegate: PlasmaComponents.TabButton {
-                            implicitHeight: parent.height
-                            text: fullRepresentationModel.get(index).applet.title
-                            checked: fullRepresentationView.currentIndex === index
-                        
-                            onClicked: fullRepresentationView.currentIndex = index
-                        }
-                    }
-                }
-                PlasmaComponents.ToolButton {
-                    Layout.fillHeight: true
-                    Layout.preferredWidth: height
-                    icon.name: "paint-none"
-                    onClicked: slidingPanel.close();
                 }
             }
         }
