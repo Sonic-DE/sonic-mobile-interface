@@ -11,24 +11,25 @@ import QtQuick.Layouts 1.4
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.networkmanagement 0.2 as PlasmaNM
 
-Item {
-    visible: false
+pragma Singleton
+
+QtObject {
     property string icon: connectionIconProvider.connectionIcon
     property bool indicatorRunning: connectionIconProvider.connecting
     
-    PlasmaNM.NetworkStatus {
+    property var networkStatus: PlasmaNM.NetworkStatus {
         id: networkStatus
     }
 
-    PlasmaNM.NetworkModel {
+    property var networkModel: PlasmaNM.NetworkModel {
         id: connectionModel
     }
 
-    PlasmaNM.Handler {
+    property var handler: PlasmaNM.Handler {
         id: handler
     }
 
-    PlasmaNM.ConnectionIcon {
+    property var connectionIcon: PlasmaNM.ConnectionIcon {
         id: connectionIconProvider
     }
 }

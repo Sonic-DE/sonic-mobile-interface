@@ -11,6 +11,8 @@ import QtQuick.Layouts 1.4
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.bluezqt 1.0 as BluezQt
 
+pragma Singleton
+
 QtObject {
     property bool isVisible: BluezQt.Manager.bluetoothOperational
     property string icon: deviceConnected ? "preferences-system-bluetooth-activated" : "preferences-system-bluetooth"

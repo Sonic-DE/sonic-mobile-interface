@@ -9,6 +9,8 @@
 import QtQuick 2.1
 import org.kde.plasma.mm 1.0
 
+pragma Singleton
+
 QtObject {
 
     property string icon: "network-mobile-" + Math.floor(SignalIndicator.strength / 20) * 20

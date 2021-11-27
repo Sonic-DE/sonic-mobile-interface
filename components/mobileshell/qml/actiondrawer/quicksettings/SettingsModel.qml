@@ -109,4 +109,19 @@ HomeScreenComponents.QuickSettingsModel
             plasmoid.nativeInterface.autoRotateEnabled = !enabled
         }
     }
+    HomeScreenComponents.QuickSetting {
+        text: i18n("Battery")
+        icon: "battery-full" + (batteryProvider.pluggedIn ? "-charging" : "")
+        enabled: false
+        settingsCommand: "plasma-open-settings kcm_mobile_power"
+    }
+    HomeScreenComponents.QuickSetting {
+        text: i18n("Sound")
+        icon: "audio-speakers-symbolic"
+        enabled: false
+        settingsCommand: "plasma-open-settings kcm_pulseaudio"
+        function toggle() {
+            volumeProvider.showVolumeOverlay()
+        }
+    }
 }

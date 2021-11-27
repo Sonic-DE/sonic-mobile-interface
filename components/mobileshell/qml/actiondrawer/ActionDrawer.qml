@@ -16,7 +16,7 @@ import org.kde.plasma.private.nanoshell 2.0 as NanoShell
 NanoShell.FullScreenOverlay {
     id: window
 
-    property int offset: 0 // slide progress
+    property real offset: 0 // slide progress
     property int openThreshold: PlasmaCore.Units.gridUnit * 2
     property bool userInteracting: false
     property bool initiallyOpened: false // whether the panel is already open after a touch release (then don't restrict to collapsed height)
