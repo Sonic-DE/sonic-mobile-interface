@@ -12,26 +12,33 @@ import QtQuick.Layouts 1.3
 import QtQml.Models 2.12
 import QtGraphicalEffects 1.12
 
-import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
-
-import org.kde.plasma.workspace.components 2.0 as PlasmaWorkspace
-import org.kde.taskmanager 0.1 as TaskManager
-
-import org.kde.plasma.private.nanoshell 2.0 as NanoShell
 import org.kde.plasma.private.mobileshell 1.0 as MobileShell
-
-import "LayoutManager.js" as LayoutManager
 
 import "indicators" as Indicators
 
 Item {
-    id: indicatorsRow
-    required property var colorGroup
-    required property bool showDropShadow
-    required property color backgroundColor
+    id: root
     
+    /**
+     * The color group 
+     */
+    required property var colorGroup
+    
+    /**
+     * 
+     */
+    property bool showDropShadow: false
+    
+    /**
+     * 
+     */
+    property color backgroundColor: "transparent"
+    
+    /**
+     * 
+     */
     property bool showSecondRow: false // show extra row with date and mobile provider
     
     property alias colorScopeColor: icons.backgroundColor
@@ -63,7 +70,7 @@ Item {
     PlasmaCore.ColorScope {
         id: icons
         z: 1
-        colorGroup: indicatorsRow.colorGroup
+        colorGroup: root.colorGroup
         anchors.fill: parent
         
         Controls.Control {
@@ -88,21 +95,9 @@ Item {
                     spacing: 0
                     
                     // clock
-                    PlasmaComponents.Label {
-                        id: clock
-                        property bool is24HourTime: plasmoid.nativeInterface.isSystem24HourFormat
+                    ClockText {
                         Layout.fillHeight: true
-                        
-                        text: Qt.formatTime(timeSource.data.Local.DateTime, is24HourTime ? "h:mm" : "h:mm ap")
-                        color: PlasmaCore.ColorScope.textColor
-                        verticalAlignment: Qt.AlignVCenter
                         font.pixelSize: textPixelSize
-
-                        TapHandler {
-                            onTapped: {
-                                plasmoid.nativeInterface.launchApp("org.kde.kclock");
-                            }
-                        }
                     }
                     
                     // spacing in the middle
@@ -122,16 +117,16 @@ Item {
                         }
 
                         delegate: TaskWidget {
-                            Layout.leftMargin: indicatorsRow.elementSpacing
+                            Layout.leftMargin: root.elementSpacing
                         }
                     }
                     
                     // applet indicators
                     RowLayout {
                         id: appletIconsRow
-                        Layout.leftMargin: indicatorsRow.elementSpacing
+                        Layout.leftMargin: root.elementSpacing
                         Layout.fillHeight: true
-                        spacing: indicatorsRow.elementSpacing
+                        spacing: root.elementSpacing
                         visible: children.length > 0
                     }
                     
@@ -140,7 +135,7 @@ Item {
                         id: indicators
                         Layout.leftMargin: PlasmaCore.Units.smallSpacing // applets have different spacing needs
                         Layout.fillHeight: true
-                        spacing: indicatorsRow.elementSpacing
+                        spacing: root.elementSpacing
 
                         Indicators.SignalStrength {
                             provider: signalStrengthProvider
@@ -160,7 +155,7 @@ Item {
                         }
                         Indicators.Battery {
                             provider: batteryProvider
-                            spacing: indicatorsRow.elementSpacing
+                            spacing: root.elementSpacing
                             labelHeight: textPixelSize
                             Layout.fillHeight: true
                         }
@@ -170,19 +165,19 @@ Item {
                 // extra row with date and mobile provider (for quicksettings panel)
                 RowLayout {
                     spacing: 0
-                    visible: indicatorsRow.showSecondRow
+                    visible: root.showSecondRow
                     Layout.fillWidth: true
                     
                     PlasmaComponents.Label {
                         text: Qt.formatDate(timeSource.data.Local.DateTime, "ddd. MMMM d")
                         color: PlasmaCore.ColorScope.disabledTextColor
-                        font.pixelSize: indicatorsRow.textPixelSize * 0.8
+                        font.pixelSize: root.textPixelSize * 0.8
                     }
                     Item { Layout.fillWidth: true }
                     PlasmaComponents.Label {
                         text: signalStrengthProvider.label
                         color: PlasmaCore.ColorScope.disabledTextColor
-                        font.pixelSize: indicatorsRow.textPixelSize * 0.8
+                        font.pixelSize: root.textPixelSize * 0.8
                         horizontalAlignment: Qt.AlignRight
                     }
                 }
