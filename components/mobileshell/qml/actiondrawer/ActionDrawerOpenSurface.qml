@@ -1,8 +1,10 @@
 /*
  *  SPDX-FileCopyrightText: 2021 Devin Lin <devin@kde.org>
  *
- *  SPDX-License-Identifier: GPL-2.0-or-later
+ *  SPDX-License-Identifier: LGPL-2.0-or-later
  */
+
+import QtQuick 2.15
 
 MouseArea {
     id: root
@@ -12,20 +14,19 @@ MouseArea {
     property int oldMouseY: 0
 
     function startSwipe(mouseX) {
-        slidingPanel.cancelAnimations();
-        slidingPanel.drawerX = Math.min(Math.max(0, mouseX - slidingPanel.drawerWidth/2), slidingPanel.width - slidingPanel.contentItem.width)
-        slidingPanel.userInteracting = true;
-        slidingPanel.flickable.contentY = slidingPanel.closedContentY;
-        slidingPanel.visible = true;
+        actionDrawer.cancelAnimations();
+        actionDrawer.dragging = true;
+        actionDrawer.offset = 0;
+        actionDrawer.visible = true;
     }
     
     function endSwipe() {
-        slidingPanel.userInteracting = false;
-        slidingPanel.updateState();
+        actionDrawer.dragging = false;
+        actionDrawer.updateState();
     }
     
     function updateOffset(offsetY) {
-        slidingPanel.updateOffset(offsetY);
+        actionDrawer.offset += offsetY;
     }
     
     anchors.fill: parent

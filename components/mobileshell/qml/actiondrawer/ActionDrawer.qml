@@ -1,6 +1,6 @@
 /*
  *   SPDX-FileCopyrightText: 2014 Marco Martin <notmart@gmail.com>
- *   SPDX-FileCopyrightText: 2021 Devin Lin <espidev@gmail.com>
+ *   SPDX-FileCopyrightText: 2021 Devin Lin <devin@kde.org>
  *
  *   SPDX-License-Identifier: LGPL-2.0-or-later
  */
@@ -9,73 +9,72 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.1
 import QtQuick.Window 2.2
+
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.plasma.private.nanoshell 2.0 as NanoShell
 
+import "../components" as Components
+
+/**
+ * Swipe top left - minimized quick settings, fully shown notifications list
+ * Swipe top right - full quick settings, minimized notifications list
+ * Swiping up and down on notifications list toggle minimized/maximized
+ * Swiping up and down on panel hides and shows the panel
+ */
+
 NanoShell.FullScreenOverlay {
     id: window
 
-    property real offset: 0 // slide progress
-    property int openThreshold: PlasmaCore.Units.gridUnit * 2
-    property bool userInteracting: false
-    property bool initiallyOpened: false // whether the panel is already open after a touch release (then don't restrict to collapsed height)
+    /**
+     * The amount of pixels moved by touch/mouse in the process of opening/closing the panel.
+     */
+    property real offset: 0
     
-    // height when quicksettings is fully open
-    required property int fullyOpenHeight
+    /**
+     * Whether the panel is being dragged.
+     */
+    property bool dragging: false
     
-    // flickable contentY
-    readonly property int openedContentY: wideScreen || offset > (collapsedHeight + openThreshold) ? -topEmptyAreaHeight : offsetToContentY(collapsedHeight)
-    readonly property int closedContentY: mainFlickable.contentHeight
+    /**
+     * Whether the panel is open after touch/mouse release from the first opening swipe.
+     */
+    property bool opened: false
+
+    /**
+     * Direction the panel is currently moving in.
+     */
+    property int direction: Components.Direction.None
     
-    readonly property bool wideScreen: width > height || width > PlasmaCore.Units.gridUnit * 45
-    readonly property int drawerWidth: wideScreen ? contentItem.implicitWidth : width
-
-    property int drawerX: 0
-    property alias fixedArea: mainScope
-    property alias flickable: mainFlickable
-
-    color: "transparent"
-    property alias contentItem: contentArea.contentItem
-    property int topPanelHeight
-    property int collapsedHeight
-    property real topEmptyAreaHeight
-    
-    property bool appletsShown: false // whether notifications or media player applets are shown
-
-    signal closed
-
     width: Screen.width
     height: Screen.height
 
-    Component.onCompleted: plasmoid.nativeInterface.panel = window;
-
-    onVisibleChanged: if (!visible) {
-        closed()
+    onOpenedChanged: {
+        if (opened) mainFlickable.focus = true;
     }
-    onInitiallyOpenedChanged: {
-        if (initiallyOpened) mainFlickable.focus = true;
-    }
-
-    function offsetToContentY(num) { return -num + window.fullyOpenHeight; }
-    function contentYToOffset(num) { return offsetToContentY(num); }
-    
-    // avoids binding loops
-    function updateOffset(delta) {
-        // only go to collapsed height for mousearea when not widescreen
-        let maximum = window.wideScreen ? window.fullyOpenHeight : collapsedHeight + openThreshold / 2;
-        offset = Math.max(0, Math.min(maximum, offset + delta));
-        if (!mainFlickable.moving && !mainFlickable.dragging && !mainFlickable.flicking) {
-            mainFlickable.contentY = offsetToContentY(window.offset);
+    onActiveChanged: {
+        if (!active) {
+            close();
         }
     }
     
-    enum MovementDirection {
-        None = 0,
-        Up,
-        Down
+    property real oldOffset
+    onOffsetChanged: {
+        if (offset < 0) {
+            offset = 0;
+        }
+        
+        window.direction = (offset === offset)
+                            ? Components.Direction.None 
+                            : (offset > oldOffset ? Components.Direction.Down : Components.Direction.Up);
+        oldOffset = offset;
+        
+        // close panel immediately after panel is not shown, and the flickable is not being dragged
+        if (opened && window.offset <= 0 && !flickable.dragging && !closeAnim.running && !openAnim.running) {
+            window.updateState();
+            focus = false;
+        }
     }
-    property int direction: SlidingContainer.MovementDirection.None
 
     function cancelAnimations() {
         closeAnim.stop();
@@ -84,17 +83,17 @@ NanoShell.FullScreenOverlay {
     function open() {
         cancelAnimations();
         openAnim.restart();
-        initiallyOpened = true;
+        opened = true;
     }
     function close() {
         cancelAnimations();
         closeAnim.restart();
-        initiallyOpened = false;
+        opened = false;
     }
     function expand() {
         cancelAnimations();
         expandAnim.restart();
-        initiallyOpened = true;
+        opened = true;
     }
     function updateState() {
         cancelAnimations();
@@ -102,13 +101,13 @@ NanoShell.FullScreenOverlay {
             // close immediately, so that we don't have to wait PlasmaCore.Units.longDuration 
             window.visible = false;
             close();
-        } else if (window.direction === SlidingContainer.MovementDirection.None) {
+        } else if (window.direction === Components.Direction.None) {
             if (window.offset < openThreshold) {
                 close();
             } else {
                 open();
             }
-        } else if (offset > openThreshold && window.direction === SlidingContainer.MovementDirection.Down) {
+        } else if (offset > openThreshold && window.direction === Components.Direction.Down) {
             open();
         } else if (mainFlickable.contentY > openThreshold) {
             close();
@@ -122,111 +121,74 @@ NanoShell.FullScreenOverlay {
         onTriggered: updateState()
     }
 
-    onActiveChanged: {
-        if (!active) {
-            close();
-        }
-    }
-
-    PropertyAnimation {
+    PropertyAnimation on offset {
         id: closeAnim
-        target: mainFlickable
-        properties: "contentY"
-        duration: PlasmaCore.Units.longDuration
-        easing.type: Easing.InOutQuad
-        to: window.closedContentY
-        onFinished: {
-            window.visible = false;
-        }
-    }
-    PropertyAnimation {
-        id: openAnim
-        target: mainFlickable
-        properties: "contentY"
-        duration: PlasmaCore.Units.longDuration
-        easing.type: Easing.InOutQuad
-        to: window.openedContentY
-    }
-    PropertyAnimation {
-        id: expandAnim
-        target: mainFlickable
-        properties: "contentY"
         duration: PlasmaCore.Units.longDuration
         easing.type: Easing.InOutQuad
         to: 0
+        onFinished: window.visible = false;
     }
-
-    // fullscreen background
-    Rectangle {
-        anchors.fill: parent
-        color: Qt.rgba(0, 0, 0, 0.75)
-        opacity: (appletsShown ? 0.85 : 0.6) * Math.max(0, Math.min(1, offset / window.collapsedHeight))
-        Behavior on opacity { // smooth opacity changes
-            NumberAnimation { duration: 70 }
-        }
+    PropertyAnimation on offset {
+        id: openAnim
+        duration: PlasmaCore.Units.longDuration
+        easing.type: Easing.InOutQuad
+        to: contentContainer.minimizedQuickSettingsOffset
+    }
+    PropertyAnimation on offset {
+        id: expandAnim
+        duration: PlasmaCore.Units.longDuration
+        easing.type: Easing.InOutQuad
+        to: contentContainer.maximizedQuickSettingsOffset
     }
     
-    PlasmaCore.ColorScope {
-        id: mainScope
-        colorGroup: PlasmaCore.Theme.ViewColorGroup
+    Flickable {
+        id: flickable
         anchors.fill: parent
-
-        Flickable {
-            id: mainFlickable
-            anchors.fill: parent
-            
-            property real oldContentY
-            contentY: contentHeight
-
-            onContentYChanged: {
-                if (contentY === oldContentY) {
-                    window.direction = SlidingContainer.MovementDirection.None;
-                } else {
-                    window.direction = contentY > oldContentY ? SlidingContainer.MovementDirection.Up : SlidingContainer.MovementDirection.Down;
+        
+        contentWidth: window.width
+        contentHeight: window.height + 999999
+        
+        // if the recent window.offset change was due to this flickable
+        property bool offsetChangedDueToContentY: false
+        Connections {
+            target: window
+            function onOffsetChanged() {
+                if (!flickable.offsetChangedDueToContentY) {
+                    // ensure the flickable's contentY is not moving when other sources change window.offset
+                    flickable.cancelFlick(); 
                 }
-                window.offset = contentYToOffset(contentY);
-                oldContentY = contentY;
-                
-                // close panel immediately after panel is not shown, and the flickable is not being dragged
-                if (initiallyOpened && window.offset <= 0 && !mainFlickable.dragging && !closeAnim.running && !openAnim.running) {
-                    window.updateState();
-                    focus = false;
-                }
-            }
-            
-            boundsMovement: Flickable.StopAtBounds
-            contentWidth: window.width
-            contentHeight: window.height
-            bottomMargin: window.height
-            onMovementStarted: {
-                window.cancelAnimations();
-                window.userInteracting = true;
-            }
-            onFlickStarted: window.userInteracting = true;
-            onMovementEnded: {
-                window.userInteracting = false;
-                window.updateState();
-            }
-            onFlickEnded: {
-                window.userInteracting = true;
-                window.updateState();
-            }
-            
-            MouseArea {
-                id: dismissArea
-                z: 2
-                width: parent.width
-                height: mainFlickable.contentHeight
-                onClicked: window.close();
-
-                // actual sliding contents
-                PlasmaComponents.Control {
-                    id: contentArea
-                    z: 1
-                    x: Math.max(0, Math.min(window.drawerX, window.width - window.drawerWidth))
-                    width: Math.min(window.width, window.drawerWidth)
-                }
+                flickable.offsetChangedDueToContentY = false;
             }
         }
+        
+        property real oldContentY
+        onContentYChanged: {
+            offsetChangedDueToContentY = true;
+            window.offset += oldContentY - contentY;
+            oldContentY = contentY;
+        }
+        
+        onMovementStarted: {
+            window.cancelAnimations();
+            window.dragging = true;
+        }
+        onFlickStarted: window.dragging = true;
+        onMovementEnded: {
+            window.userInteracting = false;
+            window.updateState();
+        }
+        onFlickEnded: {
+            window.dragging = true;
+            window.updateState();
+        }
+        
+        // the flickable is only used to measure drag changes, we implement our own UI component movements
+        // the window element is not affected by contentY changes (it's effectively anchored to the flickable)
+        ContentContainer {
+            id: contentContainer
+            y: flickable.contentY
+            actionDrawer: window
+        }
     }
+
 }

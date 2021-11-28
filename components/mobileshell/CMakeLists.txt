@@ -1,11 +1,15 @@
+qt_add_dbus_interfaces(DBUS_SRCS dbus/org.kde.KWin.ScreenShot2.xml
+                                 dbus/org.kde.KScreen.xml)
+
 set(mobileshellplugin_SRCS
     mobileshellplugin.cpp
     shellutil.cpp
+    ${DBUS_SRCS}
 )
 
 add_library(mobileshellplugin ${mobileshellplugin_SRCS})
 
-target_link_libraries(mobilehomescreencomponentsplugin
+target_link_libraries(mobileshellplugin
         PUBLIC
             Qt::Core
         PRIVATE
