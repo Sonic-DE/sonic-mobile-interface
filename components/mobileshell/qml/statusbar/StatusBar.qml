@@ -2,7 +2,7 @@
  *  SPDX-FileCopyrightText: 2015 Marco Martin <mart@kde.org>
  *  SPDX-FileCopyrightText: 2021 Devin Lin <espidev@gmail.com>
  *
- *  SPDX-License-Identifier: GPL-2.0-or-later
+ *  SPDX-License-Identifier: LGPL-2.0-or-later
  */
 
 
@@ -22,36 +22,48 @@ Item {
     id: root
     
     /**
-     * The color group 
+     * The color group used for status bar elements.
      */
     required property var colorGroup
     
     /**
-     * 
+     * Whether to show a drop shadow under the status bar.
      */
     property bool showDropShadow: false
     
     /**
-     * 
+     * The background color of the status bar.
      */
     property color backgroundColor: "transparent"
     
     /**
-     * 
+     * Whether to show a second row of the status bar, with more information.
      */
     property bool showSecondRow: false // show extra row with date and mobile provider
     
     property alias colorScopeColor: icons.backgroundColor
     property alias applets: appletIconsRow
     
-    property real textPixelSize: PlasmaCore.Units.gridUnit * 0.6
-    property real elementSpacing: PlasmaCore.Units.smallSpacing * 1.5
+    readonly property real textPixelSize: PlasmaCore.Units.gridUnit * 0.6
+    readonly property real elementSpacing: PlasmaCore.Units.smallSpacing * 1.5
     
     PlasmaCore.DataSource {
         id: timeSource
         engine: "time"
         connectedSources: ["Local"]
         interval: 60 * 1000
+    }
+    
+    PlasmaCore.DataSource {
+        id: statusNotifierSource
+        engine: "statusnotifieritem"
+        interval: 0
+        onSourceAdded: {
+            connectSource(source)
+        }
+        Component.onCompleted: {
+            connectedSources = sources
+        }
     }
 
     DropShadow {
@@ -137,24 +149,19 @@ Item {
                         Layout.fillHeight: true
                         spacing: root.elementSpacing
 
-                        Indicators.SignalStrength {
-                            provider: signalStrengthProvider
+                        Indicators.SignalStrengthIndicator {
                             Layout.fillHeight: true
                         }
-                        Indicators.Bluetooth { 
-                            provider: bluetoothProvider 
+                        Indicators.BluetoothIndicator { 
                             Layout.fillHeight: true
                         }
-                        Indicators.Wifi { 
-                            provider: wifiProvider 
+                        Indicators.WifiIndicator { 
                             Layout.fillHeight: true
                         }
-                        Indicators.Volume { 
-                            provider: volumeProvider 
+                        Indicators.VolumeIndicator { 
                             Layout.fillHeight: true
                         }
-                        Indicators.Battery {
-                            provider: batteryProvider
+                        Indicators.BatteryIndicator {
                             spacing: root.elementSpacing
                             labelHeight: textPixelSize
                             Layout.fillHeight: true
@@ -175,7 +182,7 @@ Item {
                     }
                     Item { Layout.fillWidth: true }
                     PlasmaComponents.Label {
-                        text: signalStrengthProvider.label
+                        text: MobileShell.SignalStrengthProvider.label
                         color: PlasmaCore.ColorScope.disabledTextColor
                         font.pixelSize: root.textPixelSize * 0.8
                         horizontalAlignment: Qt.AlignRight

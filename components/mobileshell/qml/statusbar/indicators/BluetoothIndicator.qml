@@ -8,14 +8,15 @@
 
 import QtQuick 2.2
 import QtQuick.Layouts 1.4
-import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.bluezqt 1.0 as BluezQt
 
-import "providers"
+import org.kde.plasma.core 2.0 as PlasmaCore
+import org.kde.plasma.private.mobileshell 1.0 as MobileShell
+
+import org.kde.bluezqt 1.0 as BluezQt
 
 PlasmaCore.IconItem {
     id: connectionIcon
-    required property BluetoothProvider provider
+    property MobileShell.BluetoothProvider provider: MobileShell.BluetoothProvider
 
     source: provider.icon;
     colorGroup: PlasmaCore.ColorScope.colorGroup

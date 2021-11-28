@@ -1,5 +1,5 @@
 /*
- *  SPDX-FileCopyrightText: 2021 Devin Lin <espidev@gmail.com>
+ *  SPDX-FileCopyrightText: 2021 Devin Lin <devin@kde.org>
  *  SPDX-FileCopyrightText: 2019 Marco Martin <mart@kde.org>
  *
  *  SPDX-License-Identifier: GPL-2.0-or-later
