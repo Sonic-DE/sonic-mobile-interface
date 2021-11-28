@@ -1,5 +1,5 @@
 /*
-    SPDX-FileCopyrightText: 2021 Devin Lin <espidev@gmail.com>
+    SPDX-FileCopyrightText: 2021 Devin Lin <devin@kde.org>
     SPDX-FileCopyrightText: 2019 Aditya Mehra <Aix.m@outlook.com>
     SPDX-FileCopyrightText: 2014-2015 Harald Sitter <sitter@kde.org>
 

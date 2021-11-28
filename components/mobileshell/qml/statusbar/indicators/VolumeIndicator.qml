@@ -10,12 +10,11 @@ import QtQuick 2.2
 import QtQuick.Layouts 1.4
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.private.volume 0.1
-
-import "providers"
+import org.kde.plasma.private.mobileshell 1.0 as MobileShell
 
 PlasmaCore.IconItem {
     id: paIcon
-    required property VolumeProvider provider
+    property MobileShell.VolumeProvider provider: MobileShell.VolumeProvider
     
     Layout.fillHeight: true
     Layout.preferredWidth: height
