@@ -11,12 +11,11 @@ import QtQuick.Layouts 1.4
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.plasma.networkmanagement 0.2 as PlasmaNM
-
-import "providers"
+import org.kde.plasma.private.mobileshell 1.0 as MobileShell
 
 PlasmaCore.IconItem {
     id: connectionIcon
-    required property WifiProvider provider
+    property MobileShell.WifiProvider provider: MobileShell.WifiProvider
 
     source: provider.icon
     colorGroup: PlasmaCore.ColorScope.colorGroup

@@ -1,6 +1,6 @@
 /*
  *   SPDX-FileCopyrightText: 2015 Marco Martin <notmart@gmail.com>
- *   SPDX-FileCopyrightText: 2021 Devin Lin <espidev@gmail.com>
+ *   SPDX-FileCopyrightText: 2021 Devin Lin <devin@kde.org>
  *   SPDX-FileCopyrightText: 2021 Aleix Pol Gonzalez <aleixpol@kde.org>
  *
  *   SPDX-License-Identifier: LGPL-2.0-or-later
@@ -9,16 +9,16 @@
 import QtQuick 2.14
 import QtQuick.Layouts 1.1
 import QtQuick.Window 2.2
-import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.networkmanagement 0.2 as PlasmaNM
+
 import org.kde.bluezqt 1.0 as BluezQt
-import org.kde.plasma.private.nanoshell 2.0 as NanoShell
+
+import org.kde.plasma.core 2.0 as PlasmaCore
+import org.kde.plasma.components 3.0 as PC3
+import org.kde.plasma.networkmanagement 0.2 as PlasmaNM
+import org.kde.plasma.private.mobileshell 1.0 as MobileShell
 import org.kde.plasma.private.mobilehomescreencomponents 0.1 as HomeScreenComponents
 
-import org.kde.plasma.components 3.0 as PC3
-
-HomeScreenComponents.QuickSettingsModel
-{
+HomeScreenComponents.QuickSettingsModel {
     id: modelItem
     property bool screenshotRequested: false
     
@@ -26,7 +26,7 @@ HomeScreenComponents.QuickSettingsModel
     
     onPanelClosed: {
         if (screenshotRequested) {
-            plasmoid.nativeInterface.takeScreenshot();
+            MobileShell.ShellUtil.takeScreenshot();
             screenshotRequested = false;
         }
     }
@@ -81,9 +81,9 @@ HomeScreenComponents.QuickSettingsModel
     HomeScreenComponents.QuickSetting {
         text: i18n("Flashlight")
         icon: "flashlight-on"
-        enabled: plasmoid.nativeInterface.torchEnabled
+        enabled: MobileShell.ShellUtil.torchEnabled
         function toggle() {
-            plasmoid.nativeInterface.toggleTorch()
+            MobileShell.ShellUtil.toggleTorch()
         }
     }
     HomeScreenComponents.QuickSetting {
@@ -104,14 +104,14 @@ HomeScreenComponents.QuickSettingsModel
         text: i18n("Auto-rotate")
         icon: "rotation-allowed"
         settingsCommand: "plasma-open-settings kcm_kscreen"
-        enabled: plasmoid.nativeInterface.autoRotateEnabled
+        enabled: MobileShell.ShellUtil.autoRotateEnabled
         function toggle() {
-            plasmoid.nativeInterface.autoRotateEnabled = !enabled
+            MobileShell.ShellUtil.autoRotateEnabled = !enabled
         }
     }
     HomeScreenComponents.QuickSetting {
         text: i18n("Battery")
-        icon: "battery-full" + (batteryProvider.pluggedIn ? "-charging" : "")
+        icon: "battery-full" + (MobileShell.BatteryProvider.pluggedIn ? "-charging" : "")
         enabled: false
         settingsCommand: "plasma-open-settings kcm_mobile_power"
     }

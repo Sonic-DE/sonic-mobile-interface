@@ -1,5 +1,5 @@
 /*
- *  SPDX-FileCopyrightText: 2021 Devin Lin <espidev@gmail.com>
+ *  SPDX-FileCopyrightText: 2021 Devin Lin <devin@kde.org>
  *  SPDX-FileCopyrightText: 2015 Marco Martin <mart@kde.org>
  *  SPDX-FileCopyrightText: 2021 Tobias Fella <fella@posteo.de>
  *

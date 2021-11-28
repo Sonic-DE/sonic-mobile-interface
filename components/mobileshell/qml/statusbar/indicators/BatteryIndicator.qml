@@ -11,11 +11,10 @@ import QtQuick.Layouts 1.4
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.plasma.workspace.components 2.0 as PW
-
-import "../../dataproviders"
+import org.kde.plasma.private.mobileshell 1.0 as MobileShell
 
 RowLayout {
-    required property BatteryProvider provider
+    property MobileShell.BatteryProvider provider: MobileShell.BatteryProvider
     property real labelHeight
     visible: provider.isVisible
 
