@@ -9,6 +9,7 @@
 
 PhonePanel::PhonePanel(QObject *parent, const QVariantList &args)
     : Plasma::Containment(parent, args)
-{}
+{
+}
 
 PhonePanel::~PhonePanel() = default;
