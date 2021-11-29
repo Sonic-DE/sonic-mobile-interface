@@ -25,19 +25,21 @@ Item {
     readonly property real columns: 3 // Math.floor(width / cellSizeHint)
     readonly property real columnWidth: Math.floor(width / columns)
     readonly property real rowHeight: columnWidth * 0.7
+    readonly property real fullHeight: column.implicitHeight
     
     readonly property SettingsModel quickSettingsModel: SettingsModel {}
     
     ColumnLayout {
-        spacing: 0
-        implicitWidth: root.width
+        id: column
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
         
         // TODO add pages
         Flow {
             id: flow
-            Layout.fillWidth: true
-            
             spacing: 0
+            Layout.fillWidth: true
             
             Repeater {
                 model: root.quickSettingsModel
@@ -60,6 +62,9 @@ Item {
         }
         
         BrightnessItem {
+            id: brightnessItem
+            Layout.topMargin: PlasmaCore.Units.smallSpacing * 2
+            Layout.bottomMargin: PlasmaCore.Units.smallSpacing * 2
             Layout.leftMargin: PlasmaCore.Units.smallSpacing
             Layout.rightMargin: PlasmaCore.Units.smallSpacing
             Layout.fillWidth: true
