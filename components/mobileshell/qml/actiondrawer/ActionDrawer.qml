@@ -193,6 +193,14 @@ NanoShell.FullScreenOverlay {
             window.updateState();
         }
         
+        onDraggingChanged: {
+            if (!dragging) {
+                window.dragging = false;
+                flickable.cancelFlick();
+                window.updateState();
+            }
+        }
+        
         // the flickable is only used to measure drag changes, we implement our own UI component movements
         // the window element is not affected by contentY changes (it's effectively anchored to the flickable)
         ContentContainer {

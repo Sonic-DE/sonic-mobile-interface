@@ -6,6 +6,9 @@
 
 import QtQuick 2.15
 
+/**
+ * Component that triggers the opening and closing of an ActionDrawer when dragged on with touch or mouse.
+ */
 MouseArea {
     id: root
     
