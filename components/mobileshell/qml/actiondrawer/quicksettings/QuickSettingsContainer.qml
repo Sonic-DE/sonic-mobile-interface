@@ -31,14 +31,21 @@ Components.BaseItem {
     /**
      * The maximum amount of added height to snap to the full height of the quick settings panel.
      */
-    readonly property real maxAddedHeight: quickSettings.rowHeight * 2 // TODO don't hardcode this to 3 rows
+    readonly property real maxAddedHeight: quickSettings.fullHeight - quickSettings.rowHeight // first row is part of minimized height
+    
+    /**
+     * Height of panel when in minimized mode.
+     */
+    readonly property real minimizedHeight: bottomPadding + topPadding + statusBar.height + quickSettings.rowHeight + mediaWidget.fullHeight + handle.fullHeight
     
     // TODO implement
     signal expandRequested
     signal closeRequested
 
-    leftPadding: PlasmaCore.Units.largeSpacing
-    rightPadding: PlasmaCore.Units.largeSpacing
+    topPadding: PlasmaCore.Units.smallSpacing
+    leftPadding: PlasmaCore.Units.smallSpacing
+    rightPadding: PlasmaCore.Units.smallSpacing
+    bottomPadding: PlasmaCore.Units.smallSpacing * 4
     
     background: PlasmaCore.FrameSvgItem {
         enabledBorders: PlasmaCore.FrameSvg.BottomBorder
@@ -46,11 +53,12 @@ Components.BaseItem {
     }
 
     contentItem: ColumnLayout {
-        spacing: PlasmaCore.Units.smallSpacing
+        spacing: 0
         
         StatusBar.StatusBar {
+            id: statusBar
             Layout.fillWidth: true
-            Layout.preferredHeight: MobileShell.TopPanelControls.panelHeight
+            Layout.preferredHeight: MobileShell.TopPanelControls.panelHeight + PlasmaCore.Units.gridUnit * 0.8
             
             colorGroup: PlasmaCore.Theme.NormalColorGroup
             backgroundColor: "transparent"
@@ -60,12 +68,28 @@ Components.BaseItem {
         
         QuickSettings {
             id: quickSettings
+            readonly property real minimizedHeight: rowHeight * 2 // minimized height of quick settings area
+            Layout.topMargin: PlasmaCore.Units.smallSpacing
             Layout.fillWidth: true
-            Layout.preferredHeight: quickSettings.rowHeight
+            Layout.preferredHeight: quickSettings.rowHeight + root.addedHeight
         }
         
         MediaPlayerWidget {
-            Layout.fillHeight: true
+            id: mediaWidget
+            property real fullHeight: height + Layout.topMargin
+            Layout.topMargin: PlasmaCore.Units.smallSpacing
+            Layout.fillWidth: true
+        }
+        
+        Rectangle {
+            id: handle
+            property real fullHeight: height + Layout.topMargin
+            Layout.alignment: Qt.AlignHCenter
+            Layout.preferredWidth: PlasmaCore.Units.gridUnit * 3
+            Layout.preferredHeight: 3
+            radius: height
+            color: PlasmaCore.Theme.textColor
+            opacity: 0.5
         }
     }
 }

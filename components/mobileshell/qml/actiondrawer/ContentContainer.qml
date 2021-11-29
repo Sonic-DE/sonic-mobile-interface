@@ -23,16 +23,16 @@ PlasmaCore.ColorScope {
     
     required property var actionDrawer
     
-    readonly property real minimizedQuickSettingsOffset: quickSettings.height
-    readonly property real maximizedQuickSettingsOffset: quickSettings.maxAddedHeight
+    readonly property real minimizedQuickSettingsOffset: quickSettings.minimizedHeight
+    readonly property real maximizedQuickSettingsOffset: minimizedQuickSettingsOffset + quickSettings.maxAddedHeight
     
     colorGroup: PlasmaCore.Theme.ViewColorGroup
     
     // fullscreen background
     Rectangle {
         anchors.fill: parent
-        color: Qt.rgba(0, 0, 0, 0.75)
-        opacity: actionDrawer.offset / maximizedQuickSettingsOffset
+        color: Qt.rgba(PlasmaCore.Theme.backgroundColor.r, PlasmaCore.Theme.backgroundColor.g, PlasmaCore.Theme.backgroundColor.b, 0.75)
+        opacity: Math.max(0, Math.min(1, actionDrawer.offset / root.maximizedQuickSettingsOffset))
         Behavior on opacity { // smooth opacity changes
             NumberAnimation { duration: 70 }
         }
@@ -44,8 +44,19 @@ PlasmaCore.ColorScope {
         anchors.left: parent.left
         anchors.right: parent.right
         
+        addedHeight: {
+            if (!actionDrawer.opened) {
+                // over-scroll effect for initial opening
+                let progress = (root.actionDrawer.offset - minimizedQuickSettingsOffset) / quickSettings.maxAddedHeight;
+                let effectProgress = Math.atan(Math.max(0, progress));
+                return quickSettings.maxAddedHeight * 0.25 * effectProgress;
+            } else {
+                return Math.max(0, Math.min(quickSettings.maxAddedHeight, root.actionDrawer.offset - minimizedQuickSettingsOffset));
+            }
+        }
+        
         transform: Translate {
-            y: root.actionDrawer.offset
+            y: Math.min(root.actionDrawer.offset - minimizedQuickSettingsOffset, 0)
         }
     }
 }

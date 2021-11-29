@@ -75,7 +75,7 @@ static QImage readImage(int fileDescriptor, const QVariantMap &metadata)
 }
 
 ShellUtil::ShellUtil(QObject *parent)
-    : QObject{ parent }
+    : QObject{parent}
 {
     // setHasConfigurationInterface(true);
     m_kscreenInterface = new org::kde::KScreen(QStringLiteral("org.kde.kded5"), QStringLiteral("/modules/kscreen"), QDBusConnection::sessionBus(), this);

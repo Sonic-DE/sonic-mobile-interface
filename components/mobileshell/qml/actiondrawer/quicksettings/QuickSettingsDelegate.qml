@@ -11,6 +11,7 @@ import QtQuick.Layouts 1.1
 import org.kde.kirigami 2.12 as Kirigami
 
 import org.kde.plasma.core 2.0 as PlasmaCore
+import org.kde.plasma.private.nanoshell 2.0 as NanoShell
 import org.kde.plasma.components 3.0 as PlasmaComponents
 
 import "../../components" as Components
@@ -31,7 +32,7 @@ Components.BaseItem {
     readonly property color enabledButtonColor: Kirigami.ColorUtils.adjustColor(PlasmaCore.ColorScope.highlightColor, {"alpha": 0.4*255})
     readonly property color enabledPressedButtonColor: Kirigami.ColorUtils.adjustColor(PlasmaCore.ColorScope.highlightColor, {"alpha": 0.6*255});
     
-    padding: PlasmaCore.Units.smallSpacing
+    padding: PlasmaCore.Units.smallSpacing * 2
     
     background: Rectangle {
         radius: PlasmaCore.Units.smallSpacing
@@ -92,6 +93,7 @@ Components.BaseItem {
         
         ColumnLayout {
             id: column
+            spacing: PlasmaCore.Units.smallSpacing
             anchors.right: parent.right
             anchors.left: parent.left
             anchors.bottom: parent.bottom
@@ -105,8 +107,8 @@ Components.BaseItem {
             PlasmaComponents.Label {
                 Layout.fillWidth: true
                 elide: Text.ElideRight
-                text: root.toggle ? i18n("On") : i18n("Off") // TODO implement descriptive text
-                opacity: 0.8
+                text: root.enabled ? i18n("On") : i18n("Off") // TODO implement descriptive text
+                opacity: 0.6
                 font.pixelSize: PlasmaCore.Theme.defaultFont.pixelSize * 0.8
             }
         }

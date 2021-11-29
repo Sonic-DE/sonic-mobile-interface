@@ -26,7 +26,7 @@ public:
     ShellUtil(QObject *parent = nullptr);
     ~ShellUtil() override;
     static ShellUtil *instance();
-    
+
 public Q_SLOTS:
     void executeCommand(const QString &command);
     void launchApp(const QString &app);

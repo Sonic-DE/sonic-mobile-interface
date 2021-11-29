@@ -48,9 +48,11 @@ NanoShell.FullScreenOverlay {
     
     width: Screen.width
     height: Screen.height
+    
+    color: "transparent"
 
     onOpenedChanged: {
-        if (opened) mainFlickable.focus = true;
+        if (opened) flickable.focus = true;
     }
     onActiveChanged: {
         if (!active) {
@@ -64,9 +66,7 @@ NanoShell.FullScreenOverlay {
             offset = 0;
         }
         
-        window.direction = (offset === offset)
-                            ? Components.Direction.None 
-                            : (offset > oldOffset ? Components.Direction.Down : Components.Direction.Up);
+        window.direction = (oldOffset === offset) ? Components.Direction.None : (offset > oldOffset ? Components.Direction.Down : Components.Direction.Up);
         oldOffset = offset;
         
         // close panel immediately after panel is not shown, and the flickable is not being dragged
@@ -83,7 +83,6 @@ NanoShell.FullScreenOverlay {
     function open() {
         cancelAnimations();
         openAnim.restart();
-        opened = true;
     }
     function close() {
         cancelAnimations();
@@ -93,10 +92,10 @@ NanoShell.FullScreenOverlay {
     function expand() {
         cancelAnimations();
         expandAnim.restart();
-        opened = true;
     }
     function updateState() {
         cancelAnimations();
+        let openThreshold = PlasmaCore.Units.gridUnit * 2;
         if (window.offset <= 0) {
             // close immediately, so that we don't have to wait PlasmaCore.Units.longDuration 
             window.visible = false;
@@ -107,9 +106,15 @@ NanoShell.FullScreenOverlay {
             } else {
                 open();
             }
-        } else if (offset > openThreshold && window.direction === Components.Direction.Down) {
+        } else if (window.offset > contentContainer.minimizedQuickSettingsOffset && window.opened) {
+            if (window.direction === Components.Direction.Down) {
+                expand();
+            } else {
+                open();
+            }
+        } else if (window.offset > openThreshold && window.direction === Components.Direction.Down) {
             open();
-        } else if (mainFlickable.contentY > openThreshold) {
+        } else if (window.offset > openThreshold) {
             close();
         } else {
             open();
@@ -126,19 +131,24 @@ NanoShell.FullScreenOverlay {
         duration: PlasmaCore.Units.longDuration
         easing.type: Easing.InOutQuad
         to: 0
-        onFinished: window.visible = false;
+        onFinished: {
+            window.visible = false;
+            window.opened = false;
+        }
     }
     PropertyAnimation on offset {
         id: openAnim
         duration: PlasmaCore.Units.longDuration
         easing.type: Easing.InOutQuad
         to: contentContainer.minimizedQuickSettingsOffset
+        onFinished: window.opened = true
     }
     PropertyAnimation on offset {
         id: expandAnim
         duration: PlasmaCore.Units.longDuration
         easing.type: Easing.InOutQuad
         to: contentContainer.maximizedQuickSettingsOffset
+        onFinished: window.opened = true;
     }
     
     Flickable {
@@ -147,6 +157,7 @@ NanoShell.FullScreenOverlay {
         
         contentWidth: window.width
         contentHeight: window.height + 999999
+        contentY: contentHeight / 2
         
         // if the recent window.offset change was due to this flickable
         property bool offsetChangedDueToContentY: false
@@ -174,7 +185,7 @@ NanoShell.FullScreenOverlay {
         }
         onFlickStarted: window.dragging = true;
         onMovementEnded: {
-            window.userInteracting = false;
+            window.dragging = false;
             window.updateState();
         }
         onFlickEnded: {
@@ -188,6 +199,8 @@ NanoShell.FullScreenOverlay {
             id: contentContainer
             y: flickable.contentY
             actionDrawer: window
+            width: window.width
+            height: window.height
         }
     }
 

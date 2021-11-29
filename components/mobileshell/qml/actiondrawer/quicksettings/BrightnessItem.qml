@@ -7,7 +7,6 @@
  */
 
 import QtQuick 2.15
-import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.1
 import org.kde.kirigami 2.12 as Kirigami
 
@@ -69,12 +68,12 @@ Item {
         PlasmaCore.IconItem {
             Layout.alignment: Qt.AlignVCenter
             Layout.leftMargin: PlasmaCore.Units.smallSpacing
-            Layout.preferredWidth: Math.round(PlasmaCore.Units.gridUnit * 1.75)
+            Layout.preferredWidth: PlasmaCore.Units.iconSizes.smallMedium
             Layout.preferredHeight: width
             source: "low-brightness"
         }
 
-        Slider {
+        PC3.Slider {
             id: brightnessSlider
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignVCenter
@@ -86,7 +85,7 @@ Item {
         PlasmaCore.IconItem {
             Layout.alignment: Qt.AlignVCenter
             Layout.rightMargin: PlasmaCore.Units.smallSpacing
-            Layout.preferredWidth: Math.round(PlasmaCore.Units.gridUnit * 1.75)
+            Layout.preferredWidth: PlasmaCore.Units.iconSizes.smallMedium
             Layout.preferredHeight: width
             source: "high-brightness"
         }
