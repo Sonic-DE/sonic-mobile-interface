@@ -38,6 +38,16 @@ Components.BaseItem {
      */
     readonly property real minimizedHeight: bottomPadding + topPadding + statusBar.height + quickSettings.rowHeight + mediaWidget.fullHeight + handle.fullHeight
     
+    /**
+     * Progress of showing the pinned quick settings view.
+     */
+    property real minimizedViewProgress: 0
+    
+    /**
+     * Progress of showing the full quick settings view (when maximized).
+     */
+    property real fullViewProgress: 1
+    
     // TODO implement
     signal expandRequested
     signal closeRequested
@@ -68,6 +78,9 @@ Components.BaseItem {
         
         QuickSettings {
             id: quickSettings
+            minimizedViewProgress: root.minimizedViewProgress
+            fullViewProgress: root.fullViewProgress
+            
             readonly property real minimizedHeight: rowHeight * 2 // minimized height of quick settings area
             Layout.topMargin: PlasmaCore.Units.smallSpacing
             Layout.fillWidth: true

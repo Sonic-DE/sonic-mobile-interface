@@ -24,13 +24,24 @@ Item {
     // readonly property real cellSizeHint: PlasmaCore.Units.iconSizes.large + PlasmaCore.Units.smallSpacing * 6
     readonly property real columns: 3 // Math.floor(width / cellSizeHint)
     readonly property real columnWidth: Math.floor(width / columns)
+    readonly property real minimizedColumns: 5
+    readonly property real minimizedColumnWidth: Math.floor(width / minimizedColumns)
+    
     readonly property real rowHeight: columnWidth * 0.7
-    readonly property real fullHeight: column.implicitHeight
+    readonly property real fullHeight: fullView.implicitHeight
+    
+    property real minimizedViewProgress: 0
+    property real fullViewProgress: 1
     
     readonly property SettingsModel quickSettingsModel: SettingsModel {}
     
+    // view when fully open
     ColumnLayout {
-        id: column
+        id: fullView
+        opacity: root.fullViewProgress
+        visible: opacity !== 0
+        transform: Translate { y: (1 - fullView.opacity) * root.rowHeight }
+        
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
@@ -50,7 +61,7 @@ Item {
                     width: root.columnWidth
                     padding: PlasmaCore.Units.smallSpacing
                     
-                    contentItem: QuickSettingsDelegate {
+                    contentItem: QuickSettingsFullDelegate {
                         text: modelData.text
                         icon: modelData.icon
                         enabled: modelData.enabled
@@ -68,6 +79,40 @@ Item {
             Layout.leftMargin: PlasmaCore.Units.smallSpacing
             Layout.rightMargin: PlasmaCore.Units.smallSpacing
             Layout.fillWidth: true
+        }
+    }
+    
+    // view when in minimized mode
+    RowLayout {
+        id: minimizedView
+        spacing: 0
+        opacity: root.minimizedViewProgress
+        visible: opacity !== 0
+        transform: Translate { y: (1 - minimizedView.opacity) * -root.rowHeight }
+        
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        
+        Repeater {
+            model: root.quickSettingsModel
+            delegate: Components.BaseItem {
+                required property var modelData
+                required property var index
+                
+                implicitHeight: width
+                implicitWidth: root.minimizedColumnWidth
+                padding: (width - PlasmaCore.Units.gridUnit * 3) / 2
+                visible: index <= root.minimizedColumns
+                
+                contentItem: QuickSettingsMinimizedDelegate {
+                    text: modelData.text
+                    icon: modelData.icon
+                    enabled: modelData.enabled
+                    settingsCommand: modelData.settingsCommand
+                    toggleFunction: modelData.toggle
+                }
+            }
         }
     }
 }

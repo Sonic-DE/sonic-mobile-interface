@@ -87,7 +87,6 @@ NanoShell.FullScreenOverlay {
     function close() {
         cancelAnimations();
         closeAnim.restart();
-        opened = false;
     }
     function expand() {
         cancelAnimations();
@@ -95,29 +94,30 @@ NanoShell.FullScreenOverlay {
     }
     function updateState() {
         cancelAnimations();
-        let openThreshold = PlasmaCore.Units.gridUnit * 2;
+        let openThreshold = PlasmaCore.Units.gridUnit;
+        
         if (window.offset <= 0) {
             // close immediately, so that we don't have to wait PlasmaCore.Units.longDuration 
             window.visible = false;
             close();
-        } else if (window.direction === Components.Direction.None) {
+        } else if (window.direction === Components.Direction.None || !window.opened) {
             if (window.offset < openThreshold) {
                 close();
             } else {
                 open();
             }
-        } else if (window.offset > contentContainer.minimizedQuickSettingsOffset && window.opened) {
+        } else if (window.offset > contentContainer.maximizedQuickSettingsOffset) {
+            expand();
+        } else if (window.offset > contentContainer.minimizedQuickSettingsOffset) {
             if (window.direction === Components.Direction.Down) {
                 expand();
             } else {
                 open();
             }
-        } else if (window.offset > openThreshold && window.direction === Components.Direction.Down) {
+        } else if (window.direction === Components.Direction.Down) {
             open();
-        } else if (window.offset > openThreshold) {
-            close();
         } else {
-            open();
+            close();
         }
     }
     Timer {
