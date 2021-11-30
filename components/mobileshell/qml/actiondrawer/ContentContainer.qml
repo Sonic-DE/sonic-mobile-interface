@@ -44,6 +44,15 @@ PlasmaCore.ColorScope {
         anchors.left: parent.left
         anchors.right: parent.right
         
+        function applyMinMax(val) {
+            return Math.max(0, Math.min(1, val));
+        }
+        
+        // opacity and move animation
+        property real dist: (maximizedQuickSettingsOffset - minimizedQuickSettingsOffset)
+        minimizedViewProgress: actionDrawer.opened ? applyMinMax(1 - (actionDrawer.offset - minimizedQuickSettingsOffset) / dist) : 1
+        fullViewProgress: actionDrawer.opened ? applyMinMax((actionDrawer.offset - minimizedQuickSettingsOffset) / dist) : 0
+        
         addedHeight: {
             if (!actionDrawer.opened) {
                 // over-scroll effect for initial opening
