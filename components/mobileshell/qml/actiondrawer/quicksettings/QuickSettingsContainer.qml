@@ -4,7 +4,7 @@
  *   SPDX-License-Identifier: LGPL-2.0-or-later
  */
 
-import QtQuick 2.14
+import QtQuick 2.15
 import QtQuick.Layouts 1.1
 import QtQuick.Window 2.2
 import QtGraphicalEffects 1.12
@@ -16,6 +16,7 @@ import org.kde.plasma.private.mobileshell 1.0 as MobileShell
 
 import "../../statusbar" as StatusBar
 import "../../components" as Components
+import "../../widgets" as Widgets
 
 /**
  * Quick settings panel for phones.
@@ -87,7 +88,7 @@ Components.BaseItem {
             Layout.preferredHeight: quickSettings.rowHeight + root.addedHeight
         }
         
-        MediaPlayerWidget {
+        Widgets.MediaPlayerWidget {
             id: mediaWidget
             property real fullHeight: height + Layout.topMargin
             Layout.topMargin: PlasmaCore.Units.smallSpacing
