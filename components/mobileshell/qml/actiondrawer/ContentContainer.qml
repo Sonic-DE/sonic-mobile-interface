@@ -14,6 +14,7 @@ import org.kde.plasma.components 3.0 as PlasmaComponents
 
 import "../components" as Components
 import "quicksettings"
+import "../widgets" as Widgets
 
 /**
  * Root element that contains all of the ActionDrawer's contents, and is anchored to the screen.
@@ -28,6 +29,10 @@ PlasmaCore.ColorScope {
     
     colorGroup: PlasmaCore.Theme.ViewColorGroup
     
+    function applyMinMax(val) {
+        return Math.max(0, Math.min(1, val));
+    }
+    
     // fullscreen background
     Rectangle {
         anchors.fill: parent
@@ -40,13 +45,10 @@ PlasmaCore.ColorScope {
     
     QuickSettingsContainer {
         id: quickSettings
+        z: 1
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        
-        function applyMinMax(val) {
-            return Math.max(0, Math.min(1, val));
-        }
         
         // opacity and move animation
         property real dist: (maximizedQuickSettingsOffset - minimizedQuickSettingsOffset)
@@ -65,7 +67,21 @@ PlasmaCore.ColorScope {
         }
         
         transform: Translate {
+            id: translate
             y: Math.min(root.actionDrawer.offset - minimizedQuickSettingsOffset, 0)
         }
+    }
+    
+    Widgets.NotificationsWidget {
+        anchors {
+            top: quickSettings.top
+            topMargin: quickSettings.height + translate.y
+            bottom: parent.bottom
+            left: parent.left
+            leftMargin: PlasmaCore.Units.largeSpacing
+            right: parent.right
+            rightMargin: PlasmaCore.Units.largeSpacing
+        }
+        opacity: applyMinMax(root.actionDrawer.offset / root.minimizedQuickSettingsOffset)
     }
 }
