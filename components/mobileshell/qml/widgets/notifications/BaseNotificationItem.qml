@@ -23,12 +23,12 @@ Item {
     required property NotificationManager.Notifications notificationsModel
     
     property var model
+    property int modelIndex
     
     property PlasmaCore.DataSource timeSource
     
     property int notificationType: model.type
 
-    property bool isGroup: model.isGroup
     property bool inGroup: model.isInGroup
     property bool inHistory: true
 
@@ -39,6 +39,12 @@ Item {
     property string summary: model.summary
     property var time: model.updated || model.created
 
+    property bool hasReplyAction: model.hasReplyAction || false
+    property string replyActionLabel: model.replyActionLabel || ""
+    property string replyPlaceholderText: model.replyPlaceholderText || ""
+    property string replySubmitButtonText: model.replySubmitButtonText || ""
+    property string replySubmitButtonIconName: model.replySubmitButtonIconName || ""
+    
     // configure button on every single notifications is bit overwhelming
     property bool configurable: !inGroup && model.configurable
 
@@ -96,13 +102,13 @@ Item {
     
     onCloseClicked: close()
     onDismissClicked: model.dismissed = false;
-    onConfigureClicked: notificationsModel.configure(notificationsModel.index(index, 0))
+    onConfigureClicked: notificationsModel.configure(notificationsModel.index(modelIndex, 0))
 
     onActionInvoked: {
         if (actionName === "default") {
-            notificationsModel.invokeDefaultAction(notificationsModel.index(index, 0));
+            notificationsModel.invokeDefaultAction(notificationsModel.index(modelIndex, 0));
         } else {
-            notificationsModel.invokeAction(notificationsModel.index(index, 0), actionName);
+            notificationsModel.invokeAction(notificationsModel.index(modelIndex, 0), actionName);
         }
 
         expire();
@@ -118,20 +124,20 @@ Item {
             expire();
         }
     }
-    onSuspendJobClicked: notificationsModel.suspendJob(notificationsModel.index(index, 0))
-    onResumeJobClicked: notificationsModel.resumeJob(notificationsModel.index(index, 0))
-    onKillJobClicked: notificationsModel.killJob(notificationsModel.index(index, 0))
+    onSuspendJobClicked: notificationsModel.suspendJob(notificationsModel.index(modelIndex, 0))
+    onResumeJobClicked: notificationsModel.resumeJob(notificationsModel.index(modelIndex, 0))
+    onKillJobClicked: notificationsModel.killJob(notificationsModel.index(modelIndex, 0))
 
     function expire() {
         if (model.resident) {
             model.expired = true;
         } else {
-            notificationsModel.expire(notificationsModel.index(index, 0));
+            notificationsModel.expire(notificationsModel.index(modelIndex, 0));
         }
     }
 
     function close() {
-        notificationsModel.close(notificationsModel.index(index, 0));
+        notificationsModel.close(notificationsModel.index(modelIndex, 0));
     }
 }
 

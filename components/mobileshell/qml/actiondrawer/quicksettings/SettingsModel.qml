@@ -19,17 +19,11 @@ import org.kde.plasma.private.mobileshell 1.0 as MobileShell
 import org.kde.plasma.private.mobilehomescreencomponents 0.1 as HomeScreenComponents
 
 HomeScreenComponents.QuickSettingsModel {
-    id: modelItem
+    id: root
+    
+    required property var actionDrawer
+    
     property bool screenshotRequested: false
-    
-    signal panelClosed()
-    
-    onPanelClosed: {
-        if (screenshotRequested) {
-            MobileShell.ShellUtil.takeScreenshot();
-            screenshotRequested = false;
-        }
-    }
 
     HomeScreenComponents.QuickSetting {
         text: i18n("Settings")
@@ -96,8 +90,18 @@ HomeScreenComponents.QuickSettingsModel {
         icon: "spectacle"
         enabled: false
         function toggle() {
-            modelItem.screenshotRequested = true;
-            root.closeRequested();
+            root.screenshotRequested = true;
+            root.actionDrawer.close();
+        }
+        
+        Connections {
+            target: root.actionDrawer
+            function onVisibleChanged(visible) {
+                if (!visible && screenshotRequested) {
+                    MobileShell.ShellUtil.takeScreenshot();
+                    root.screenshotRequested = false
+                }
+            }
         }
     }
     HomeScreenComponents.QuickSetting {

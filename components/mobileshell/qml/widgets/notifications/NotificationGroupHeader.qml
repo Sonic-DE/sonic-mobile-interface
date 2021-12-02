@@ -29,14 +29,6 @@ RowLayout {
     property string applicationName
     property string originName
 
-    property string configureActionLabel
-
-    property bool configurable: false
-    property bool dismissable: false
-    property bool dismissed
-    property string closeButtonTooltip: i18n("Close")
-    property bool closable
-
     property var time
     property PlasmaCore.DataSource timeSource
 
@@ -45,10 +37,6 @@ RowLayout {
 
     property real timeout: 5000
     property real remainingTime: 0
-
-    signal configureClicked
-    signal dismissClicked
-    signal closeClicked
 
     spacing: PlasmaCore.Units.smallSpacing
     Layout.preferredHeight: Math.max(applicationNameLabel.implicitHeight, PlasmaCore.Units.iconSizes.small)
@@ -78,75 +66,4 @@ RowLayout {
         id: spacer
         Layout.fillWidth: true
     }
-
-    NotificationTimeText {
-        notificationType: notificationHeading.notificationType
-        jobState: notificationHeading.jobState
-        jobDetails: notificationHeading.jobDetails
-        
-        time: notificationHeading.time
-        timeSource: notificationHeading.timeSource
-    }
-
-    // TODO re-implement with gestures
-//     RowLayout {
-//         id: headerButtonsRow
-//         spacing: 0
-// 
-//         PlasmaComponents3.ToolButton {
-//             id: configureButton
-//             icon.name: "configure"
-//             visible: configurable
-//             onClicked: notificationHeading.configureClicked()
-// 
-//             PlasmaComponents3.ToolTip {
-//                 text: notificationHeading.configureActionLabel || i18nd("plasma_applet_org.kde.plasma.notifications", "Configure")
-//             }
-//         }
-// 
-//         PlasmaComponents3.ToolButton {
-//             id: dismissButton
-//             icon.name: notificationHeading.dismissed ? "window-restore" : "window-minimize"
-//             visible: dismissable
-//             onClicked: notificationHeading.dismissClicked()
-// 
-//             PlasmaComponents3.ToolTip {
-//                 text: notificationHeading.dismissed
-//                       ? i18ndc("plasma_applet_org.kde.plasma.notifications", "Opposite of minimize", "Restore")
-//                       : i18nd("plasma_applet_org.kde.plasma.notifications", "Minimize")
-//             }
-//         }
-// 
-//         PlasmaComponents3.ToolButton {
-//             id: closeButton
-//             visible: closable
-//             icon.name: "window-close"
-//             onClicked: notificationHeading.closeClicked()
-// 
-//             PlasmaComponents3.ToolTip {
-//                 id: closeButtonToolTip
-//                 text: closeButtonTooltip
-//             }
-// 
-//             Charts.PieChart {
-//                 id: chart
-//                 anchors.fill: parent
-//                 anchors.margins: PlasmaCore.Units.smallSpacing + Math.max(Math.floor(PlasmaCore.Units.devicePixelRatio), 1)
-// 
-//                 opacity: (notificationHeading.remainingTime > 0 && notificationHeading.remainingTime < notificationHeading.timeout) ? 1 : 0
-//                 Behavior on opacity {
-//                     NumberAnimation { duration: PlasmaCore.Units.longDuration }
-//                 }
-// 
-//                 range { from: 0; to: notificationHeading.timeout; automatic: false }
-// 
-//                 valueSources: Charts.SingleValueSource { value: notificationHeading.remainingTime }
-//                 colorSource: Charts.SingleValueSource { value: PlasmaCore.Theme.highlightColor }
-// 
-//                 thickness: Math.max(Math.floor(PlasmaCore.Units.devicePixelRatio), 1) * 5
-// 
-//                 transform: Scale { origin.x: chart.width / 2; xScale: -1 }
-//             }
-//         }
-//     }
 }
