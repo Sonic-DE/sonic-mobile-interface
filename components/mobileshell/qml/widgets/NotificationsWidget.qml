@@ -28,37 +28,15 @@ import "notifications"
 Item {
     id: root
     
+    property var historyModel: MobileShell.NotificationProvider.historyModel
+    property var notificationSettings: MobileShell.NotificationProvider.notificationSettings
+    
     function clearHistory() {
         historyModel.clear(NotificationManager.Notifications.ClearExpired);
     }
 
     function openNotificationSettings() {
         MobileShell.ShellUtil.executeCommand("plasma-open-settings kcm_notifications");
-    }
-    
-    NotificationManager.Settings {
-        id: notificationSettings
-    }
-    
-    NotificationManager.Notifications {
-        id: historyModel
-        showExpired: true
-        showDismissed: true
-        showJobs: notificationSettings.jobsInNotifications
-        sortMode: NotificationManager.Notifications.SortByTypeAndUrgency
-        groupMode: NotificationManager.Notifications.GroupApplicationsFlat
-        groupLimit: 2
-        expandUnread: true
-        blacklistedDesktopEntries: notificationSettings.historyBlacklistedApplications
-        blacklistedNotifyRcNames: notificationSettings.historyBlacklistedServices
-        urgencies: {
-            var urgencies = NotificationManager.Notifications.CriticalUrgency
-                          | NotificationManager.Notifications.NormalUrgency;
-            if (notificationSettings.lowPriorityHistory) {
-                urgencies |= NotificationManager.Notifications.LowUrgency;
-            }
-            return urgencies;
-        }
     }
 
     PlasmaCore.DataSource {
@@ -78,7 +56,55 @@ Item {
         spacing: Kirigami.Units.largeSpacing
         
         anchors.fill: parent
+
+        // TODO keyboard focus
+        highlightMoveDuration: 0
+        highlightResizeDuration: 0
+        highlight: Item {} 
         
+        section {
+            property: "isInGroup"
+            criteria: ViewSection.FullString
+        }
+
+        PlasmaExtras.PlaceholderMessage {
+            anchors.centerIn: parent
+            width: parent.width - (PlasmaCore.Units.largeSpacing * 4)
+
+            text: i18n("Notification service not available")
+            visible: list.count === 0 && !NotificationManager.Server.valid
+
+            PlasmaComponents3.Label {
+                // Checking valid to avoid creating ServerInfo object if everything is alright
+                readonly property NotificationManager.ServerInfo currentOwner: !NotificationManager.Server.valid ? NotificationManager.Server.currentOwner : null
+                // PlasmaExtras.PlaceholderMessage is internally a ColumnLayout, so we can use Layout.whatever properties here
+                Layout.fillWidth: true
+                wrapMode: Text.WordWrap
+                text: currentOwner ? i18nc("Vendor and product name", "Notifications are currently provided by '%1 %2'", currentOwner.vendor, currentOwner.name) : ""
+                visible: currentOwner && currentOwner.vendor && currentOwner.name
+            }
+        }
+        
+        add: Transition {
+            SequentialAnimation {
+                PropertyAction { property: "opacity"; value: 0 }
+                PauseAnimation { duration: PlasmaCore.Units.longDuration }
+                ParallelAnimation {
+                    NumberAnimation { property: "opacity"; from: 0; to: 1; duration: PlasmaCore.Units.longDuration }
+                    NumberAnimation { property: "height"; from: 0; duration: PlasmaCore.Units.longDuration }
+                }
+            }
+        }
+        addDisplaced: Transition {
+            NumberAnimation { properties: "y"; duration:  PlasmaCore.Units.longDuration }
+        }
+        removeDisplaced: Transition {
+            SequentialAnimation {
+                PauseAnimation { duration: PlasmaCore.Units.longDuration }
+                NumberAnimation { properties: "y"; duration:  PlasmaCore.Units.longDuration }
+            }
+        }
+
         function isRowExpanded(row) {
             var idx = historyModel.index(row, 0);
             return historyModel.data(idx, NotificationManager.Notifications.IsGroupExpandedRole);
@@ -102,110 +128,48 @@ Item {
                 }
             }
         }
-
-        // TODO keyboard focus
-        highlightMoveDuration: 0
-        highlightResizeDuration: 0
-        highlight: Item {} 
         
-        section {
-            property: "isInGroup"
-            criteria: ViewSection.FullString
-        }
-
-        PlasmaExtras.PlaceholderMessage {
-            anchors.centerIn: parent
-            width: parent.width - (PlasmaCore.Units.largeSpacing * 4)
-
-            text: i18n("No unread notifications")
-            visible: list.count === 0 && NotificationManager.Server.valid
-        }
-
-        PlasmaExtras.PlaceholderMessage {
-            anchors.centerIn: parent
-            width: parent.width - (PlasmaCore.Units.largeSpacing * 4)
-
-            text: i18n("Notification service not available")
-            visible: list.count === 0 && !NotificationManager.Server.valid
-
-            PlasmaComponents3.Label {
-                // Checking valid to avoid creating ServerInfo object if everything is alright
-                readonly property NotificationManager.ServerInfo currentOwner: !NotificationManager.Server.valid ? NotificationManager.Server.currentOwner
-                                                                                                                : null
-
-                // PlasmaExtras.PlaceholderMessage is internally a ColumnLayout, so we can use Layout.whatever properties here
-                Layout.fillWidth: true
-                wrapMode: Text.WordWrap
-                text: currentOwner ? i18nc("Vendor and product name", "Notifications are currently provided by '%1 %2'", currentOwner.vendor, currentOwner.name) : ""
-                visible: currentOwner && currentOwner.vendor && currentOwner.name
-            }
-        }
-        
-        delegate: DraggableDelegate {
-            id: draggableDelegate
-            required property var model
-            
-            contentItem: delegateLoader
+        delegate: Loader {
+            id: delegateLoader
             width: list.width
-            draggable: !model.isGroup && model.type != NotificationManager.Notifications.JobType
-
-            onDismissRequested: {
-                // Setting the animation target explicitly before removing the notification:
-                // Using ViewTransition.item.x to get the x position in the animation
-                // causes random crash in attached property access (cf. Bug 414066)
-                if (x < 0) {
-                    removeXAnimation.to = -list.width;
+            sourceComponent: model.isGroup ? groupDelegate : notificationDelegate
+            
+            required property var model
+            required property int index
+            
+            Component {
+                id: groupDelegate
+                NotificationGroupHeader {
+                    applicationName: model.applicationName
+                    applicationIconSource: model.applicationIconName
+                    originName: model.originName || ""
+                    timeSource: timeDataSource
                 }
-
-                historyModel.close(historyModel.index(index, 0));
             }
-
-            Loader {
-                id: delegateLoader
-                width: list.width
-                sourceComponent: model.isGroup ? groupDelegate : notificationDelegate
-                
-                Component {
-                    id: groupDelegate
-                    NotificationGroupHeader {
-                        applicationName: model.applicationName
-                        applicationIconSource: model.applicationIconName
-                        originName: model.originName || ""
-
-                        configurable: model.configurable
-                        closable: model.closable
-                        closeButtonTooltip: i18n("Close Group")
-
-                        onCloseClicked: historyModel.close(historyModel.index(index, 0))
-                        onConfigureClicked: historyModel.configure(historyModel.index(index, 0))
+            
+            Component {
+                id: notificationDelegate
+                ColumnLayout {
+                    spacing: PlasmaCore.Units.smallSpacing
+                    
+                    NotificationItem {
+                        Layout.fillWidth: true
                         
+                        model: delegateLoader.model
+                        modelIndex: delegateLoader.index
+                        notificationsModel: historyModel
                         timeSource: timeDataSource
                     }
-                }
-                
-                
-                Component {
-                    id: notificationDelegate
-                    ColumnLayout {
-                        spacing: PlasmaCore.Units.smallSpacing
-                        
-                        NotificationItem {
-                            Layout.fillWidth: true
-                            
-                            model: draggableDelegate.model
-                            notificationsModel: historyModel
-                            timeSource: timeDataSource
-                        }
-                        
-                        PlasmaComponents3.ToolButton {
-                            icon.name: model.isGroupExpanded ? "arrow-up" : "arrow-down"
-                            text: model.isGroupExpanded ? i18n("Show Fewer")
-                                                        : i18nc("Expand to show n more notifications",
-                                                                "Show %1 More", (model.groupChildrenCount - model.expandedGroupChildrenCount))
-                            visible: (model.groupChildrenCount > model.expandedGroupChildrenCount || model.isGroupExpanded)
-                                && delegate.ListView.nextSection !== delegate.ListView.section
-                            onClicked: list.setGroupExpanded(model.index, !model.isGroupExpanded)
-                        }
+                    
+                    PlasmaComponents3.ToolButton {
+                        icon.name: model.isGroupExpanded ? "arrow-up" : "arrow-down"
+                        text: model.isGroupExpanded ? i18n("Show Fewer")
+                                                    : i18nc("Expand to show n more notifications",
+                                                            "Show %1 More", (model.groupChildrenCount - model.expandedGroupChildrenCount))
+                        visible: (model.groupChildrenCount > model.expandedGroupChildrenCount || model.isGroupExpanded)
+                            && delegateLoader.ListView.nextSection !== delegateLoader.ListView.section
+                        onClicked: list.setGroupExpanded(model.index, !model.isGroupExpanded)
+                        height: visible ? implicitHeight : 0
                     }
                 }
             }
