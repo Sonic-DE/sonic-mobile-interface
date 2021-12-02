@@ -14,6 +14,7 @@ PanelBackground 1.0 components/PanelBackground.qml
 # /dataproviders
 singleton BatteryProvider 1.0 dataproviders/BatteryProvider.qml
 singleton BluetoothProvider 1.0 dataproviders/BluetoothProvider.qml
+singleton NotificationProvider 1.0 dataproviders/NotificationProvider.qml
 singleton SignalStrengthProvider 1.0 dataproviders/SignalStrengthProvider.qml
 singleton VolumeProvider 1.0 dataproviders/VolumeProvider.qml
 singleton WifiProvider 1.0 dataproviders/WifiProvider.qml

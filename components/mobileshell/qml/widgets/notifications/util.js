@@ -1,4 +1,5 @@
 .import org.kde.notificationmanager 1.0 as NotificationManager
+.import QtQml 2.15 as QtQml
 
 function determineNotificationHeadingText(notificationItem) {
     if (notificationItem.notificationType === NotificationManager.Notifications.JobType) {
@@ -46,11 +47,11 @@ function generateNotificationHeaderAgoText(time, jobState) {
     }
     // Received less than a day ago, show time, 22 hours so the time isn't as ambiguous between today and yesterday
     if (deltaMinutes < 60 * 22) {
-        return Qt.formatTime(time, Qt.locale().timeFormat(Locale.ShortFormat).replace(/.ss?/i, ""));
+        return Qt.formatTime(time, Qt.locale().timeFormat(QtQml.Locale.ShortFormat).replace(/.ss?/i, ""));
     }
 
     // Otherwise show relative date (Yesterday, "Last Sunday", or just date if too far in the past)
-    return KCoreAddons.Format.formatRelativeDate(time, Locale.ShortFormat);
+    return KCoreAddons.Format.formatRelativeDate(time, QtQml.Locale.ShortFormat);
 }
 
 function generateNotificationHeaderRemainingText(notificationType, jobState, jobDetails) {

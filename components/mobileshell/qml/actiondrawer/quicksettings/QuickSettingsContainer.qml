@@ -24,6 +24,8 @@ import "../../widgets" as Widgets
 Components.BaseItem {
     id: root
     
+    required property var actionDrawer
+    
     /**
      * The amount of height to add to the panel (increasing the height of the quick settings area).
      */
@@ -37,7 +39,7 @@ Components.BaseItem {
     /**
      * Height of panel when in minimized mode.
      */
-    readonly property real minimizedHeight: bottomPadding + topPadding + statusBar.height + quickSettings.rowHeight + mediaWidget.fullHeight + handle.fullHeight
+    readonly property real minimizedHeight: bottomPadding + topPadding + statusBar.height + quickSettings.rowHeight + handle.fullHeight
     
     /**
      * Progress of showing the pinned quick settings view.
@@ -48,10 +50,6 @@ Components.BaseItem {
      * Progress of showing the full quick settings view (when maximized).
      */
     property real fullViewProgress: 1
-    
-    // TODO implement
-    signal expandRequested
-    signal closeRequested
 
     topPadding: PlasmaCore.Units.smallSpacing
     leftPadding: PlasmaCore.Units.smallSpacing
@@ -79,6 +77,7 @@ Components.BaseItem {
         
         QuickSettings {
             id: quickSettings
+            actionDrawer: root.actionDrawer
             minimizedViewProgress: root.minimizedViewProgress
             fullViewProgress: root.fullViewProgress
             
@@ -91,7 +90,7 @@ Components.BaseItem {
         Widgets.MediaPlayerWidget {
             id: mediaWidget
             property real fullHeight: height + Layout.topMargin
-            Layout.topMargin: PlasmaCore.Units.smallSpacing
+            Layout.topMargin: visible ? PlasmaCore.Units.smallSpacing : 0
             Layout.fillWidth: true
         }
         
@@ -99,6 +98,7 @@ Components.BaseItem {
             id: handle
             property real fullHeight: height + Layout.topMargin
             Layout.alignment: Qt.AlignHCenter
+            Layout.topMargin: PlasmaCore.Units.smallSpacing
             Layout.preferredWidth: PlasmaCore.Units.gridUnit * 3
             Layout.preferredHeight: 3
             radius: height

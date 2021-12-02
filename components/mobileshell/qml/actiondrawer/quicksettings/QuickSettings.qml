@@ -21,6 +21,8 @@ Item {
     id: root
     clip: true
     
+    required property var actionDrawer
+    
     // readonly property real cellSizeHint: PlasmaCore.Units.iconSizes.large + PlasmaCore.Units.smallSpacing * 6
     readonly property real columns: 3 // Math.floor(width / cellSizeHint)
     readonly property real columnWidth: Math.floor(width / columns)
@@ -33,7 +35,9 @@ Item {
     property real minimizedViewProgress: 0
     property real fullViewProgress: 1
     
-    readonly property SettingsModel quickSettingsModel: SettingsModel {}
+    readonly property SettingsModel quickSettingsModel: SettingsModel {
+        actionDrawer: root.actionDrawer
+    }
     
     // view when fully open
     ColumnLayout {

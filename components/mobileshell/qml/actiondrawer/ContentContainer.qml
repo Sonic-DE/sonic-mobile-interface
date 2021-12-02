@@ -13,8 +13,8 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
 
 import "../components" as Components
-import "quicksettings"
 import "../widgets" as Widgets
+import "quicksettings"
 
 /**
  * Root element that contains all of the ActionDrawer's contents, and is anchored to the screen.
@@ -36,7 +36,7 @@ PlasmaCore.ColorScope {
     // fullscreen background
     Rectangle {
         anchors.fill: parent
-        color: Qt.rgba(PlasmaCore.Theme.backgroundColor.r, PlasmaCore.Theme.backgroundColor.g, PlasmaCore.Theme.backgroundColor.b, 0.75)
+        color: Qt.rgba(PlasmaCore.Theme.backgroundColor.r, PlasmaCore.Theme.backgroundColor.g, PlasmaCore.Theme.backgroundColor.b, 0.8)
         opacity: Math.max(0, Math.min(1, actionDrawer.offset / root.minimizedQuickSettingsOffset))
         Behavior on opacity { // smooth opacity changes
             NumberAnimation { duration: 70 }
@@ -49,6 +49,8 @@ PlasmaCore.ColorScope {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
+        
+        actionDrawer: root.actionDrawer
         
         // opacity and move animation
         property real dist: (maximizedQuickSettingsOffset - minimizedQuickSettingsOffset)
@@ -77,6 +79,7 @@ PlasmaCore.ColorScope {
             top: quickSettings.top
             topMargin: quickSettings.height + translate.y
             bottom: parent.bottom
+            bottomMargin: PlasmaCore.Units.largeSpacing
             left: parent.left
             leftMargin: PlasmaCore.Units.largeSpacing
             right: parent.right
