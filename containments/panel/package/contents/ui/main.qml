@@ -48,7 +48,7 @@ Item {
         target: MobileShell.TopPanelControls
         
         function onStartSwipe() {
-            swipeArea.startSwipe(0);
+            swipeArea.startSwipe();
         }
         function onEndSwipe() {
             swipeArea.endSwipe();
