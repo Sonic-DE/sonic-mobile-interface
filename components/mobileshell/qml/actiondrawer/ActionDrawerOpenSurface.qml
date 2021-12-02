@@ -16,10 +16,14 @@ MouseArea {
     
     property int oldMouseY: 0
 
-    function startSwipe(mouseX) {
+    function startSwipe() {
         actionDrawer.cancelAnimations();
         actionDrawer.dragging = true;
+        actionDrawer.opened = false;
+        
+        // must be after properties other are set, we cannot have actionDrawer.updateState() be called
         actionDrawer.offset = 0;
+        actionDrawer.oldOffset = 0;
         actionDrawer.visible = true;
     }
     
@@ -35,7 +39,7 @@ MouseArea {
     anchors.fill: parent
     onPressed: {
         oldMouseY = mouse.y;
-        startSwipe(mouse.x);
+        startSwipe();
     }
     onReleased: endSwipe()
     onCanceled: endSwipe()
