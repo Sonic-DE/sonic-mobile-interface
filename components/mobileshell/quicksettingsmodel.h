@@ -15,6 +15,7 @@ class QuickSetting : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString text READ text WRITE setText REQUIRED NOTIFY textChanged)
+    Q_PROPERTY(QString status READ status WRITE setStatus REQUIRED NOTIFY statusChanged) // if no status is explicitly set, On/Off is used by default
     Q_PROPERTY(QString icon READ iconName WRITE setIconName REQUIRED NOTIFY iconNameChanged)
     Q_PROPERTY(QString settingsCommand READ settingsCommand WRITE setSettingsCommand NOTIFY settingsCommandChanged)
     Q_PROPERTY(bool enabled READ isEnabled WRITE setEnabled NOTIFY enabledChanged)
@@ -27,6 +28,10 @@ public:
     QString text() const
     {
         return m_text;
+    }
+    QString status() const
+    {
+        return m_status;
     }
     QString iconName() const
     {
@@ -42,6 +47,7 @@ public:
     }
 
     void setText(const QString &text);
+    void setStatus(const QString &status);
     void setIconName(const QString &iconName);
     void setSettingsCommand(const QString &settingsCommand);
     void setEnabled(bool enabled);
@@ -50,12 +56,14 @@ public:
 Q_SIGNALS:
     void enabledChanged(bool enabled);
     void textChanged(const QString &text);
+    void statusChanged(const QString &text);
     void iconNameChanged(const QString &icon);
     void settingsCommandChanged(const QString &settingsCommand);
 
 private:
     bool m_enabled = true;
     QString m_text;
+    QString m_status;
     QString m_iconName;
     QString m_settingsCommand;
     QList<QObject *> m_children;

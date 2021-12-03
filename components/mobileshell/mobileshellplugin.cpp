@@ -8,6 +8,7 @@
 #include <QQuickItem>
 
 #include "mobileshellplugin.h"
+#include "quicksettingsmodel.h"
 #include "shellutil.h"
 
 void MobileShellPlugin::registerTypes(const char *uri)
@@ -17,4 +18,7 @@ void MobileShellPlugin::registerTypes(const char *uri)
     qmlRegisterSingletonType<ShellUtil>(uri, 1, 0, "ShellUtil", [](QQmlEngine *, QJSEngine *) -> QObject * {
         return ShellUtil::instance();
     });
+
+    qmlRegisterType<QuickSetting>(uri, 1, 0, "QuickSetting");
+    qmlRegisterType<QuickSettingsModel>(uri, 1, 0, "QuickSettingsModel");
 }

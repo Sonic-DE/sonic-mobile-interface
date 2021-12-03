@@ -16,22 +16,22 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PC3
 import org.kde.plasma.networkmanagement 0.2 as PlasmaNM
 import org.kde.plasma.private.mobileshell 1.0 as MobileShell
-import org.kde.plasma.private.mobilehomescreencomponents 0.1 as HomeScreenComponents
 
-HomeScreenComponents.QuickSettingsModel {
+MobileShell.QuickSettingsModel {
     id: root
     
     required property var actionDrawer
     
     property bool screenshotRequested: false
 
-    HomeScreenComponents.QuickSetting {
+    MobileShell.QuickSetting {
         text: i18n("Settings")
+        status: i18n("Tap to open")
         icon: "configure"
         enabled: false
         settingsCommand: "plasma-open-settings"
     }
-    HomeScreenComponents.QuickSetting {
+    MobileShell.QuickSetting {
         PlasmaNM.Handler {
             id: nmHandler
         }
@@ -48,7 +48,7 @@ HomeScreenComponents.QuickSettingsModel {
         }
         enabled: enabledConnections.wirelessEnabled
     }
-    HomeScreenComponents.QuickSetting {
+    MobileShell.QuickSetting {
         text: i18n("Bluetooth")
         icon: "network-bluetooth"
         settingsCommand: "plasma-open-settings kcm_bluetooth"
@@ -63,7 +63,7 @@ HomeScreenComponents.QuickSettingsModel {
         }
         enabled: BluezQt.Manager.bluetoothOperational
     }
-    HomeScreenComponents.QuickSetting {
+    MobileShell.QuickSetting {
         text: i18n("Mobile Data")
         icon: "network-modem"
         settingsCommand: "plasma-open-settings kcm_mobile_broadband"
@@ -72,7 +72,7 @@ HomeScreenComponents.QuickSettingsModel {
             nmHandler.enableWwan(!enabledConnections.wwanEnabled)
         }
     }
-    HomeScreenComponents.QuickSetting {
+    MobileShell.QuickSetting {
         text: i18n("Flashlight")
         icon: "flashlight-on"
         enabled: MobileShell.ShellUtil.torchEnabled
@@ -80,13 +80,14 @@ HomeScreenComponents.QuickSettingsModel {
             MobileShell.ShellUtil.toggleTorch()
         }
     }
-    HomeScreenComponents.QuickSetting {
+    MobileShell.QuickSetting {
         text: i18n("Location")
         icon: "gps"
         enabled: false
     }
-    HomeScreenComponents.QuickSetting {
+    MobileShell.QuickSetting {
         text: i18n("Screenshot")
+        status: i18n("Tap to screenshot")
         icon: "spectacle"
         enabled: false
         function toggle() {
@@ -104,7 +105,7 @@ HomeScreenComponents.QuickSettingsModel {
             }
         }
     }
-    HomeScreenComponents.QuickSetting {
+    MobileShell.QuickSetting {
         text: i18n("Auto-rotate")
         icon: "rotation-allowed"
         settingsCommand: "plasma-open-settings kcm_kscreen"
@@ -113,15 +114,17 @@ HomeScreenComponents.QuickSettingsModel {
             MobileShell.ShellUtil.autoRotateEnabled = !enabled
         }
     }
-    HomeScreenComponents.QuickSetting {
+    MobileShell.QuickSetting {
         text: i18n("Battery")
+        status: i18n("%1%", MobileShell.BatteryProvider.percent) 
         icon: "battery-full" + (MobileShell.BatteryProvider.pluggedIn ? "-charging" : "")
         enabled: false
         settingsCommand: "plasma-open-settings kcm_mobile_power"
     }
-    HomeScreenComponents.QuickSetting {
+    MobileShell.QuickSetting {
         text: i18n("Sound")
         icon: "audio-speakers-symbolic"
+        status: i18n("%1%", MobileShell.VolumeProvider.volumeValue) 
         enabled: false
         settingsCommand: "plasma-open-settings kcm_pulseaudio"
         function toggle() {
