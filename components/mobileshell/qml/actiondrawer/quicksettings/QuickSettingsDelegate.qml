@@ -22,6 +22,7 @@ Components.BaseItem {
     
     // Model interface
     required property string text
+    required property string status
     required property string icon
     required property bool enabled
     required property string settingsCommand

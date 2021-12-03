@@ -123,6 +123,15 @@ void QuickSetting::setText(const QString &text)
     Q_EMIT textChanged(text);
 }
 
+void QuickSetting::setStatus(const QString &status)
+{
+    if (m_status == status)
+        return;
+
+    m_status = status;
+    Q_EMIT statusChanged(status);
+}
+
 QQmlListProperty<QObject> QuickSetting::children()
 {
     return QQmlListProperty<QObject>(this, &m_children);
