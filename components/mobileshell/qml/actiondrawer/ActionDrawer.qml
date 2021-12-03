@@ -46,6 +46,13 @@ NanoShell.FullScreenOverlay {
      */
     property int direction: Components.Direction.None
     
+    property int mode: height > width ? ActionDrawer.Portrait : ActionDrawer.Landscape
+    
+    enum Mode {
+        Portrait = 0,
+        Landscape
+    }
+    
     width: Screen.width
     height: Screen.height
     
@@ -65,8 +72,10 @@ NanoShell.FullScreenOverlay {
         if (offset < 0) {
             offset = 0;
         }
-        
-        window.direction = (oldOffset === offset) ? Components.Direction.None : (offset > oldOffset ? Components.Direction.Down : Components.Direction.Up);
+        window.direction = (oldOffset === offset) 
+                            ? Components.Direction.None 
+                            : (offset > oldOffset ? Components.Direction.Down : Components.Direction.Up);
+            
         oldOffset = offset;
         
         // close panel immediately after panel is not shown, and the flickable is not being dragged
@@ -106,9 +115,9 @@ NanoShell.FullScreenOverlay {
             } else {
                 open();
             }
-        } else if (window.offset > contentContainer.maximizedQuickSettingsOffset) {
+        } else if (window.offset > contentContainerLoader.maximizedQuickSettingsOffset) {
             expand();
-        } else if (window.offset > contentContainer.minimizedQuickSettingsOffset) {
+        } else if (window.offset > contentContainerLoader.minimizedQuickSettingsOffset) {
             if (window.direction === Components.Direction.Down) {
                 expand();
             } else {
@@ -140,14 +149,14 @@ NanoShell.FullScreenOverlay {
         id: openAnim
         duration: PlasmaCore.Units.longDuration
         easing.type: Easing.InOutQuad
-        to: contentContainer.minimizedQuickSettingsOffset
+        to: contentContainerLoader.minimizedQuickSettingsOffset
         onFinished: window.opened = true
     }
     PropertyAnimation on offset {
         id: expandAnim
         duration: PlasmaCore.Units.longDuration
         easing.type: Easing.InOutQuad
-        to: contentContainer.maximizedQuickSettingsOffset
+        to: contentContainerLoader.maximizedQuickSettingsOffset
         onFinished: window.opened = true;
     }
     
@@ -203,13 +212,35 @@ NanoShell.FullScreenOverlay {
         
         // the flickable is only used to measure drag changes, we implement our own UI component movements
         // the window element is not affected by contentY changes (it's effectively anchored to the flickable)
-        ContentContainer {
-            id: contentContainer
+        Loader {
+            id: contentContainerLoader
+            
+            property real minimizedQuickSettingsOffset: item ? item.minimizedQuickSettingsOffset : 0
+            property real maximizedQuickSettingsOffset: item ? item.maximizedQuickSettingsOffset : 0
+            
             y: flickable.contentY
-            actionDrawer: window
             width: window.width
             height: window.height
+            
+            sourceComponent: window.mode == ActionDrawer.Portrait ? portraitContentContainer : landscapeContentContainer
+        }
+        
+        Component {
+            id: portraitContentContainer
+            PortraitContentContainer {
+                actionDrawer: window
+                width: window.width
+                height: window.height
+            }
+        }
+        
+        Component {
+            id: landscapeContentContainer
+            LandscapeContentContainer {
+                actionDrawer: window
+                width: window.width
+                height: window.height
+            }
         }
     }
-
 }
