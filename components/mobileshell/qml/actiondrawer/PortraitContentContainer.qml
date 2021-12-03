@@ -45,7 +45,7 @@ PlasmaCore.ColorScope {
     
     QuickSettingsContainer {
         id: quickSettings
-        z: 1
+        z: 1 // ensure it's above notifications
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
@@ -53,9 +53,9 @@ PlasmaCore.ColorScope {
         actionDrawer: root.actionDrawer
         
         // opacity and move animation
-        property real dist: (maximizedQuickSettingsOffset - minimizedQuickSettingsOffset)
-        minimizedViewProgress: actionDrawer.opened ? applyMinMax(1 - (actionDrawer.offset - minimizedQuickSettingsOffset) / dist) : 1
-        fullViewProgress: actionDrawer.opened ? applyMinMax((actionDrawer.offset - minimizedQuickSettingsOffset) / dist) : 0
+        property real offsetDist: actionDrawer.offset - minimizedQuickSettingsOffset
+        property real totalOffsetDist: maximizedQuickSettingsOffset - minimizedQuickSettingsOffset
+        minimizedToFullProgress: actionDrawer.opened ? applyMinMax(offsetDist / totalOffsetDist) : 0
         
         addedHeight: {
             if (!actionDrawer.opened) {
