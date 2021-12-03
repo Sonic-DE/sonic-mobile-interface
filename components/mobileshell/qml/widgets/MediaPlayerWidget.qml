@@ -15,14 +15,15 @@ import org.kde.plasma.extras 2.0 as PlasmaExtras
 import "../components" as Components
 
 Components.BaseItem {
+    visible: mpris2Source.hasPlayer
     padding: PlasmaCore.Units.smallSpacing
     
     background: Rectangle {
         radius: PlasmaCore.Units.smallSpacing
         color: PlasmaCore.Theme.backgroundColor
     }
+    
     contentItem: Item {  
-        visible: mpris2Source.hasPlayer
         implicitHeight: controlsRow.height + controlsRow.y
 
         RowLayout {

@@ -5,6 +5,7 @@
  */
 
 import QtQuick 2.15
+import QtQuick.Controls 2.15 as QQC2
 import QtQuick.Layouts 1.1
 import QtQuick.Window 2.2
 import QtGraphicalEffects 1.12
@@ -17,6 +18,7 @@ import org.kde.plasma.private.mobileshell 1.0 as MobileShell
 import "../../statusbar" as StatusBar
 import "../../components" as Components
 import "../../widgets" as Widgets
+import "../"
 
 /**
  * Quick settings panel for phones.
@@ -42,68 +44,78 @@ Components.BaseItem {
     readonly property real minimizedHeight: bottomPadding + topPadding + statusBar.height + quickSettings.rowHeight + handle.fullHeight
     
     /**
-     * Progress of showing the pinned quick settings view.
+     * Progress of showing the full quick settings view from pinned.
      */
-    property real minimizedViewProgress: 0
+    property real minimizedToFullProgress: 1
     
-    /**
-     * Progress of showing the full quick settings view (when maximized).
-     */
-    property real fullViewProgress: 1
-
-    topPadding: PlasmaCore.Units.smallSpacing
-    leftPadding: PlasmaCore.Units.smallSpacing
-    rightPadding: PlasmaCore.Units.smallSpacing
+    // we need extra padding if the background side border is enabled
+    topPadding: PlasmaCore.Units.smallSpacing * (root.actionDrawer.mode === ActionDrawer.Portrait ? 1 : 4)
+    leftPadding: PlasmaCore.Units.smallSpacing * (root.actionDrawer.mode === ActionDrawer.Portrait ? 1 : 4)
+    rightPadding: PlasmaCore.Units.smallSpacing * (root.actionDrawer.mode === ActionDrawer.Portrait ? 1 : 4)
     bottomPadding: PlasmaCore.Units.smallSpacing * 4
     
     background: PlasmaCore.FrameSvgItem {
-        enabledBorders: PlasmaCore.FrameSvg.BottomBorder
+        enabledBorders: root.actionDrawer.mode === ActionDrawer.Portrait ? PlasmaCore.FrameSvg.BottomBorder : PlasmaCore.FrameSvg.AllBorders
         imagePath: "widgets/background"
     }
 
-    contentItem: ColumnLayout {
-        spacing: 0
+    contentItem: Item {
+        id: containerItem
+        implicitHeight: column.implicitHeight
+        clip: true
         
-        StatusBar.StatusBar {
-            id: statusBar
-            Layout.fillWidth: true
-            Layout.preferredHeight: MobileShell.TopPanelControls.panelHeight + PlasmaCore.Units.gridUnit * 0.8
+        // use container item so that our column doesn't get stretched if base item is anchored
+        ColumnLayout {
+            id: column
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+            spacing: 0
             
-            colorGroup: PlasmaCore.Theme.NormalColorGroup
-            backgroundColor: "transparent"
-            showSecondRow: true
-            showDropShadow: false
-        }
-        
-        QuickSettings {
-            id: quickSettings
-            actionDrawer: root.actionDrawer
-            minimizedViewProgress: root.minimizedViewProgress
-            fullViewProgress: root.fullViewProgress
+            StatusBar.StatusBar {
+                id: statusBar
+                Layout.fillWidth: true
+                Layout.preferredHeight: MobileShell.TopPanelControls.panelHeight + PlasmaCore.Units.gridUnit * 0.8
+                
+                colorGroup: PlasmaCore.Theme.NormalColorGroup
+                backgroundColor: "transparent"
+                showSecondRow: true
+                showDropShadow: false
+            }
             
-            readonly property real minimizedHeight: rowHeight * 2 // minimized height of quick settings area
-            Layout.topMargin: PlasmaCore.Units.smallSpacing
-            Layout.fillWidth: true
-            Layout.preferredHeight: quickSettings.rowHeight + root.addedHeight
-        }
-        
-        Widgets.MediaPlayerWidget {
-            id: mediaWidget
-            property real fullHeight: height + Layout.topMargin
-            Layout.topMargin: visible ? PlasmaCore.Units.smallSpacing : 0
-            Layout.fillWidth: true
-        }
-        
-        Rectangle {
-            id: handle
-            property real fullHeight: height + Layout.topMargin
-            Layout.alignment: Qt.AlignHCenter
-            Layout.topMargin: PlasmaCore.Units.smallSpacing
-            Layout.preferredWidth: PlasmaCore.Units.gridUnit * 3
-            Layout.preferredHeight: 3
-            radius: height
-            color: PlasmaCore.Theme.textColor
-            opacity: 0.5
+            QuickSettings {
+                id: quickSettings
+                readonly property real minimizedHeight: rowHeight * 2 // minimized height of quick settings area
+                Layout.preferredHeight: quickSettings.rowHeight + root.addedHeight
+                Layout.topMargin: PlasmaCore.Units.smallSpacing
+                Layout.fillWidth: true
+                
+                actionDrawer: root.actionDrawer
+                minimizedViewProgress: 1 - root.minimizedToFullProgress
+                fullViewProgress: root.minimizedToFullProgress
+                height: quickSettings.rowHeight + root.addedHeight
+                width: parent.width
+            }
+            
+            Widgets.MediaPlayerWidget {
+                id: mediaWidget
+                property real fullHeight: height + Layout.topMargin
+                Layout.topMargin: visible ? PlasmaCore.Units.smallSpacing : 0
+                Layout.fillWidth: true
+            }
+            
+            Rectangle {
+                id: handle
+                property real fullHeight: root.actionDrawer.mode === ActionDrawer.Portrait ? height + Layout.topMargin : 0
+                Layout.alignment: Qt.AlignHCenter
+                Layout.topMargin: root.actionDrawer.mode === ActionDrawer.Portrait ? PlasmaCore.Units.smallSpacing : 0
+                Layout.preferredWidth: PlasmaCore.Units.gridUnit * 3
+                Layout.preferredHeight: 3
+                visible: root.actionDrawer.mode === ActionDrawer.Portrait
+                radius: height
+                color: PlasmaCore.Theme.textColor
+                opacity: 0.5
+            }
         }
     }
 }
