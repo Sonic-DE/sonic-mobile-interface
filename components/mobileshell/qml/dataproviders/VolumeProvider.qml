@@ -24,6 +24,8 @@ QtObject {
     property bool volumeFeedback: true
     property int maxVolumeValue: Math.round(100 * PulseAudio.NormalVolume / 100.0)
     property int volumeStep: Math.round(5 * PulseAudio.NormalVolume / 100.0)
+    property int volumeValue
+    
     readonly property string dummyOutputName: "auto_null"
 
     function showVolumeOverlay() {
@@ -82,7 +84,7 @@ QtObject {
         var percent = volumePercent(volume, maxVolumeValue);
         paSinkModel.preferredSink.muted = percent == 0;
         paSinkModel.preferredSink.volume = volume;
-        osd.volume = percent;
+        volumeValue = percent;
         osd.showOverlay();
         playFeedback();
 
@@ -97,7 +99,7 @@ QtObject {
         var percent = volumePercent(volume, maxVolumeValue);
         paSinkModel.preferredSink.muted = percent == 0;
         paSinkModel.preferredSink.volume = volume;
-        osd.volume = percent;
+        volumeValue = percent;
         osd.showOverlay();
         playFeedback();
     }
@@ -112,7 +114,7 @@ QtObject {
         var toMute = !paSinkModel.preferredSink.muted;
         paSinkModel.preferredSink.muted = toMute;
         
-        osd.volume = toMute ? 0 : volumePercent(paSinkModel.preferredSink.volume, maxVolumeValue);
+        volumeValue = toMute ? 0 : volumePercent(paSinkModel.preferredSink.volume, maxVolumeValue);
         osd.showOverlay();
         
         if (!toMute) {
@@ -125,7 +127,7 @@ QtObject {
         
         function onVolumeChanged() {
             var percent = volumePercent(paSinkModel.preferredSink.volume, maxVolumeValue);
-            osd.volume = percent;
+            volumeValue = percent;
         }
     }
     property var updateVolumeOnSinkChange: Connections {
@@ -134,14 +136,16 @@ QtObject {
         function onPreferredSinkChanged() {
             if (paSinkModel.preferredSink) {
                 var percent = volumePercent(paSinkModel.preferredSink.volume, maxVolumeValue);
-                osd.volume = percent;
+                volumeValue = percent;
             }
         }
     }
 
     property SinkModel paSinkModel: SinkModel {}
 
-    property VolumeOSD osd: VolumeOSD {}
+    property VolumeOSD osd: VolumeOSD {
+        volume: volumeValue
+    }
 
     property VolumeFeedback feedback: VolumeFeedback {}
 
