@@ -67,6 +67,7 @@ Item {
                     
                     contentItem: QuickSettingsFullDelegate {
                         text: modelData.text
+                        status: modelData.status
                         icon: modelData.icon
                         enabled: modelData.enabled
                         settingsCommand: modelData.settingsCommand
@@ -111,6 +112,7 @@ Item {
                 
                 contentItem: QuickSettingsMinimizedDelegate {
                     text: modelData.text
+                    status: modelData.status
                     icon: modelData.icon
                     enabled: modelData.enabled
                     settingsCommand: modelData.settingsCommand

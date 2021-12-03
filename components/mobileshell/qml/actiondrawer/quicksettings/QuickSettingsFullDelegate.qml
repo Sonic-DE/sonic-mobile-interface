@@ -71,7 +71,8 @@ QuickSettingsDelegate {
             PlasmaComponents.Label {
                 Layout.fillWidth: true
                 elide: Text.ElideRight
-                text: root.enabled ? i18n("On") : i18n("Off") // TODO implement descriptive text
+                // if no status is given, just use On/Off
+                text: root.status ? root.status : (root.enabled ? i18n("On") : i18n("Off"))
                 opacity: 0.6
                 font.pixelSize: PlasmaCore.Theme.defaultFont.pixelSize * 0.8
             }
