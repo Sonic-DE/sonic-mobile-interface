@@ -16,6 +16,7 @@ Item {
     property MobileShell.SignalStrengthProvider provider: MobileShell.SignalStrengthProvider
     
     property bool showLabel: true
+    property real textPixelSize: PlasmaCore.Units.gridUnit * 0.6
     
     width: strengthIcon.width + label.width
     Layout.minimumWidth: strengthIcon.width + label.width
@@ -41,6 +42,6 @@ Item {
 
         text: provider.label
         color: PlasmaCore.ColorScope.textColor
-        font.pixelSize: PlasmaCore.Units.gridUnit * 0.6
+        font.pixelSize: textPixelSize
     }
 }
