@@ -9,8 +9,11 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.1
 import QtQuick.Window 2.2
 
+import org.kde.kirigami 2.12 as Kirigami
+
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
+import org.kde.plasma.private.mobileshell 1.0 as MobileShell
 
 import "../components" as Components
 import "../widgets" as Widgets
@@ -24,8 +27,8 @@ PlasmaCore.ColorScope {
     
     required property var actionDrawer
     
-    readonly property real minimizedQuickSettingsOffset: maximizedQuickSettingsOffset
-    readonly property real maximizedQuickSettingsOffset: quickSettings.minimizedHeight + quickSettings.maxAddedHeight
+    readonly property real minimizedQuickSettingsOffset: height
+    readonly property real maximizedQuickSettingsOffset: height
     
     colorGroup: PlasmaCore.Theme.ViewColorGroup
     
@@ -36,42 +39,79 @@ PlasmaCore.ColorScope {
     // fullscreen background
     Rectangle {
         anchors.fill: parent
-        color: Qt.rgba(PlasmaCore.Theme.backgroundColor.r, PlasmaCore.Theme.backgroundColor.g, PlasmaCore.Theme.backgroundColor.b, 0.8)
+        color: Qt.rgba(PlasmaCore.Theme.backgroundColor.r, PlasmaCore.Theme.backgroundColor.g, PlasmaCore.Theme.backgroundColor.b, 0.95)
         opacity: Math.max(0, Math.min(1, actionDrawer.offset / root.minimizedQuickSettingsOffset))
         Behavior on opacity { // smooth opacity changes
             NumberAnimation { duration: 70 }
         }
     }
     
-    QuickSettingsContainer {
+    PlasmaCore.DataSource {
+        id: timeSource
+        engine: "time"
+        connectedSources: ["Local"]
+        interval: 60 * 1000
+    }
+    
+    // left side
+    ColumnLayout {
+        opacity: applyMinMax(root.actionDrawer.offset / root.maximizedQuickSettingsOffset)
+        anchors {
+            top: parent.top
+            topMargin: Math.min(root.width, root.height) * 0.06
+            bottom: parent.bottom
+            bottomMargin: Math.min(root.width, root.height) * 0.06
+            right: quickSettings.left
+            rightMargin: Math.min(root.width, root.height) * 0.06
+            left: parent.left
+            leftMargin: Math.min(root.width, root.height) * 0.06
+        }
+        
+        PlasmaComponents.Label {
+            id: clock
+            text: Qt.formatTime(timeSource.data.Local.DateTime, MobileShell.ShellUtil.isSystem24HourFormat ? "h:mm" : "h:mm ap")
+            verticalAlignment: Qt.AlignTop
+            Layout.fillWidth: true
+
+            font.pixelSize: Math.min(root.width, root.height) * 0.1
+            font.weight: Font.ExtraLight
+            elide: Text.ElideRight
+        }
+        
+        PlasmaComponents.Label {
+            id: date
+            text: Qt.formatDate(timeSource.data.Local.DateTime, "ddd. MMMM d")
+            verticalAlignment: Qt.AlignTop
+            color: PlasmaCore.ColorScope.disabledTextColor
+            Layout.fillWidth: true
+
+            font.pixelSize: Math.min(root.width, root.height) * 0.05
+            font.weight: Font.Light
+        }
+        
+        Widgets.NotificationsWidget {
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+        }
+    }
+    
+    // right sidebar
+    QuickSettingsPanel {
         id: quickSettings
-        z: 1 // ensure it's above notifications
-        height: Math.min(parent.height, implicitHeight)
+        height: Math.min(root.height, Math.max(quickSettings.minimizedHeight, actionDrawer.offset))
         width: Math.min(parent.width * 0.5, intendedWidth)
         
         readonly property real intendedWidth: 360
         
         anchors.top: parent.top
-        anchors.left: parent.left
+        anchors.right: parent.right
         
         actionDrawer: root.actionDrawer
-        
-        minimizedToFullProgress: 1
-        addedHeight: Math.max(0, Math.min(quickSettings.maxAddedHeight, root.actionDrawer.offset - quickSettings.minimizedHeight));
+        fullHeight: root.height
         
         transform: Translate {
             id: translate
             y: Math.min(root.actionDrawer.offset - quickSettings.minimizedHeight, 0)
         }
-    }
-    
-    Widgets.NotificationsWidget {
-        anchors {
-            top: parent.top
-            right: parent.left
-            bottom: parent.bottom
-            left: parent.left
-        }
-        opacity: applyMinMax(root.actionDrawer.offset / root.maximizedQuickSettingsOffset)
     }
 }
