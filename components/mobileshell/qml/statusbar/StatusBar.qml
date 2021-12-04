@@ -41,6 +41,11 @@ Item {
      */
     property bool showSecondRow: false // show extra row with date and mobile provider
     
+    /**
+     * Whether to show time. If set to false, the signal strength indicator is moved in its place.
+     */
+    property bool showTime: true
+    
     property alias colorScopeColor: icons.backgroundColor
     property alias applets: appletIconsRow
     
@@ -108,8 +113,16 @@ Item {
                     
                     // clock
                     ClockText {
+                        visible: root.showTime
                         Layout.fillHeight: true
                         font.pixelSize: textPixelSize
+                        source: timeSource
+                    }
+                    
+                    Indicators.SignalStrengthIndicator {
+                        Layout.fillHeight: true
+                        showLabel: true
+                        visible: !root.showTime
                     }
                     
                     // spacing in the middle
@@ -151,6 +164,8 @@ Item {
 
                         Indicators.SignalStrengthIndicator {
                             Layout.fillHeight: true
+                            showLabel: false
+                            visible: root.showTime
                         }
                         Indicators.BluetoothIndicator { 
                             Layout.fillHeight: true
@@ -182,6 +197,7 @@ Item {
                     }
                     Item { Layout.fillWidth: true }
                     PlasmaComponents.Label {
+                        visible: root.showTime
                         text: MobileShell.SignalStrengthProvider.label
                         color: PlasmaCore.ColorScope.disabledTextColor
                         font.pixelSize: root.textPixelSize * 0.8

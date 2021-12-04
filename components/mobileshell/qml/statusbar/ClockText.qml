@@ -16,13 +16,14 @@ import "indicators" as Indicators
 
 PlasmaComponents.Label {
     id: clock
-    property bool is24HourTime: MobileShell.ShellUtil.isSystem24HourFormat
-    Layout.fillHeight: true
     
-    text: Qt.formatTime(timeSource.data.Local.DateTime, is24HourTime ? "h:mm" : "h:mm ap")
+    required property PlasmaCore.DataSource source
+    
+    property bool is24HourTime: MobileShell.ShellUtil.isSystem24HourFormat
+    
+    text: Qt.formatTime(source.data.Local.DateTime, is24HourTime ? "h:mm" : "h:mm ap")
     color: PlasmaCore.ColorScope.textColor
     verticalAlignment: Qt.AlignVCenter
-    font.pixelSize: textPixelSize
 
     TapHandler {
         onTapped: {

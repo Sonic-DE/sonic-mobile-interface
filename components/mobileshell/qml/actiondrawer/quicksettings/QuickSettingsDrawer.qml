@@ -21,7 +21,8 @@ import "../../widgets" as Widgets
 import "../"
 
 /**
- * Quick settings panel for phones.
+ * Quick settings drawer pulled down from the top (for portrait mode).
+ * For the landscape view quicksettings container, see QuickSettingsPanel.
  */
 Components.BaseItem {
     id: root
@@ -49,20 +50,19 @@ Components.BaseItem {
     property real minimizedToFullProgress: 1
     
     // we need extra padding if the background side border is enabled
-    topPadding: PlasmaCore.Units.smallSpacing * (root.actionDrawer.mode === ActionDrawer.Portrait ? 1 : 4)
-    leftPadding: PlasmaCore.Units.smallSpacing * (root.actionDrawer.mode === ActionDrawer.Portrait ? 1 : 4)
-    rightPadding: PlasmaCore.Units.smallSpacing * (root.actionDrawer.mode === ActionDrawer.Portrait ? 1 : 4)
+    topPadding: PlasmaCore.Units.smallSpacing 
+    leftPadding: PlasmaCore.Units.smallSpacing 
+    rightPadding: PlasmaCore.Units.smallSpacing
     bottomPadding: PlasmaCore.Units.smallSpacing * 4
     
     background: PlasmaCore.FrameSvgItem {
-        enabledBorders: root.actionDrawer.mode === ActionDrawer.Portrait ? PlasmaCore.FrameSvg.BottomBorder : PlasmaCore.FrameSvg.AllBorders
+        enabledBorders: PlasmaCore.FrameSvg.BottomBorder
         imagePath: "widgets/background"
     }
 
     contentItem: Item {
         id: containerItem
         implicitHeight: column.implicitHeight
-        clip: true
         
         // use container item so that our column doesn't get stretched if base item is anchored
         ColumnLayout {
@@ -85,7 +85,6 @@ Components.BaseItem {
             
             QuickSettings {
                 id: quickSettings
-                readonly property real minimizedHeight: rowHeight * 2 // minimized height of quick settings area
                 Layout.preferredHeight: quickSettings.rowHeight + root.addedHeight
                 Layout.topMargin: PlasmaCore.Units.smallSpacing
                 Layout.fillWidth: true
@@ -104,17 +103,11 @@ Components.BaseItem {
                 Layout.fillWidth: true
             }
             
-            Rectangle {
+            Handle {
                 id: handle
                 property real fullHeight: root.actionDrawer.mode === ActionDrawer.Portrait ? height + Layout.topMargin : 0
                 Layout.alignment: Qt.AlignHCenter
-                Layout.topMargin: root.actionDrawer.mode === ActionDrawer.Portrait ? PlasmaCore.Units.smallSpacing : 0
-                Layout.preferredWidth: PlasmaCore.Units.gridUnit * 3
-                Layout.preferredHeight: 3
-                visible: root.actionDrawer.mode === ActionDrawer.Portrait
-                radius: height
-                color: PlasmaCore.Theme.textColor
-                opacity: 0.5
+                Layout.topMargin: PlasmaCore.Units.smallSpacing
             }
         }
     }

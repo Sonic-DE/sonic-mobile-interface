@@ -9,9 +9,12 @@ import QtQuick 2.12
 import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.12
+
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.workspace.keyboardlayout 1.0
 import org.kde.notificationmanager 1.1 as Notifications
+import org.kde.plasma.private.mobileshell 1.0 as MobileShell
+
 import "../components"
 
 PlasmaCore.ColorScope {
@@ -80,7 +83,14 @@ PlasmaCore.ColorScope {
         }
         height: PlasmaCore.Units.gridUnit
         opacity: 1 - (passwordFlickable.contentY / passwordFlickable.columnHeight)
-        sourceComponent: SimpleHeaderBar {}
+        sourceComponent: MobileShell.StatusBar {
+            id: statusBar
+            colorGroup: PlasmaCore.Theme.NormalColorGroup
+            backgroundColor: "transparent"
+            showSecondRow: false
+            showDropShadow: true
+            showTime: false
+        }
     }
 
     // phone lockscreen component
