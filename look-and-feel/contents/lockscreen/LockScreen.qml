@@ -81,15 +81,17 @@ PlasmaCore.ColorScope {
             left: parent.left
             right: parent.right
         }
-        height: PlasmaCore.Units.gridUnit
+        height: PlasmaCore.Units.gridUnit * 1.25
         opacity: 1 - (passwordFlickable.contentY / passwordFlickable.columnHeight)
         sourceComponent: MobileShell.StatusBar {
             id: statusBar
-            colorGroup: PlasmaCore.Theme.NormalColorGroup
+            colorGroup: PlasmaCore.Theme.ComplementaryColorGroup
             backgroundColor: "transparent"
+            
             showSecondRow: false
             showDropShadow: true
             showTime: false
+            disableSystemTray: true // HACK: prevent SIGABRT
         }
     }
 

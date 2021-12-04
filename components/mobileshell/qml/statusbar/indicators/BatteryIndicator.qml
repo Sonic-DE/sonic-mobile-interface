@@ -15,7 +15,7 @@ import org.kde.plasma.private.mobileshell 1.0 as MobileShell
 
 RowLayout {
     property MobileShell.BatteryProvider provider: MobileShell.BatteryProvider
-    property real labelHeight
+    property real textPixelSize: PlasmaCore.Units.gridUnit * 0.6
     visible: provider.isVisible
 
     PW.BatteryIcon {
@@ -36,6 +36,6 @@ RowLayout {
         Layout.alignment: Qt.AlignVCenter
 
         color: PlasmaCore.ColorScope.textColor
-        font.pixelSize: labelHeight
+        font.pixelSize: textPixelSize
     }
 }
