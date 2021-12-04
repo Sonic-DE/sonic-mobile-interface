@@ -46,6 +46,11 @@ Item {
      */
     property bool showTime: true
     
+    /**
+     * Disables showing system tray indicators, which causes SIGABRT when used on the lockscreen.
+     */
+    property bool disableSystemTray: false
+    
     property alias colorScopeColor: icons.backgroundColor
     property alias applets: appletIconsRow
     
@@ -59,15 +64,21 @@ Item {
         interval: 60 * 1000
     }
     
-    PlasmaCore.DataSource {
-        id: statusNotifierSource
-        engine: "statusnotifieritem"
-        interval: 0
-        onSourceAdded: {
-            connectSource(source)
-        }
-        Component.onCompleted: {
-            connectedSources = sources
+    property alias statusNotifierSource: statusNotifierSourceLoader.item
+    
+    Loader {
+        id: statusNotifierSourceLoader
+        active: !disableSystemTray
+        sourceComponent: PlasmaCore.DataSource { // TODO REMOVE WHEN TESTING LOCKSCREEN
+            id: statusNotifierSource
+            engine: "statusnotifieritem"
+            interval: 0
+            onSourceAdded: {
+                connectSource(source)
+            }
+            Component.onCompleted: {
+                connectedSources = sources
+            }
         }
     }
 
@@ -123,6 +134,7 @@ Item {
                         Layout.fillHeight: true
                         showLabel: true
                         visible: !root.showTime
+                        textPixelSize: root.textPixelSize
                     }
                     
                     // spacing in the middle
@@ -137,7 +149,7 @@ Item {
                             id: filteredStatusNotifiers
                             filterRole: "Title"
                             sourceModel: PlasmaCore.DataModel {
-                                dataSource: statusNotifierSource
+                                dataSource: statusNotifierSource ? statusNotifierSource : null
                             }
                         }
 
@@ -178,7 +190,7 @@ Item {
                         }
                         Indicators.BatteryIndicator {
                             spacing: root.elementSpacing
-                            labelHeight: textPixelSize
+                            textPixelSize: root.textPixelSize
                             Layout.fillHeight: true
                         }
                     }
