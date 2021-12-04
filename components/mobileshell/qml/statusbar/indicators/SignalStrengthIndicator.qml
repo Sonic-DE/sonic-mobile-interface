@@ -8,7 +8,6 @@
 import QtQuick 2.1
 import QtQuick.Layouts 1.1
 
-import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.plasma.private.mobileshell 1.0 as MobileShell
@@ -16,8 +15,10 @@ import org.kde.plasma.private.mobileshell 1.0 as MobileShell
 Item {
     property MobileShell.SignalStrengthProvider provider: MobileShell.SignalStrengthProvider
     
-    width: strengthIcon.height
-    Layout.minimumWidth: strengthIcon.height 
+    property bool showLabel: true
+    
+    width: strengthIcon.width + label.width
+    Layout.minimumWidth: strengthIcon.width + label.width
 
     PlasmaCore.IconItem {
         id: strengthIcon
@@ -28,5 +29,18 @@ Item {
         height: parent.height
 
         source: provider.icon
+    }
+    
+    PlasmaComponents.Label {
+        id: label
+        visible: showLabel
+        width: visible ? implicitWidth : 0
+        anchors.leftMargin: PlasmaCore.Units.smallSpacing
+        anchors.left: strengthIcon.right
+        anchors.verticalCenter: parent.verticalCenter
+
+        text: provider.label
+        color: PlasmaCore.ColorScope.textColor
+        font.pixelSize: PlasmaCore.Units.gridUnit * 0.6
     }
 }

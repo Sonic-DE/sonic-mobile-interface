@@ -23,7 +23,6 @@ Item {
     
     required property var actionDrawer
     
-    // readonly property real cellSizeHint: PlasmaCore.Units.iconSizes.large + PlasmaCore.Units.smallSpacing * 6
     readonly property real columns: 3 // Math.floor(width / cellSizeHint)
     readonly property real columnWidth: Math.floor(width / columns)
     readonly property real minimizedColumns: 5
