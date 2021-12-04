@@ -43,7 +43,7 @@ PlasmaCore.ColorScope {
         }
     }
     
-    QuickSettingsContainer {
+    QuickSettingsDrawer {
         id: quickSettings
         z: 1 // ensure it's above notifications
         anchors.top: parent.top

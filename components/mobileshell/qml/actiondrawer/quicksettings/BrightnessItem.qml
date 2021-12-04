@@ -1,7 +1,7 @@
 /*
  *   SPDX-FileCopyrightText: 2012-2013 Daniel Nicoletti <dantti12@gmail.com>
  *   SPDX-FileCopyrightText: 2013, 2015 Kai Uwe Broulik <kde@privat.broulik.de>
- *   SPDX-FileCopyrightText: 2021 Devin Lin <espidev@gmail.com>
+ *   SPDX-FileCopyrightText: 2021 Devin Lin <devin@kde.org>
  *
  *   SPDX-License-Identifier: LGPL-2.0-or-later
  */
