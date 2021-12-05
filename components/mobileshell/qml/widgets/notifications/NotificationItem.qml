@@ -155,6 +155,7 @@ BaseNotificationItem {
                 Layout.fillWidth: true
                 active: notificationItem.urls.length > 0
                 visible: active
+                asynchronous: true
                 sourceComponent: ThumbnailStrip {
                     leftPadding: -thumbnailStripLoader.Layout.leftMargin
                     rightPadding: -thumbnailStripLoader.Layout.rightMargin

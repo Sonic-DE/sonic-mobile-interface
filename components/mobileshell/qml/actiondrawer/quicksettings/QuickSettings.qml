@@ -23,7 +23,7 @@ Item {
     
     required property var actionDrawer
     
-    readonly property real columns: 3 // Math.floor(width / cellSizeHint)
+    readonly property real columns: 3
     readonly property real columnWidth: Math.floor(width / columns)
     readonly property real minimizedColumns: 5
     readonly property real minimizedColumnWidth: Math.floor(width / minimizedColumns)

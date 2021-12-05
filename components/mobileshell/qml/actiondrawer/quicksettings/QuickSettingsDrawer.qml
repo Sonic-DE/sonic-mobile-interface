@@ -110,6 +110,14 @@ Components.BaseItem {
                 property real fullHeight: height + Layout.topMargin
                 Layout.alignment: Qt.AlignHCenter
                 Layout.topMargin: PlasmaCore.Units.smallSpacing * 2
+                
+                onTapped: {
+                    if (root.minimizedToFullProgress < 0.5) {
+                        root.actionDrawer.expand();
+                    } else {
+                        root.actionDrawer.open();
+                    }
+                }
             }
         }
     }
