@@ -47,7 +47,7 @@ Item {
     property bool showTime: true
     
     /**
-     * Disables showing system tray indicators, which causes SIGABRT when used on the lockscreen.
+     * Disables showing system tray indicators, preventing SIGABRT when used on the lockscreen.
      */
     property bool disableSystemTray: false
     
@@ -69,7 +69,7 @@ Item {
     Loader {
         id: statusNotifierSourceLoader
         active: !disableSystemTray
-        sourceComponent: PlasmaCore.DataSource { // TODO REMOVE WHEN TESTING LOCKSCREEN
+        sourceComponent: PlasmaCore.DataSource {
             id: statusNotifierSource
             engine: "statusnotifieritem"
             interval: 0

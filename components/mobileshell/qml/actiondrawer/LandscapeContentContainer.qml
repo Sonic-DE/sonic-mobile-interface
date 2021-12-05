@@ -41,9 +41,6 @@ PlasmaCore.ColorScope {
         anchors.fill: parent
         color: Qt.rgba(PlasmaCore.Theme.backgroundColor.r, PlasmaCore.Theme.backgroundColor.g, PlasmaCore.Theme.backgroundColor.b, 0.95)
         opacity: Math.max(0, Math.min(1, actionDrawer.offset / root.minimizedQuickSettingsOffset))
-        Behavior on opacity { // smooth opacity changes
-            NumberAnimation { duration: 70 }
-        }
     }
     
     PlasmaCore.DataSource {
@@ -80,7 +77,7 @@ PlasmaCore.ColorScope {
         
         PlasmaComponents.Label {
             id: date
-            text: Qt.formatDate(timeSource.data.Local.DateTime, "ddd. MMMM d")
+            text: Qt.formatDate(timeSource.data.Local.DateTime, "ddd MMMM d")
             verticalAlignment: Qt.AlignTop
             color: PlasmaCore.ColorScope.disabledTextColor
             Layout.fillWidth: true

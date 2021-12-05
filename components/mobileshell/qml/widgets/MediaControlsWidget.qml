@@ -7,6 +7,9 @@
 
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
+import QtGraphicalEffects 1.12
+
+import org.kde.kirigami 2.12 as Kirigami
 
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents3
@@ -15,23 +18,65 @@ import org.kde.plasma.extras 2.0 as PlasmaExtras
 import "../components" as Components
 
 Components.BaseItem {
-    visible: mpris2Source.hasPlayer
-    padding: PlasmaCore.Units.smallSpacing
+    id: root
     
-    background: Rectangle {
-        radius: PlasmaCore.Units.smallSpacing
-        color: PlasmaCore.Theme.backgroundColor
+    visible: mpris2Source.hasPlayer
+    padding: visible ? Kirigami.Units.largeSpacing + Kirigami.Units.smallSpacing : 0
+    implicitHeight: visible ? bottomPadding + topPadding + PlasmaCore.Units.gridUnit * 2 + PlasmaCore.Units.smallSpacing : 0
+    
+    background: Item {
+        layer.enabled: true
+        layer.effect: OpacityMask {
+            maskSource: Item {
+                width: img.width
+                height: img.height
+                Rectangle {
+                    anchors.centerIn: parent
+                    width: img.width
+                    height: img.height
+                    radius: PlasmaCore.Units.smallSpacing
+                }
+            }
+        }
+        
+        Image {
+            id: img
+            source: mpris2Source.albumArt
+            asynchronous: true
+            
+            anchors.fill: parent
+            fillMode: Image.PreserveAspectCrop
+            
+            Rectangle {
+                anchors.fill: parent
+                color: Qt.rgba(0, 0, 0, 0.4)
+            }
+            
+            layer.enabled: true
+            layer.effect: HueSaturation {
+                cached: true
+
+                lightness: 0.2
+                saturation: 1.5
+
+                layer.enabled: true
+                layer.effect: FastBlur {
+                    cached: true
+                    radius: 64
+                    transparentBorder: false
+                }
+            }
+        }
     }
     
-    contentItem: Item {  
-        implicitHeight: controlsRow.height + controlsRow.y
-
+    contentItem: PlasmaCore.ColorScope {
+        colorGroup: PlasmaCore.Theme.ComplementaryColorGroup
+        width: root.width - root.leftPadding - root.rightPadding
+        
         RowLayout {
             id: controlsRow
-            anchors.bottom: parent.bottom
-            y: PlasmaCore.Units.smallSpacing // some distance to the password field
             width: parent.width
-            height: PlasmaCore.Units.gridUnit * 3
+            height: parent.height
             spacing: 0
 
             enabled: mpris2Source.canControl
@@ -102,12 +147,8 @@ Components.BaseItem {
                 visible: status === Image.Loading || status === Image.Ready
             }
 
-            Item { // spacer
-                width: PlasmaCore.Units.smallSpacing
-                height: 1
-            }
-
             ColumnLayout {
+                Layout.leftMargin: albumArt.visible ? Kirigami.Units.largeSpacing : 0
                 Layout.fillWidth: true
                 spacing: 0
 
@@ -115,10 +156,11 @@ Components.BaseItem {
                     Layout.fillWidth: true
                     wrapMode: Text.NoWrap
                     elide: Text.ElideRight
-                    text: mpris2Source.track || i18nd("plasma_lookandfeel_org.kde.lookandfeel", "No media playing")
+                    text: mpris2Source.track || i18n("No media playing")
                     textFormat: Text.PlainText
-                    font.pointSize: PlasmaCore.Theme.defaultFont.pointSize + 1
+                    font.pointSize: PlasmaCore.Theme.defaultFont.pointSize
                     maximumLineCount: 1
+                    color: "white"
                 }
 
                 PlasmaExtras.DescriptiveLabel {
@@ -128,40 +170,45 @@ Components.BaseItem {
                     // if no artist is given, show player name instead
                     text: mpris2Source.artist || mpris2Source.identity || ""
                     textFormat: Text.PlainText
-                    font.pointSize: PlasmaCore.Theme.smallestFont.pointSize + 1
+                    font.pointSize: PlasmaCore.Theme.smallestFont.pointSize
                     maximumLineCount: 1
+                    color: "white"
                 }
             }
 
             PlasmaComponents3.ToolButton {
+                Layout.fillHeight: true
+                Layout.preferredWidth: height
+                
                 enabled: mpris2Source.canGoBack
                 icon.name: LayoutMirroring.enabled ? "media-skip-forward" : "media-skip-backward"
-                onClicked: {
-    //                 fadeoutTimer.running = false
-                    mpris2Source.goPrevious()
-                }
+                icon.width: PlasmaCore.Units.iconSizes.small
+                icon.height: PlasmaCore.Units.iconSizes.small
+                onClicked: mpris2Source.goPrevious()
                 visible: mpris2Source.canGoBack || mpris2Source.canGoNext
                 Accessible.name: i18nd("plasma_lookandfeel_org.kde.lookandfeel", "Previous track")
             }
 
             PlasmaComponents3.ToolButton {
                 Layout.fillHeight: true
-                Layout.preferredWidth: height // make this button bigger
+                Layout.preferredWidth: height
+                
                 icon.name: mpris2Source.playing ? "media-playback-pause" : "media-playback-start"
-                onClicked: {
-    //                 fadeoutTimer.running = false
-                    mpris2Source.playPause()
-                }
+                icon.width: PlasmaCore.Units.iconSizes.small
+                icon.height: PlasmaCore.Units.iconSizes.small
+                onClicked: mpris2Source.playPause()
                 Accessible.name: i18nd("plasma_lookandfeel_org.kde.lookandfeel", "Play or Pause media")
             }
 
             PlasmaComponents3.ToolButton {
+                Layout.fillHeight: true
+                Layout.preferredWidth: height
+                
                 enabled: mpris2Source.canGoNext
                 icon.name: LayoutMirroring.enabled ? "media-skip-backward" : "media-skip-forward"
-                onClicked: {
-    //                 fadeoutTimer.running = false
-                    mpris2Source.goNext()
-                }
+                icon.width: PlasmaCore.Units.iconSizes.small
+                icon.height: PlasmaCore.Units.iconSizes.small
+                onClicked: mpris2Source.goNext()
                 visible: mpris2Source.canGoBack || mpris2Source.canGoNext
                 Accessible.name: i18nd("plasma_lookandfeel_org.kde.lookandfeel", "Next track")
             }

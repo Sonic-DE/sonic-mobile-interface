@@ -42,7 +42,7 @@ Components.BaseItem {
     /**
      * Height of panel when in minimized mode.
      */
-    readonly property real minimizedHeight: bottomPadding + topPadding + statusBar.height + quickSettings.rowHeight + handle.fullHeight
+    readonly property real minimizedHeight: bottomPadding + topPadding + statusBar.height + quickSettings.rowHeight + mediaWidget.height + handle.fullHeight
     
     /**
      * Progress of showing the full quick settings view from pinned.
@@ -96,18 +96,20 @@ Components.BaseItem {
                 width: parent.width
             }
             
-            Widgets.MediaPlayerWidget {
+            Widgets.MediaControlsWidget {
                 id: mediaWidget
                 property real fullHeight: height + Layout.topMargin
-                Layout.topMargin: visible ? PlasmaCore.Units.smallSpacing : 0
                 Layout.fillWidth: true
+                Layout.topMargin: PlasmaCore.Units.smallSpacing
+                Layout.leftMargin: Kirigami.Units.largeSpacing
+                Layout.rightMargin: Kirigami.Units.largeSpacing
             }
             
             Handle {
                 id: handle
-                property real fullHeight: root.actionDrawer.mode === ActionDrawer.Portrait ? height + Layout.topMargin : 0
+                property real fullHeight: height + Layout.topMargin
                 Layout.alignment: Qt.AlignHCenter
-                Layout.topMargin: PlasmaCore.Units.smallSpacing
+                Layout.topMargin: PlasmaCore.Units.smallSpacing * 2
             }
         }
     }

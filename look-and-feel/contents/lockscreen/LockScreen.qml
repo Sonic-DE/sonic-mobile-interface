@@ -137,11 +137,10 @@ PlasmaCore.ColorScope {
                 alignment: Qt.AlignHCenter
                 Layout.bottomMargin: PlasmaCore.Units.gridUnit * 2 // keep spacing even if media controls are gone
             }
-            MediaControls {
+            MobileShell.MediaControlsWidget {
                 Layout.alignment: Qt.AlignHCenter
                 Layout.fillWidth: true
                 Layout.maximumWidth: PlasmaCore.Units.gridUnit * 25
-                Layout.minimumWidth: PlasmaCore.Units.gridUnit * 15
                 Layout.leftMargin: PlasmaCore.Units.gridUnit
                 Layout.rightMargin: PlasmaCore.Units.gridUnit
             }
@@ -196,11 +195,10 @@ PlasmaCore.ColorScope {
                         Layout.fillWidth: true
                         Layout.minimumWidth: PlasmaCore.Units.gridUnit * 20
                     }
-                    MediaControls {
+                    MobileShell.MediaControlsWidget {
                         Layout.alignment: Qt.AlignLeft
                         Layout.fillWidth: true
                         Layout.maximumWidth: PlasmaCore.Units.gridUnit * 25
-                        Layout.minimumWidth: PlasmaCore.Units.gridUnit * 20
                     }
                 }
             }
