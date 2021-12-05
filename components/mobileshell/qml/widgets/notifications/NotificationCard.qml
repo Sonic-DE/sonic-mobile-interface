@@ -14,12 +14,16 @@ import org.kde.plasma.components 3.0 as PlasmaComponents
 
 Item {
     id: root
+    
     default property Item contentItem
+    
+    property bool tapEnabled: false
     
     property bool swipeGestureEnabled: false
     
     property real dragOffset: 0
     
+    signal tapped()
     signal dismissRequested()
     signal configureClicked() // TODO implement settings button
     
@@ -75,7 +79,7 @@ Item {
         anchors.rightMargin: root.dragOffset < 0 ? -root.dragOffset : 0
         anchors.top: parent.top
         
-        color: PlasmaCore.Theme.backgroundColor
+        color: (root.tapEnabled && tapHandler.pressed) ? Qt.darker(PlasmaCore.Theme.backgroundColor, 1.1) : PlasmaCore.Theme.backgroundColor
         radius: PlasmaCore.Units.smallSpacing 
         implicitHeight: contentParent.implicitHeight
         clip: true
@@ -92,9 +96,19 @@ Item {
         }
     }
     
+    TapHandler {
+        id: tapHandler
+        onTapped: {
+            if (root.tapEnabled) {
+                root.tapped();
+            }
+        }
+    }
+    
     DragHandler {
         id: dragHandler
         enabled: root.swipeGestureEnabled
+        yAxis.enabled: false
         
         property real startDragOffset: 0
         property real startPosition: 0
