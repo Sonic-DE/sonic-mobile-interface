@@ -7,7 +7,6 @@
 
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
-import QtGraphicalEffects 1.12
 
 import org.kde.kirigami 2.12 as Kirigami
 
@@ -16,6 +15,7 @@ import org.kde.plasma.components 3.0 as PlasmaComponents3
 import org.kde.plasma.extras 2.0 as PlasmaExtras
 
 import "../components" as Components
+import "mediacontrols"
 
 Components.BaseItem {
     id: root
@@ -24,54 +24,17 @@ Components.BaseItem {
     padding: visible ? Kirigami.Units.largeSpacing + Kirigami.Units.smallSpacing : 0
     implicitHeight: visible ? bottomPadding + topPadding + PlasmaCore.Units.gridUnit * 2 + PlasmaCore.Units.smallSpacing : 0
     
-    background: Item {
-        layer.enabled: true
-        layer.effect: OpacityMask {
-            maskSource: Item {
-                width: img.width
-                height: img.height
-                Rectangle {
-                    anchors.centerIn: parent
-                    width: img.width
-                    height: img.height
-                    radius: PlasmaCore.Units.smallSpacing
-                }
-            }
-        }
-        
-        Image {
-            id: img
-            source: mpris2Source.albumArt
-            asynchronous: true
-            
-            anchors.fill: parent
-            fillMode: Image.PreserveAspectCrop
-            
-            Rectangle {
-                anchors.fill: parent
-                color: Qt.rgba(0, 0, 0, 0.4)
-            }
-            
-            layer.enabled: true
-            layer.effect: HueSaturation {
-                cached: true
-
-                lightness: 0.2
-                saturation: 1.5
-
-                layer.enabled: true
-                layer.effect: FastBlur {
-                    cached: true
-                    radius: 64
-                    transparentBorder: false
-                }
-            }
-        }
+    background: BlurredBackground {
+        imageSource: mpris2Source.albumArt
     }
     
     contentItem: PlasmaCore.ColorScope {
         colorGroup: PlasmaCore.Theme.ComplementaryColorGroup
         width: root.width - root.leftPadding - root.rightPadding
+        
+        MediaControlsSource {
+            id: mpris2Source
+        }
         
         RowLayout {
             id: controlsRow
@@ -80,61 +43,6 @@ Components.BaseItem {
             spacing: 0
 
             enabled: mpris2Source.canControl
-
-            PlasmaCore.DataSource {
-                id: mpris2Source
-
-                readonly property string source: "@multiplex"
-                readonly property var playerData: data[source]
-
-                readonly property bool hasPlayer: sources.length > 1 && !!playerData
-                readonly property string identity: hasPlayer ? playerData.Identity : ""
-                readonly property bool playing: hasPlayer && playerData.PlaybackStatus === "Playing"
-                readonly property bool canControl: hasPlayer && playerData.CanControl
-                readonly property bool canGoBack: hasPlayer && playerData.CanGoPrevious
-                readonly property bool canGoNext: hasPlayer && playerData.CanGoNext
-
-                readonly property var currentMetadata: hasPlayer ? playerData.Metadata : ({})
-
-                readonly property string track: {
-                    var xesamTitle = currentMetadata["xesam:title"]
-                    if (xesamTitle) {
-                        return xesamTitle
-                    }
-                    // if no track title is given, print out the file name
-                    var xesamUrl = currentMetadata["xesam:url"] ? currentMetadata["xesam:url"].toString() : ""
-                    if (!xesamUrl) {
-                        return ""
-                    }
-                    var lastSlashPos = xesamUrl.lastIndexOf('/')
-                    if (lastSlashPos < 0) {
-                        return ""
-                    }
-                    var lastUrlPart = xesamUrl.substring(lastSlashPos + 1)
-                    return decodeURIComponent(lastUrlPart)
-                }
-                readonly property string artist: currentMetadata["xesam:artist"] || ""
-                readonly property string albumArt: currentMetadata["mpris:artUrl"] || ""
-
-                engine: "mpris2"
-                connectedSources: [source]
-
-                function startOperation(op) {
-                    var service = serviceForSource(source)
-                    var operation = service.operationDescription(op)
-                    return service.startOperationCall(operation)
-                }
-
-                function goPrevious() {
-                    startOperation("Previous");
-                }
-                function goNext() {
-                    startOperation("Next");
-                }
-                function playPause(source) {
-                    startOperation("PlayPause");
-                }
-            }
 
             Image {
                 id: albumArt

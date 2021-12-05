@@ -27,59 +27,60 @@ Item {
     
     property PlasmaCore.DataSource timeSource
     
-    property int notificationType: model.type
+    readonly property int notificationType: model.type
 
-    property bool inGroup: model.isInGroup
-    property bool inHistory: true
+    readonly property bool inGroup: model.isInGroup
+    readonly property bool inHistory: true
 
-    property string applicationIconSource: model.applicationIconName
-    property string applicationName: model.applicationName
-    property string originName: model.originName || ""
+    readonly property string applicationIconSource: model.applicationIconName
+    readonly property string applicationName: model.applicationName
+    readonly property string originName: model.originName || ""
 
-    property string summary: model.summary
-    property var time: model.updated || model.created
+    readonly property string summary: model.summary
+    readonly property var time: model.updated || model.created
 
-    property bool hasReplyAction: model.hasReplyAction || false
-    property string replyActionLabel: model.replyActionLabel || ""
-    property string replyPlaceholderText: model.replyPlaceholderText || ""
-    property string replySubmitButtonText: model.replySubmitButtonText || ""
-    property string replySubmitButtonIconName: model.replySubmitButtonIconName || ""
+    readonly property bool hasReplyAction: model.hasReplyAction || false
+    readonly property string replyActionLabel: model.replyActionLabel || ""
+    readonly property string replyPlaceholderText: model.replyPlaceholderText || ""
+    readonly property string replySubmitButtonText: model.replySubmitButtonText || ""
+    readonly property string replySubmitButtonIconName: model.replySubmitButtonIconName || ""
     
     // configure button on every single notifications is bit overwhelming
-    property bool configurable: !inGroup && model.configurable
+    readonly property bool configurable: !inGroup && model.configurable
 
-    property bool dismissable: model.type === NotificationManager.Notifications.JobType
+    readonly property bool dismissable: model.type === NotificationManager.Notifications.JobType
         && model.jobState !== NotificationManager.Notifications.JobStateStopped
         && model.dismissed
         && notificationSettings.permanentJobPopups
-    property bool dismissed: model.dismissed || false
-    property bool closable: model.closable
+    readonly property bool dismissed: model.dismissed || false
+    readonly property bool closable: model.closable
 
-    property string body: model.body || ""
-    property var icon: model.image || model.iconName
+    readonly property string body: model.body || ""
+    readonly property var icon: model.image || model.iconName
 
-    property var urls: model.urls || []
+    readonly property var urls: model.urls || []
 
-    property int jobState: model.jobState || 0
-    property int percentage: model.percentage || 0
-    property int jobError: model.jobError || 0
-    property bool suspendable: !!model.suspendable
-    property bool killable: !!model.killable
+    readonly property int jobState: model.jobState || 0
+    readonly property int percentage: model.percentage || 0
+    readonly property int jobError: model.jobError || 0
+    readonly property bool suspendable: !!model.suspendable
+    readonly property bool killable: !!model.killable
     
-    property QtObject jobDetails: model.jobDetails || null
+    readonly property QtObject jobDetails: model.jobDetails || null
 
-    property string configureActionLabel: model.configureActionLabel || ""
+    readonly property string configureActionLabel: model.configureActionLabel || ""
+    readonly property bool hasDefaultAction: model.hasDefaultAction
     readonly property bool addDefaultAction: (model.hasDefaultAction
                                             && model.defaultActionLabel
                                             && (model.actionLabels || []).indexOf(model.defaultActionLabel) === -1) ? true : false
-    property var actionNames: {
+    readonly property var actionNames: {
         var actions = (model.actionNames || []);
         if (addDefaultAction) {
             actions.unshift("default"); // prepend
         }
         return actions;
     }
-    property var actionLabels: {
+    readonly property var actionLabels: {
         var labels = (model.actionLabels || []);
         if (addDefaultAction) {
             labels.unshift(model.defaultActionLabel);
@@ -87,10 +88,6 @@ Item {
         return labels;
     }
 
-    signal bodyClicked
-    signal closeClicked
-    signal configureClicked
-    signal dismissClicked
     signal actionInvoked(string actionName)
     signal replied(string text)
     signal openUrl(string url)
@@ -100,10 +97,6 @@ Item {
     signal resumeJobClicked
     signal killJobClicked
     
-    onCloseClicked: close()
-    onDismissClicked: model.dismissed = false;
-    onConfigureClicked: notificationsModel.configure(notificationsModel.index(modelIndex, 0))
-
     onActionInvoked: {
         if (actionName === "default") {
             notificationsModel.invokeDefaultAction(notificationsModel.index(modelIndex, 0));
@@ -138,6 +131,11 @@ Item {
 
     function close() {
         notificationsModel.close(notificationsModel.index(modelIndex, 0));
+    }
+    
+    // TODO call
+    function configure() {
+        notificationsModel.configure(notificationsModel.index(modelIndex, 0))
     }
 }
 

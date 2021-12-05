@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
 */
 
-import QtQuick 2.8
+import QtQuick 2.15
 import QtQuick.Layouts 1.1
 import QtQuick.Window 2.2
 
@@ -59,13 +59,16 @@ BaseNotificationItem {
         anchors.left: parent.left
         anchors.right: parent.right
         
+        tapEnabled: notificationItem.hasDefaultAction
+        onTapped: notificationItem.actionInvoked("default");
         swipeGestureEnabled: notificationItem.notificationType != NotificationManager.Notifications.JobType
-        onDismissRequested: notificationItem.notificationsModel.close(notificationItem.notificationsModel.index(index, 0));
+        onDismissRequested: notificationItem.close()
         
         ColumnLayout {
             id: column
             spacing: 0
             
+            // notification summary row
             RowLayout {
                 Layout.fillWidth: true
                 Layout.bottomMargin: PlasmaCore.Units.smallSpacing
@@ -139,107 +142,10 @@ BaseNotificationItem {
                 }
             }
             
-            Item {
-                id: actionContainer
+            // notification actions
+            NotificationFooterActions {
                 Layout.fillWidth: true
-                Layout.preferredHeight: Math.max(actionFlow.implicitHeight, replyLoader.height)
-                visible: actionRepeater.count > 0
-
-                // Notification actions
-                Flow { // it's a Flow so it can wrap if too long
-                    id: actionFlow
-                    width: parent.width
-                    spacing: PlasmaCore.Units.smallSpacing
-                    layoutDirection: Qt.RightToLeft
-                    enabled: !replyLoader.active
-                    opacity: replyLoader.active ? 0 : 1
-                    Behavior on opacity {
-                        NumberAnimation {
-                            duration: PlasmaCore.Units.longDuration
-                            easing.type: Easing.InOutQuad
-                        }
-                    }
-
-                    Repeater {
-                        id: actionRepeater
-
-                        model: {
-                            var buttons = [];
-                            var actionNames = (notificationItem.actionNames || []);
-                            var actionLabels = (notificationItem.actionLabels || []);
-                            // HACK We want the actions to be right-aligned but Flow also reverses
-                            for (var i = actionNames.length - 1; i >= 0; --i) {
-                                buttons.push({
-                                    actionName: actionNames[i],
-                                    label: actionLabels[i]
-                                });
-                            }
-                            
-                            if (notificationItem.hasReplyAction) {
-                                buttons.unshift({
-                                    actionName: "inline-reply",
-                                    label: notificationItem.replyActionLabel || i18nc("Reply to message", "Reply")
-                                });
-                            }
-                            
-                            return buttons;
-                        }
-
-                        PlasmaComponents.ToolButton {
-                            flat: false
-                            text: modelData.label || ""
-
-                            onClicked: {
-                                if (modelData.actionName === "inline-reply") {
-                                    replyLoader.beginReply();
-                                    return;
-                                }
-                                notificationItem.actionInvoked(modelData.actionName);
-                            }
-                        }
-                    }
-                }
-                
-                // inline reply field
-                Loader {
-                    id: replyLoader
-                    width: parent.width
-                    height: active ? item.implicitHeight : 0
-                    
-                    // When there is only one action and it is a reply action, show text field right away
-                    active: false
-                    visible: active
-                    opacity: active ? 1 : 0
-                    x: active ? 0 : parent.width
-                    
-                    Behavior on x {
-                        NumberAnimation {
-                            duration: PlasmaCore.Units.longDuration
-                            easing.type: Easing.InOutQuad
-                        }
-                    }
-                    Behavior on opacity {
-                        NumberAnimation {
-                            duration: PlasmaCore.Units.longDuration
-                            easing.type: Easing.InOutQuad
-                        }
-                    }
-
-                    function beginReply() {
-                        active = true
-                        replyLoader.item.activate();
-                    }
-
-                    sourceComponent: NotificationReplyField {
-                        placeholderText: notificationItem.replyPlaceholderText
-                        buttonIconName: notificationItem.replySubmitButtonIconName
-                        buttonText: notificationItem.replySubmitButtonText
-                        onReplied: notificationItem.replied(text)
-                        
-                        replying: replyLoader.active
-                        onBeginReplyRequested: replyLoader.beginReply()
-                    }
-                }
+                notification: notificationItem
             }
             
             // thumbnails

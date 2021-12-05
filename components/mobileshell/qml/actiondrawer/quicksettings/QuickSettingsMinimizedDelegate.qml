@@ -18,23 +18,16 @@ import "../../components" as Components
 QuickSettingsDelegate {
     id: root
 
-    readonly property color disabledButtonColor: PlasmaCore.Theme.backgroundColor
-    readonly property color disabledPressedButtonColor: Qt.darker(disabledButtonColor, 1.1)
-    readonly property color enabledButtonColor: Kirigami.ColorUtils.adjustColor(PlasmaCore.ColorScope.highlightColor, {"alpha": 0.4*255})
-    readonly property color enabledPressedButtonColor: Kirigami.ColorUtils.adjustColor(PlasmaCore.ColorScope.highlightColor, {"alpha": 0.6*255});
-    
     iconItem: icon
     
     background: Rectangle {
         radius: PlasmaCore.Units.smallSpacing
-        border.color: root.enabled ?
-            Qt.darker(Kirigami.ColorUtils.adjustColor(PlasmaCore.ColorScope.highlightColor, {}), 1.25) :
-            Kirigami.ColorUtils.adjustColor(PlasmaCore.ColorScope.textColor, {"alpha": 0.2*255})
+        border.color: root.enabled ? root.enabledButtonBorderColor : root.disabledButtonBorderColor
         color: {
             if (root.enabled) {
-                return mouseArea.pressed ? enabledPressedButtonColor : enabledButtonColor
+                return mouseArea.pressed ? root.enabledButtonPressedColor : root.enabledButtonColor
             } else {
-                return mouseArea.pressed ? disabledPressedButtonColor : disabledButtonColor
+                return mouseArea.pressed ? root.disabledButtonPressedColor : root.disabledButtonColor
             }
         }
     }

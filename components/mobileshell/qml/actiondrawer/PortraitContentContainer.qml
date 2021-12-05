@@ -36,7 +36,7 @@ PlasmaCore.ColorScope {
     // fullscreen background
     Rectangle {
         anchors.fill: parent
-        color: Qt.rgba(PlasmaCore.Theme.backgroundColor.r, PlasmaCore.Theme.backgroundColor.g, PlasmaCore.Theme.backgroundColor.b, 0.8)
+        color: Qt.rgba(PlasmaCore.Theme.backgroundColor.r, PlasmaCore.Theme.backgroundColor.g, PlasmaCore.Theme.backgroundColor.b, 0.95)
         opacity: Math.max(0, Math.min(1, actionDrawer.offset / root.minimizedQuickSettingsOffset))
         Behavior on opacity { // smooth opacity changes
             NumberAnimation { duration: 70 }
