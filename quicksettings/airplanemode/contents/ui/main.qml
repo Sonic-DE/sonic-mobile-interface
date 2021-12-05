@@ -11,6 +11,7 @@ import org.kde.plasma.networkmanagement 0.2 as PlasmaNM
 MobileShell.QuickSetting {
     text: i18n("Airplane Mode")
     icon: "network-flightmode-on"
+    status: ""
     enabled: PlasmaNM.Configuration.airplaneModeEnabled
 
     PlasmaNM.Handler {

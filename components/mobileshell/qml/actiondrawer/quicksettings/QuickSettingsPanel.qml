@@ -37,7 +37,7 @@ Components.BaseItem {
      */
     readonly property real minimizedHeight: bottomPadding + topPadding + statusBar.height + quickSettings.rowHeight
     
-    // we need extra padding if the background side border is enabled
+    // we need extra padding since the background side border is enabled
     topPadding: PlasmaCore.Units.smallSpacing * 4
     leftPadding: PlasmaCore.Units.smallSpacing * 4
     rightPadding: PlasmaCore.Units.smallSpacing * 4
@@ -63,6 +63,7 @@ Components.BaseItem {
             
             StatusBar.StatusBar {
                 id: statusBar
+                Layout.alignment: Qt.AlignTop
                 Layout.fillWidth: true
                 Layout.preferredHeight: MobileShell.TopPanelControls.panelHeight
                 
@@ -74,10 +75,10 @@ Components.BaseItem {
             }
             
             PlasmaComponents.ScrollView {
+                id: scrollView
                 Layout.alignment: Qt.AlignTop
-                Layout.fillHeight: true
                 Layout.fillWidth: true
-                Layout.maximumHeight: root.fullHeight - statusBar.height - mediaWidget.height - PlasmaCore.Units.gridUnit - PlasmaCore.Units.smallSpacing * 2
+                Layout.maximumHeight: root.fullHeight - root.topPadding - root.bottomPadding - statusBar.height - mediaWidget.fullHeight - PlasmaCore.Units.smallSpacing
                 Layout.maximumWidth: column.width
                 
                 QQC2.ScrollBar.horizontal.policy: QQC2.ScrollBar.AlwaysOff
@@ -93,13 +94,15 @@ Components.BaseItem {
                     fullViewProgress: 1
                 }
             }
-            
-            Widgets.MediaPlayerWidget {
-                id: mediaWidget
-                Layout.alignment: Qt.AlignTop
-                Layout.topMargin: visible ? PlasmaCore.Units.smallSpacing : 0
-                Layout.fillWidth: true
-            }
+        }
+        
+        Widgets.MediaControlsWidget {
+            id: mediaWidget
+            property real fullHeight: visible ? height + PlasmaCore.Units.smallSpacing * 6 : 0
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.bottom: column.bottom
+            anchors.bottomMargin: root.bottomPadding * 2 + PlasmaCore.Units.smallSpacing * 2 // HACK: can't figure out a cleaner way to position
         }
         
         Handle {

@@ -13,6 +13,7 @@ MobileShell.QuickSetting {
     text: i18n("Night Color")
     icon: "redshift-status-on"
     enabled: compositorAdaptor.active
+    status: ""
     settingsCommand: "plasma-open-settings kcm_nightcolor"
 
     CC.CompositorAdaptor {
