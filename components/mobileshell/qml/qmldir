@@ -22,6 +22,10 @@ singleton WifiProvider 1.0 dataproviders/WifiProvider.qml
 # /statusbar
 StatusBar 1.0 statusbar/StatusBar.qml
 
+# /widgets
+MediaControlsWidget 1.0 widgets/MediaControlsWidget.qml
+NotificationsWidget 1.0 widgets/NotificationsWidget.qml
+
 # /
 singleton HomeScreenControls 1.0 HomeScreenControls.qml
 singleton TopPanelControls 1.0 TopPanelControls.qml
