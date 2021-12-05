@@ -18,7 +18,7 @@ PlasmaCore.IconItem {
     id: connectionIcon
     property MobileShell.BluetoothProvider provider: MobileShell.BluetoothProvider
 
-    source: provider.icon;
+    source: provider.icon
     colorGroup: PlasmaCore.ColorScope.colorGroup
 
     visible: provider.isVisible

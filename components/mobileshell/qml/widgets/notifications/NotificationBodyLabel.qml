@@ -24,42 +24,5 @@ PlasmaComponents.Label {
     elide: Text.ElideRight
     wrapMode: Text.Wrap
     textFormat: TextEdit.RichText
-
-    // Handle right-click and cursorShape
-    MouseArea {
-        anchors.fill: parent
-        acceptedButtons: Qt.LeftButton | Qt.RightButton
-
-        function trigger(mouse) {
-            contextMenu = contextMenuComponent.createObject(bodyText);
-            contextMenu.link = bodyText.linkAt(mouse.x, mouse.y);
-
-            contextMenu.closed.connect(function() {
-                contextMenu.destroy();
-                contextMenu = null;
-            });
-            contextMenu.open(mouse.x, mouse.y);
-        }
-        
-        onPressed: {
-            if (mouse.button == Qt.RightButton) {
-                trigger(mouse);
-            }
-        }
-        onPressAndHold: {
-            if (Kirigami.Settings.isMobile) {
-                trigger(mouse);
-            }
-        }
-    }
-    
-    Component {
-        id: contextMenuComponent
-
-        EditContextMenu {
-            target: bodyText
-        }
-    }
-
 }
 

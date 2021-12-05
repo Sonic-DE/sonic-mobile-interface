@@ -62,6 +62,7 @@ Item {
         engine: "time"
         connectedSources: ["Local"]
         interval: 60 * 1000
+        intervalAlignment: PlasmaCore.Types.AlignToMinute
     }
     
     property alias statusNotifierSource: statusNotifierSourceLoader.item
