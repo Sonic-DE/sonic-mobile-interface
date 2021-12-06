@@ -60,6 +60,11 @@ Item {
     
 //END API implementation
     
+    Component.onCompleted: {
+        // we want to bind global shortcuts here
+        MobileShell.VolumeProvider.bindShortcuts = true;
+    }
+    
     // top panel component
     MobileShell.StatusBar {
         id: topPanel
