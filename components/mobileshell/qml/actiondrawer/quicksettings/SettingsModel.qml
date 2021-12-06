@@ -99,10 +99,17 @@ MobileShell.QuickSettingsModel {
             target: root.actionDrawer
             function onVisibleChanged(visible) {
                 if (!visible && screenshotRequested) {
-                    MobileShell.ShellUtil.takeScreenshot();
+                    timer.restart();
                     root.screenshotRequested = false
                 }
             }
+        }
+        
+        // HACK: KWin's fade effect may have the window ending up being in the screenshot if taken too fast
+        Timer {
+            id: timer
+            interval: 500
+            onTriggered: MobileShell.ShellUtil.takeScreenshot()
         }
     }
     MobileShell.QuickSetting {

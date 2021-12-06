@@ -93,6 +93,11 @@ NanoShell.FullScreenOverlay {
         cancelAnimations();
         openAnim.restart();
     }
+    function closeImmediately() {
+        cancelAnimations();
+        offset = 0;
+        closeAnim.finished();
+    }
     function close() {
         cancelAnimations();
         closeAnim.restart();
