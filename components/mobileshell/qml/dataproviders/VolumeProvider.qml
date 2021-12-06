@@ -16,7 +16,16 @@ import "../osd/volume"
 pragma Singleton
 
 QtObject {
+    /**
+     * Whether or not to bind the volume global key shortcuts.
+     * We should never bind the shortcut multiple times in the shell, or else they may not work at all.
+     * 
+     * We only set this to true when loaded for the panel containment (and NOT in the lockscreen).
+     */
+    property bool bindShortcuts: false
+    
     property bool isVisible: paSinkModel.preferredSink && paSinkModel.preferredSink.muted
+    
     property string icon: paSinkModel.preferredSink && !isDummyOutput(paSinkModel.preferredSink)
                           ? iconName(paSinkModel.preferredSink.volume, paSinkModel.preferredSink.muted)
                           : iconName(0, true)
@@ -149,38 +158,43 @@ QtObject {
 
     property VolumeFeedback feedback: VolumeFeedback {}
 
-    property GlobalActionCollection actionCollection: GlobalActionCollection {
-        // KGlobalAccel cannot transition from kmix to something else, so if
-        // the user had a custom shortcut set for kmix those would get lost.
-        // To avoid this we hijack kmix name and actions. Entirely mental but
-        // best we can do to not cause annoyance for the user.
-        // The display name actually is updated to whatever registered last
-        // though, so as far as user visible strings go we should be fine.
-        // As of 2015-07-21:
-        //   componentName: kmix
-        //   actions: increase_volume, decrease_volume, mute
-        name: "kmix"
-        displayName: i18n("Audio")
+    // only bind the global shortcuts when told to
+    property var actionCollection: Loader {
+        active: bindShortcuts
+        
+        sourceComponent: GlobalActionCollection {
+            // KGlobalAccel cannot transition from kmix to something else, so if
+            // the user had a custom shortcut set for kmix those would get lost.
+            // To avoid this we hijack kmix name and actions. Entirely mental but
+            // best we can do to not cause annoyance for the user.
+            // The display name actually is updated to whatever registered last
+            // though, so as far as user visible strings go we should be fine.
+            // As of 2015-07-21:
+            //   componentName: kmix
+            //   actions: increase_volume, decrease_volume, mute
+            name: "kmix"
+            displayName: i18n("Audio")
 
-        GlobalAction {
-            objectName: "increase_volume"
-            text: i18n("Increase Volume")
-            shortcut: Qt.Key_VolumeUp
-            onTriggered: increaseVolume()
-        }
+            GlobalAction {
+                objectName: "increase_volume"
+                text: i18n("Increase Volume")
+                shortcut: Qt.Key_VolumeUp
+                onTriggered: increaseVolume()
+            }
 
-        GlobalAction {
-            objectName: "decrease_volume"
-            text: i18n("Decrease Volume")
-            shortcut: Qt.Key_VolumeDown
-            onTriggered: decreaseVolume()
-        }
+            GlobalAction {
+                objectName: "decrease_volume"
+                text: i18n("Decrease Volume")
+                shortcut: Qt.Key_VolumeDown
+                onTriggered: decreaseVolume()
+            }
 
-        GlobalAction {
-            objectName: "mute"
-            text: i18n("Mute")
-            shortcut: Qt.Key_VolumeMute
-            onTriggered: muteVolume()
+            GlobalAction {
+                objectName: "mute"
+                text: i18n("Mute")
+                shortcut: Qt.Key_VolumeMute
+                onTriggered: muteVolume()
+            }
         }
     }
 }
