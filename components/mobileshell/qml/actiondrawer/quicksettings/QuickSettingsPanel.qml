@@ -37,6 +37,11 @@ Components.BaseItem {
      */
     readonly property real minimizedHeight: bottomPadding + topPadding + statusBar.height + quickSettings.rowHeight
     
+    /**
+     * Implicit height of the contents of the panel.
+     */
+    readonly property real contentImplicitHeight: column.implicitHeight
+    
     // we need extra padding since the background side border is enabled
     topPadding: PlasmaCore.Units.smallSpacing * 4
     leftPadding: PlasmaCore.Units.smallSpacing * 4
@@ -65,7 +70,8 @@ Components.BaseItem {
                 id: statusBar
                 Layout.alignment: Qt.AlignTop
                 Layout.fillWidth: true
-                Layout.preferredHeight: MobileShell.TopPanelControls.panelHeight
+                Layout.preferredHeight: Kirigami.Units.gridUnit * 1.25
+                Layout.maximumHeight: Kirigami.Units.gridUnit * 1.25
                 
                 colorGroup: PlasmaCore.Theme.NormalColorGroup
                 backgroundColor: "transparent"

@@ -46,7 +46,12 @@ NanoShell.FullScreenOverlay {
      */
     property int direction: Components.Direction.None
     
-    property int mode: height > width ? ActionDrawer.Portrait : ActionDrawer.Landscape
+    property int mode: (height > width && width <= largePortraitThreshold) ? ActionDrawer.Portrait : ActionDrawer.Landscape
+    
+    /**
+     * At some point, even if the screen is technically portrait, if we have a ton of width it'd be best to just show the landscape mode.
+     */
+    readonly property real largePortraitThreshold: PlasmaCore.Units.gridUnit * 35
     
     enum Mode {
         Portrait = 0,
