@@ -53,6 +53,7 @@ PlasmaCore.ColorScope {
     // left side
     ColumnLayout {
         opacity: applyMinMax(root.actionDrawer.offset / root.maximizedQuickSettingsOffset)
+        spacing: 0
         anchors {
             top: parent.top
             topMargin: Math.min(root.width, root.height) * 0.06
@@ -70,7 +71,7 @@ PlasmaCore.ColorScope {
             verticalAlignment: Qt.AlignTop
             Layout.fillWidth: true
 
-            font.pixelSize: Math.min(root.width, root.height) * 0.1
+            font.pixelSize: Math.min(40, Math.min(root.width, root.height) * 0.1)
             font.weight: Font.ExtraLight
             elide: Text.ElideRight
         }
@@ -81,14 +82,18 @@ PlasmaCore.ColorScope {
             verticalAlignment: Qt.AlignTop
             color: PlasmaCore.ColorScope.disabledTextColor
             Layout.fillWidth: true
+            Layout.topMargin: PlasmaCore.Units.smallSpacing
 
-            font.pixelSize: Math.min(root.width, root.height) * 0.05
+            font.pixelSize: Math.min(20, Math.min(root.width, root.height) * 0.05)
             font.weight: Font.Light
         }
         
         Widgets.NotificationsWidget {
+            // don't allow notifications widget to get too wide
+            Layout.maximumWidth: PlasmaCore.Units.gridUnit * 25
             Layout.fillHeight: true
             Layout.fillWidth: true
+            Layout.topMargin: Math.min(root.width, root.height) * 0.02
         }
     }
     
@@ -96,7 +101,7 @@ PlasmaCore.ColorScope {
     QuickSettingsPanel {
         id: quickSettings
         height: Math.min(root.height, Math.max(quickSettings.minimizedHeight, actionDrawer.offset))
-        width: Math.min(parent.width * 0.5, intendedWidth)
+        width: intendedWidth
         
         readonly property real intendedWidth: 360
         

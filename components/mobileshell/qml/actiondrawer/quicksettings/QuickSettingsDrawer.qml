@@ -37,12 +37,17 @@ Components.BaseItem {
     /**
      * The maximum amount of added height to snap to the full height of the quick settings panel.
      */
-    readonly property real maxAddedHeight: quickSettings.fullHeight - quickSettings.rowHeight // first row is part of minimized height
+    readonly property real maxAddedHeight: quickSettings.fullHeight - minimizedQuickSettingsHeight // first row is part of minimized height
     
     /**
      * Height of panel when in minimized mode.
      */
-    readonly property real minimizedHeight: bottomPadding + topPadding + statusBar.height + quickSettings.rowHeight + mediaWidget.height + handle.fullHeight
+    readonly property real minimizedHeight: bottomPadding + topPadding + statusBar.height + minimizedQuickSettingsHeight + mediaWidget.height + handle.fullHeight
+    
+    /**
+     * Height of just the QuickSettings component in minimized mode.
+     */
+    readonly property real minimizedQuickSettingsHeight: quickSettings.minimizedRowHeight + PlasmaCore.Units.gridUnit
     
     /**
      * Progress of showing the full quick settings view from pinned.
@@ -85,14 +90,14 @@ Components.BaseItem {
             
             QuickSettings {
                 id: quickSettings
-                Layout.preferredHeight: quickSettings.rowHeight + root.addedHeight
+                Layout.preferredHeight: root.minimizedQuickSettingsHeight + root.addedHeight
                 Layout.topMargin: PlasmaCore.Units.smallSpacing
                 Layout.fillWidth: true
                 
                 actionDrawer: root.actionDrawer
                 minimizedViewProgress: 1 - root.minimizedToFullProgress
                 fullViewProgress: root.minimizedToFullProgress
-                height: quickSettings.rowHeight + root.addedHeight
+                height: root.minimizedQuickSettingsHeight + root.addedHeight
                 width: parent.width
             }
             

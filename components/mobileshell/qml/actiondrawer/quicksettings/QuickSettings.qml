@@ -13,6 +13,7 @@ import QtQuick.Window 2.2
 import org.kde.plasma.core 2.0 as PlasmaCore
 
 import "../../components" as Components
+import "../../components/util.js" as Util
 
 /**
  * Quick settings elements layout, change the height to clip.
@@ -23,13 +24,17 @@ Item {
     
     required property var actionDrawer
     
-    readonly property real columns: 3
+    readonly property real columns: Math.round(Util.applyMinMaxRange(3, 6, width / intendedColumnWidth))
     readonly property real columnWidth: Math.floor(width / columns)
-    readonly property real minimizedColumns: 5
+    readonly property real minimizedColumns: Math.round(Util.applyMinMaxRange(5, 8, width / intendedMinimizedColumnWidth))
     readonly property real minimizedColumnWidth: Math.floor(width / minimizedColumns)
     
     readonly property real rowHeight: columnWidth * 0.7
     readonly property real fullHeight: fullView.implicitHeight
+    
+    readonly property real intendedColumnWidth: 120
+    readonly property real intendedMinimizedColumnWidth: PlasmaCore.Units.gridUnit * 3 + PlasmaCore.Units.largeSpacing
+    readonly property real minimizedRowHeight: PlasmaCore.Units.gridUnit * 3 + PlasmaCore.Units.largeSpacing
     
     property real minimizedViewProgress: 0
     property real fullViewProgress: 1
@@ -104,9 +109,10 @@ Item {
                 required property var modelData
                 required property var index
                 
-                implicitHeight: width
+                implicitHeight: root.minimizedRowHeight
                 implicitWidth: root.minimizedColumnWidth
-                padding: (width - PlasmaCore.Units.gridUnit * 3) / 2
+                horizontalPadding: (width - PlasmaCore.Units.gridUnit * 3) / 2
+                verticalPadding: (height - PlasmaCore.Units.gridUnit * 3) / 2
                 visible: index <= root.minimizedColumns
                 
                 contentItem: QuickSettingsMinimizedDelegate {
