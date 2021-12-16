@@ -70,8 +70,8 @@ Components.BaseItem {
                 id: statusBar
                 Layout.alignment: Qt.AlignTop
                 Layout.fillWidth: true
-                Layout.preferredHeight: Kirigami.Units.gridUnit * 1.25
-                Layout.maximumHeight: Kirigami.Units.gridUnit * 1.25
+                Layout.preferredHeight: Kirigami.Units.gridUnit * 1.5
+                Layout.maximumHeight: Kirigami.Units.gridUnit * 1.5
                 
                 colorGroup: PlasmaCore.Theme.NormalColorGroup
                 backgroundColor: "transparent"
@@ -100,6 +100,8 @@ Components.BaseItem {
                     fullViewProgress: 1
                 }
             }
+            
+            Item { Layout.fillHeight: true }
         }
         
         Widgets.MediaControlsWidget {
