@@ -14,7 +14,7 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PC3
 
 Item {
-    id: brightnessRoot
+    id: root
     
     implicitHeight: brightnessRow.implicitHeight
     
@@ -22,14 +22,31 @@ Item {
     property bool disableBrightnessUpdate: true
     readonly property int maximumScreenBrightness: pmSource.data["PowerDevil"] ? pmSource.data["PowerDevil"]["Maximum Screen Brightness"] || 0 : 0
     
+    property QtObject updateScreenBrightnessJob
+    
+    function updateBrightnessUI() {
+        if (updateScreenBrightnessJob)
+            return;
+        
+        root.disableBrightnessUpdate = true;
+        console.log(pmSource.data["PowerDevil"]["Screen Brightness"]);
+        root.screenBrightness = pmSource.data["PowerDevil"]["Screen Brightness"];
+        root.disableBrightnessUpdate = false;
+    }
+    
     onScreenBrightnessChanged: {
-        brightnessSlider.value = brightnessRoot.screenBrightness
+        brightnessSlider.value = root.screenBrightness
+        
         if (!disableBrightnessUpdate) {
             var service = pmSource.serviceForSource("PowerDevil");
             var operation = service.operationDescription("setBrightness");
             operation.brightness = screenBrightness;
-            operation.silent = true
-            service.startOperationCall(operation);
+            operation.silent = true; // don't show OSD
+            
+            updateScreenBrightnessJob = service.startOperationCall(operation);
+            updateScreenBrightnessJob.finished.connect(function (job) {
+                root.updateBrightnessUI();
+            });
         }
     }
     
@@ -43,18 +60,7 @@ Item {
                 connectSource(source);
             }
         }
-        onDataChanged: {
-            disableBrightnessUpdate = true;
-            brightnessRoot.screenBrightness = pmSource.data["PowerDevil"]["Screen Brightness"];
-            disableBrightnessUpdate = false;
-        }
-    }
-    
-    Component.onCompleted: {
-        brightnessSlider.moved.connect(function() {
-            brightnessRoot.screenBrightness = brightnessSlider.value;
-        });
-        disableBrightnessUpdate = false;
+        onDataChanged: root.updateBrightnessUI()
     }
     
     RowLayout {
@@ -77,9 +83,11 @@ Item {
             id: brightnessSlider
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignVCenter
-            value: screenBrightness
             from: 1
-            to: maximumScreenBrightness
+            to: root.maximumScreenBrightness
+            value: root.screenBrightness
+            
+            onMoved: root.screenBrightness = value;
         }
         
         PlasmaCore.IconItem {
