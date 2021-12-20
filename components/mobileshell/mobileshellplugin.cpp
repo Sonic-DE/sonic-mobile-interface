@@ -8,6 +8,8 @@
 #include <QQuickItem>
 
 #include "mobileshellplugin.h"
+#include "notifications/notificationfilemenu.h"
+#include "notifications/notificationthumbnailer.h"
 #include "quicksettingsmodel.h"
 #include "shellutil.h"
 
@@ -21,4 +23,8 @@ void MobileShellPlugin::registerTypes(const char *uri)
 
     qmlRegisterType<QuickSetting>(uri, 1, 0, "QuickSetting");
     qmlRegisterType<QuickSettingsModel>(uri, 1, 0, "QuickSettingsModel");
+
+    // notifications
+    qmlRegisterType<NotificationThumbnailer>(uri, 1, 0, "NotificationThumbnailer");
+    qmlRegisterType<NotificationFileMenu>(uri, 1, 0, "NotificationFileMenu");
 }
