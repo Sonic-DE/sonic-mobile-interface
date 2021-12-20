@@ -5,6 +5,8 @@ set(mobileshellplugin_SRCS
     mobileshellplugin.cpp
     shellutil.cpp
     quicksettingsmodel.cpp
+    notifications/notificationthumbnailer.cpp
+    notifications/notificationfilemenu.cpp
     ${DBUS_SRCS}
 )
 
@@ -18,11 +20,14 @@ target_link_libraries(mobileshellplugin
             Qt::Qml
             Qt::Gui
             Qt::Quick
+            KF5::ConfigWidgets # for KStandardAction
             KF5::KIOGui
             KF5::Plasma
             KF5::I18n
             KF5::Notifications
             KF5::PlasmaQuick
+            KF5::KIOGui
+            KF5::KIOWidgets # for PreviewJob
             KF5::WaylandClient
             KF5::Service
     )

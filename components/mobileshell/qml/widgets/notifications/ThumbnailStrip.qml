@@ -11,10 +11,9 @@ import QtGraphicalEffects 1.0
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents3
 import org.kde.plasma.extras 2.0 as PlasmaExtras
+import org.kde.plasma.private.mobileshell 1.0 as MobileShell
 
 import org.kde.kquickcontrolsaddons 2.0 as KQCAddons
-
-import org.kde.plasma.private.notifications 2.0 as Notifications
 
 MouseArea {
     id: thumbnailArea
@@ -42,14 +41,14 @@ MouseArea {
                              Math.round(Math.min(width / 3, width / thumbnailer.ratio)))
                     + topPadding + bottomPadding
 
-    Notifications.FileMenu {
+    MobileShell.NotificationFileMenu {
         id: fileMenu
         url: thumbnailer.url
         visualParent: menuButton
         onActionTriggered: thumbnailArea.fileActionInvoked(action)
     }
 
-    Notifications.Thumbnailer {
+    MobileShell.NotificationThumbnailer {
         id: thumbnailer
 
         readonly property real ratio: pixmapSize.height ? pixmapSize.width / pixmapSize.height : 1
