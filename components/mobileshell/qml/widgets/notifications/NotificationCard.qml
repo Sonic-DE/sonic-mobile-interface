@@ -79,7 +79,7 @@ Item {
         anchors.rightMargin: root.dragOffset < 0 ? -root.dragOffset : 0
         anchors.top: parent.top
         
-        color: (root.tapEnabled && tapHandler.pressed) ? Qt.darker(PlasmaCore.Theme.backgroundColor, 1.1) : PlasmaCore.Theme.backgroundColor
+        color: (root.tapEnabled && mouseArea.pressed) ? Qt.darker(PlasmaCore.Theme.backgroundColor, 1.1) : PlasmaCore.Theme.backgroundColor
         radius: PlasmaCore.Units.smallSpacing 
         implicitHeight: contentParent.implicitHeight
         clip: true
@@ -96,11 +96,12 @@ Item {
         }
     }
     
-    TapHandler {
-        id: tapHandler
-        onTapped: {
+    MouseArea {
+        id: mouseArea
+        anchors.fill: parent
+        onClicked: {
             if (root.tapEnabled) {
-                root.tapped();
+                root.tapped()
             }
         }
     }
