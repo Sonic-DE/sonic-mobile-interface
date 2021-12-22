@@ -25,20 +25,20 @@ PlasmaCore.DataSource {
     readonly property var currentMetadata: hasPlayer ? playerData.Metadata : ({})
 
     readonly property string track: {
-        var xesamTitle = currentMetadata["xesam:title"]
+        const xesamTitle = currentMetadata["xesam:title"]
         if (xesamTitle) {
             return xesamTitle
         }
         // if no track title is given, print out the file name
-        var xesamUrl = currentMetadata["xesam:url"] ? currentMetadata["xesam:url"].toString() : ""
+        const xesamUrl = currentMetadata["xesam:url"] ? currentMetadata["xesam:url"].toString() : ""
         if (!xesamUrl) {
             return ""
         }
-        var lastSlashPos = xesamUrl.lastIndexOf('/')
+        const lastSlashPos = xesamUrl.lastIndexOf('/')
         if (lastSlashPos < 0) {
             return ""
         }
-        var lastUrlPart = xesamUrl.substring(lastSlashPos + 1)
+        const lastUrlPart = xesamUrl.substring(lastSlashPos + 1)
         return decodeURIComponent(lastUrlPart)
     }
     readonly property string artist: currentMetadata["xesam:artist"] || ""
