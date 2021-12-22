@@ -36,7 +36,7 @@ function generateNotificationHeaderAgoText(time, jobState) {
         return "";
     }
 
-    var deltaMinutes = Math.floor((Date.now() - time.getTime()) / 1000 / 60);
+    const deltaMinutes = Math.floor((Date.now() - time.getTime()) / 1000 / 60);
     if (deltaMinutes < 1) {
         return "";
     }
@@ -59,7 +59,7 @@ function generateNotificationHeaderRemainingText(notificationType, jobState, job
         return "";
     }
 
-    var details = jobDetails;
+    const details = jobDetails;
     if (!details || !details.speed) {
         return "";
     }
