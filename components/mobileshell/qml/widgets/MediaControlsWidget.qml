@@ -7,6 +7,7 @@
 
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15 as QQC2
 
 import org.kde.kirigami 2.12 as Kirigami
 
@@ -58,9 +59,9 @@ Components.BaseItem {
             ColumnLayout {
                 Layout.leftMargin: albumArt.visible ? Kirigami.Units.largeSpacing : 0
                 Layout.fillWidth: true
-                spacing: 0
+                spacing: Kirigami.Units.smallSpacing
 
-                PlasmaComponents3.Label {
+                QQC2.Label {
                     Layout.fillWidth: true
                     wrapMode: Text.NoWrap
                     elide: Text.ElideRight
@@ -71,7 +72,7 @@ Components.BaseItem {
                     color: "white"
                 }
 
-                PlasmaExtras.DescriptiveLabel {
+                QQC2.Label {
                     Layout.fillWidth: true
                     wrapMode: Text.NoWrap
                     elide: Text.ElideRight
@@ -80,6 +81,7 @@ Components.BaseItem {
                     textFormat: Text.PlainText
                     font.pointSize: PlasmaCore.Theme.smallestFont.pointSize
                     maximumLineCount: 1
+                    opacity: 0.9
                     color: "white"
                 }
             }
