@@ -39,7 +39,7 @@ Item {
         // ensure text is readable
         Rectangle {
             anchors.fill: parent
-            color: Qt.rgba(0, 0, 0, 0.4)
+            color: Qt.rgba(0, 0, 0, 0.6)
         }
         
         // apply lighten, saturate and blur effect
