@@ -39,7 +39,7 @@ Item {
             id: actionRepeater
 
             model: {
-                var buttons = [];
+                const buttons = [];
                 var actionNames = (notificationItem.actionNames || []);
                 var actionLabels = (notificationItem.actionLabels || []);
                 for (var i = actionNames.length - 1; i >= 0; --i) {
