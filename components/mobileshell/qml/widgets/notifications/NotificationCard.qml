@@ -84,6 +84,17 @@ Item {
         implicitHeight: contentParent.implicitHeight
         clip: true
         
+        // ensure this is behind the content to not interfere
+        MouseArea {
+            id: mouseArea
+            anchors.fill: parent
+            onClicked: {
+                if (root.tapEnabled) {
+                    root.tapped()
+                }
+            }
+        }
+        
         // content parent
         Item {
             id: contentParent
@@ -93,16 +104,6 @@ Item {
             
             width: root.width
             implicitHeight: contentItem.implicitHeight + contentItem.anchors.topMargin + contentItem.anchors.bottomMargin  
-        }
-    }
-    
-    MouseArea {
-        id: mouseArea
-        anchors.fill: parent
-        onClicked: {
-            if (root.tapEnabled) {
-                root.tapped()
-            }
         }
     }
     
