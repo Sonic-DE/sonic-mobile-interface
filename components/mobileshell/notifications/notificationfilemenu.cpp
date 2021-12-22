@@ -102,7 +102,7 @@ void NotificationFileMenu::open(int x, int y)
 
     KFileItem fileItem(m_url);
 
-    QMenu *menu = new QMenu();
+    auto menu = new QMenu();
     menu->setAttribute(Qt::WA_DeleteOnClose, true);
     connect(menu, &QMenu::triggered, this, &NotificationFileMenu::actionTriggered);
 
@@ -118,7 +118,7 @@ void NotificationFileMenu::open(int x, int y)
         });
     }
 
-    KFileItemActions *actions = new KFileItemActions(menu);
+    auto actions = new KFileItemActions(menu);
     KFileItemListProperties itemProperties(KFileItemList({fileItem}));
     actions->setItemListProperties(itemProperties);
     actions->setParentWidget(menu);
@@ -129,7 +129,7 @@ void NotificationFileMenu::open(int x, int y)
     QAction *copyAction = menu->addAction(QIcon::fromTheme(QStringLiteral("edit-copy")), i18n("&Copy"));
     connect(copyAction, &QAction::triggered, this, [fileItem] {
         // inspired by KDirModel::mimeData()
-        QMimeData *data = new QMimeData(); // who cleans it up?
+        auto data = new QMimeData(); // who cleans it up?
         KUrlMimeData::setUrls({fileItem.url()}, {fileItem.mostLocalUrl()}, data);
         QApplication::clipboard()->setMimeData(data);
     });
@@ -157,7 +157,7 @@ void NotificationFileMenu::open(int x, int y)
                 KIO::FileUndoManager::self()->recordJob(KIO::FileUndoManager::Trash, urls, QUrl(QStringLiteral("trash:/")), job);
             }
         };
-        QAction *moveToTrashAction = KStandardAction::moveToTrash(this, moveToTrashLambda, menu);
+        auto moveToTrashAction = KStandardAction::moveToTrash(this, moveToTrashLambda, menu);
         moveToTrashAction->setShortcut({}); // Can't focus notification to press Delete
         menu->addAction(moveToTrashAction);
     }
@@ -175,7 +175,7 @@ void NotificationFileMenu::open(int x, int y)
                 job->uiDelegate()->setAutoErrorHandlingEnabled(true);
             }
         };
-        QAction *deleteAction = KStandardAction::deleteFile(this, deleteLambda, menu);
+        auto deleteAction = KStandardAction::deleteFile(this, deleteLambda, menu);
         deleteAction->setShortcut({});
         menu->addAction(deleteAction);
     }
