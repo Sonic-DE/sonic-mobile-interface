@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2021 Devin Lin <devin@kde.org>
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 qt_add_dbus_interfaces(DBUS_SRCS dbus/org.kde.KWin.ScreenShot2.xml
                                  dbus/org.kde.KScreen.xml)
 
