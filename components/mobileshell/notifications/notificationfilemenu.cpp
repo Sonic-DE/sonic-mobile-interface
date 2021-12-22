@@ -85,8 +85,6 @@ void NotificationFileMenu::setVisible(bool visible)
 
     if (visible) {
         open(0, 0);
-    } else {
-        // TODO warning or close?
     }
 }
 
