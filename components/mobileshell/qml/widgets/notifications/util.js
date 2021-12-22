@@ -14,18 +14,18 @@ function determineNotificationHeadingText(notificationItem) {
                 } else {
                     return i18n("Job Failed");
                 }
+            } else if (notificationItem.summary) {
+                return i18ndc("plasma_applet_org.kde.plasma.notifications", "Job name, e.g. Copying has finished", "%1 (Finished)", notificationItem.summary);
             } else {
-                if (notificationItem.summary) {
-                    return i18ndc("plasma_applet_org.kde.plasma.notifications", "Job name, e.g. Copying has finished", "%1 (Finished)", notificationItem.summary);
-                } else {
-                    return i18nd("plasma_applet_org.kde.plasma.notifications", "Job Finished");
-                }
+                return i18nd("plasma_applet_org.kde.plasma.notifications", "Job Finished");
+            }
+
             }
         }
     }
     // some apps use their app name as summary, avoid showing the same text twice
     // try very hard to match the two
-    if (notificationItem.summary && notificationItem.summary.toLocaleLowerCase().trim() != notificationItem.applicationName.toLocaleLowerCase().trim()) {
+    if (notificationItem.summary && notificationItem.summary.toLocaleLowerCase().trim() !== notificationItem.applicationName.toLocaleLowerCase().trim()) {
         return notificationItem.summary;
     }
     return "";
