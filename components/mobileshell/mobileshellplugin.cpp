@@ -4,10 +4,12 @@
  *  SPDX-License-Identifier: GPL-2.0-or-later
  */
 
+#include "mobileshellplugin.h"
+
 #include <QQmlContext>
 #include <QQuickItem>
 
-#include "mobileshellplugin.h"
+#include "mobileshellsettings.h"
 #include "notifications/notificationfilemenu.h"
 #include "notifications/notificationthumbnailer.h"
 #include "quicksettingsmodel.h"
@@ -23,6 +25,11 @@ void MobileShellPlugin::registerTypes(const char *uri)
 
     qmlRegisterType<QuickSetting>(uri, 1, 0, "QuickSetting");
     qmlRegisterType<QuickSettingsModel>(uri, 1, 0, "QuickSettingsModel");
+
+    // settings
+    qmlRegisterSingletonType<MobileShellSettings>(uri, 1, 0, "MobileShellSettings", [](QQmlEngine *, QJSEngine *) -> QObject * {
+        return MobileShellSettings::self();
+    });
 
     // notifications
     qmlRegisterType<NotificationThumbnailer>(uri, 1, 0, "NotificationThumbnailer");
