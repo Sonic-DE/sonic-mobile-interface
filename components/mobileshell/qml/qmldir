@@ -24,6 +24,7 @@ singleton VolumeProvider 1.0 dataproviders/VolumeProvider.qml
 singleton WifiProvider 1.0 dataproviders/WifiProvider.qml
 
 # /navigationpanel
+NavigationGestureArea 1.0 navigationpanel/NavigationGestureArea.qml
 NavigationPanel 1.0 navigationpanel/NavigationPanel.qml
 NavigationPanelAction 1.0 navigationpanel/NavigationPanelAction.qml
 
