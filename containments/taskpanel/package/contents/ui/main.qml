@@ -7,7 +7,7 @@
 
 import QtQuick 2.4
 import QtQuick.Layouts 1.1
-import QtQuick.Window 2.2
+import QtQuick.Window 2.15
 import QtGraphicalEffects 1.12
 
 import org.kde.taskmanager 0.1 as TaskManager
@@ -23,8 +23,6 @@ PlasmaCore.ColorScope {
     id: root
     width: 360
     colorGroup: showingApp ? PlasmaCore.Theme.HeaderColorGroup : PlasmaCore.Theme.ComplementaryColorGroup
-    
-    Plasmoid.backgroundHints: PlasmaCore.Types.NoBackground
 
     readonly property color backgroundColor: PlasmaCore.ColorScope.backgroundColor
     readonly property bool showingApp: !plasmoid.nativeInterface.allMinimized
@@ -33,6 +31,21 @@ PlasmaCore.ColorScope {
 
     property var taskSwitcher: MobileShell.HomeScreenControls.taskSwitcher
 
+    Plasmoid.backgroundHints: PlasmaCore.Types.NoBackground
+    
+    Binding {
+        target: plasmoid.Window.window // assumed to be plasma-workspace PanelView
+        property: "visibilityMode"
+        // 0 - VisibilityMode.NormalPanel
+        // 3 - VisibilityMode.WindowsGoBelow
+        value: MobileShell.MobileShellSettings.navigationPanelEnabled ? 0 : 3
+    }
+    Binding {
+        target: plasmoid.Window.window // assumed to be plasma-workspace PanelView
+        property: "height"
+        value: MobileShell.MobileShellSettings.navigationPanelEnabled ? PlasmaCore.Units.gridUnit * 2 : 8
+    }
+    
 //BEGIN API implementation
 
     Binding {
@@ -43,12 +56,12 @@ PlasmaCore.ColorScope {
     Binding {
         target: MobileShell.TaskPanelControls
         property: "panelHeight"
-        value: root.height
+        value: MobileShell.MobileShellSettings.navigationPanelEnabled ? root.height : 0
     }
     Binding {
         target: MobileShell.TaskPanelControls
         property: "panelWidth"
-        value: root.width
+        value: MobileShell.MobileShellSettings.navigationPanelEnabled ? root.width : 0
     }
 
 //END API implementation
@@ -154,28 +167,42 @@ PlasmaCore.ColorScope {
     }
     
     // bottom navigation panel
-    MobileShell.NavigationPanel {
-        id: panel
-        anchors.fill: parent
-        taskSwitcher: root.taskSwitcher
-        opacity: 0
-        
-        backgroundColor: {
-            if (taskSwitcher.visible) {
-                return Qt.rgba(0, 0, 0, 0.1);
-            } else {
-                return root.showingApp ? root.backgroundColor : "transparent";
+    Component {
+        id: navigationPanel 
+        MobileShell.NavigationPanel {
+            taskSwitcher: root.taskSwitcher
+            backgroundColor: {
+                if (taskSwitcher.visible) {
+                    return Qt.rgba(0, 0, 0, 0.1);
+                } else {
+                    return root.showingApp ? root.backgroundColor : "transparent";
+                }
             }
+            foregroundColorGroup: (!taskSwitcher.visible && root.showingApp) ? PlasmaCore.Theme.NormalColorGroup : PlasmaCore.Theme.ComplementaryColorGroup
+            
+            // do not enable drag gesture when task switcher is already open
+            // also don't disable drag gesture mid-drag
+            dragGestureEnabled: !taskSwitcher.visible || taskSwitcher.taskSwitcherState.currentlyBeingOpened
+            
+            leftAction: taskSwitcherAction
+            middleAction: homeAction
+            rightAction: closeAppAction
         }
-        foregroundColorGroup: (!taskSwitcher.visible && root.showingApp) ? PlasmaCore.Theme.NormalColorGroup : PlasmaCore.Theme.ComplementaryColorGroup
-        
-        // do not enable drag gesture when task switcher is already open
-        // also don't disable drag gesture mid-drag
-        dragGestureEnabled: !taskSwitcher.visible || taskSwitcher.taskSwitcherState.currentlyBeingOpened
-        
-        leftAction: taskSwitcherAction
-        middleAction: homeAction
-        rightAction: closeAppAction
+    }
+    
+    // bottom gesture area
+    Component {
+        id: navigationGesture 
+        MobileShell.NavigationGestureArea {
+            taskSwitcher: root.taskSwitcher
+        }
+    }
+    
+    // load system navigation
+    Loader {
+        id: navigationLoader
+        anchors.fill: parent
+        sourceComponent: MobileShell.MobileShellSettings.navigationPanelEnabled ? navigationPanel : navigationGesture
     }
     
     states: [
@@ -184,7 +211,8 @@ PlasmaCore.ColorScope {
             when: MobileShell.Shell.orientation === MobileShell.Shell.Landscape
             PropertyChanges {
                 target: plasmoid.nativeInterface
-                location: PlasmaCore.Types.RightEdge
+                // only show on right edge if gestures are not enabled
+                location: MobileShell.MobileShellSettings.navigationPanelEnabled ? PlasmaCore.Types.RightEdge : PlasmaCore.Types.BottomEdge
             }
             PropertyChanges {
                 target: plasmoid
