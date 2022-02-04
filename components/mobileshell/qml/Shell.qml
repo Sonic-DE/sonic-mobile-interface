@@ -25,7 +25,7 @@ QtObject {
     /**
      * Bottom margin from the screen edge where application windows would display.
      */
-    readonly property real bottomMargin: orientation === Shell.Portrait ? TaskPanelControls.panelHeight : 0
+    readonly property real bottomMargin: TaskPanelControls.isPortrait ? TaskPanelControls.panelHeight : 0
     
     /**
      * Left margin from the screen edge where application windows would display.
@@ -35,7 +35,7 @@ QtObject {
     /**
      * Right margin from the screen edge where application windows would display.
      */
-    readonly property real rightMargin: orientation === Shell.Landscape ? TaskPanelControls.panelWidth : 0
+    readonly property real rightMargin: !TaskPanelControls.isPortrait ? TaskPanelControls.panelWidth : 0
     
     /**
      * Orientation of the mobile device.
