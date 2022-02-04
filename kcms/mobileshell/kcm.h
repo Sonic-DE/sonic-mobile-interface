@@ -12,17 +12,17 @@
 class KCMMobileShell : public KQuickAddons::ManagedConfigModule
 {
     Q_OBJECT
-    Q_PROPERTY(bool vibrationsEnabled READ vibrationsEnabled WRITE setVibrationsEnabled NOTIFY vibrationsEnabledChanged)
+    Q_PROPERTY(bool navigationPanelEnabled READ navigationPanelEnabled WRITE setNavigationPanelEnabled NOTIFY navigationPanelEnabledChanged)
 
 public:
     KCMMobileShell(QObject *parent, const KPluginMetaData &data, const QVariantList &args);
     virtual ~KCMMobileShell() override = default;
 
-    bool vibrationsEnabled() const;
-    void setVibrationsEnabled(bool vibrationsEnabled);
+    bool navigationPanelEnabled() const;
+    void setNavigationPanelEnabled(bool navigationPanelEnabled);
 
 Q_SIGNALS:
-    void vibrationsEnabledChanged();
+    void navigationPanelEnabledChanged();
 
 private:
     KSharedConfig::Ptr m_config;

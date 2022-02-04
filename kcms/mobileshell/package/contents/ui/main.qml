@@ -22,7 +22,7 @@ KCM.SimpleKCM {
         id: form
         wideMode: false
         
-        Kirigami.Separator {
+        Item {
             Layout.fillWidth: true
             Kirigami.FormData.label: i18n("Navigation Panel")
             Kirigami.FormData.isSection: true
@@ -32,10 +32,10 @@ KCM.SimpleKCM {
             Kirigami.FormData.label: i18n("Remove panel (only use gestures):")
             Layout.maximumWidth: form.width
             text: checked ? i18n("On") : i18n("Off")
-            checked: kcm.vibrationsEnabled
+            checked: !kcm.navigationPanelEnabled
             onCheckStateChanged: {
-                if (checked != kcm.vibrationsEnabled) {
-                    kcm.vibrationsEnabled = checked;
+                if (checked != !kcm.navigationPanelEnabled) {
+                    kcm.navigationPanelEnabled = !checked;
                 }
             }
         }
