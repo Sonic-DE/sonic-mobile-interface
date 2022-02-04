@@ -19,16 +19,16 @@ KCMMobileShell::KCMMobileShell(QObject *parent, const KPluginMetaData &data, con
     setButtons(0);
 }
 
-bool KCMMobileShell::vibrationsEnabled() const
+bool KCMMobileShell::navigationPanelEnabled() const
 {
     auto group = KConfigGroup{m_config, GENERAL_CONFIG_GROUP};
-    return group.readEntry("vibrationsEnabled", true);
+    return group.readEntry("navigationPanelEnabled", true);
 }
 
-void KCMMobileShell::setVibrationsEnabled(bool vibrationsEnabled)
+void KCMMobileShell::setNavigationPanelEnabled(bool navigationPanelEnabled)
 {
     auto group = KConfigGroup{m_config, GENERAL_CONFIG_GROUP};
-    group.writeEntry("vibrationsEnabled", vibrationsEnabled, KConfigGroup::Notify);
+    group.writeEntry("navigationPanelEnabled", navigationPanelEnabled, KConfigGroup::Notify);
     m_config->sync();
 }
 

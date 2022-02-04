@@ -25,6 +25,5 @@ if (!topFound) {
 if (!bottomFound) {
     let bottomPanel = new Panel("org.kde.phone.taskpanel")
     bottomPanel.location = "bottom";
-    bottomPanel.hiding = "windowsbelow"; // VisibilityMode::WindowsGoBelow
-    bottomPanel.height = 8;
+    bottomPanel.height = 2 * gridUnit;
 }
