@@ -22,26 +22,24 @@ import org.kde.plasma.phone.taskpanel 1.0 as TaskPanel
 PlasmaCore.ColorScope {
     id: root
     width: 360
-    colorGroup: showingApp ? PlasmaCore.Theme.HeaderColorGroup : PlasmaCore.Theme.ComplementaryColorGroup
+    
+    // contrasting colour
+    colorGroup: !plasmoid.nativeInterface.allMinimized ? PlasmaCore.Theme.HeaderColorGroup : PlasmaCore.Theme.ComplementaryColorGroup
 
     readonly property color backgroundColor: PlasmaCore.ColorScope.backgroundColor
-    readonly property bool showingApp: !plasmoid.nativeInterface.allMinimized
-
-    readonly property bool hasTasks: tasksModel.count > 0
-
-    property var taskSwitcher: MobileShell.HomeScreenControls.taskSwitcher
 
     Plasmoid.backgroundHints: PlasmaCore.Types.NoBackground
     
+    // toggle visibility of navigation bar (show, or use gestures only)
     Binding {
-        target: plasmoid.Window.window // assumed to be plasma-workspace PanelView
+        target: plasmoid.Window.window // assumed to be plasma-workspace "PanelView" component
         property: "visibilityMode"
         // 0 - VisibilityMode.NormalPanel
         // 3 - VisibilityMode.WindowsGoBelow
         value: MobileShell.MobileShellSettings.navigationPanelEnabled ? 0 : 3
     }
     Binding {
-        target: plasmoid.Window.window // assumed to be plasma-workspace PanelView
+        target: plasmoid.Window.window // assumed to be plasma-workspace "PanelView" component
         property: "height"
         value: MobileShell.MobileShellSettings.navigationPanelEnabled ? PlasmaCore.Units.gridUnit * 2 : 8
     }
@@ -64,33 +62,14 @@ PlasmaCore.ColorScope {
         value: MobileShell.MobileShellSettings.navigationPanelEnabled ? root.width : 0
     }
 
-//END API implementation
-    
     Connections {
         target: plasmoid.nativeInterface
         function onAllMinimizedChanged() {
             MobileShell.HomeScreenControls.homeScreenVisible = plasmoid.nativeInterface.allMinimized
         }
     }
-
-    TaskManager.TasksModel {
-        id: tasksModel
-        groupMode: TaskManager.TasksModel.GroupDisabled
-
-        screenGeometry: plasmoid.screenGeometry
-        sortMode: TaskManager.TasksModel.SortAlpha
-
-        virtualDesktop: virtualDesktopInfo.currentDesktop
-        activity: activityInfo.currentActivity
-    }
-
-    TaskManager.VirtualDesktopInfo {
-        id: virtualDesktopInfo
-    }
-
-    TaskManager.ActivityInfo {
-        id: activityInfo
-    }
+    
+//END API implementation
     
     Window.onWindowChanged: {
         if (!Window.window)
@@ -100,111 +79,31 @@ PlasmaCore.ColorScope {
             return plasmoid.formFactor === PlasmaCore.Types.Vertical ? MobileShell.TopPanelControls.panelHeight : 0
         });
     }
-
-    // navigation panel actions
-    MobileShell.NavigationPanelAction {
-        id: taskSwitcherAction
-        
-        enabled: hasTasks || taskSwitcher.visible
-        iconSource: "mobile-task-switcher"
-        iconSizeFactor: 0.75
-        
-        onTriggered: {
-            plasmoid.nativeInterface.showDesktop = false;
-            
-            if (!taskSwitcher.visible) {
-                taskSwitcher.show(true);
-            } else {
-                // when task switcher is open
-                if (taskSwitcher.taskSwitcherState.wasInActiveTask) {
-                    // restore active window
-                    taskSwitcher.activateWindow(taskSwitcher.taskSwitcherState.currentTaskIndex);
-                } else {
-                    taskSwitcher.hide();
-                }
-            }
-        }
-    }
     
-    MobileShell.NavigationPanelAction {
-        id: homeAction
-        
-        enabled: true
-        iconSource: "start-here-kde"
-        iconSizeFactor: 1
-        onTriggered: {
-            MobileShell.HomeScreenControls.openHomeScreen();
-            plasmoid.nativeInterface.allMinimizedChanged();
-        }
-    }
-    
-    MobileShell.NavigationPanelAction {
-        id: closeAppAction
-        
-        enabled: MobileShell.KWinVirtualKeyboard.visible || taskSwitcher.visible || plasmoid.nativeInterface.hasCloseableActiveWindow
-        // mobile-close-app (from plasma-frameworks) seems to have less margins than icons from breeze-icons
-        iconSizeFactor: MobileShell.KWinVirtualKeyboard.visible ? 1 : 0.75
-        iconSource: MobileShell.KWinVirtualKeyboard.visible ? "go-down-symbolic" : "mobile-close-app"
-        
-        onTriggered: {
-            if (MobileShell.KWinVirtualKeyboard.active) {
-                // close keyboard if it is open
-                MobileShell.KWinVirtualKeyboard.active = false;
-            } else if (taskSwitcher.visible) { 
-                
-                // if task switcher is open, close the current window shown
-                taskSwitcher.tasksModel.requestClose(taskSwitcher.tasksModel.index(taskSwitcher.currentTaskIndex, 0));
-                
-            } else if (plasmoid.nativeInterface.hasCloseableActiveWindow) {
-                
-                // if task switcher is closed, but there is an active window
-                var index = taskSwitcher.tasksModel.activeTask;
-                if (index) {
-                    taskSwitcher.tasksModel.requestClose(index);
-                }
-            }
-        }
-    }
-    
-    // bottom navigation panel
+    // bottom navigation panel component
     Component {
         id: navigationPanel 
-        MobileShell.NavigationPanel {
-            taskSwitcher: root.taskSwitcher
-            backgroundColor: {
-                if (taskSwitcher.visible) {
-                    return Qt.rgba(0, 0, 0, 0.1);
-                } else {
-                    return root.showingApp ? root.backgroundColor : "transparent";
-                }
-            }
-            foregroundColorGroup: (!taskSwitcher.visible && root.showingApp) ? PlasmaCore.Theme.NormalColorGroup : PlasmaCore.Theme.ComplementaryColorGroup
-            
-            // do not enable drag gesture when task switcher is already open
-            // also don't disable drag gesture mid-drag
-            dragGestureEnabled: !taskSwitcher.visible || taskSwitcher.taskSwitcherState.currentlyBeingOpened
-            
-            leftAction: taskSwitcherAction
-            middleAction: homeAction
-            rightAction: closeAppAction
+        NavigationPanelComponent {
+            taskSwitcher: MobileShell.HomeScreenControls.taskSwitcher
         }
     }
     
-    // bottom gesture area
+    // bottom navigation gesture area component
     Component {
         id: navigationGesture 
         MobileShell.NavigationGestureArea {
-            taskSwitcher: root.taskSwitcher
+            taskSwitcher: MobileShell.HomeScreenControls.taskSwitcher
         }
     }
     
-    // load system navigation
+    // load appropriate system navigation component
     Loader {
         id: navigationLoader
         anchors.fill: parent
         sourceComponent: MobileShell.MobileShellSettings.navigationPanelEnabled ? navigationPanel : navigationGesture
     }
     
+    // landscape vs. portrait orientation of panel
     states: [
         State {
             name: "landscape"

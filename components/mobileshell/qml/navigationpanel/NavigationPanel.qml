@@ -20,6 +20,7 @@ import org.kde.plasma.private.mobileshell 1.0 as MobileShell
 Item {
     id: root
     
+    property bool shadow: false
     property color backgroundColor
     property var foregroundColorGroup
     
@@ -32,7 +33,7 @@ Item {
     
     DropShadow {
         anchors.fill: mouseArea
-        visible: !showingApp
+        visible: shadow
         cached: true
         horizontalOffset: 0
         verticalOffset: 1
