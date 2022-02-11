@@ -25,7 +25,6 @@ MobileShell.NavigationPanel {
         if (root.taskSwitcher.visible) {
             return Qt.rgba(0, 0, 0, 0.1);
         } else {
-            console.log(appIsShown);
             return appIsShown ? PlasmaCore.ColorScope.backgroundColor : "transparent";
         }
     }
@@ -43,7 +42,7 @@ MobileShell.NavigationPanel {
     leftAction: MobileShell.NavigationPanelAction {
         id: taskSwitcherAction
         
-        enabled: (root.taskSwitcher.taskCount > 0) || root.taskSwitcher.visible
+        enabled: (root.taskSwitcher.tasksCount > 0) || root.taskSwitcher.visible
         iconSource: "mobile-task-switcher"
         iconSizeFactor: 0.75
         
