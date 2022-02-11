@@ -167,7 +167,7 @@ Item {
     states: [
         State {
             name: "landscape"
-            when: Screen.width > Screen.height
+            when: root.width < root.height
             PropertyChanges {
                 target: icons
                 buttonLength: icons.height * 0.8 / 3
@@ -205,7 +205,7 @@ Item {
             }
         }, State {
             name: "portrait"
-            when: Screen.width <= Screen.height
+            when: root.width >= root.height
             PropertyChanges {
                 target: icons
                 buttonLength: icons.width * 0.8 / 3
