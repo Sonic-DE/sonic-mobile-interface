@@ -40,7 +40,10 @@ PlasmaCore.ColorScope {
     }
     Binding {
         target: plasmoid.Window.window // assumed to be plasma-workspace "PanelView" component
-        property: "height"
+        property: "thickness"
+        // height of panel:
+        // - if navigation panel is enabled: PlasmaCore.Units.gridUnit * 2
+        // - if gestures only is enabled: 8 (just large enough for touch swipe to register, without blocking app content)
         value: MobileShell.MobileShellSettings.navigationPanelEnabled ? PlasmaCore.Units.gridUnit * 2 : 8
     }
     
@@ -75,8 +78,9 @@ PlasmaCore.ColorScope {
         if (!Window.window)
             return;
 
+        // ensure that Plasma sets the correct offset
         Window.window.offset = Qt.binding(() => {
-            return plasmoid.formFactor === PlasmaCore.Types.Vertical ? MobileShell.TopPanelControls.panelHeight : 0
+            return (plasmoid.formFactor === PlasmaCore.Types.Vertical) ? MobileShell.TopPanelControls.panelHeight : MobileShell.TopPanelControls.panelWidth
         });
     }
     
