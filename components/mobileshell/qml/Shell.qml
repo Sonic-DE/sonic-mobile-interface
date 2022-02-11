@@ -40,7 +40,7 @@ QtObject {
     /**
      * Orientation of the mobile device.
      */
-    readonly property bool orientation: (Screen.width <= Screen.height) ? Shell.Portrait : Shell.Landscape   
+    readonly property int orientation: TaskPanelControls.isPortrait ? Shell.Portrait : Shell.Landscape
 
     enum Orientation {
         Landscape,

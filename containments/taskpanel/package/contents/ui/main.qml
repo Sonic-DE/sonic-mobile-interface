@@ -113,18 +113,9 @@ PlasmaCore.ColorScope {
                 // only show on right edge if gestures are not enabled
                 location: MobileShell.MobileShellSettings.navigationPanelEnabled ? PlasmaCore.Types.RightEdge : PlasmaCore.Types.BottomEdge
             }
-            PropertyChanges {
-                target: plasmoid
-                width: PlasmaCore.Units.gridUnit
-                height: PlasmaCore.Units.gridUnit
-            }
         }, State {
             name: "portrait"
             when: MobileShell.Shell.orientation === MobileShell.Shell.Portrait
-            PropertyChanges {
-                target: plasmoid
-                height: PlasmaCore.Units.gridUnit
-            }
             PropertyChanges {
                 target: plasmoid.nativeInterface
                 location: PlasmaCore.Types.BottomEdge
