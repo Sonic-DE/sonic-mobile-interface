@@ -92,13 +92,13 @@ MobileShell.NavigationPanel {
                 MobileShell.KWinVirtualKeyboard.active = false;
             } else if (taskSwitcher.visible) { 
                 // if task switcher is open, close the current window shown
-                let indexToClose = root.taskSwitcher.model.index(root.taskSwitcher.currentTaskIndex, 0);
-                root.taskSwitcher.model.requestClose(indexToClose);
+                let indexToClose = root.taskSwitcher.tasksModel.index(root.taskSwitcher.currentTaskIndex, 0);
+                root.taskSwitcher.tasksModel.requestClose(indexToClose);
                 
             } else if (plasmoid.nativeInterface.hasCloseableActiveWindow) {
                 // if task switcher is closed, but there is an active window
-                if (root.taskSwitcher.model.activeTask !== 0) {
-                    root.taskSwitcher.model.requestClose(root.taskSwitcher.model.activeTask);
+                if (root.taskSwitcher.tasksModel.activeTask !== 0) {
+                    root.taskSwitcher.tasksModel.requestClose(root.taskSwitcher.tasksModel.activeTask);
                 }
             }
         }
