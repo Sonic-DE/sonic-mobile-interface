@@ -52,5 +52,4 @@ private:
     ModemManager::Modem3gpp::Ptr m_3gppModem;
 
     void updateModem();
-    void updateConnection();
 };

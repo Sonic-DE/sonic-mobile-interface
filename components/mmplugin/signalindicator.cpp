@@ -51,11 +51,7 @@ bool SignalIndicator::mobileDataEnabled() const
         return false;
     }
 
-    return m_nmModem->autoconnect();
-
-    //     NetworkManager::ConnectionSettings::Ptr conSettings = m_connection->settings();
-    //     NetworkManager::GsmSetting::Ptr conGsmSettings = conSettings->setting(NetworkManager::Setting::Gsm).dynamicCast<NetworkManager::GsmSetting>();
-    //     return conSettings->autoconnect();
+    return m_nmModem->state() == NetworkManager::Device::Activated || m_nmModem->autoconnect();
 }
 
 void SignalIndicator::setMobileDataEnabled(bool enabled)
@@ -66,10 +62,8 @@ void SignalIndicator::setMobileDataEnabled(bool enabled)
 
     if (!enabled) {
         m_nmModem->setAutoconnect(false);
-        //         if (m_nmModem->activeConnection()) {
-        //             NetworkManager::deactivateConnection(m_nmModem->activeConnection()->path()).waitForFinished();
-        //         }
 
+        // before disconnecting, we ensure the current active connection is set to autoconnect
         for (NetworkManager::Connection::Ptr con : m_nmModem->availableConnections()) {
             if (con->uuid() == m_nmModem->activeConnection()->uuid()) {
                 con->settings()->setAutoconnect(true);
@@ -82,23 +76,14 @@ void SignalIndicator::setMobileDataEnabled(bool enabled)
     } else {
         m_nmModem->setAutoconnect(true);
 
+        // activate the connection that is set to autoconnect
         for (NetworkManager::Connection::Ptr con : m_nmModem->availableConnections()) {
-            qDebug() << con->name() << con->settings()->autoconnect();
-
             if (con->settings()->autoconnect()) {
                 NetworkManager::activateConnection(con->path(), m_nmModem->uni(), "");
                 break;
             }
         }
     }
-
-    //         NetworkManager::ConnectionSettings::Ptr conSettings = m_connection->settings();
-    //         NetworkManager::GsmSetting::Ptr conGsmSettings = conSettings->setting(NetworkManager::Setting::Gsm).dynamicCast<NetworkManager::GsmSetting>();
-    //         conSettings->setAutoconnect(enabled);
-    //
-    //         // we're going to block the thread to ensure state consistency for disconnect
-    //         m_connection->update(conSettings->toMap()).waitForFinished();
-    //         NetworkManager::deactivateConnection()
 }
 
 void SignalIndicator::updateModem()
@@ -122,11 +107,6 @@ void SignalIndicator::updateModem()
             connect(m_nmModem.get(), &NetworkManager::Device::autoconnectChanged, this, [this]() {
                 Q_EMIT mobileDataEnabledChanged();
             });
-            connect(m_nmModem.get(), &NetworkManager::Device::availableConnectionChanged, this, [this]() {
-                updateConnection();
-            });
-
-            updateConnection();
         }
     }
 
@@ -137,32 +117,4 @@ void SignalIndicator::updateModem()
     Q_EMIT mobileDataSupportedChanged();
     Q_EMIT nameChanged();
     Q_EMIT availableChanged();
-}
-
-void SignalIndicator::updateConnection()
-{
-    if (m_nmModem && m_modemDevice) {
-        for (NetworkManager::Connection::Ptr con : m_nmModem->availableConnections()) {
-            NetworkManager::ConnectionSettings::Ptr conSettings = con->settings();
-
-            // TODO: we should verify the sim id as well, not just if the connection is a gsm one
-            // currently though, all connections created don't have their sim id stored for some reason...
-            // conGsmSettings->simId() == m_modemDevice->sim()->simIdentifier()
-
-            if (conSettings->connectionType() == NetworkManager::ConnectionSettings::Gsm) {
-                m_connection = con;
-
-                connect(m_connection.get(), &NetworkManager::Connection::removed, this, [this](const QString &) {
-                    updateConnection();
-                });
-                connect(m_connection.get(), &NetworkManager::Connection::updated, this, [this]() {
-                    Q_EMIT mobileDataEnabledChanged();
-                });
-
-                break;
-            }
-        }
-    }
-
-    Q_EMIT mobileDataEnabledChanged();
 }
