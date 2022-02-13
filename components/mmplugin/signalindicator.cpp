@@ -47,27 +47,36 @@ bool SignalIndicator::mobileDataSupported() const
 
 bool SignalIndicator::mobileDataEnabled() const
 {
-    if (!m_connection) {
+    if (!m_nmModem || !m_connection) {
         return false;
     }
 
-    NetworkManager::ConnectionSettings::Ptr conSettings = m_connection->settings();
-    NetworkManager::GsmSetting::Ptr conGsmSettings = conSettings->setting(NetworkManager::Setting::Gsm).dynamicCast<NetworkManager::GsmSetting>();
-    return conSettings->autoconnect();
+    return m_nmModem->autoconnect();
+
+    //     NetworkManager::ConnectionSettings::Ptr conSettings = m_connection->settings();
+    //     NetworkManager::GsmSetting::Ptr conGsmSettings = conSettings->setting(NetworkManager::Setting::Gsm).dynamicCast<NetworkManager::GsmSetting>();
+    //     return conSettings->autoconnect();
 }
 
 void SignalIndicator::setMobileDataEnabled(bool enabled)
 {
-    if (!m_connection) {
+    if (!m_nmModem || !m_connection) {
         return;
     }
 
-    NetworkManager::ConnectionSettings::Ptr conSettings = m_connection->settings();
-    NetworkManager::GsmSetting::Ptr conGsmSettings = conSettings->setting(NetworkManager::Setting::Gsm).dynamicCast<NetworkManager::GsmSetting>();
-    conSettings->setAutoconnect(enabled);
+    if (!enabled) {
+        m_nmModem->setAutoconnect(false);
+        m_nmModem->disconnectInterface();
+    } else {
+        m_nmModem->setAutoconnect(true);
+    }
 
-    // we're not going to block the thread
-    m_connection->update(conSettings->toMap());
+    //     NetworkManager::ConnectionSettings::Ptr conSettings = m_connection->settings();
+    //     NetworkManager::GsmSetting::Ptr conGsmSettings = conSettings->setting(NetworkManager::Setting::Gsm).dynamicCast<NetworkManager::GsmSetting>();
+    //     conSettings->setAutoconnect(enabled);
+    //
+    //     // we're not going to block the thread
+    //     m_connection->update(conSettings->toMap());
 }
 
 void SignalIndicator::updateModem()
@@ -88,6 +97,9 @@ void SignalIndicator::updateModem()
             qDebug() << "signalindicator: Found NM modem device " << nmDevice->udi();
 
             m_nmModem = nmDevice.objectCast<NetworkManager::ModemDevice>();
+            connect(m_nmModem.get(), &NetworkManager::Device::autoconnectChanged, this, [this]() {
+                Q_EMIT mobileDataEnabledChanged();
+            });
             connect(m_nmModem.get(), &NetworkManager::Device::availableConnectionChanged, this, [this]() {
                 updateConnection();
             });
