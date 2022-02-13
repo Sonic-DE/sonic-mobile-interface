@@ -51,7 +51,7 @@ bool SignalIndicator::mobileDataEnabled() const
         return false;
     }
 
-    return m_nmModem->autoconnect();
+    return m_nmModem->isActive() || m_nmModem->autoconnect();
 
     //     NetworkManager::ConnectionSettings::Ptr conSettings = m_connection->settings();
     //     NetworkManager::GsmSetting::Ptr conGsmSettings = conSettings->setting(NetworkManager::Setting::Gsm).dynamicCast<NetworkManager::GsmSetting>();
@@ -66,17 +66,21 @@ void SignalIndicator::setMobileDataEnabled(bool enabled)
 
     if (!enabled) {
         m_nmModem->setAutoconnect(false);
-        m_nmModem->disconnectInterface();
+        if (m_nmModem->activeConnection()) {
+            NetworkManager::deactivateConnection(m_nmModem->activeConnection()->uuid());
+        }
+        //         m_nmModem->disconnectInterface();
     } else {
         m_nmModem->setAutoconnect(true);
     }
 
-    //     NetworkManager::ConnectionSettings::Ptr conSettings = m_connection->settings();
-    //     NetworkManager::GsmSetting::Ptr conGsmSettings = conSettings->setting(NetworkManager::Setting::Gsm).dynamicCast<NetworkManager::GsmSetting>();
-    //     conSettings->setAutoconnect(enabled);
+    //         NetworkManager::ConnectionSettings::Ptr conSettings = m_connection->settings();
+    //         NetworkManager::GsmSetting::Ptr conGsmSettings = conSettings->setting(NetworkManager::Setting::Gsm).dynamicCast<NetworkManager::GsmSetting>();
+    //         conSettings->setAutoconnect(enabled);
     //
-    //     // we're not going to block the thread
-    //     m_connection->update(conSettings->toMap());
+    //         // we're going to block the thread to ensure state consistency for disconnect
+    //         m_connection->update(conSettings->toMap()).waitForFinished();
+    //         NetworkManager::deactivateConnection()
 }
 
 void SignalIndicator::updateModem()
