@@ -67,7 +67,7 @@ void SignalIndicator::setMobileDataEnabled(bool enabled)
     conSettings->setAutoconnect(enabled);
 
     // we're not going to block the thread
-    m_connection->save();
+    m_connection->update(conSettings->toMap());
 }
 
 void SignalIndicator::updateModem()
@@ -109,23 +109,22 @@ void SignalIndicator::updateConnection()
     if (m_nmModem && m_modemDevice) {
         for (NetworkManager::Connection::Ptr con : m_nmModem->availableConnections()) {
             NetworkManager::ConnectionSettings::Ptr conSettings = con->settings();
-            NetworkManager::GsmSetting::Ptr conGsmSettings = conSettings->setting(NetworkManager::Setting::Gsm).dynamicCast<NetworkManager::GsmSetting>();
 
-            if (conGsmSettings) {
-                qDebug() << conGsmSettings->simId() << " " << m_modemDevice->sim()->simIdentifier(); // TODO
+            // TODO: we should verify the sim id as well, not just if the connection is a gsm one
+            // currently though, all connections created don't have their sim id stored for some reason...
+            // conGsmSettings->simId() == m_modemDevice->sim()->simIdentifier()
 
-                if (conGsmSettings->simId() == m_modemDevice->sim()->simIdentifier()) {
-                    m_connection = con;
+            if (conSettings->connectionType() == NetworkManager::ConnectionSettings::Gsm) {
+                m_connection = con;
 
-                    connect(m_connection.get(), &NetworkManager::Connection::removed, this, [this](const QString &) {
-                        updateConnection();
-                    });
-                    connect(m_connection.get(), &NetworkManager::Connection::updated, this, [this]() {
-                        Q_EMIT mobileDataEnabledChanged();
-                    });
+                connect(m_connection.get(), &NetworkManager::Connection::removed, this, [this](const QString &) {
+                    updateConnection();
+                });
+                connect(m_connection.get(), &NetworkManager::Connection::updated, this, [this]() {
+                    Q_EMIT mobileDataEnabledChanged();
+                });
 
-                    break;
-                }
+                break;
             }
         }
     }
