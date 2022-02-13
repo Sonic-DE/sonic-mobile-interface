@@ -107,6 +107,9 @@ void SignalIndicator::updateModem()
             connect(m_nmModem.get(), &NetworkManager::Device::autoconnectChanged, this, [this]() {
                 Q_EMIT mobileDataEnabledChanged();
             });
+            connect(m_nmModem.get(), &NetworkManager::Device::stateChanged, this, [this](auto, auto, auto) {
+                Q_EMIT mobileDataEnabledChanged();
+            });
         }
     }
 
