@@ -40,6 +40,11 @@ bool SignalIndicator::available() const
     return !ModemManager::modemDevices().isEmpty();
 }
 
+bool SignalIndicator::mobileDataSupported() const
+{
+    return m_connection;
+}
+
 bool SignalIndicator::mobileDataEnabled() const
 {
     if (!m_connection) {
@@ -80,7 +85,13 @@ void SignalIndicator::updateModem()
     // find networkmanager modem
     for (NetworkManager::Device::Ptr nmDevice : NetworkManager::networkInterfaces()) {
         if (nmDevice->udi() == m_modemDevice->uni()) {
+            qDebug() << "signalindicator: Found NM modem device " << m_nmModem->udi();
+
             m_nmModem = nmDevice.objectCast<NetworkManager::ModemDevice>();
+            connect(m_nmModem.get(), &NetworkManager::Device::availableConnectionChanged, this, [this]() {
+                updateConnection();
+            });
+
             updateConnection();
         }
     }
@@ -95,22 +106,26 @@ void SignalIndicator::updateModem()
 
 void SignalIndicator::updateConnection()
 {
-    if (m_nmModem) {
+    if (m_nmModem && m_modemDevice) {
         for (NetworkManager::Connection::Ptr con : m_nmModem->availableConnections()) {
             NetworkManager::ConnectionSettings::Ptr conSettings = con->settings();
             NetworkManager::GsmSetting::Ptr conGsmSettings = conSettings->setting(NetworkManager::Setting::Gsm).dynamicCast<NetworkManager::GsmSetting>();
 
-            if (conGsmSettings->simId() == m_modemDevice->sim()->simIdentifier()) {
-                m_connection = con;
+            if (conGsmSettings) {
+                qDebug() << conGsmSettings->simId() << " " << m_modemDevice->sim()->simIdentifier(); // TODO
 
-                connect(m_connection.get(), &NetworkManager::Connection::removed, this, [this](const QString &) {
-                    updateConnection();
-                });
-                connect(m_connection.get(), &NetworkManager::Connection::updated, this, [this]() {
-                    Q_EMIT mobileDataEnabledChanged();
-                });
+                if (conGsmSettings->simId() == m_modemDevice->sim()->simIdentifier()) {
+                    m_connection = con;
 
-                break;
+                    connect(m_connection.get(), &NetworkManager::Connection::removed, this, [this](const QString &) {
+                        updateConnection();
+                    });
+                    connect(m_connection.get(), &NetworkManager::Connection::updated, this, [this]() {
+                        Q_EMIT mobileDataEnabledChanged();
+                    });
+
+                    break;
+                }
             }
         }
     }
