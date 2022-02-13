@@ -42,12 +42,12 @@ bool SignalIndicator::available() const
 
 bool SignalIndicator::mobileDataSupported() const
 {
-    return m_connection;
+    return m_nmModem && m_modemDevice->sim();
 }
 
 bool SignalIndicator::mobileDataEnabled() const
 {
-    if (!m_nmModem || !m_connection) {
+    if (!m_nmModem) {
         return false;
     }
 
@@ -56,7 +56,7 @@ bool SignalIndicator::mobileDataEnabled() const
 
 void SignalIndicator::setMobileDataEnabled(bool enabled)
 {
-    if (!m_nmModem || !m_connection) {
+    if (!m_nmModem) {
         return;
     }
 

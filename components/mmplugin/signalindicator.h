@@ -45,7 +45,6 @@ Q_SIGNALS:
     void mobileDataEnabledChanged();
 
 private:
-    NetworkManager::Connection::Ptr m_connection;
     NetworkManager::ModemDevice::Ptr m_nmModem;
     ModemManager::ModemDevice::Ptr m_modemDevice;
     ModemManager::Modem::Ptr m_modem;
