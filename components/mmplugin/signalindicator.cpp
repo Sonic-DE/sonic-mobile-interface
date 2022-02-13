@@ -51,7 +51,7 @@ bool SignalIndicator::mobileDataEnabled() const
         return false;
     }
 
-    return m_nmModem->isActive() || m_nmModem->autoconnect();
+    return m_nmModem->activeConnection() || m_nmModem->autoconnect();
 
     //     NetworkManager::ConnectionSettings::Ptr conSettings = m_connection->settings();
     //     NetworkManager::GsmSetting::Ptr conGsmSettings = conSettings->setting(NetworkManager::Setting::Gsm).dynamicCast<NetworkManager::GsmSetting>();
@@ -74,10 +74,11 @@ void SignalIndicator::setMobileDataEnabled(bool enabled)
         m_nmModem->setAutoconnect(true);
 
         for (NetworkManager::Connection::Ptr con : m_nmModem->availableConnections()) {
-            NetworkManager::ConnectionSettings::Ptr conSettings = con->settings();
+            qDebug() << con->name() << con->settings()->autoconnect();
 
-            if (conSettings->autoconnect()) {
+            if (con->settings()->autoconnect()) {
                 NetworkManager::activateConnection(con->path(), m_nmModem->uni(), "");
+                break;
             }
         }
     }
