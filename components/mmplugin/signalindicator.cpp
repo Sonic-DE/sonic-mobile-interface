@@ -67,7 +67,7 @@ void SignalIndicator::setMobileDataEnabled(bool enabled)
     if (!enabled) {
         m_nmModem->setAutoconnect(false);
         if (m_nmModem->activeConnection()) {
-            NetworkManager::deactivateConnection(m_nmModem->activeConnection()->uuid());
+            NetworkManager::deactivateConnection(m_nmModem->activeConnection()->path());
         }
         //         m_nmModem->disconnectInterface();
     } else {
