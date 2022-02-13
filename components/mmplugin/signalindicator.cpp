@@ -66,12 +66,20 @@ void SignalIndicator::setMobileDataEnabled(bool enabled)
 
     if (!enabled) {
         m_nmModem->setAutoconnect(false);
-        if (m_nmModem->activeConnection()) {
-            NetworkManager::deactivateConnection(m_nmModem->activeConnection()->path());
-        }
-        //         m_nmModem->disconnectInterface();
+        //         if (m_nmModem->activeConnection()) {
+        //             NetworkManager::deactivateConnection(m_nmModem->activeConnection()->path()).waitForFinished();
+        //         }
+        m_nmModem->disconnectInterface().waitForFinished();
     } else {
         m_nmModem->setAutoconnect(true);
+
+        for (NetworkManager::Connection::Ptr con : m_nmModem->availableConnections()) {
+            NetworkManager::ConnectionSettings::Ptr conSettings = con->settings();
+
+            if (conSettings->autoconnect()) {
+                NetworkManager::activateConnection(con->path(), m_nmModem->uni(), "");
+            }
+        }
     }
 
     //         NetworkManager::ConnectionSettings::Ptr conSettings = m_connection->settings();
