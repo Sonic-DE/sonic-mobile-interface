@@ -51,7 +51,7 @@ bool SignalIndicator::mobileDataEnabled() const
         return false;
     }
 
-    return m_nmModem->activeConnection() || m_nmModem->autoconnect();
+    return m_nmModem->autoconnect();
 
     //     NetworkManager::ConnectionSettings::Ptr conSettings = m_connection->settings();
     //     NetworkManager::GsmSetting::Ptr conGsmSettings = conSettings->setting(NetworkManager::Setting::Gsm).dynamicCast<NetworkManager::GsmSetting>();
@@ -69,6 +69,15 @@ void SignalIndicator::setMobileDataEnabled(bool enabled)
         //         if (m_nmModem->activeConnection()) {
         //             NetworkManager::deactivateConnection(m_nmModem->activeConnection()->path()).waitForFinished();
         //         }
+
+        for (NetworkManager::Connection::Ptr con : m_nmModem->availableConnections()) {
+            if (con->uuid() == m_nmModem->activeConnection()->uuid()) {
+                con->settings()->setAutoconnect(true);
+            } else {
+                con->settings()->setAutoconnect(false);
+            }
+        }
+
         m_nmModem->disconnectInterface().waitForFinished();
     } else {
         m_nmModem->setAutoconnect(true);
@@ -125,6 +134,7 @@ void SignalIndicator::updateModem()
     connect(m_3gppModem.get(), &ModemManager::Modem3gpp::operatorNameChanged, this, &SignalIndicator::nameChanged);
     connect(m_modem.get(), &ModemManager::Modem::unlockRequiredChanged, this, &SignalIndicator::simLockedChanged);
 
+    Q_EMIT mobileDataSupportedChanged();
     Q_EMIT nameChanged();
     Q_EMIT availableChanged();
 }
