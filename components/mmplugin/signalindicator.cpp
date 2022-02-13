@@ -85,7 +85,7 @@ void SignalIndicator::updateModem()
     // find networkmanager modem
     for (NetworkManager::Device::Ptr nmDevice : NetworkManager::networkInterfaces()) {
         if (nmDevice->udi() == m_modemDevice->uni()) {
-            qDebug() << "signalindicator: Found NM modem device " << m_nmModem->udi();
+            qDebug() << "signalindicator: Found NM modem device " << nmDevice->udi();
 
             m_nmModem = nmDevice.objectCast<NetworkManager::ModemDevice>();
             connect(m_nmModem.get(), &NetworkManager::Device::availableConnectionChanged, this, [this]() {
