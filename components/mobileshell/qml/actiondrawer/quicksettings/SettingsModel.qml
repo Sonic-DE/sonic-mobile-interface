@@ -68,9 +68,9 @@ MobileShell.QuickSettingsModel {
         text: i18n("Mobile Data")
         icon: "network-modem"
         settingsCommand: "plasma-open-settings kcm_mobile_broadband"
-        enabled: PlasmaMM.SignalIndicator.wwanEnabled
+        enabled: PlasmaMM.SignalIndicator.mobileDataEnabled
         function toggle() {
-            PlasmaMM.SignalIndicator.wwanEnabled = !PlasmaMM.SignalIndicator.wwanEnabled
+            PlasmaMM.SignalIndicator.mobileDataEnabled = !PlasmaMM.SignalIndicator.mobileDataEnabled
         }
     }
     MobileShell.QuickSetting {

@@ -2,16 +2,13 @@
 // SPDX-FileCopyrightText: 2022 Devin Lin <devin@kde.org>
 // SPDX-License-Identifier: GPL-2.0-or-later
 
+#include <NetworkManagerQt/GsmSetting>
 #include <NetworkManagerQt/Manager>
 
 #include "signalindicator.h"
 
 SignalIndicator::SignalIndicator()
 {
-    connect(NetworkManager::notifier(), &NetworkManager::Notifier::wwanEnabledChanged, this, [this](bool) {
-        Q_EMIT wwanEnabledChanged();
-    });
-
     connect(ModemManager::notifier(), &ModemManager::Notifier::modemAdded, this, &SignalIndicator::updateModem);
     connect(ModemManager::notifier(), &ModemManager::Notifier::modemRemoved, this, &SignalIndicator::updateModem);
     updateModem();
@@ -43,14 +40,29 @@ bool SignalIndicator::available() const
     return !ModemManager::modemDevices().isEmpty();
 }
 
-bool SignalIndicator::wwanEnabled() const
+bool SignalIndicator::mobileDataEnabled() const
 {
-    return NetworkManager::isWwanEnabled();
+    if (!m_connection) {
+        return false;
+    }
+
+    NetworkManager::ConnectionSettings::Ptr conSettings = m_connection->settings();
+    NetworkManager::GsmSetting::Ptr conGsmSettings = conSettings->setting(NetworkManager::Setting::Gsm).dynamicCast<NetworkManager::GsmSetting>();
+    return conSettings->autoconnect();
 }
 
-void SignalIndicator::setWwanEnabled(bool wwanEnabled)
+void SignalIndicator::setMobileDataEnabled(bool enabled)
 {
-    NetworkManager::setWwanEnabled(wwanEnabled);
+    if (!m_connection) {
+        return;
+    }
+
+    NetworkManager::ConnectionSettings::Ptr conSettings = m_connection->settings();
+    NetworkManager::GsmSetting::Ptr conGsmSettings = conSettings->setting(NetworkManager::Setting::Gsm).dynamicCast<NetworkManager::GsmSetting>();
+    conSettings->setAutoconnect(enabled);
+
+    // we're not going to block the thread
+    m_connection->save();
 }
 
 void SignalIndicator::updateModem()
@@ -59,11 +71,49 @@ void SignalIndicator::updateModem()
         qWarning() << "No modems available";
         return;
     }
-    m_modem = ModemManager::modemDevices()[0]->modemInterface();
-    m_3gppModem = ModemManager::modemDevices()[0]->interface(ModemManager::ModemDevice::GsmInterface).objectCast<ModemManager::Modem3gpp>();
-    Q_EMIT nameChanged();
+
+    // we assume that there is a single modem
+    m_modemDevice = ModemManager::modemDevices()[0];
+    m_modem = m_modemDevice->modemInterface();
+    m_3gppModem = m_modemDevice->interface(ModemManager::ModemDevice::GsmInterface).objectCast<ModemManager::Modem3gpp>();
+
+    // find networkmanager modem
+    for (NetworkManager::Device::Ptr nmDevice : NetworkManager::networkInterfaces()) {
+        if (nmDevice->udi() == m_modemDevice->uni()) {
+            m_nmModem = nmDevice.objectCast<NetworkManager::ModemDevice>();
+            updateConnection();
+        }
+    }
+
     connect(m_modem.get(), &ModemManager::Modem::signalQualityChanged, this, &SignalIndicator::strengthChanged);
     connect(m_3gppModem.get(), &ModemManager::Modem3gpp::operatorNameChanged, this, &SignalIndicator::nameChanged);
     connect(m_modem.get(), &ModemManager::Modem::unlockRequiredChanged, this, &SignalIndicator::simLockedChanged);
+
+    Q_EMIT nameChanged();
     Q_EMIT availableChanged();
+}
+
+void SignalIndicator::updateConnection()
+{
+    if (m_nmModem) {
+        for (NetworkManager::Connection::Ptr con : m_nmModem->availableConnections()) {
+            NetworkManager::ConnectionSettings::Ptr conSettings = con->settings();
+            NetworkManager::GsmSetting::Ptr conGsmSettings = conSettings->setting(NetworkManager::Setting::Gsm).dynamicCast<NetworkManager::GsmSetting>();
+
+            if (conGsmSettings->simId() == m_modemDevice->sim()->simIdentifier()) {
+                m_connection = con;
+
+                connect(m_connection.get(), &NetworkManager::Connection::removed, this, [this](const QString &) {
+                    updateConnection();
+                });
+                connect(m_connection.get(), &NetworkManager::Connection::updated, this, [this]() {
+                    Q_EMIT mobileDataEnabledChanged();
+                });
+
+                break;
+            }
+        }
+    }
+
+    Q_EMIT mobileDataEnabledChanged();
 }
