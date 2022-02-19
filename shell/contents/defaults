@@ -14,3 +14,6 @@ ToolBox=org.kde.plasma.nano.desktoptoolbox
 
 [plasmarc][Theme]
 name=breeze
+
+[Wallpaper]
+Image=Next
