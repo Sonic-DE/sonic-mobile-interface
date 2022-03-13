@@ -1,11 +1,14 @@
 # SPDX-FileCopyrightText: 2014-2020 Marco Martin <mart@kde.org>
 # SPDX-FileCopyrightText: 2017-2021 Bhushan Shah <bshah@kde.org>
 # SPDX-FileCopyrightText: 2019-2021 Nicolas Fella <nicolas.fella@kde.org>
+# SPDX-FileCopyrightText: 2022 Devin Lin <devin@kde.org>
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 cmake_minimum_required(VERSION 3.16)
 
 project(plasma-mobile)
+set(PROJECT_VERSION "5.24.80")
+set(PROJECT_VERSION_MAJOR 5)
 
 set(QT_MIN_VERSION "5.15.0")
 set(KF5_MIN_VERSION "5.90")
@@ -62,6 +65,7 @@ find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS
 )
 
 find_package(LibKWorkspace CONFIG REQUIRED)
+find_package(LibNotificationManager CONFIG REQUIRED)
 
 find_package(KWinDBusInterface)
 set_package_properties(KWinDBusInterface PROPERTIES DESCRIPTION "KWin DBus interface"
@@ -82,6 +86,7 @@ add_subdirectory(components)
 add_subdirectory(homescreens)
 add_subdirectory(quicksettings)
 add_subdirectory(kcms)
+add_subdirectory(libmobileshell)
 
 find_program(PlasmaOpenSettings plasma-open-settings)
 set_package_properties(PlasmaOpenSettings PROPERTIES

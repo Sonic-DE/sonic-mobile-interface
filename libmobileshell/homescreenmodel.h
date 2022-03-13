@@ -9,10 +9,17 @@
 #include <QAbstractListModel>
 #include <QQmlListProperty>
 
-class HomeScreenModel : public QObject
+#include "mobileshell_export.h"
+
+namespace MobileShell
+{
+
+class MOBILESHELL_EXPORT HomeScreenModel : public QObject
 {
     Q_OBJECT
 
 public:
     HomeScreenModel(QObject *parent = nullptr);
 };
+
+} // namespace MobileShell

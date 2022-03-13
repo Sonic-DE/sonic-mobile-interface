@@ -7,10 +7,17 @@
 
 #include <Plasma/Containment>
 
-class HomeScreen : public Plasma::Containment
+#include "mobileshell_export.h"
+
+namespace MobileShell
+{
+
+class MOBILESHELL_EXPORT HomeScreen : public Plasma::Containment
 {
     Q_OBJECT
 
 public:
     HomeScreen(QObject *parent = nullptr, const KPluginMetaData &data = {}, const QVariantList &args = {});
 };
+
+} // namespace MobileShell

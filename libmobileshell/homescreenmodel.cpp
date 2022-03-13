@@ -3,6 +3,8 @@
 
 #include "homescreenmodel.h"
 
+using namespace MobileShell;
+
 HomeScreenModel::HomeScreenModel(QObject *parent)
 {
     //     QQmlEngine *engine = qmlEngine(this);

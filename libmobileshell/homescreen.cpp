@@ -7,6 +7,8 @@
 
 #include <KPackage/PackageLoader>
 
+using namespace MobileShell;
+
 HomeScreen::HomeScreen(QObject *parent, const KPluginMetaData &data, const QVariantList &args)
     : Plasma::Containment{parent, data, args}
 {

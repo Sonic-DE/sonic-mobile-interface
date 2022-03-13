@@ -21,6 +21,7 @@ target_link_libraries(plasma_homescreen_folio
     KF5::Notifications
     KF5::PlasmaQuick
     KF5::WaylandClient
+    PM::LibMobileShell
 )
 
 

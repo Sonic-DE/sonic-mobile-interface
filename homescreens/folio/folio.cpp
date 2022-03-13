@@ -9,6 +9,8 @@
 #include "favoritesmodel.h"
 #include "homescreenutils.h"
 
+#include "quicksetting.h"
+
 #include <QJSEngine>
 #include <QQmlEngine>
 
