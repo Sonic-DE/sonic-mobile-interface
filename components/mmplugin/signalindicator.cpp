@@ -59,29 +59,34 @@ void SignalIndicator::setMobileDataEnabled(bool enabled)
     if (!m_nmModem) {
         return;
     }
-
     if (!enabled) {
         m_nmModem->setAutoconnect(false);
-
-        // before disconnecting, we ensure the current active connection is set to autoconnect
+        // we need to also set all connections to not autoconnect (#182)
         for (NetworkManager::Connection::Ptr con : m_nmModem->availableConnections()) {
-            if (con->uuid() == m_nmModem->activeConnection()->uuid()) {
-                con->settings()->setAutoconnect(true);
-            } else {
-                con->settings()->setAutoconnect(false);
-            }
+            con->settings()->setAutoconnect(false);
         }
-
         m_nmModem->disconnectInterface().waitForFinished();
     } else {
         m_nmModem->setAutoconnect(true);
-
-        // activate the connection that is set to autoconnect
+        // activate the connection that was last used
+        QDateTime latestTimestamp;
+        NetworkManager::Connection::Ptr latestCon;
         for (NetworkManager::Connection::Ptr con : m_nmModem->availableConnections()) {
-            if (con->settings()->autoconnect()) {
-                NetworkManager::activateConnection(con->path(), m_nmModem->uni(), "");
-                break;
+            QDateTime timestamp = con->settings()->timestamp();
+            // if con was not used yet, skip it, otherwise:
+            // if we have no latestTimestamp yet, con is the latest
+            // otherwise, compare the timestamps
+            // in case of a tie, use the first connection that was found
+            if (!timestamp.isNull() && (latestTimestamp.isNull() || timestamp > latestTimestamp)) {
+                latestTimestamp = timestamp;
+                latestCon = con;
             }
+        }
+        // if we found the last used connection
+        if (!latestCon.isNull()) {
+            // set it to autoconnect and connect it immediately
+            latestCon->settings()->setAutoconnect(true);
+            NetworkManager::activateConnection(latestCon->path(), m_nmModem->uni(), "");
         }
     }
 }
