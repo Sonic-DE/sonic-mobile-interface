@@ -20,23 +20,16 @@ import org.kde.notificationmanager 1.1 as Notifications
 PlasmaCore.ColorScope {
     id: root
 
-    property string password
+    property var lockScreenState: LockScreenState {}
+    property var notifModel: Notifications.WatchedNotificationsModel {}
     
     property bool isWidescreen: root.height < root.width * 0.75
     property bool notificationsShown: false
     
     readonly property bool drawerOpen: flickable.openFactor >= 1
     
-    function askPassword() {
-        flickable.goToOpenPosition();
-    }
-    
     colorGroup: PlasmaCore.Theme.ComplementaryColorGroup
     anchors.fill: parent
-    
-    Notifications.WatchedNotificationsModel {
-        id: notifModel
-    }
     
     // wallpaper blur 
     Loader {
@@ -55,8 +48,17 @@ PlasmaCore.ColorScope {
         anchors.fill: parent
         
         openFactor: flickable.openFactor
-        notificationsModel: notifModel
+        notificationsModel: root.notifModel
         onPasswordRequested: root.askPassword()
+    }
+    
+    Connections {
+        target: root.lockScreenState
+        
+        // ensure keypad is opened when password is updated (ex. keyboard)
+        function onPasswordChanged() {
+            flickable.goToOpenPosition()
+        }
     }
 
     FlickContainer {
@@ -67,11 +69,13 @@ PlasmaCore.ColorScope {
         
         keypadHeight: PlasmaCore.Units.gridUnit * 20
         
+        // go to closed position when loaded
         Component.onCompleted: {
             flickable.position = 0;
             flickable.goToClosePosition();
         }
         
+        // update position, and cap it at the keypad height
         onPositionChanged: {
             if (position > keypadHeight) {
                 position = keypadHeight;
@@ -94,10 +98,11 @@ PlasmaCore.ColorScope {
                 
                 fullHeight: root.height
                 
-                notificationsModel: notifModel
+                lockScreenState: root.lockScreenState
+                notificationsModel: root.notifModel
                 onNotificationsShownChanged: root.notificationsShown = notificationsShown
                 
-                onPasswordRequested: root.askPassword()
+                onPasswordRequested: flickable.goToOpenPosition()
                 
                 anchors.top: parent.top
                 anchors.bottom: scrollUpIconLoader.top
@@ -110,14 +115,16 @@ PlasmaCore.ColorScope {
             
             LockScreenWideScreenContent {
                 id: tabletComponent
+                
                 visible: isWidescreen
                 active: visible
                 opacity: 1 - flickable.openFactor
                 
-                notificationsModel: notifModel
+                lockScreenState: root.lockScreenState
+                notificationsModel: root.notifModel
                 onNotificationsShownChanged: root.notificationsShown = notificationsShown
                 
-                onPasswordRequested: root.askPassword()
+                onPasswordRequested: flickable.goToOpenPosition()
                 
                 anchors.topMargin: headerBar.statusBarHeight
                 anchors.top: parent.top
@@ -174,10 +181,10 @@ PlasmaCore.ColorScope {
                     Keypad {
                         id: keypad
                         Layout.fillWidth: true
-                        
                         focus: true
+                        
+                        lockScreenState: root.lockScreenState
                         swipeProgress: flickable.openFactor
-                        onPasswordChanged: flickable.goToOpenPosition()
                     }
                 }
             }
