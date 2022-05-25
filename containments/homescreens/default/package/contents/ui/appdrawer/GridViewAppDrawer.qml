@@ -26,7 +26,7 @@ AbstractAppDrawer {
     contentItem: GridView {
         id: gridView
         clip: true
-        interactive: root.homeScreenState.appDrawerInteractive
+        interactive: contentHeight <= height ? true : root.homeScreenState.appDrawerInteractive
         
         cellWidth: root.contentWidth / Math.floor(root.contentWidth / ((root.availableCellHeight - root.reservedSpaceForLabel) + PlasmaCore.Units.smallSpacing*4))
         cellHeight: root.availableCellHeight
