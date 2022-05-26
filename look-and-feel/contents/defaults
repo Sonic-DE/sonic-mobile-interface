@@ -4,11 +4,74 @@
 # SPDX-FileCopyrightText: 2014 Aaron J. Seigo
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-[kwinrc][Windows]
-Placement=Maximizing
+[Wallpaper]
+Image=Next
+
+## plasmashellrc
 
 [plasmashellrc][Shell]
 ShellPackage=org.kde.plasma.phoneshell
 
-[Wallpaper]
-Image=Next
+## kdeglobals
+
+[kdeglobals][KDE] 
+StartDragDist=10
+
+[kdeglobals][Icons]
+Theme=breeze
+
+[kdeglobals][General]
+BrowserApplication[$e]=!angelfish
+ColorScheme=BreezeLight
+Name=Breeze
+XftHintStyle=
+XftSubPixel=none
+shadeSortColumn=true
+
+[kdeglobals][KDE]
+LookAndFeelPackage=org.kde.plasma.phone
+
+[kdeglobals][QtQuickRendererSettings]
+RenderLoop=basic
+
+## kscreenlockerrc
+
+[kscreenlockerrc][Daemon]
+LockOnStart=true 
+
+## kwinrc
+
+[kwinrc][Plugins]
+org.kde.phone.multitaskingEnabled=false
+kwin4_effect_eyeonscreenEnabled=false
+kwin4_effect_windowapertureEnabled=false
+blurEnabled=false
+contrastEnabled=false
+
+[kwinrc][Windows]
+Placement=Maximizing
+
+[kwinrc][TabBox]
+TouchBorderActivate=9
+TouchBorderAlternativeActivate=9
+BorderActivate=9
+
+[kwinrc][Effect-PresentWindows]
+BorderActivateAll=9
+
+[kwinrc][org.kde.kdecoration2]
+NoPlugin=true
+
+[kwinrc][TouchEdges]
+Left=None
+Right=None
+
+[kwinrc][Wayland]
+InputMethod[$e]=/usr/share/applications/com.github.maliit.keyboard.desktop
+VirtualKeyboardEnabled=true
+
+# applications-blacklistrc
+
+[applications-blacklistrc][Applications]
+blacklist=cuttlefish,org.kde.plasma.themeexplorer,org.kde.klipper,ciborium,syncmonitorhelper,org.kde.okular,wordview,assistant,assistant-qt5,designer,designer-qt5,linguist,linguist-qt5,org.kde.perusecreator,UserFeedbackConsole,org.kde.kuserfeedback-console,avahi-discover,bssh,bvnc,ktelnetservice5,qv4l2,qvidcap
+
