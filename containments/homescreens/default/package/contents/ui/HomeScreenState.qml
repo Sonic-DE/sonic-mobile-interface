@@ -102,7 +102,7 @@ QtObject {
     
     // threshold of movement in a direction before we count that as the defining SwipeState
     readonly property real horizontalSwipeStateDetermineThreshold: PlasmaCore.Units.smallSpacing
-    readonly property real verticalSwipeStateDetermineThreshold: PlasmaCore.Units.smallSpacing * 3
+    readonly property real verticalSwipeStateDetermineThreshold: PlasmaCore.Units.smallSpacing
     
     // we put the offset position here when determining the swipe type, before we
     // transfer movement over to xPosition and yPosition
