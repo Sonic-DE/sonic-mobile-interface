@@ -24,8 +24,8 @@ MobileShell.HomeScreen {
     
     Component.onCompleted: {
         MobileShell.ApplicationListModel.loadApplications();
-        MobileShell.FavoritesModel.applet = plasmoid;
-        MobileShell.FavoritesModel.loadApplications();
+        //MobileShell.FavoritesModel.applet = plasmoid;
+        //MobileShell.FavoritesModel.loadApplications();
         
         forceActiveFocus();
     }
