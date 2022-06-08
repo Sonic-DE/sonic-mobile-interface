@@ -17,6 +17,8 @@ import org.kde.kquickcontrolsaddons 2.0
 import org.kde.plasma.private.containmentlayoutmanager 1.0 as ContainmentLayoutManager 
 import org.kde.plasma.private.mobileshell 1.0 as MobileShell
 
+import org.kde.kirigami 2.19 as Kirigami
+
 MouseArea {
     id: delegate
     width: GridView.view.cellWidth
@@ -30,7 +32,8 @@ MouseArea {
     signal launch(int x, int y, var source, string title, string storageId)
     
     onPressAndHold: {
-        
+        dialogLoader.active = true;
+        dialogLoader.item.open();
     }
     
     function launchApp() {
@@ -39,6 +42,24 @@ MouseArea {
             delegate.launch(0, 0, "", model.applicationName, model.applicationStorageId);
         } else {
             delegate.launch(delegate.x + (PlasmaCore.Units.smallSpacing * 2), delegate.y + (PlasmaCore.Units.smallSpacing * 2), icon.source, model.applicationName, model.applicationStorageId);
+        }
+    }
+    
+    Loader {
+        id: dialogLoader
+        active: false
+        
+        sourceComponent: PlasmaComponents.Menu {
+            title: label.text
+            
+            PlasmaComponents.MenuItem {
+                icon.name: "emblem-favorite"
+                text: i18n("Add to favourites")
+                onClicked: {
+                    MobileShell.FavoritesModel.addFavorite(model.applicationStorageId, 0, MobileShell.ApplicationListModel.Favorites);
+                }
+            }
+            onClosed: dialogLoader.active = false
         }
     }
 
@@ -106,8 +127,6 @@ MouseArea {
 
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
             Layout.fillWidth: true
-            Layout.leftMargin: PlasmaCore.Units.smallSpacing / 2
-            Layout.rightMargin: PlasmaCore.Units.smallSpacing / 2
             Layout.minimumHeight: Math.floor(parent.height - delegate.reservedSpaceForLabel)
             Layout.preferredHeight: Layout.minimumHeight
 

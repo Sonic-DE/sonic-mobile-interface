@@ -42,6 +42,7 @@ GridView {
         contentItem: PlasmaExtras.Heading {
             color: "white"
             level: 1
+            font.weight: Font.Bold
             text: i18n("Applications")
         }
     }

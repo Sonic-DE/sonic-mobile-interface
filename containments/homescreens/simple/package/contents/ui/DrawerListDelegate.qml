@@ -38,10 +38,8 @@ MouseArea {
     }
     
     onPressAndHold: {
-        delegate.grabToImage(function(result) {
-            delegate.Drag.imageSource = result.url
-            dragStarted(result.url, width/2, height/2, model.applicationStorageId)
-        })
+        dialogLoader.active = true;
+        dialogLoader.item.open();
     }
 
     onClicked: {
@@ -53,6 +51,24 @@ MouseArea {
         }
     }
     hoverEnabled: true
+    
+    Loader {
+        id: dialogLoader
+        active: false
+        
+        sourceComponent: PlasmaComponents.Menu {
+            title: label.text
+            
+            PlasmaComponents.MenuItem {
+                icon.name: "emblem-favorite"
+                text: i18n("Remove from favourites")
+                onClicked: {
+                    MobileShell.FavoritesModel.removeFavorite(model.index);
+                }
+            }
+            onClosed: dialogLoader.active = false
+        }
+    }
     
     Rectangle {
         anchors.fill: parent

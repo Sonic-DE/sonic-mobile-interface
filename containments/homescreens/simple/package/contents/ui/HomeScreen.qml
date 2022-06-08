@@ -61,8 +61,8 @@ Item {
                     }
                 }
                 
-                model: MobileShell.ApplicationListModel // MobileShell.FavoritesModel
-                header: QQC2.Control {
+                model: MobileShell.FavoritesModel
+                header: MobileShell.BaseItem {
                     topPadding: Math.round(swipeView.height * 0.2)
                     bottomPadding: PlasmaCore.Units.largeSpacing
                     implicitWidth: favouritesList.width

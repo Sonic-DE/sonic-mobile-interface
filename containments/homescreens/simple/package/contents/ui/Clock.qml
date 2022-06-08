@@ -28,7 +28,7 @@ ColumnLayout {
         
         horizontalAlignment: Text.AlignLeft
         font.weight: Font.Bold // this font weight may switch to regular on distros that don't have a light variant
-        font.pointSize: 24
+        font.pointSize: 28
         layer.enabled: true
         layer.effect: DropShadow {
             verticalOffset: 1
@@ -48,7 +48,7 @@ ColumnLayout {
         style: softwareRendering ? Text.Outline : Text.Normal
         styleColor: softwareRendering ? ColorScope.backgroundColor : "transparent" // no outline, doesn't matter
         
-        font.pointSize: 10
+        font.pointSize: 12
         layer.enabled: true
         layer.effect: DropShadow {
             verticalOffset: 1
