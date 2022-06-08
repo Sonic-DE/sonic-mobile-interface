@@ -22,22 +22,10 @@ MobileShell.HomeScreen {
         search.close();
     }
     
-    property bool componentComplete: false
-    
-    function recalculateMaxFavoriteCount() {
-        if (!componentComplete) {
-            return;
-        }
-        MobileShell.ApplicationListModel.maxFavoriteCount = Math.max(4, Math.floor(Math.min(width, height) / homescreen.homeScreenContents.favoriteStrip.cellWidth));
-    }
-    
     Component.onCompleted: {
         MobileShell.ApplicationListModel.loadApplications();
         MobileShell.FavoritesModel.applet = plasmoid;
         MobileShell.FavoritesModel.loadApplications();
-        
-        componentComplete = true;
-        recalculateMaxFavoriteCount()
         
         forceActiveFocus();
     }
@@ -49,7 +37,7 @@ MobileShell.HomeScreen {
             anchors.fill: parent
             
             // make the homescreen not interactable when task switcher or startup feedback is on
-            //interactive: !root.overlayShown
+            interactive: !root.overlayShown
             searchWidget: search
         }
         
