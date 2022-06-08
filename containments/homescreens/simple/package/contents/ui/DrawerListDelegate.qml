@@ -98,6 +98,14 @@ MouseArea {
                 height: width
                 color: PlasmaCore.Theme.highlightColor
             }
+            
+            layer.enabled: true
+            layer.effect: DropShadow {
+                verticalOffset: 1
+                radius: 4
+                samples: 6
+                color: Qt.rgba(0, 0, 0, 0.5)
+            }
         }
 
         PlasmaComponents.Label {
@@ -116,6 +124,14 @@ MouseArea {
             font.pointSize: PlasmaCore.Theme.defaultFont.pointSize
             font.weight: Font.Bold
             color: "white"
+            
+            layer.enabled: true
+            layer.effect: DropShadow {
+                verticalOffset: 1
+                radius: 4
+                samples: 6
+                color: Qt.rgba(0, 0, 0, 0.5)
+            }
         }
     }
 }
