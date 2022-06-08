@@ -1,0 +1,22 @@
+# SPDX-FileCopyrightText: 2015 Marco Martin <mart@kde.org>
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+[Desktop Entry]
+Encoding=UTF-8
+Keywords=
+Name=Simple
+Type=Service
+
+X-KDE-ServiceTypes=Plasma/Applet,Plasma/Containment
+X-Plasma-API=declarativeappletscript
+X-KDE-Library=plasma_containment_phone_homescreen_simple
+X-KDE-PluginInfo-Author=Devin Lin
+X-KDE-PluginInfo-Category=Containments
+X-KDE-PluginInfo-Email=devin@kde.org
+X-KDE-PluginInfo-License=GPLv2+
+X-KDE-PluginInfo-Name=org.kde.phone.homescreen.simple
+X-KDE-PluginInfo-Version=
+X-KDE-PluginInfo-Website=
+X-Plasma-ContainmentType=Desktop
+X-Plasma-MainScript=ui/main.qml
+X-Plasma-Provides=org.kde.plasma.launchermenu
