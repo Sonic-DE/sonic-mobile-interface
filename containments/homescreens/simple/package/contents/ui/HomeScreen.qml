@@ -16,6 +16,8 @@ import org.kde.plasma.private.mobileshell 1.0 as MobileShell
 
 Item {
     id: root
+    
+    property bool interactive: true
     property var searchWidget
     
     function triggerHomescreen() {
@@ -35,6 +37,7 @@ Item {
     QQC2.SwipeView {
         id: swipeView
         opacity: 1 - searchWidget.openFactor
+        interactive: root.interactive
         
         anchors.fill: parent
         anchors.topMargin: MobileShell.Shell.topMargin
@@ -49,15 +52,18 @@ Item {
             ListView {
                 id: favouritesList
                 clip: true
+                interactive: root.interactive
                 property real delegateHeight: PlasmaCore.Units.gridUnit * 3
                 
                 anchors.fill: parent
                 anchors.leftMargin: Math.round(parent.width * 0.1)
                 anchors.rightMargin: Math.round(parent.width * 0.1)
                 
-                onDraggingChanged: {
-                    if (!dragging && (contentY < originY - PlasmaCore.Units.gridUnit * 3)) {
-                        searchWidget.open();
+                // open wallpaper menu when held on click
+                TapHandler {
+                    onLongPressed: {
+                        plasmoid.action("configure").trigger();
+                        plasmoid.editMode = false;
                     }
                 }
                 
@@ -106,13 +112,6 @@ Item {
                         text: i18n("Add applications to your favourites so they show up here.")
                     }
                 }
-                
-                TapHandler {
-                    onLongPressed: {
-                        plasmoid.action("configure").trigger();
-                        plasmoid.editMode = false;
-                    }
-                }
             }
         }
         
@@ -124,10 +123,18 @@ Item {
             property real horizontalMargin: Math.max(Kirigami.Units.largeSpacing, column.width * 0.1 / 2)
             
             GridAppList {
+                interactive: root.interactive
                 Layout.leftMargin: column.horizontalMargin
                 Layout.rightMargin: column.horizontalMargin
                 Layout.fillWidth: true
                 Layout.fillHeight: true
+                
+                // open search widget when pulled down
+                onDraggingChanged: {
+                    if (!dragging && (contentY < originY - PlasmaCore.Units.gridUnit * 3)) {
+                        searchWidget.open();
+                    }
+                }
             }
         }
     }
