@@ -45,7 +45,7 @@ Item {
         Item {
             height: swipeView.height
             width: swipeView.width
-            
+                    
             ListView {
                 id: favouritesList
                 clip: true
@@ -104,6 +104,13 @@ Item {
                         wrapMode: Text.Wrap
                         horizontalAlignment: Text.AlignHCenter
                         text: i18n("Add applications to your favourites so they show up here.")
+                    }
+                }
+                
+                TapHandler {
+                    onLongPressed: {
+                        plasmoid.action("configure").trigger();
+                        plasmoid.editMode = false;
                     }
                 }
             }

@@ -38,6 +38,7 @@ GridView {
         implicitWidth: gridView.width
         topPadding: PlasmaCore.Units.largeSpacing
         bottomPadding: PlasmaCore.Units.largeSpacing
+        leftPadding: PlasmaCore.Units.smallSpacing
         
         contentItem: PlasmaExtras.Heading {
             color: "white"
@@ -75,23 +76,6 @@ GridView {
             MobileShell.ApplicationListModel.setMinimizedDelegate(index, delegate);
             MobileShell.ApplicationListModel.runApplication(storageId);
             gridView.launched();
-        }
-    }
-
-    PC3.ScrollBar.vertical: PC3.ScrollBar {
-        id: scrollBar
-        interactive: true
-        enabled: true
-        Behavior on opacity {
-            OpacityAnimator {
-                duration: PlasmaCore.Units.longDuration * 2
-                easing.type: Easing.InOutQuad
-            }
-        }
-        implicitWidth: PlasmaCore.Units.smallSpacing
-        contentItem: Rectangle {
-            radius: width/2
-            color: Qt.rgba(1, 1, 1, 0.3)
         }
     }
 }
