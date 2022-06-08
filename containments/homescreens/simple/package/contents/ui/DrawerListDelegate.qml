@@ -76,9 +76,6 @@ MouseArea {
         radius: height / 2
         
         color: delegate.pressed ? Qt.rgba(255, 255, 255, 0.2) : (delegate.containsMouse ? Qt.rgba(255, 255, 255, 0.1) : "transparent")
-        Behavior on color { 
-            ColorAnimation { duration: PlasmaCore.Units.shortDuration } 
-        }
     }
     
     RowLayout {

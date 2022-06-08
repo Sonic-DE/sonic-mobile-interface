@@ -56,7 +56,7 @@ Item {
                 anchors.rightMargin: Math.round(parent.width * 0.1)
                 
                 onDraggingChanged: {
-                    if (!dragging && (contentY < originY)) {
+                    if (!dragging && (contentY < originY - PlasmaCore.Units.gridUnit * 3)) {
                         searchWidget.open();
                     }
                 }
@@ -83,7 +83,7 @@ Item {
                     visible: favouritesList.count == 0
                     opacity: 0.9
                     
-                    anchors.topMargin: Math.round(swipeView.height * 0.2)
+                    anchors.topMargin: Math.round(swipeView.height * 0.2) - (favouritesList.contentY - favouritesList.originY)
                     anchors.fill: parent
                     
                     Kirigami.Icon {

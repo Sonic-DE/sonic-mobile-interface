@@ -24,26 +24,22 @@ MobileShell.HomeScreen {
     
     property bool componentComplete: false
     
-    Component.onCompleted: {
-        MobileShell.ApplicationListModel.loadApplications();
-        forceActiveFocus();
+    function recalculateMaxFavoriteCount() {
+        if (!componentComplete) {
+            return;
+        }
+        MobileShell.ApplicationListModel.maxFavoriteCount = Math.max(4, Math.floor(Math.min(width, height) / homescreen.homeScreenContents.favoriteStrip.cellWidth));
     }
     
-    Plasmoid.onActivated: {
-        console.log("Triggered!", plasmoid.nativeInterface.showingDesktop)
+    Component.onCompleted: {
+        MobileShell.ApplicationListModel.loadApplications();
+        MobileShell.FavoritesModel.applet = plasmoid;
+        MobileShell.FavoritesModel.loadApplications();
         
-        // there's a couple of steps:
-        // - minimize windows
-        // - open app drawer
-        // - restore windows
-        if (!plasmoid.nativeInterface.showingDesktop) {
-            plasmoid.nativeInterface.showingDesktop = true;
-        } else if (homescreen.homeScreenState.currentView === MobileShell.HomeScreenState.PageView) {
-            homescreen.homeScreenState.openAppDrawer()
-        } else {
-            plasmoid.nativeInterface.showingDesktop = false
-            homescreen.homeScreenState.closeAppDrawer()
-        }
+        componentComplete = true;
+        recalculateMaxFavoriteCount()
+        
+        forceActiveFocus();
     }
     
     // homescreen component
@@ -62,6 +58,14 @@ MobileShell.HomeScreen {
             id: search
             anchors.fill: parent
             visible: openFactor > 0
+            
+             // close search component when task switcher is shown or hidden
+            Connections {
+                target: MobileShell.HomeScreenControls.taskSwitcher
+                function onVisibleChanged() {
+                    searchWidget.close();
+                }
+            }
         }
     }
 }
