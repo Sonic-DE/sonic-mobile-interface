@@ -69,8 +69,9 @@ PlasmaCore.ColorScope {
             
             anchors {
                 top: mediaWidget.bottom
-                topMargin: 0
+                topMargin: PlasmaCore.Units.largeSpacing
                 bottom: parent.bottom
+                bottomMargin: 0
                 right: quickSettings.left
                 left: parent.left
             }
@@ -98,7 +99,7 @@ PlasmaCore.ColorScope {
                 Layout.maximumWidth: PlasmaCore.Units.gridUnit * 25
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-                Layout.topMargin: minWidthHeight * 0.02
+                Layout.topMargin: this.list.currentItem.height
             }
         }
         
