@@ -6,7 +6,8 @@
  */
 
 import QtQuick 2.15
-import QtQuick.Layouts 1.1
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 import QtQuick.Window 2.2
 import QtGraphicalEffects 1.12
 
@@ -29,17 +30,17 @@ Item {
     /**
      * The notification model for the widget.
      */
-    property var historyModel: []
+    property var historyModel
     
     /**
      * The type of notification model used for the widget.
      */
-    property int historyModelType: NotificationsModelType.NotificationsModel
+    property int historyModelType
     
     /**
      * The notification model settings for the widget.
      */
-    property var notificationSettings: NotificationManager.Settings {}
+    property var notificationSettings
     
     /**
      * Whether invoking notification actions requires authentiation of some sort.
@@ -54,6 +55,8 @@ Item {
      * Whether the widget has notifications.
      */
     readonly property bool hasNotifications: list.count > 0
+    
+    readonly property bool doNotDisturbModeEnabled: !isNaN(notificationSettings.notificationsInhibitedUntil)
     
     enum ModelType {
         NotificationsModel, // used in the logged-in shell
@@ -88,6 +91,23 @@ Item {
     }
 
     /**
+     * Toggles Do Not Disturb mode.
+     */
+    function toggleDoNotDisturbMode() {
+        if (doNotDisturbModeEnabled) {
+            notificationSettings.defaults();
+        } else {
+            var until = new Date();
+            
+            until.setFullYear(until.getFullYear() + 1);
+            
+            notificationSettings.notificationsInhibitedUntil = until;
+        }
+        
+        notificationSettings.save();
+    }
+    
+    /**
      * Open the system notification settings.
      */
     function openNotificationSettings() {
@@ -102,33 +122,44 @@ Item {
         intervalAlignment: PlasmaCore.Types.AlignToMinute
     }
     
+    // implement background clicking signal
+    MouseArea {
+        anchors.fill: parent
+        onClicked: backgroundClicked()
+        z: -1 // ensure that this is below notification items so we don't steal button clicks
+    }
+
     ListView {
         id: list
         model: historyModel
-        currentIndex: -1
+        
+        clip: true
+        
+        currentIndex: 0
         
         property var pendingNotificationWithAction
+
+        readonly property bool listOverflowing: contentItem.childrenRect.height + toolButtons.height + spacing >= root.height
         
+        height: count === 0 ? 0 : listOverflowing ? root.height - toolButtons.height : contentItem.childrenRect.height + spacing
+        
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
+        }
+                
         boundsBehavior: Flickable.StopAtBounds
         spacing: Kirigami.Units.largeSpacing
-        
-        anchors.fill: parent
 
         // TODO keyboard focus
         highlightMoveDuration: 0
         highlightResizeDuration: 0
         highlight: Item {} 
-        
+
         section {
             property: "isInGroup"
             criteria: ViewSection.FullString
-        }
-
-        // implement background clicking signal
-        MouseArea {
-            anchors.fill: parent
-            onClicked: root.backgroundClicked()
-            z: -1 // ensure that this is below notification items so we don't steal button clicks
         }
         
         PlasmaExtras.PlaceholderMessage {
@@ -150,25 +181,40 @@ Item {
         }
         
         add: Transition {
-            SequentialAnimation {
-                PropertyAction { property: "opacity"; value: 0 }
-                PauseAnimation { duration: PlasmaCore.Units.longDuration }
+            //SequentialAnimation {
+                //PropertyAction { property: "opacity"; value: 0 }
+                //PauseAnimation { duration: PlasmaCore.Units.longDuration }
                 ParallelAnimation {
                     NumberAnimation { property: "opacity"; from: 0; to: 1; duration: PlasmaCore.Units.longDuration }
                     NumberAnimation { property: "height"; from: 0; duration: PlasmaCore.Units.longDuration }
                 }
-            }
+            //}
         }
         addDisplaced: Transition {
             NumberAnimation { properties: "y"; duration:  PlasmaCore.Units.longDuration }
         }
+        remove: Transition {
+            SequentialAnimation {
+                ParallelAnimation {
+                    NumberAnimation { property: "opacity"; from: 1; to: 0; duration: PlasmaCore.Units.longDuration }
+                    NumberAnimation { property: "height"; to: 0; duration: PlasmaCore.Units.longDuration }
+                }
+                PauseAnimation { duration: PlasmaCore.Units.longDuration }
+            }
+        }
         removeDisplaced: Transition {
+            SequentialAnimation {
+                NumberAnimation { properties: "y"; duration:  PlasmaCore.Units.longDuration }
+            }
+        }
+        moveDisplaced: Transition {
             SequentialAnimation {
                 PauseAnimation { duration: PlasmaCore.Units.longDuration }
                 NumberAnimation { properties: "y"; duration:  PlasmaCore.Units.longDuration }
             }
         }
 
+        
         function isRowExpanded(row) {
             var idx = historyModel.index(row, 0);
             return historyModel.data(idx, NotificationManager.Notifications.IsGroupExpandedRole);
@@ -191,11 +237,21 @@ Item {
                     }
                 }
             }
+            
+            forceLayout();
         }
         
         delegate: Loader {
             id: delegateLoader
-            width: list.width
+            
+            anchors {
+                left: parent ? parent.left : undefined
+                leftMargin: PlasmaCore.Units.largeSpacing
+                right: parent ? parent.right : undefined
+                rightMargin: PlasmaCore.Units.largeSpacing
+            }
+            
+            height: model.isGroup ? groupDelegate.height : notificationDelegate.height
             sourceComponent: model.isGroup ? groupDelegate : notificationDelegate
             
             required property var model
@@ -213,12 +269,15 @@ Item {
             
             Component {
                 id: notificationDelegate
-                ColumnLayout {
+                
+                Column {
                     spacing: PlasmaCore.Units.smallSpacing
+                    
+                    height: notificationItem.height + showMoreLoader.height
                     
                     NotificationItem {
                         id: notificationItem
-                        Layout.fillWidth: true
+                        width: parent.width
                         
                         model: delegateLoader.model
                         modelIndex: delegateLoader.index
@@ -234,6 +293,8 @@ Item {
                     }
                     
                     Loader {
+                        id: showMoreLoader
+                        
                         height: visible ? implicitHeight : 0
                         visible: active
                         active: {
@@ -242,7 +303,7 @@ Item {
                                 return false;
                             
                             return (model.groupChildrenCount > model.expandedGroupChildrenCount || model.isGroupExpanded)
-                                    && delegateLoader.ListView.nextSection !== delegateLoader.ListView.section
+                                && delegateLoader.ListView.nextSection != delegateLoader.ListView.section;
                         }
                         
                         sourceComponent: PlasmaComponents3.ToolButton {
@@ -250,9 +311,79 @@ Item {
                             text: model.isGroupExpanded ? i18n("Show Fewer")
                                                         : i18nc("Expand to show n more notifications",
                                                                 "Show %1 More", (model.groupChildrenCount - model.expandedGroupChildrenCount))
-                            onClicked: list.setGroupExpanded(model.index, !model.isGroupExpanded)
+                            onClicked: {
+                                list.setGroupExpanded(model.index, !model.isGroupExpanded)
+                            }
                         }
                     }
+                }
+            }
+        }
+    }
+    
+    Item {
+        id: toolButtons
+            
+        z: 2
+        
+        width: root.width
+        height: toolLayout.implicitHeight + PlasmaCore.Units.largeSpacing
+        
+        anchors {
+            top: list.bottom
+            left: parent.left
+            right: parent.right
+        }
+        
+        Rectangle {
+            visible: hasNotifications
+                                
+            anchors {
+                top: toolButtons.top
+                left: toolButtons.left
+                right: toolButtons.right
+            }
+            
+            height: 1
+            
+            opacity: 0.25
+            color: PlasmaCore.Theme.textColor
+        }
+        
+        RowLayout {
+            id: toolLayout
+            
+            anchors {
+                fill: parent
+                leftMargin: PlasmaCore.Units.smallSpacing
+                rightMargin: PlasmaCore.Units.smallSpacing
+            }
+            
+            PlasmaComponents3.ToolButton {
+                Layout.alignment: hasNotifications ? Qt.AlignLeft : Qt.AlignHCenter
+                
+                font.bold: true
+                
+                icon.name: doNotDisturbModeEnabled ? "notifications" : "notifications-disabled"
+                text: doNotDisturbModeEnabled ? "Enable Notifications" : "Do Not Disturb"
+                onClicked: {
+                    toggleDoNotDisturbMode();
+                }
+            }
+            
+            PlasmaComponents3.ToolButton {
+                id: clearButton
+                
+                Layout.alignment: Qt.AlignRight
+                
+                visible: hasNotifications
+                
+                font.bold: true
+                
+                icon.name: "edit-clear-history"
+                text: "Clear All Notifications"
+                onClicked: {
+                    clearHistory();
                 }
             }
         }
