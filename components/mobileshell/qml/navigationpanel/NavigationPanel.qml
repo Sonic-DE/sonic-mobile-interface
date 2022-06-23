@@ -31,17 +31,17 @@ Item {
     property NavigationPanelAction middleAction
     property NavigationPanelAction rightAction
     
-    DropShadow {
-        anchors.fill: mouseArea
-        visible: shadow
-        cached: true
-        horizontalOffset: 0
-        verticalOffset: 1
-        radius: 4.0
-        samples: 17
-        color: Qt.rgba(0,0,0,0.8)
-        source: icons
-    }
+    //DropShadow {
+        //anchors.fill: mouseArea
+        //visible: shadow
+        //cached: true
+        //horizontalOffset: 0
+        //verticalOffset: 1
+        //radius: 4.0
+        //samples: 17
+        //color: Qt.rgba(0, 0, 0, 0.8)
+        //source: icons
+    //}
     
     MouseArea {
         id: mouseArea
