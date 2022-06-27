@@ -30,5 +30,5 @@ Placement=Maximizing
 NoPlugin=true
 
 [kwinrc][Wayland]
-InputMethod[$e]=/usr/share/applications/com.github.maliit.keyboard.desktop
+InputMethod=/usr/share/applications/com.github.maliit.keyboard.desktop
 VirtualKeyboardEnabled=true
