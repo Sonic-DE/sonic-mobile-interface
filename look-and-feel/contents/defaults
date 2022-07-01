@@ -16,11 +16,6 @@ Theme=breeze
 ColorScheme=BreezeLight
 Name=Breeze
 
-## kscreenlockerrc
-
-[kscreenlockerrc][Daemon]
-LockOnStart=true 
-
 ## kwinrc
 
 [kwinrc][Windows]
@@ -28,7 +23,3 @@ Placement=Maximizing
 
 [kwinrc][org.kde.kdecoration2]
 NoPlugin=true
-
-[kwinrc][Wayland]
-InputMethod=/usr/share/applications/com.github.maliit.keyboard.desktop
-VirtualKeyboardEnabled=true
