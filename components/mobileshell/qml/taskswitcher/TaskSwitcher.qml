@@ -115,6 +115,7 @@ Item {
     function instantHide() {
         opacity = 0;
         visible = false;
+        closeAllButton.closeRequested = false;
     }
     
     function hide() {
@@ -171,9 +172,11 @@ Item {
         to: 0
         duration: PlasmaCore.Units.shortDuration
         easing.type: Easing.InOutQuad
+                
         onFinished: {
             root.visible = false;
             tasksModel.taskReorderingEnabled = true;
+            closeAllButton.closeRequested = false;
         }
     }
 
@@ -204,11 +207,15 @@ Item {
         
         FlickContainer {
             id: flickable
+            
             anchors.fill: parent
+            
             taskSwitcherState: root.taskSwitcherState
             
             // the item is effectively anchored to the flickable bounds
             TaskList {
+                id: taskList
+                
                 taskSwitcher: root
                 
                 opacity: {
@@ -223,6 +230,36 @@ Item {
                 x: flickable.contentX
                 width: flickable.width
                 height: flickable.height
+                
+                PlasmaComponents.ToolButton {
+                    id: closeAllButton
+                    
+                    property bool closeRequested: false
+                    
+                    anchors {
+                        bottom: parent.bottom
+                        bottomMargin: taskList.taskY / 2
+                        horizontalCenter: parent.horizontalCenter
+                    }
+                    
+                    PlasmaCore.ColorScope.colorGroup: PlasmaCore.Theme.ComplementaryColorGroup
+                    PlasmaCore.ColorScope.inherit: false
+                    
+                    visible: !taskSwitcherState.currentlyBeingOpened && !taskSwitcherState.currentlyBeingClosed
+                    
+                    icon.name: "edit-clear-history"
+                    
+                    font.pointSize: PlasmaCore.Theme.defaultFont.pointSize * 1.5
+                    text: closeRequested ? "Are you sure?" : "Close All"
+                    
+                    onClicked: {
+                        if (closeRequested) {
+                            taskList.closeAll();
+                        } else {
+                            closeRequested = true;
+                        }
+                    }
+                }
             }
         }
     }
