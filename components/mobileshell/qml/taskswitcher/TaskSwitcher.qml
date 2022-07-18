@@ -248,10 +248,8 @@ Item {
                     visible: !taskSwitcherState.currentlyBeingOpened && !taskSwitcherState.currentlyBeingClosed
                     
                     icon.name: "edit-clear-history"
-                    icon.height: PlasmaCore.Units.iconSizes.medium
-                    icon.width: PlasmaCore.Units.iconSizes.medium
                     
-                    font.pointSize: PlasmaCore.Theme.defaultFont.pointSize * 1.5
+                    font.bold: true
                     text: closeRequested ? "Tap one more time to close all" : "Close All"
                     
                     onClicked: {
