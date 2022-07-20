@@ -19,6 +19,7 @@ Item {
     required property var taskSwitcher
     readonly property var taskSwitcherState: taskSwitcher.taskSwitcherState
     
+    // account for system header and footer offset (center the preview image)
     readonly property real taskY: {
         let headerHeight = MobileShell.Shell.topMargin;
         let footerHeight = MobileShell.Shell.bottomMargin;
@@ -85,7 +86,6 @@ Item {
             // this is the actual displayed x-position on screen
             x: listX + repeater.leftMargin - taskSwitcherState.xPosition
             
-            // account for system header and footer offset (center the preview image)
             y: root.taskY
             
             // ensure current task is above others
