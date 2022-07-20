@@ -245,14 +245,20 @@ Item {
                     PlasmaCore.ColorScope.colorGroup: PlasmaCore.Theme.ComplementaryColorGroup
                     PlasmaCore.ColorScope.inherit: false
                     
-                    visible: !taskSwitcherState.currentlyBeingOpened && !taskSwitcherState.currentlyBeingClosed
+                    opacity: taskSwitcherState.currentlyBeingOpened || taskSwitcherState.currentlyBeingClosed || !root.visible ? 0.0 : 1.0
+                    
+                    Behavior on opacity {
+                        NumberAnimation {
+                            duration: PlasmaCore.Units.shortDuration
+                        }
+                    }
                     
                     icon.name: "edit-clear-history"
                     icon.height: PlasmaCore.Units.iconSizes.medium
                     icon.width: PlasmaCore.Units.iconSizes.medium
                     
                     font.pointSize: PlasmaCore.Theme.defaultFont.pointSize * 1.5
-                    text: closeRequested ? "Tap one more time to close all" : "Close All"
+                    text: closeRequested ? "Confirm Close All" : "Close All"
                     
                     onClicked: {
                         if (closeRequested) {
