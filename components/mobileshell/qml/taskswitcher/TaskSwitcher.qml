@@ -254,10 +254,7 @@ Item {
                     }
                     
                     icon.name: "edit-clear-history"
-                    icon.height: PlasmaCore.Units.iconSizes.medium
-                    icon.width: PlasmaCore.Units.iconSizes.medium
                     
-                    font.pointSize: PlasmaCore.Theme.defaultFont.pointSize * 1.5
                     text: closeRequested ? "Confirm Close All" : "Close All"
                     
                     onClicked: {
