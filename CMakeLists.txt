@@ -55,6 +55,7 @@ endif()
 
 find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS
     I18n
+    GlobalAccel
     KIO
     Plasma
     PlasmaQuick
@@ -67,6 +68,8 @@ find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS
     Declarative
 )
 find_package(KF5KirigamiAddons 0.6 REQUIRED)
+
+find_package(KWinEffects REQUIRED)
 
 find_package(LibKWorkspace CONFIG REQUIRED)
 
@@ -90,6 +93,7 @@ add_subdirectory(containments)
 add_subdirectory(components)
 add_subdirectory(quicksettings)
 add_subdirectory(kcms)
+add_subdirectory(kwin)
 
 find_program(PlasmaOpenSettings plasma-open-settings)
 set_package_properties(PlasmaOpenSettings PROPERTIES
