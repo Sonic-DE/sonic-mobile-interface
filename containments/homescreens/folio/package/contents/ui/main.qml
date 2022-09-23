@@ -40,20 +40,18 @@ MobileShell.HomeScreen {
         forceActiveFocus();
     }
     
-    Plasmoid.onActivated: {
-        console.log("Triggered!", plasmoid.nativeInterface.showingDesktop)
-        
+    Plasmoid.onActivated: {        
         // there's a couple of steps:
         // - minimize windows
         // - open app drawer
         // - restore windows
-        if (!plasmoid.nativeInterface.showingDesktop) {
+        if (!plasmoid.nativeInterface.showingDesktop && !MobileShell.HomeScreenControls.homeScreenVisible) {
             plasmoid.nativeInterface.showingDesktop = true;
-        } else if (homescreen.homeScreenState.currentView === MobileShell.HomeScreenState.PageView) {
-            homescreen.homeScreenState.openAppDrawer()
+        } else if (homescreen.homeScreenState.currentView === HomeScreenState.PageView) {
+            homescreen.homeScreenState.openAppDrawer();
         } else {
-            plasmoid.nativeInterface.showingDesktop = false
-            homescreen.homeScreenState.closeAppDrawer()
+            plasmoid.nativeInterface.showingDesktop = false;
+            homescreen.homeScreenState.closeAppDrawer();
         }
     }
     
