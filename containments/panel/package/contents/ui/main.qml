@@ -90,7 +90,10 @@ Item {
     
     Component.onCompleted: {
         // we want to bind global volume shortcuts here
-        MobileShell.AudioProvider.bindShortcuts = true;
+        MobileShell.VolumeProvider.bindShortcuts = true;
+        
+        // initialize lockscreen overlay
+        plasmoid.nativeInterface.item = root;
     }
     
     TaskManager.VirtualDesktopInfo {
