@@ -34,6 +34,7 @@ include(ECMMarkNonGuiExecutable)
 include(ECMGenerateHeaders)
 include(ECMQMLModules)
 include(ECMGenerateQmlTypes)
+include(ECMConfiguredInstall)
 include(ECMFindQmlModule)
 include(GenerateExportHeader)
 include(KDEGitCommitHooks)
@@ -46,6 +47,7 @@ find_package(Qt${QT_MAJOR_VERSION} ${QT_MIN_VERSION} CONFIG REQUIRED
     Core
     Qml
     Quick
+    WaylandClient
 )
 if (QT_MAJOR_VERSION STREQUAL "5")
     if (QUICK_COMPILER)
@@ -65,6 +67,29 @@ find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS
     NetworkManagerQt
     KCMUtils
     Declarative
+)
+
+find_package(Wayland REQUIRED)
+find_package(PlasmaWaylandProtocols 1.8 CONFIG)
+set_package_properties(PlasmaWaylandProtocols PROPERTIES
+    TYPE REQUIRED
+    PURPOSE "Collection of Plasma-specific Wayland protocols"
+    URL "https://invent.kde.org/libraries/plasma-wayland-protocols/"
+)
+
+if (QT_MAJOR_VERSION EQUAL "5")
+    find_package(QtWaylandScanner)
+    set_package_properties(QtWaylandScanner PROPERTIES
+        TYPE REQUIRED
+        PURPOSE "Required for building with Wayland above-lock-screen support"
+    )
+endif()
+
+find_package(KWinEffects 5.26.0 CONFIG)
+set_package_properties(KWinEffects PROPERTIES DESCRIPTION "KWin (Effects)"
+    TYPE RECOMMENDED
+    PURPOSE "Appropriate KWin version is expected to support above lockscreen mode (shell overlay)"
+    URL "https://invent.kde.org/plasma/kwin/"
 )
 
 find_package(LibKWorkspace CONFIG REQUIRED)
