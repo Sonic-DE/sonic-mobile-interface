@@ -13,6 +13,7 @@ class PhonePanel : public Plasma::Containment
 {
     Q_OBJECT
     Q_PROPERTY(QQuickItem *item WRITE initializeOverlay)
+    Q_PROPERTY(bool lockscreenShown READ lockscreenShown NOTIFY lockscreenShownChanged)
 
 public:
     PhonePanel(QObject *parent, const KPluginMetaData &data, const QVariantList &args);
@@ -20,9 +21,15 @@ public:
 
     void initializeOverlay(QQuickItem *item);
 
+    bool lockscreenShown();
+
+Q_SIGNALS:
+    void lockscreenShownChanged();
+
 private Q_SLOTS:
     void slotLockscreenStateChanged(bool active);
 
 private:
     QWindow *m_window = nullptr;
+    bool m_lockscreenShown = false;
 };

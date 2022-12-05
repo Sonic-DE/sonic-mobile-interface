@@ -29,6 +29,9 @@ Item {
     // only opaque if there are no maximized windows on this screen
     readonly property bool showingApp: visibleMaximizedWindowsModel.count > 0
     readonly property color backgroundColor: topPanel.colorScopeColor
+    
+    // whether this is an overlay over the lockscreen
+    readonly property bool lockscreenShown: plasmoid.nativeInterface.lockscreenShown
 
     Plasmoid.backgroundHints: PlasmaCore.Types.NoBackground
     

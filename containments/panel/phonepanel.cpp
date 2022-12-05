@@ -31,6 +31,8 @@ public:
     {
         QPlatformNativeInterface *native = qGuiApp->platformNativeInterface();
         wl_surface *surface = reinterpret_cast<wl_surface *>(native->nativeResourceForWindow(QByteArrayLiteral("surface"), window));
+
+        Q_ASSERT(surface);
         allow(surface);
     }
 };
@@ -38,6 +40,18 @@ public:
 PhonePanel::PhonePanel(QObject *parent, const KPluginMetaData &data, const QVariantList &args)
     : Plasma::Containment(parent, data, args)
 {
+    // get lockscreen state
+    QDBusMessage request = QDBusMessage::createMethodCall(QStringLiteral("org.freedesktop.ScreenSaver"),
+                                                          QStringLiteral("/ScreenSaver"),
+                                                          QStringLiteral("org.freedesktop.ScreenSaver"),
+                                                          QStringLiteral("GetActive"));
+    const QDBusReply<bool> response = QDBusConnection::sessionBus().call(request);
+
+    m_lockscreenShown = response.isValid() ? response.value() : false;
+
+    qDebug() << "initial lockscreen state:" << m_lockscreenShown;
+
+    // listen to future state changes
     QDBusConnection::sessionBus().connect(QStringLiteral("org.freedesktop.ScreenSaver"),
                                           QStringLiteral("/ScreenSaver"),
                                           QStringLiteral("org.freedesktop.ScreenSaver"),
@@ -61,8 +75,18 @@ void PhonePanel::initializeOverlay(QQuickItem *item)
     aboveLockscreen.allowWindow(m_window);
 }
 
+bool PhonePanel::lockscreenShown()
+{
+    return m_lockscreenShown;
+}
+
 void PhonePanel::slotLockscreenStateChanged(bool active)
 {
+    m_lockscreenShown = active;
+    Q_EMIT lockscreenShownChanged();
+
+    qDebug() << "lockscreen state changed:" << m_lockscreenShown;
+
     if (active && m_window) {
         KWindowSystem::requestXdgActivationToken(m_window, 0, QStringLiteral("org.kde.plasmashell.desktop"));
 
