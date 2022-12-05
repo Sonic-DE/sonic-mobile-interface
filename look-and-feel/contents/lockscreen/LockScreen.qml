@@ -66,17 +66,6 @@ PlasmaCore.ColorScope {
         }
     }
     
-    // header bar and action drawer
-    HeaderComponent {
-        id: headerBar
-        z: 1 // on top of flick area
-        anchors.fill: parent
-        
-        openFactor: flickable.openFactor
-        notificationsModel: root.notifModel
-        onPasswordRequested: root.askPassword()
-    }
-    
     Connections {
         target: root.lockScreenState
         
