@@ -93,7 +93,7 @@ Item {
     
     Component.onCompleted: {
         // we want to bind global volume shortcuts here
-        MobileShell.VolumeProvider.bindShortcuts = true;
+        MobileShell.AudioProvider.bindShortcuts = true;
         
         // initialize lockscreen overlay
         plasmoid.nativeInterface.item = root;
@@ -131,9 +131,12 @@ Item {
         id: topPanel
         anchors.fill: parent
         
-        showDropShadow: !root.showingApp
-        colorGroup: root.showingApp ? PlasmaCore.Theme.HeaderColorGroup : PlasmaCore.Theme.ComplementaryColorGroup
-        backgroundColor: !root.showingApp ? "transparent" : root.backgroundColor
+        showDropShadow: root.lockscreenShown || !root.showingApp
+        colorGroup: (!root.lockscreenShown && root.showingApp) ? PlasmaCore.Theme.HeaderColorGroup : PlasmaCore.Theme.ComplementaryColorGroup
+        backgroundColor: (!root.lockscreenShown && root.showingApp) ? root.backgroundColor : "transparent"
+        
+        showSecondRow: !root.lockscreenShown
+        showTime: !root.lockscreenShown
     }
     
     MobileShell.ActionDrawerOpenSurface {
