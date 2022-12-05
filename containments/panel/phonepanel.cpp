@@ -38,7 +38,7 @@ public:
 PhonePanel::PhonePanel(QObject *parent, const KPluginMetaData &data, const QVariantList &args)
     : Plasma::Containment(parent, data, args)
 {
-    QDBusConnection::sessionBus().connect(QStringLiteral("org.kde.freedesktop.ScreenSaver"),
+    QDBusConnection::sessionBus().connect(QStringLiteral("org.freedesktop.ScreenSaver"),
                                           QStringLiteral("/ScreenSaver"),
                                           QStringLiteral("org.freedesktop.ScreenSaver"),
                                           QStringLiteral("ActiveChanged"),
