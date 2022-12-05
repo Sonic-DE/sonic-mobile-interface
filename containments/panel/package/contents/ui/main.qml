@@ -96,7 +96,7 @@ Item {
         MobileShell.AudioProvider.bindShortcuts = true;
         
         // initialize lockscreen overlay
-        plasmoid.nativeInterface.item = root;
+        plasmoid.nativeInterface.initializeOverlay(root);
     }
     
     TaskManager.VirtualDesktopInfo {
@@ -135,7 +135,7 @@ Item {
         colorGroup: (!root.lockscreenShown && root.showingApp) ? PlasmaCore.Theme.HeaderColorGroup : PlasmaCore.Theme.ComplementaryColorGroup
         backgroundColor: (!root.lockscreenShown && root.showingApp) ? root.backgroundColor : "transparent"
         
-        showSecondRow: !root.lockscreenShown
+        showSecondRow: false
         showTime: !root.lockscreenShown
     }
     

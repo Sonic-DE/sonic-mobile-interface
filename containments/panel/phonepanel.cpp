@@ -96,3 +96,7 @@ void PhonePanel::slotLockscreenStateChanged(bool active)
         });
     }
 }
+
+K_PLUGIN_CLASS_WITH_JSON(PhonePanel, "package/metadata.json")
+
+#include "phonepanel.moc"
