@@ -64,7 +64,7 @@ void PhonePanel::initializeOverlay(QQuickItem *item)
 void PhonePanel::slotLockscreenStateChanged(bool active)
 {
     if (active && m_window) {
-        KWindowSystem::requestXdgActivationToken(m_window, 0, QStringLiteral("TODO.desktop"));
+        KWindowSystem::requestXdgActivationToken(m_window, 0, QStringLiteral("org.kde.plasmashell.desktop"));
 
         QObject::connect(KWindowSystem::self(), &KWindowSystem::xdgActivationTokenArrived, m_window, [this](int, const QString &token) {
             KWindowSystem::setCurrentXdgActivationToken(token);
