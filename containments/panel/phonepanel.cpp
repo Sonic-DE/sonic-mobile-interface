@@ -62,13 +62,13 @@ PhonePanel::PhonePanel(QObject *parent, const KPluginMetaData &data, const QVari
 
 PhonePanel::~PhonePanel() = default;
 
-void PhonePanel::initializeOverlay(QQuickItem *item)
+void PhonePanel::initializeOverlay(QQuickWindow *window)
 {
-    if (!item) {
+    if (!window) {
         return;
     }
 
-    m_window = item->window();
+    m_window = window;
 
     WaylandAboveLockscreen aboveLockscreen;
     Q_ASSERT(aboveLockscreen.isInitialized());

@@ -96,7 +96,7 @@ Item {
         MobileShell.AudioProvider.bindShortcuts = true;
         
         // initialize lockscreen overlay
-        plasmoid.nativeInterface.initializeOverlay(root);
+        plasmoid.nativeInterface.initializeOverlay(plasmoid.Window.window);
     }
     
     TaskManager.VirtualDesktopInfo {
