@@ -1,0 +1,6 @@
+# SPDX-FileCopyrightText: 2023 Devin Lin <devin@kde.org>
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+plasma_install_package(cellular org.kde.plasma.mobileinitialstart.cellular mobileinitialstart)
+plasma_install_package(display org.kde.plasma.mobileinitialstart.display mobileinitialstart)
+plasma_install_package(finished org.kde.plasma.mobileinitialstart.finished mobileinitialstart)

@@ -9,12 +9,8 @@
         <file>qml/Wizard.qml</file>
         <file>qml/SetupStep.qml</file>
         <file>qml/LandingComponent.qml</file>
-        <file>qml/steps/CellularStep.qml</file>
-        <file>qml/steps/DisplayScalingStep.qml</file>
-        <file>qml/steps/FinalStep.qml</file>
 
         <file>assets/background.png</file>
-        <file>assets/konqi-calling.png</file>
 
     </qresource>
 </RCC>

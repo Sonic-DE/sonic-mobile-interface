@@ -6,6 +6,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QString>
+#include <QCommandLineParser>
 
 #include <KAboutData>
 #include <KLocalizedString>
@@ -13,6 +14,15 @@
 #include "settings.h"
 #include "version.h"
 #include "wizard.h"
+
+QCommandLineParser *createParser()
+{
+    QCommandLineParser *parser = new QCommandLineParser;
+    parser->addOption(QCommandLineOption(QStringLiteral("test-wizard"), i18n("Opens the initial start wizard without modifying configuration")));
+    parser->addVersionOption();
+    parser->addHelpOption();
+    return parser;
+}
 
 int main(int argc, char *argv[])
 {
@@ -43,13 +53,21 @@ int main(int argc, char *argv[])
 
     QApplication app(argc, argv);
 
-    // apply configuration
-    Settings::self()->applyConfiguration();
+    // parse command
+    QScopedPointer<QCommandLineParser> parser{createParser()};
+    parser->process(app);
 
-    // if the wizard has already been run, or we aren't in plasma mobile
-    if (!Settings::self()->shouldStartWizard()) {
-        qDebug() << "Wizard will not be started since either it has already been run, or the current session is not Plasma Mobile.";
-        return 0;
+    bool testWizard = parser->isSet(QStringLiteral("test-wizard"));
+
+    if (!testWizard) {
+        // apply configuration
+        Settings::self()->applyConfiguration();
+
+        // if the wizard has already been run, or we aren't in plasma mobile
+        if (!Settings::self()->shouldStartWizard()) {
+            qDebug() << "Wizard will not be started since either it has already been run, or the current session is not Plasma Mobile.";
+            return 0;
+        }
     }
 
     // start wizard
@@ -63,14 +81,17 @@ int main(int argc, char *argv[])
     aboutData.addAuthor(i18n("Devin Lin"), QString(), QStringLiteral("devin@kde.org"));
     KAboutData::setApplicationData(aboutData);
 
-    Wizard *wizard = new Wizard;
+    QQmlApplicationEngine *engine = new QQmlApplicationEngine;
+    engine->rootContext()->setContextObject(new KLocalizedContext{engine});
+
+    Wizard *wizard = new Wizard{nullptr, engine};
+    wizard->setTestingMode(testWizard);
+    wizard->load();
+
     qmlRegisterSingletonType<Wizard>("initialstart", 1, 0, "Wizard", [wizard](QQmlEngine *, QJSEngine *) -> QObject * {
         return wizard;
     });
 
-    QQmlApplicationEngine *engine = new QQmlApplicationEngine;
-
-    engine->rootContext()->setContextObject(new KLocalizedContext{engine});
     engine->load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
 
     app.setWindowIcon(QIcon::fromTheme(QStringLiteral("start-here-symbolic")));

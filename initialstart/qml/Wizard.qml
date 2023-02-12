@@ -9,8 +9,6 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.kirigami 2.20 as Kirigami
 import org.kde.plasma.private.mobileshell 1.0 as MobileShell
 
-import "steps"
-
 import initialstart 1.0 as InitialStart
 
 Kirigami.Page {
@@ -157,9 +155,19 @@ Kirigami.Page {
                 }
 
                 // setup steps
-                DisplayScalingStep { height: swipeView.height; width: swipeView.height }
-                CellularStep { height: swipeView.height; width: swipeView.height }
-                FinalStep { height: swipeView.height; width: swipeView.height }
+                Repeater {
+                    model: InitialStart.Wizard.steps
+
+                    MobileShell.BaseItem {
+                        height: swipeView.height
+                        width: swipeView.height
+
+                        contentItem: modelData
+
+                        // pass up the property
+                        property string name: contentItem.name
+                    }
+                }
             }
 
             // bottom footer

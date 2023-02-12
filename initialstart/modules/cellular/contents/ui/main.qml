@@ -6,32 +6,22 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import org.kde.kirigami 2.20 as Kirigami
 
-import ".."
-
-SetupStep {
+Item {
     id: root
-
-    name: i18n("Complete!")
+    property string name: i18n("Cellular")
 
     ColumnLayout {
         anchors.fill: parent
         anchors.margins: Kirigami.Units.gridUnit
 
         Label {
+            Layout.alignment: Qt.AlignTop
             Layout.fillWidth: true
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-            text: i18n("Your device is now ready. <br /><br />Enjoy <b>postmarketOS Plasma 5.27</b>!")
             wrapMode: Text.Wrap
             horizontalAlignment: Text.AlignHCenter
-        }
-
-        Item { Layout.fillHeight: true }
-
-        Image {
-            Layout.fillWidth: true
-            Layout.alignment: Qt.AlignHCenter
-            fillMode: Image.PreserveAspectFit
-            source: "qrc:/assets/konqi-calling.png"
+            text: i18n("No SIM card detected.")
         }
     }
 }
+
+

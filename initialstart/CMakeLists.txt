@@ -6,15 +6,19 @@ set(plasma-mobile-initial-start_SRCS
     settings.cpp
     wizard.cpp
     config.h
+    utils.h
 )
 
 qt_add_resources(RESOURCES resources.qrc)
+
+add_subdirectory(modules)
 
 add_executable(plasma-mobile-initial-start ${plasma-mobile-initial-start_SRCS} ${RESOURCES})
 target_link_libraries(plasma-mobile-initial-start
     Qt::Qml
     Qt::Gui
     Qt::Widgets
+    Qt::Quick
     KF5::I18n
     KF5::ConfigCore
     KF5::ConfigGui

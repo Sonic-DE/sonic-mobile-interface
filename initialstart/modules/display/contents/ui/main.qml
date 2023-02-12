@@ -6,12 +6,9 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import org.kde.kirigami 2.20 as Kirigami
 
-import ".."
-
-SetupStep {
+Item {
     id: root
-
-    name: i18n("Display")
+    property string name: i18n("Display")
 
     ColumnLayout {
         anchors.fill: parent
@@ -26,5 +23,3 @@ SetupStep {
         }
     }
 }
-
-

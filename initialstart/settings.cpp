@@ -3,6 +3,7 @@
 
 #include "settings.h"
 #include "config.h"
+#include "utils.h"
 
 #include <KPackage/PackageLoader>
 #include <KRuntimePlatform>
@@ -10,10 +11,7 @@
 #include <QDBusConnection>
 #include <QDBusMessage>
 #include <QDebug>
-#include <QLoggingCategory>
 #include <QProcess>
-
-Q_LOGGING_CATEGORY(LOGGING_CATEGORY, "plasma-mobile-initial-start")
 
 const QString CONFIG_FILE = QStringLiteral("plasmamobilerc");
 const QString INITIAL_START_CONFIG_GROUP = QStringLiteral("InitialStart");
