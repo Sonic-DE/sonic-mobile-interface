@@ -69,9 +69,6 @@ Item {
         opacity: root.contentOpacity
         spacing: Kirigami.Units.largeSpacing
 
-        Kirigami.Theme.inherit: false
-        Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
-
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
         anchors.right: parent.right
@@ -95,9 +92,6 @@ Item {
         anchors.bottom: parent.bottom
         anchors.right: parent.right
         anchors.margins: Kirigami.Units.gridUnit
-
-        Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
-        Kirigami.Theme.inherit: false
 
         topPadding: Kirigami.Units.largeSpacing
         bottomPadding: Kirigami.Units.largeSpacing

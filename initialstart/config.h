@@ -12,7 +12,7 @@
 // kwinrc
 const QMap<QString, QMap<QString, QVariant>> KWINRC_SETTINGS = {
     {"Plugins", {{"blurEnabled", false}}},
-    {"Wayland", {{"InputMethod", false}, {"VirtualKeyboardEnabled", true}}},
+    {"Wayland", {{"InputMethod", "/usr/share/applications/com.github.maliit.keyboard.desktop"}, {"VirtualKeyboardEnabled", true}}},
     {"Windows",
      {
          {"Placement", "Maximizing"},

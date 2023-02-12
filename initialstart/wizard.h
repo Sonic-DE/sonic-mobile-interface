@@ -12,6 +12,8 @@ class Wizard : public QObject
 public:
     Wizard(QObject *parent = nullptr);
 
+    void load();
+
 public Q_SLOTS:
     void wizardFinished();
 };

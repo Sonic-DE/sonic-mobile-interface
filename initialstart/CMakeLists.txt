@@ -20,6 +20,7 @@ target_link_libraries(plasma-mobile-initial-start
     KF5::ConfigGui
     KF5::CoreAddons
     KF5::DBusAddons
+    KF5::Package
 )
 
 target_include_directories(plasma-mobile-initial-start PRIVATE ${CMAKE_BINARY_DIR})

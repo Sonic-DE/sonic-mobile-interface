@@ -26,7 +26,18 @@ public:
     void applyConfiguration();
 
 private:
-    bool m_wizardRun;
+    // loads the saved configuration, so it can be restored on desktop
+    void loadSavedConfiguration();
+
+    // applies our mobile configuration
+    void applyMobileConfiguration();
+
+    void writeKeys(const QString &fileName, KSharedConfig::Ptr &config, const QMap<QString, QMap<QString, QVariant>> &settings, bool overwriteOnlyIfEmpty);
+    void loadKeys(const QString &fileName, KSharedConfig::Ptr &config, const QMap<QString, QMap<QString, QVariant>> &settings);
+    void saveConfigSetting(const QString &fileName, const QString &group, const QString &key, const QVariant value);
+    void loadSavedConfigSetting(KSharedConfig::Ptr &config, const QString &fileName, const QString &group, const QString &key);
+
+    void reloadKWinConfig();
 
     // whether this is Plasma Mobile
     bool m_isMobilePlatform;

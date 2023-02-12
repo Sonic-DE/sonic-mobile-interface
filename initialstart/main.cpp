@@ -16,6 +16,8 @@
 
 int main(int argc, char *argv[])
 {
+    // some ideas about how this can work:
+    //
     // kded module:
     // Start Plasma
     // -> If desktop, check the configuration and popup a window if certain settings would be bad for it and should be changed
@@ -39,6 +41,9 @@ int main(int argc, char *argv[])
     // -> set virtual keyboard
     // -> set blur
 
+    QApplication app(argc, argv);
+
+    // apply configuration
     Settings::self()->applyConfiguration();
 
     // if the wizard has already been run, or we aren't in plasma mobile
@@ -48,8 +53,6 @@ int main(int argc, char *argv[])
     }
 
     // start wizard
-    QApplication app(argc, argv);
-
     KLocalizedString::setApplicationDomain("plasma-mobile-initial-start");
     KAboutData aboutData(QStringLiteral("plasma-mobile-initial-start"),
                          QStringLiteral("Initial Start"),

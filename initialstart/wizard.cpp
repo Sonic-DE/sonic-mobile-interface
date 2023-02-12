@@ -9,6 +9,10 @@ Wizard::Wizard(QObject *parent)
 {
 }
 
+void Wizard::load()
+{
+}
+
 void Wizard::wizardFinished()
 {
     Settings::self()->setWizardFinished();
