@@ -7,7 +7,6 @@
 
         <file>qml/main.qml</file>
         <file>qml/Wizard.qml</file>
-        <file>qml/SetupStep.qml</file>
         <file>qml/LandingComponent.qml</file>
 
         <file>assets/background.png</file>

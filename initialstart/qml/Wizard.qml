@@ -125,7 +125,8 @@ Kirigami.Page {
             id: overlaySteps
 
             Kirigami.Theme.inherit: false
-            Kirigami.Theme.colorSet: Kirigami.Theme.View
+            Kirigami.Theme.colorSet: Kirigami.Theme.Window
+
             color: Kirigami.Theme.backgroundColor
 
             anchors.fill: parent

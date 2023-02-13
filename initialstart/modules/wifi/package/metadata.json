@@ -6,10 +6,10 @@
                 "Name": "Devin Lin"
             }
         ],
-        "Description": "Display initialstart module for Plasma Mobile",
-        "Id": "org.kde.plasma.mobileinitialstart.display",
+        "Description": "WiFi initialstart module for Plasma Mobile",
+        "Id": "org.kde.plasma.mobileinitialstart.wifi",
         "License": "GPL-2.0+",
-        "Name": "Display",
+        "Name": "WiFi",
         "ServiceTypes": [
             "KPackage/GenericQML"
         ],
@@ -17,3 +17,5 @@
         "Website": "https://kde.org"
     }
 }
+
+

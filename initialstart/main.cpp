@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: LGPL-2.0-or-later
 
 #include <QApplication>
+#include <QCommandLineParser>
 #include <QIcon>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QString>
-#include <QCommandLineParser>
 
 #include <KAboutData>
 #include <KLocalizedString>

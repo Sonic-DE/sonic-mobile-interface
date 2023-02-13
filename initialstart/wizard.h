@@ -7,8 +7,8 @@
 #include <QQmlEngine>
 #include <QQuickItem>
 
-#include <KPluginMetaData>
 #include <KPackage/PackageLoader>
+#include <KPluginMetaData>
 
 class Wizard : public QObject
 {

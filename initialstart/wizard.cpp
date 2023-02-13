@@ -10,6 +10,13 @@
 #include <QFileInfo>
 #include <QQmlComponent>
 
+// TODO read distro provided config file
+const QList<QString> WIZARD_MODULE_ORDER = {QStringLiteral("org.kde.plasma.mobileinitialstart.prepare"),
+                                            QStringLiteral("org.kde.plasma.mobileinitialstart.time"),
+                                            QStringLiteral("org.kde.plasma.mobileinitialstart.wifi"),
+                                            QStringLiteral("org.kde.plasma.mobileinitialstart.cellular"),
+                                            QStringLiteral("org.kde.plasma.mobileinitialstart.finished")};
+
 Wizard::Wizard(QObject *parent, QQmlEngine *engine)
     : QObject{parent}
     , m_engine{engine}
@@ -26,7 +33,6 @@ void Wizard::load()
 
     // load initialstart packages
     auto packages = KPackage::PackageLoader::self()->listPackages(QStringLiteral("KPackage/GenericQML"), QStringLiteral("plasma/mobileinitialstart"));
-    qDebug() << "package" << packages.size();
     for (auto &metaData : packages) {
         KPackage::Package package = KPackage::PackageLoader::self()->loadPackage(QStringLiteral("KPackage/GenericQML"), QFileInfo(metaData.fileName()).path());
         if (!package.isValid()) {
@@ -36,7 +42,10 @@ void Wizard::load()
         m_modulePackages.push_back({new KPluginMetaData{metaData}, package});
     }
 
-    // TODO read config file, and then sort order
+    // sort modules by order
+    std::sort(m_modulePackages.begin(), m_modulePackages.end(), [](const auto &lhs, const auto &rhs) {
+        return WIZARD_MODULE_ORDER.indexOf(lhs.first->pluginId()) < WIZARD_MODULE_ORDER.indexOf(rhs.first->pluginId());
+    });
 
     QQmlComponent *c = new QQmlComponent(m_engine, this);
 
