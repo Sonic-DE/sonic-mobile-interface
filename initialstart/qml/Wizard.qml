@@ -19,13 +19,97 @@ Kirigami.Page {
     topPadding: 0
     bottomPadding: 0
 
+    property int currentIndex: 0
+    property int stepCount: 0
     property bool showingLanding: true
 
-    readonly property bool onFinalPage: swipeView.currentIndex === (swipeView.count - 1)
+    // filled by items
+    property var currentStepItem
+    property var nextStepItem
+    property var previousStepItem
+
+    readonly property bool onFinalPage: currentIndex === (stepCount - 1)
+
+    // step animation
+    // manually doing the animation is more performant and less glitchy with window resize than a SwipeView
+    property real previousStepItemX: 0
+    property real currentStepItemX: 0
+    property real nextStepItemX: 0
+
+    NumberAnimation on previousStepItemX {
+        id: previousStepAnim
+        duration: 400
+        easing.type: Easing.OutExpo
+        onFinished: {
+            if (root.previousStepItemX != 0) {
+                root.previousStepItem.visible = false;
+            }
+        }
+    }
+
+    NumberAnimation on currentStepItemX {
+        id: currentStepAnim
+        duration: 400
+        easing.type: Easing.OutExpo
+    }
+
+    NumberAnimation on nextStepItemX {
+        id: nextStepAnim
+        duration: 400
+        easing.type: Easing.OutExpo
+        onFinished: {
+            if (root.nextStepItemX != 0) {
+                root.nextStepItem.visible = false;
+            }
+        }
+    }
 
     function finishFinalPage() {
         InitialStart.Wizard.wizardFinished();
         applicationWindow().close();
+    }
+
+    function requestNextPage() {
+        if (previousStepAnim.running || currentStepAnim.running || nextStepAnim.running) {
+            return;
+        }
+
+        previousStepItemX = 0;
+
+        currentIndex++;
+        stepHeading.changeText(currentStepItem.name);
+
+        currentStepItemX = root.width;
+        currentStepItem.visible = true;
+
+        previousStepAnim.to = -root.width;
+        previousStepAnim.restart();
+        currentStepAnim.to = 0;
+        currentStepAnim.restart();
+    }
+
+    function requestPreviousPage() {
+        if (previousStepAnim.running || currentStepAnim.running || nextStepAnim.running) {
+            return;
+        }
+
+        if (currentIndex === 0) {
+            root.showingLanding = true;
+            landingComponent.returnToLanding();
+        } else {
+            nextStepItemX = 0;
+
+            currentIndex--;
+            stepHeading.changeText(currentStepItem.name);
+
+            currentStepItemX = -root.width;
+            currentStepItem.visible = true;
+
+            nextStepAnim.to = root.width;
+            nextStepAnim.restart();
+            currentStepAnim.to = 0;
+            currentStepAnim.restart();
+        }
     }
 
     // top status bar
@@ -54,7 +138,7 @@ Kirigami.Page {
 
         onRequestNextPage: {
             root.showingLanding = false;
-            stepHeading.changeText(swipeView.currentItem.name);
+            stepHeading.changeText(root.currentStepItem.name);
         }
     }
 
@@ -132,41 +216,61 @@ Kirigami.Page {
             anchors.fill: parent
             anchors.topMargin: root.height * 0.3
 
-            // all steps are in a swipeview
-            SwipeView {
-                id: swipeView
+            // all steps are in this container
+            Item {
                 anchors.fill: parent
                 anchors.bottomMargin: stepFooter.implicitHeight
-                currentIndex: 0
-                interactive: false
-
-                function requestNextPage() {
-                    currentIndex++;
-                    stepHeading.changeText(currentItem.name);
-                }
-
-                function requestPreviousPage() {
-                    if (currentIndex === 0) {
-                        root.showingLanding = true;
-                        landingComponent.returnToLanding();
-                    } else {
-                        currentIndex--;
-                        stepHeading.changeText(currentItem.name);
-                    }
-                }
 
                 // setup steps
                 Repeater {
                     model: InitialStart.Wizard.steps
 
-                    MobileShell.BaseItem {
-                        height: swipeView.height
-                        width: swipeView.height
-
+                    delegate: MobileShell.BaseItem {
+                        id: item
+                        visible: model.index === 0 // the binding is broken later
                         contentItem: modelData
+                        transform: Translate {
+                            x: {
+                                if (item.currentIndex === root.currentIndex - 1) {
+                                    return previousStepItemX;
+                                } else if (item.currentIndex === root.currentIndex + 1) {
+                                    return nextStepItemX;
+                                } else if (item.currentIndex === root.currentIndex) {
+                                    return currentStepItemX;
+                                }
+                                return 0;
+                            }
+                        }
+
+                        anchors.fill: parent
 
                         // pass up the property
                         property string name: contentItem.name
+                        property int currentIndex: model.index
+
+                        function updateRootItems() {
+                            if (model.index === root.currentIndex) {
+                                root.currentStepItem = item;
+                            } else if (model.index === root.currentIndex - 1) {
+                                root.previousStepItem = item;
+                            } else if (model.index === root.currentIndex + 1) {
+                                root.nextStepItem = item;
+                            }
+                        }
+
+                        Component.onCompleted: {
+                            root.stepCount++
+                            updateRootItems();
+                        }
+
+                        // keep root properties updated
+                        Connections {
+                            target: root
+
+                            function onCurrentIndexChanged() {
+                                item.updateRootItems();
+                            }
+                        }
                     }
                 }
             }
@@ -191,7 +295,7 @@ Kirigami.Page {
                     text: i18n("Back")
                     icon.name: "arrow-left"
 
-                    onClicked: swipeView.requestPreviousPage()
+                    onClicked: root.requestPreviousPage()
                 }
 
                 Item {}
@@ -210,7 +314,7 @@ Kirigami.Page {
                     text: i18n("Next")
                     icon.name: "arrow-right"
 
-                    onClicked: swipeView.requestNextPage();
+                    onClicked: root.requestNextPage();
                 }
 
                 Button {
