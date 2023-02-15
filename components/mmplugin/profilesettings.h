@@ -1,9 +1,7 @@
 // SPDX-FileCopyrightText: 2021-2023 Devin Lin <espidev@gmail.com>
-// SPDX-License-Identifier: GPL-3.0-or-later
+// SPDX-License-Identifier: GPL-2.0-or-later
 
 #pragma once
-
-#include "sim.h"
 
 #include <QList>
 #include <QString>
