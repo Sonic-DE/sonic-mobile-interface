@@ -14,7 +14,6 @@ class TimeUtil : public QObject
     Q_PROPERTY(bool is24HourTime READ is24HourTime WRITE setIs24HourTime NOTIFY is24HourTimeChanged);
     Q_PROPERTY(QString currentTimeZone READ currentTimeZone WRITE setCurrentTimeZone NOTIFY currentTimeZoneChanged);
     Q_PROPERTY(TimeZoneFilterProxy *timeZones READ timeZones CONSTANT);
-    Q_PROPERTY(QString timeZoneQuery READ timeZoneQuery WRITE setTimeZoneQuery NOTIFY timeZoneQueryChanged)
 
 public:
     TimeUtil(QObject *parent = nullptr);
@@ -27,17 +26,12 @@ public:
 
     TimeZoneFilterProxy *timeZones() const;
 
-    QString timeZoneQuery() const;
-    void setTimeZoneQuery(const QString &timeZoneQuery);
-
 Q_SIGNALS:
     void is24HourTimeChanged();
     void currentTimeZoneChanged();
-    void timeZoneQueryChanged();
 
 private:
     bool m_is24HourTime;
-    QString m_timeZoneQuery;
 
     TimeZoneModel *m_timeZoneModel;
     TimeZoneFilterProxy *m_filterModel;

@@ -6,8 +6,10 @@
 #include "timezonemodel.h"
 
 #include <KLocalizedString>
+
 #include <QStringMatcher>
 #include <QTimeZone>
+#include <QDebug>
 
 TimeZoneFilterProxy::TimeZoneFilterProxy(QObject *parent)
     : QSortFilterProxyModel(parent)
@@ -21,7 +23,7 @@ bool TimeZoneFilterProxy::filterAcceptsRow(int source_row, const QModelIndex &so
         return true;
     }
     const QString id = sourceModel()->index(source_row, 0, source_parent).data(TimeZoneModel::TimeZoneIdRole).toString();
-    return m_stringMatcher.indexIn(id) != 1;
+    return m_stringMatcher.indexIn(id) != -1;
 }
 
 void TimeZoneFilterProxy::setFilterString(const QString &filterString)
