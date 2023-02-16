@@ -54,17 +54,3 @@ TimeZoneFilterProxy *TimeUtil::timeZones() const
 {
     return m_filterModel;
 }
-
-QString TimeUtil::timeZoneQuery() const
-{
-    return m_timeZoneQuery;
-}
-
-void TimeUtil::setTimeZoneQuery(const QString &timeZoneQuery)
-{
-    if (m_timeZoneQuery != timeZoneQuery) {
-        m_timeZoneQuery = timeZoneQuery;
-        m_filterModel->setFilterString(timeZoneQuery);
-        Q_EMIT timeZoneQueryChanged();
-    }
-}

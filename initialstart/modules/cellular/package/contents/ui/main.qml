@@ -27,7 +27,6 @@ Item {
     EditProfileDialog {
         id: profileDialog
         profile: null
-        parent: applicationWindow()
     }
 
     ColumnLayout {

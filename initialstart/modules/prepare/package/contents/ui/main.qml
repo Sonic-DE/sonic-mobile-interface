@@ -63,7 +63,9 @@ Item {
     ScrollView {
         anchors.fill: parent
         anchors.topMargin: Kirigami.Units.gridUnit
+
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+        contentWidth: -1
 
         ColumnLayout {
             width: root.width

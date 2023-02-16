@@ -47,7 +47,11 @@ Item {
                     Layout.fillWidth: true
                     text: i18n("24-Hour Format")
                     checked: Time.TimeUtil.is24HourTime
-                    onCheckedChanged: Time.TimeUtil.is24HourTime = checked
+                    onCheckedChanged: {
+                        if (checked !== Time.TimeUtil.is24HourTime) {
+                            Time.TimeUtil.is24HourTime = checked;
+                        }
+                    }
                 }
             }
         }
@@ -80,9 +84,15 @@ Item {
                             id: searchField
 
                             onTextChanged: {
-                                Time.TimeUtil.timeZoneQuery = text;
-                                forceActiveFocus();
-                                focus = true
+                                Time.TimeUtil.timeZones.filterString = text;
+                                // HACK: search field seems to lose focus every time the text changes
+                                focusTimer.restart();
+                            }
+
+                            Timer {
+                                id: focusTimer
+                                interval: 1
+                                onTriggered: searchField.forceActiveFocus()
                             }
                         }
                     }
@@ -92,7 +102,7 @@ Item {
                         text: model.timeZoneId
                         checked: Time.TimeUtil.currentTimeZone === model.timeZoneId
                         onCheckedChanged: {
-                            if (checked != Time.TimeUtil.currentTimeZone) {
+                            if (checked && model.timeZoneId !== Time.TimeUtil.currentTimeZone) {
                                 Time.TimeUtil.currentTimeZone = model.timeZoneId;
                                 checked = Qt.binding(() => Time.TimeUtil.currentTimeZone === model.timeZoneId);
                             }
