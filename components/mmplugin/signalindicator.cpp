@@ -200,7 +200,7 @@ void SignalIndicator::activateProfile(const QString &connectionUni)
 
     // activate connection manually
     // despite the documentation saying otherwise, activateConnection seems to need the DBus path, not uuid of the connection
-    QDBusPendingReply<QDBusObjectPath> reply = NetworkManager::activateConnection(con->path(), m_nmModem->uni(), "");
+    QDBusPendingReply<QDBusObjectPath> reply = NetworkManager::activateConnection(con->path(), m_nmModem->uni(), {});
     reply.waitForFinished();
     if (reply.isError()) {
         qWarning() << QStringLiteral("Error activating connection:") << reply.error().message();
@@ -230,12 +230,12 @@ void SignalIndicator::addProfile(QString name, QString apn, QString username, QS
 
     gsmSetting->setInitialized(true);
 
-    QDBusPendingReply<QDBusObjectPath> reply = NetworkManager::addAndActivateConnection(settings->toMap(), m_nmModem->uni(), "");
+    QDBusPendingReply<QDBusObjectPath> reply = NetworkManager::addAndActivateConnection(settings->toMap(), m_nmModem->uni(), {});
     reply.waitForFinished();
     if (reply.isError()) {
-        qWarning() << QStringLiteral("Error adding connection:") << reply.error().message();
+        qWarning() << "Error adding connection:" << reply.error().message();
     } else {
-        qDebug() << QStringLiteral("Successfully added a new connection") << name << QStringLiteral("with APN") << apn << ".";
+        qDebug() << "Successfully added a new connection" << name << "with APN" << apn << ".";
     }
 }
 
@@ -243,14 +243,14 @@ void SignalIndicator::removeProfile(const QString &connectionUni)
 {
     NetworkManager::Connection::Ptr con = NetworkManager::findConnectionByUuid(connectionUni);
     if (!con) {
-        qWarning() << QStringLiteral("Could not find connection") << connectionUni << QStringLiteral("to update!");
+        qWarning() << "Could not find connection" << connectionUni << "to update!";
         return;
     }
 
     QDBusPendingReply reply = con->remove();
     reply.waitForFinished();
     if (reply.isError()) {
-        qWarning() << QStringLiteral("Error removing connection") << reply.error().message();
+        qWarning() << "Error removing connection" << reply.error().message();
     }
 }
 
@@ -258,13 +258,13 @@ void SignalIndicator::updateProfile(QString connectionUni, QString name, QString
 {
     NetworkManager::Connection::Ptr con = NetworkManager::findConnectionByUuid(connectionUni);
     if (!con) {
-        qWarning() << QStringLiteral("Could not find connection") << connectionUni << QStringLiteral("to update!");
+        qWarning() << "Could not find connection" << connectionUni << "to update!";
         return;
     }
 
     NetworkManager::ConnectionSettings::Ptr conSettings = con->settings();
     if (!conSettings) {
-        qWarning() << QStringLiteral("Could not find connection settings for") << connectionUni << QStringLiteral("to update!");
+        qWarning() << "Could not find connection settings for" << connectionUni << "to update!";
         return;
     }
 
@@ -282,10 +282,9 @@ void SignalIndicator::updateProfile(QString connectionUni, QString name, QString
     QDBusPendingReply reply = con->update(conSettings->toMap());
     reply.waitForFinished();
     if (reply.isError()) {
-        qWarning() << QStringLiteral("Error updating connection settings for") << connectionUni << QStringLiteral(":") << reply.error().message()
-                   << QStringLiteral(".");
+        qWarning() << "Error updating connection settings for" << connectionUni << ":" << reply.error().message() << ".";
     } else {
-        qDebug() << QStringLiteral("Successfully updated connection settings") << connectionUni << QStringLiteral(".");
+        qDebug() << "Successfully updated connection settings" << connectionUni << ".";
     }
 }
 

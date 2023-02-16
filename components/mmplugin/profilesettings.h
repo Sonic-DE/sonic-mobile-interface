@@ -34,24 +34,24 @@ public:
     {
     }
     ProfileSettings(QObject *parent,
-                    QString name,
-                    QString apn,
-                    QString user,
-                    QString password,
+                    const QString &name,
+                    const QString &apn,
+                    const QString &user,
+                    const QString &password,
                     NetworkManager::GsmSetting::NetworkType networkType,
-                    QString connectionUni);
+                    const QString &connectionUni);
     ProfileSettings(QObject *parent, NetworkManager::Setting::Ptr settings, NetworkManager::Connection::Ptr connection);
 
-    QString name();
-    QString apn();
-    void setApn(QString apn);
-    QString user();
-    void setUser(QString user);
-    QString password();
-    void setPassword(QString password);
-    QString networkType();
-    void setNetworkType(QString ipType);
-    QString connectionUni();
+    QString name() const;
+    QString apn() const;
+    void setApn(const QString &apn);
+    QString user() const;
+    void setUser(const QString &user);
+    QString password() const;
+    void setPassword(const QString &password);
+    QString networkType() const;
+    void setNetworkType(const QString &ipType);
+    QString connectionUni() const;
 
     // utilities
     static QString networkTypeStr(NetworkManager::GsmSetting::NetworkType networkType);

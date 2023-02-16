@@ -6,12 +6,12 @@
 #include <KLocalizedString>
 
 ProfileSettings::ProfileSettings(QObject *parent,
-                                 QString name,
-                                 QString apn,
-                                 QString user,
-                                 QString password,
+                                 const QString &name,
+                                 const QString &apn,
+                                 const QString &user,
+                                 const QString &password,
                                  NetworkManager::GsmSetting::NetworkType networkType,
-                                 QString connectionUni)
+                                 const QString &connectionUni)
     : QObject{parent}
     , m_name(name)
     , m_apn(apn)
@@ -38,17 +38,17 @@ ProfileSettings::ProfileSettings(QObject *parent, NetworkManager::Setting::Ptr s
     m_networkType = networkTypeStr(gsmSetting->networkType());
 }
 
-QString ProfileSettings::name()
+QString ProfileSettings::name() const
 {
     return m_name;
 }
 
-QString ProfileSettings::apn()
+QString ProfileSettings::apn() const
 {
     return m_apn;
 }
 
-void ProfileSettings::setApn(QString apn)
+void ProfileSettings::setApn(const QString &apn)
 {
     if (apn != m_apn) {
         m_apn = apn;
@@ -56,12 +56,12 @@ void ProfileSettings::setApn(QString apn)
     }
 }
 
-QString ProfileSettings::user()
+QString ProfileSettings::user() const
 {
     return m_user;
 }
 
-void ProfileSettings::setUser(QString user)
+void ProfileSettings::setUser(const QString &user)
 {
     if (user != m_user) {
         m_user = user;
@@ -69,12 +69,12 @@ void ProfileSettings::setUser(QString user)
     }
 }
 
-QString ProfileSettings::password()
+QString ProfileSettings::password() const
 {
     return m_password;
 }
 
-void ProfileSettings::setPassword(QString password)
+void ProfileSettings::setPassword(const QString &password)
 {
     if (password != m_password) {
         m_password = password;
@@ -82,12 +82,12 @@ void ProfileSettings::setPassword(QString password)
     }
 }
 
-QString ProfileSettings::networkType()
+QString ProfileSettings::networkType() const
 {
     return m_networkType;
 }
 
-void ProfileSettings::setNetworkType(QString networkType)
+void ProfileSettings::setNetworkType(const QString &networkType)
 {
     if (networkType != m_networkType) {
         m_networkType = networkType;
@@ -95,7 +95,7 @@ void ProfileSettings::setNetworkType(QString networkType)
     }
 }
 
-QString ProfileSettings::connectionUni()
+QString ProfileSettings::connectionUni() const
 {
     return m_connectionUni;
 }
