@@ -274,7 +274,7 @@ void SignalIndicator::updateProfile(QString connectionUni, QString name, QString
     gsmSetting->setApn(apn);
     gsmSetting->setUsername(username);
     gsmSetting->setPassword(password);
-    gsmSetting->setPasswordFlags(password == "" ? NetworkManager::Setting::NotRequired : NetworkManager::Setting::AgentOwned);
+    gsmSetting->setPasswordFlags(password.isEmpty() ? NetworkManager::Setting::NotRequired : NetworkManager::Setting::AgentOwned);
     gsmSetting->setNetworkType(ProfileSettings::networkTypeFlag(networkType));
 
     gsmSetting->setInitialized(true);
@@ -338,9 +338,7 @@ void SignalIndicator::updateNetworkManagerModem()
             connect(m_nmModem.get(), &NetworkManager::Device::availableConnectionAppeared, this, &SignalIndicator::mobileDataEnabledChanged);
             connect(m_nmModem.get(), &NetworkManager::Device::availableConnectionDisappeared, this, &SignalIndicator::mobileDataEnabledChanged);
 
-            connect(m_nmModem.data(), &NetworkManager::ModemDevice::availableConnectionChanged, this, [this]() -> void {
-                refreshProfiles();
-            });
+            connect(m_nmModem.data(), &NetworkManager::ModemDevice::availableConnectionChanged, this, &SignalIndicator::refreshProfiles);
             connect(m_nmModem.data(), &NetworkManager::ModemDevice::activeConnectionChanged, this, [this]() -> void {
                 refreshProfiles();
                 Q_EMIT activeConnectionUniChanged();

@@ -32,7 +32,7 @@ void Wizard::load()
     qCDebug(LOGGING_CATEGORY) << "Loading initialstart packages...";
 
     // load initialstart packages
-    auto packages = KPackage::PackageLoader::self()->listPackages(QStringLiteral("KPackage/GenericQML"), QStringLiteral("plasma/mobileinitialstart"));
+    const auto packages = KPackage::PackageLoader::self()->listPackages(QStringLiteral("KPackage/GenericQML"), QStringLiteral("plasma/mobileinitialstart"));
     for (auto &metaData : packages) {
         KPackage::Package package = KPackage::PackageLoader::self()->loadPackage(QStringLiteral("KPackage/GenericQML"), QFileInfo(metaData.fileName()).path());
         if (!package.isValid()) {
