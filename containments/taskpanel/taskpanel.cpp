@@ -20,6 +20,8 @@
 #include <KWayland/Client/surface.h>
 #include <Plasma/Package>
 
+#include <KGlobalAccel>
+
 #include <virtualkeyboardinterface.h>
 
 // register type for Keyboards.KWinVirtualKeyboard.forceActivate();
@@ -119,6 +121,15 @@ void TaskPanel::updatePanelVisibility()
     if (m_shellSurface) {
         m_shellSurface->setSkipTaskbar(true);
     }
+}
+
+void TaskPanel::triggerTaskSwitcher() const
+{
+    QDBusMessage message = QDBusMessage::createMethodCall("org.kde.kglobalaccel", "/component/kwin", "org.kde.kglobalaccel.Component", "invokeShortcut");
+    message.setArguments({QStringLiteral("Mobile Task Switcher")});
+
+    // this does not block, so it won't necessarily be called before the method returns
+    QDBusConnection::sessionBus().send(message);
 }
 
 K_PLUGIN_CLASS_WITH_JSON(TaskPanel, "package/metadata.json")

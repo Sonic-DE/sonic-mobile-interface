@@ -3,13 +3,18 @@
 
 #pragma once
 
-#include <kwinquickeffect.h>
+#include "kwinquickeffect.h"
 
 #include <QAction>
 #include <QKeySequence>
 
 #include <KGlobalAccel>
 #include <KLocalizedString>
+
+/**
+ * Feature Scope:
+ * -
+ */
 
 namespace KWin
 {
@@ -29,6 +34,8 @@ public:
     void grabbedKeyboardEvent(QKeyEvent *keyEvent) override;
 
 public Q_SLOTS:
+    void realDeactivate();
+    void toggle();
     void activate();
     void deactivate();
 

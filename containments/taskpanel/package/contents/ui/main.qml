@@ -142,7 +142,6 @@ PlasmaCore.ColorScope {
     Component {
         id: navigationPanel 
         NavigationPanelComponent {
-            taskSwitcher: MobileShellState.HomeScreenControls.taskSwitcher
             opaqueBar: root.opaqueBar
         }
     }
@@ -150,9 +149,7 @@ PlasmaCore.ColorScope {
     // bottom navigation gesture area component
     Component {
         id: navigationGesture 
-        MobileShell.NavigationGestureArea {
-            taskSwitcher: MobileShellState.HomeScreenControls.taskSwitcher
-        }
+        MobileShell.NavigationGestureArea {}
     }
     
     // load appropriate system navigation component

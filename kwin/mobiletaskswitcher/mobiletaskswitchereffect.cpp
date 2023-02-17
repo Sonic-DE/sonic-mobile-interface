@@ -4,18 +4,22 @@
 
 #include "mobiletaskswitchereffect.h"
 
+#include <QKeyEvent>
+
 namespace KWin
 {
 
 MobileTaskSwitcherEffect::MobileTaskSwitcherEffect()
 {
-    const QKeySequence defaultToggleShortcut = Qt::META | Qt::Key_T;
+    const QKeySequence defaultToggleShortcut = Qt::META | Qt::Key_C;
     m_toggleAction = new QAction(this);
-    //     connect(m_toggleAction, &QAction::triggered, this, &MobileTaskSwitcherEffect::toggle);
-    m_toggleAction->setObjectName(QStringLiteral("Task Switcher"));
-    m_toggleAction->setText(i18n("Toggle Task Switcher"));
+    connect(m_toggleAction, &QAction::triggered, this, &MobileTaskSwitcherEffect::toggle);
+    m_toggleAction->setObjectName(QStringLiteral("Mobile Task Switcher"));
+    m_toggleAction->setText(i18n("Toggle Mobile Task Switcher"));
+
     KGlobalAccel::self()->setDefaultShortcut(m_toggleAction, {defaultToggleShortcut});
     KGlobalAccel::self()->setShortcut(m_toggleAction, {defaultToggleShortcut});
+
     effects->registerGlobalShortcut({defaultToggleShortcut}, m_toggleAction);
 
     //     connect(effects, &EffectsHandler::screenAboutToLock, this, &MobileTaskSwitcherEffect::realDeactivate);
@@ -44,6 +48,28 @@ void MobileTaskSwitcherEffect::reconfigure(ReconfigureFlags flags)
 
 void MobileTaskSwitcherEffect::grabbedKeyboardEvent(QKeyEvent *keyEvent)
 {
+    if (m_toggleShortcut.contains(keyEvent->key() | keyEvent->modifiers())) {
+        if (keyEvent->type() == QEvent::KeyPress) {
+            toggle();
+        }
+        return;
+    }
+    QuickSceneEffect::grabbedKeyboardEvent(keyEvent);
+}
+
+void MobileTaskSwitcherEffect::realDeactivate()
+{
+    setRunning(false);
+    m_status = Status::Inactive;
+}
+
+void MobileTaskSwitcherEffect::toggle()
+{
+    if (!isRunning()) {
+        activate();
+    } else {
+        deactivate();
+    }
 }
 
 void MobileTaskSwitcherEffect::activate()
@@ -63,8 +89,8 @@ void MobileTaskSwitcherEffect::deactivate()
     //         QMetaObject::invokeMethod(view->rootItem(), "stop");
     //     }
 
-    //     setRunning(false);
-    //     m_status = Status::Inactive;
+    setRunning(false);
+    m_status = Status::Inactive;
 }
 
 }

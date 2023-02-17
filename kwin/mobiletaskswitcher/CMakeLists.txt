@@ -5,12 +5,13 @@ set(mobiletaskswitcher_SRCS
     main.cpp
     mobiletaskswitchereffect.cpp
 )
-add_library(kwin4_effect_taskswitcher SHARED ${mobiletaskswitcher_SRCS})
+add_library(kwin_effect_taskswitcher SHARED ${mobiletaskswitcher_SRCS})
 
-install(FILES metadata.json DESTINATION ${KDE_INSTALL_DATADIR}/${KWIN_NAME}/builtin-effects/kwin4_effect_mobiletaskswitcher/)
+install(FILES metadata.json DESTINATION ${KDE_INSTALL_DATADIR}/kwin/builtin-effects/kwin_effect_mobiletaskswitcher/)
 
-target_link_libraries(kwin4_effect_taskswitcher PRIVATE
-    KWinEffects
+target_link_libraries(kwin_effect_taskswitcher
+PRIVATE
+    kwineffects
 
     KF5::ConfigGui
     KF5::GlobalAccel
@@ -21,5 +22,5 @@ target_link_libraries(kwin4_effect_taskswitcher PRIVATE
     Qt::Quick
 )
 
-install(TARGETS kwin4_effect_taskswitcher DESTINATION ${PLUGIN_INSTALL_DIR}/kwin/effects/plugins)
+install(TARGETS kwin_effect_taskswitcher DESTINATION ${PLUGIN_INSTALL_DIR}/kwin/effects/plugins)
 install(DIRECTORY qml DESTINATION ${KDE_INSTALL_DATADIR}/kwin/effects/mobiletaskswitcher)
