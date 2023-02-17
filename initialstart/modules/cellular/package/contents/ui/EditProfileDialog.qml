@@ -36,7 +36,7 @@ Kirigami.Dialog {
             Controls.TextField {
                 id: profileName
                 Kirigami.FormData.label: i18n("Name")
-                text: profile != null ? profile.name : ""
+                text: profile !== null ? profile.name : ""
             }
             Controls.TextField {
                 id: profileApn
@@ -57,10 +57,8 @@ Kirigami.Dialog {
                 id: profileNetworkType
                 Kirigami.FormData.label: i18n("Network type")
                 model: [i18n("4G/3G/2G"), i18n("3G/2G"), i18n("2G"), i18n("Only 4G"), i18n("Only 3G"), i18n("Only 2G"), i18n("Any")]
-                Component.onCompleted: {
-                    if (profile != null) {
-                        currentIndex = indexOfValue(profile.networkType)
-                    }
+                Component.onCompleted: if (profile !== null) {
+                    currentIndex = indexOfValue(profile.networkType);
                 }
             }
         }

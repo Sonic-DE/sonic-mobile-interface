@@ -27,8 +27,6 @@ ProfileSettings::ProfileSettings(QObject *parent, NetworkManager::Setting::Ptr s
     : QObject{parent}
     , m_connectionUni(connection->uuid())
 {
-    setParent(parent);
-
     NetworkManager::GsmSetting::Ptr gsmSetting = setting.staticCast<NetworkManager::GsmSetting>();
 
     m_name = connection->name();

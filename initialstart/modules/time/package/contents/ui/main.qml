@@ -17,9 +17,12 @@ Item {
     readonly property real cardWidth: Math.min(Kirigami.Units.gridUnit * 30, root.width - Kirigami.Units.gridUnit * 2)
 
     ColumnLayout {
-        anchors.fill: parent
-        anchors.topMargin: Kirigami.Units.gridUnit
-        anchors.bottomMargin: Kirigami.Units.largeSpacing
+        anchors {
+            fill: parent
+            topMargin: Kirigami.Units.gridUnit
+            bottomMargin: Kirigami.Units.largeSpacing
+        }
+
         width: root.width
         spacing: Kirigami.Units.gridUnit
 
@@ -98,13 +101,15 @@ Item {
                     }
 
                     delegate: MobileForm.FormRadioDelegate {
-                        width: listView.width
-                        text: model.timeZoneId
-                        checked: Time.TimeUtil.currentTimeZone === model.timeZoneId
+                        required property string timeZoneId
+
+                        width: ListView.view.width
+                        text: timeZoneId
+                        checked: Time.TimeUtil.currentTimeZone === timeZoneId
                         onCheckedChanged: {
-                            if (checked && model.timeZoneId !== Time.TimeUtil.currentTimeZone) {
+                            if (checked && timeZoneId !== Time.TimeUtil.currentTimeZone) {
                                 Time.TimeUtil.currentTimeZone = model.timeZoneId;
-                                checked = Qt.binding(() => Time.TimeUtil.currentTimeZone === model.timeZoneId);
+                                checked = Qt.binding(() => Time.TimeUtil.currentTimeZone === timeZoneId);
                             }
                         }
                     }

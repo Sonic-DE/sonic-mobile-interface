@@ -35,8 +35,8 @@ Item {
         brightnessSlider.value = root.screenBrightness
 
         if (!disableBrightnessUpdate) {
-            var service = pmSource.serviceForSource("PowerDevil");
-            var operation = service.operationDescription("setBrightness");
+            const service = pmSource.serviceForSource("PowerDevil");
+            const operation = service.operationDescription("setBrightness");
             operation.brightness = screenBrightness;
             operation.silent = true; // don't show OSD
 
@@ -51,18 +51,18 @@ Item {
         id: pmSource
         engine: "powermanagement"
         connectedSources: ["PowerDevil"]
-        onSourceAdded: {
-            if (source === "PowerDevil") {
-                disconnectSource(source);
-                connectSource(source);
-            }
+        onSourceAdded: if (source === "PowerDevil") {
+            disconnectSource(source);
+            connectSource(source);
         }
         onDataChanged: root.updateBrightnessUI()
     }
 
     ScrollView {
-        anchors.fill: parent
-        anchors.topMargin: Kirigami.Units.gridUnit
+        anchors {
+            fill: parent
+            topMargin: Kirigami.Units.gridUnit
+        }
 
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         contentWidth: -1

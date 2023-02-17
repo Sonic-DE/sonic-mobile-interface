@@ -24,7 +24,7 @@ int PrepareUtil::scaling() const
 void PrepareUtil::setScaling(int scaling)
 {
     if (scaling != m_scaling) {
-        QString scalingNum = QString::number(((double)scaling) / 100);
+        const QString scalingNum = QString::number(((double)scaling) / 100);
         qDebug() << "scaling" << scalingNum;
 
         m_process->start("kscreen-doctor", {"output." + m_display + ".scale." + scalingNum});
@@ -48,8 +48,8 @@ void PrepareUtil::receiveScalingFactor(int exitCode, QProcess::ExitStatus exitSt
     disconnect(m_process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, &PrepareUtil::receiveScalingFactor);
 
     // remove ansi color codes
-    auto ansiEscape = QRegularExpression{"\\\u001B\\[.*?m"};
-    auto output = QString::fromUtf8(m_process->readAllStandardOutput()).replace(ansiEscape, "").replace("\\n", " ");
+    const auto ansiEscape = QRegularExpression{"\\\u001B\\[.*?m"};
+    const auto output = QString::fromUtf8(m_process->readAllStandardOutput()).replace(ansiEscape, "").replace("\\n", " ");
     auto split = output.split(" ");
 
     // HACK: hardcode how we get the output from kscreen-doctor

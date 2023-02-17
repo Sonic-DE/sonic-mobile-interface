@@ -30,9 +30,11 @@ Item {
     }
 
     ColumnLayout {
-        anchors.fill: parent
-        anchors.topMargin: Kirigami.Units.gridUnit
-        anchors.bottomMargin: Kirigami.Units.largeSpacing
+        anchors {
+            fill: parent
+            topMargin: Kirigami.Units.gridUnit
+            bottomMargin: Kirigami.Units.largeSpacing
+        }
         width: root.width
         spacing: Kirigami.Units.gridUnit
 
