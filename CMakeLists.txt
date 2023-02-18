@@ -65,6 +65,7 @@ find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS
     NetworkManagerQt
     KCMUtils
     Declarative
+    DBusAddons
 )
 find_package(KF5KirigamiAddons 0.6 REQUIRED)
 
@@ -90,6 +91,7 @@ add_subdirectory(containments)
 add_subdirectory(components)
 add_subdirectory(quicksettings)
 add_subdirectory(kcms)
+add_subdirectory(initialstart)
 
 find_program(PlasmaOpenSettings plasma-open-settings)
 set_package_properties(PlasmaOpenSettings PROPERTIES
