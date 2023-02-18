@@ -66,6 +66,7 @@ find_package(KF6 ${KF6_MIN_VERSION} REQUIRED COMPONENTS
     KCMUtils
     Declarative
     Package
+    DBusAddons
 )
 
 find_package(PkgConfig REQUIRED)
@@ -98,6 +99,7 @@ add_subdirectory(quicksettings)
 add_subdirectory(kcms)
 add_subdirectory(kded)
 add_subdirectory(kwin)
+add_subdirectory(initialstart)
 
 find_program(PlasmaOpenSettings plasma-open-settings)
 set_package_properties(PlasmaOpenSettings PROPERTIES
