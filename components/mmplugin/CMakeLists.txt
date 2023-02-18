@@ -4,6 +4,7 @@
 add_library(ppc-mmqmlplugin)
 target_sources(ppc-mmqmlplugin PRIVATE
     mmqmlplugin.cpp
+    signalindicator.cpp
 )
 
 target_link_libraries(ppc-mmqmlplugin
