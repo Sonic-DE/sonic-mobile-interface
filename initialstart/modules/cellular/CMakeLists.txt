@@ -3,7 +3,6 @@
 
 set(cellularplugin_SRCS
     cellularplugin.cpp
-    cellularutil.cpp
 )
 
 add_library(cellularplugin ${cellularplugin_SRCS})

@@ -17,7 +17,7 @@ Item {
     readonly property real cardWidth: Math.min(Kirigami.Units.gridUnit * 30, root.width - Kirigami.Units.gridUnit * 2)
 
     // brightness controls
-    property int screenBrightness
+    property int screenBrightness: 0
     property bool disableBrightnessUpdate: true
     readonly property int maximumScreenBrightness: pmSource.data["PowerDevil"] ? pmSource.data["PowerDevil"]["Maximum Screen Brightness"] || 0 : 0
     property QtObject updateScreenBrightnessJob

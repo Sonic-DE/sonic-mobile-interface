@@ -51,9 +51,14 @@ public:
     QList<ProfileSettings *> &profileList();
     void refreshProfiles();
     Q_INVOKABLE void activateProfile(const QString &connectionUni);
-    Q_INVOKABLE void addProfile(QString name, QString apn, QString username, QString password, QString networkType);
+    Q_INVOKABLE void addProfile(const QString &name, const QString &apn, const QString &username, const QString &password, const QString &networkType);
     Q_INVOKABLE void removeProfile(const QString &connectionUni);
-    Q_INVOKABLE void updateProfile(QString connectionUni, QString name, QString apn, QString username, QString password, QString networkType);
+    Q_INVOKABLE void updateProfile(const QString &connectionUni,
+                                   const QString &name,
+                                   const QString &apn,
+                                   const QString &username,
+                                   const QString &password,
+                                   const QString &networkType);
 
 Q_SIGNALS:
     void strengthChanged();

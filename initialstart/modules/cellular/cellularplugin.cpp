@@ -6,13 +6,7 @@
 #include <QQmlContext>
 #include <QQuickItem>
 
-#include "cellularutil.h"
-
 void CellularPlugin::registerTypes(const char *uri)
 {
     Q_ASSERT(QLatin1String(uri) == QLatin1String("org.kde.plasma.mobileinitialstart.cellular"));
-
-    qmlRegisterSingletonType<CellularUtil>(uri, 1, 0, "CellularUtil", [](QQmlEngine *, QJSEngine *) {
-        return new CellularUtil;
-    });
 }

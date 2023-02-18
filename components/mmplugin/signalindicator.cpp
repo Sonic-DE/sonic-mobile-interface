@@ -208,7 +208,7 @@ void SignalIndicator::activateProfile(const QString &connectionUni)
     }
 }
 
-void SignalIndicator::addProfile(QString name, QString apn, QString username, QString password, QString networkType)
+void SignalIndicator::addProfile(const QString &name, const QString &apn, const QString &username, const QString &password, const QString &networkType)
 {
     if (!m_nmModem) {
         qWarning() << "Cannot add profile since there is no NetworkManager modem";
@@ -254,7 +254,12 @@ void SignalIndicator::removeProfile(const QString &connectionUni)
     }
 }
 
-void SignalIndicator::updateProfile(QString connectionUni, QString name, QString apn, QString username, QString password, QString networkType)
+void SignalIndicator::updateProfile(const QString &connectionUni,
+                                    const QString &name,
+                                    const QString &apn,
+                                    const QString &username,
+                                    const QString &password,
+                                    const QString &networkType)
 {
     NetworkManager::Connection::Ptr con = NetworkManager::findConnectionByUuid(connectionUni);
     if (!con) {
