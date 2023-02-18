@@ -19,7 +19,7 @@ Kirigami.Dialog {
     standardButtons: Controls.Dialog.Ok | Controls.Dialog.Cancel
 
     onAccepted: {
-        if (profile == null) { // create new profile
+        if (profile === null) { // create new profile
             PlasmaMM.SignalIndicator.addProfile(profileName.text, profileApn.text, profileUsername.text, profilePassword.text, profileNetworkType.value);
         } else { // edit existing profile
             PlasmaMM.SignalIndicator.updateProfile(profile.connectionUni, profileName.text, profileApn.text, profileUsername.text, profilePassword.text, profileNetworkType.value);
