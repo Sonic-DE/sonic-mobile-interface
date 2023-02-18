@@ -3,7 +3,9 @@
 
 #pragma once
 
-#include "kwinquickeffect.h"
+#include <kwinquickeffect.h>
+
+#include <span>
 
 #include <QAction>
 #include <QKeySequence>

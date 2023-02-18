@@ -18,7 +18,13 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(ECM ${KF5_MIN_VERSION} REQUIRED NO_MODULE)
-set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH})
+set(CMAKE_MODULE_PATH
+    ${CMAKE_MODULE_PATH}
+    ${ECM_MODULE_PATH}
+    ${ECM_KDE_MODULE_DIR}
+    ${CMAKE_SOURCE_DIR}/cmake
+    ${CMAKE_SOURCE_DIR}/cmake/Modules
+)
 
 set(KF_IGNORE_PLATFORM_CHECK ON CACHE BOOL "Don't check platform that is being built on")
 
@@ -69,7 +75,11 @@ find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS
 )
 find_package(KF5KirigamiAddons 0.6 REQUIRED)
 
-find_package(KWinEffects REQUIRED)
+find_package(epoxy REQUIRED)
+find_package(XCB REQUIRED COMPONENTS XCB)
+find_package(KWinEffects 5.27.0 REQUIRED COMPONENTS
+    kwineffects
+)
 
 find_package(LibKWorkspace CONFIG REQUIRED)
 

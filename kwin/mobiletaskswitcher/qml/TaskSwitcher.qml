@@ -82,13 +82,7 @@ FocusScope {
         taskSwitcherState.wasInActiveTask = false; // tasksModel.activeTask.row >= 0; // TODO
         taskSwitcherState.currentlyBeingOpened = true;
 
-        reorderTimer.stop();
-        tasksModel.taskReorderingEnabled = false;
-
         taskSwitcherState.goToTaskIndex(0);
-
-        // show task switcher, hide all running apps
-        minimizeAll();
 
         // fully open the panel (if this is a button press, not gesture)
         taskSwitcherState.open();
@@ -140,11 +134,6 @@ FocusScope {
         } else {
             tasksModel.taskReorderingEnabled = true;
         }
-    }
-
-    function minimizeAll() {
-        MobileShell.WindowUtil.unsetAllMinimizedGeometries(root);
-        MobileShell.WindowUtil.minimizeAll();
     }
 
     NumberAnimation on opacity {

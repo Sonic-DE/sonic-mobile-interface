@@ -11,16 +11,18 @@ namespace KWin
 
 MobileTaskSwitcherEffect::MobileTaskSwitcherEffect()
 {
+    qDebug() << "INITIALIZE MOBILE TASK SWITCHER";
+
     const QKeySequence defaultToggleShortcut = Qt::META | Qt::Key_C;
+
     m_toggleAction = new QAction(this);
-    connect(m_toggleAction, &QAction::triggered, this, &MobileTaskSwitcherEffect::toggle);
     m_toggleAction->setObjectName(QStringLiteral("Mobile Task Switcher"));
     m_toggleAction->setText(i18n("Toggle Mobile Task Switcher"));
 
+    connect(m_toggleAction, &QAction::triggered, this, &MobileTaskSwitcherEffect::toggle);
+
     KGlobalAccel::self()->setDefaultShortcut(m_toggleAction, {defaultToggleShortcut});
     KGlobalAccel::self()->setShortcut(m_toggleAction, {defaultToggleShortcut});
-
-    effects->registerGlobalShortcut({defaultToggleShortcut}, m_toggleAction);
 
     //     connect(effects, &EffectsHandler::screenAboutToLock, this, &MobileTaskSwitcherEffect::realDeactivate);
 
@@ -74,6 +76,7 @@ void MobileTaskSwitcherEffect::toggle()
 
 void MobileTaskSwitcherEffect::activate()
 {
+    qDebug() << "ACTIVATE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
     if (effects->isScreenLocked()) {
         return;
     }
