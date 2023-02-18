@@ -5,6 +5,9 @@ kcoreaddons_add_plugin(kded_plasma-mobile-start INSTALL_NAMESPACE "kf${QT_MAJOR_
 
 target_sources(kded_plasma-mobile-start PRIVATE
     daemon.cpp
+    settings.cpp
+    config.h
+    utils.h
 )
 
 target_link_libraries(kded_plasma-mobile-start PRIVATE
@@ -13,5 +16,6 @@ target_link_libraries(kded_plasma-mobile-start PRIVATE
     KF5::ConfigWidgets
     KF5::KIOGui
     KF5::Notifications
+    KF5::Package
 )
 
