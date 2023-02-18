@@ -8,8 +8,8 @@
 
 #include <QProcess>
 
-#include "daemon.h"
 #include "settings.h"
+#include "startdaemon.h"
 
 K_PLUGIN_CLASS_WITH_JSON(PlasmaMobileStartDaemon, "kded_plasma-mobile-start.json")
 
@@ -20,4 +20,4 @@ PlasmaMobileStartDaemon::PlasmaMobileStartDaemon(QObject *parent, const QList<QV
     Settings::self()->applyConfiguration();
 }
 
-#include "daemon.moc"
+#include "startdaemon.moc"
