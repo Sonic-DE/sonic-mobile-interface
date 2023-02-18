@@ -9,16 +9,15 @@
 #include <QProcess>
 
 #include "daemon.h"
+#include "settings.h"
 
 K_PLUGIN_CLASS_WITH_JSON(PlasmaMobileStartDaemon, "kded_plasma-mobile-start.json")
 
 PlasmaMobileStartDaemon::PlasmaMobileStartDaemon(QObject *parent, const QList<QVariant> &)
     : KDEDModule{parent}
 {
-    auto *job = new KIO::CommandLauncherJob(QStringLiteral("plasma-mobile-initial-start"), {});
-    job->setUiDelegate(new KNotificationJobUiDelegate(KJobUiDelegate::AutoErrorHandlingEnabled));
-    job->setDesktopName(QStringLiteral("org.kde.plasma-mobile-initial-start"));
-    job->start();
+    // apply configuration
+    Settings::self()->applyConfiguration();
 }
 
 #include "daemon.moc"

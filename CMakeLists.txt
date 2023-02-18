@@ -97,7 +97,6 @@ add_subdirectory(components)
 add_subdirectory(quicksettings)
 add_subdirectory(kcms)
 add_subdirectory(kded)
-add_subdirectory(initialstart)
 
 find_program(PlasmaOpenSettings plasma-open-settings)
 set_package_properties(PlasmaOpenSettings PROPERTIES
