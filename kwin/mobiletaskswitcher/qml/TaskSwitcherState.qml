@@ -206,6 +206,7 @@ QtObject {
         easing.type: Easing.OutBack
 
         onFinished: {
+            console.log('position ' + root.yPosition + ' ' + openedYPosition)
             root.currentlyBeingOpened = false;
         }
     }

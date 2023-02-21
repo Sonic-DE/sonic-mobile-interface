@@ -5,6 +5,7 @@
 #include "mobiletaskswitchereffect.h"
 
 #include <QKeyEvent>
+#include <QTimer>
 
 namespace KWin
 {
@@ -76,7 +77,6 @@ void MobileTaskSwitcherEffect::toggle()
 
 void MobileTaskSwitcherEffect::activate()
 {
-    qDebug() << "ACTIVATE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
     if (effects->isScreenLocked()) {
         return;
     }
@@ -87,13 +87,7 @@ void MobileTaskSwitcherEffect::activate()
 
 void MobileTaskSwitcherEffect::deactivate()
 {
-    //     const auto screenViews = views();
-    //     for (QuickSceneView *view : screenViews) {
-    //         QMetaObject::invokeMethod(view->rootItem(), "stop");
-    //     }
-
     setRunning(false);
     m_status = Status::Inactive;
 }
-
 }

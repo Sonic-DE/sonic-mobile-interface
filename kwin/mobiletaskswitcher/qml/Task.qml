@@ -9,6 +9,7 @@ import QtQuick.Controls 2.2 as QQC2
 
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
+import org.kde.kwin 3.0 as KWinComponents
 
 Item {
     id: delegate
@@ -131,14 +132,14 @@ Item {
                     Layout.preferredWidth: PlasmaCore.Units.iconSizes.smallMedium
                     Layout.alignment: Qt.AlignVCenter
                     usesPlasmaTheme: false
-                    source: model.decoration
+                    source: delegate.window.icon
                 }
 
                 PlasmaComponents.Label {
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignVCenter
                     elide: Text.ElideRight
-                    text: model.AppName
+                    text: delegate.window.caption
                     color: "white"
                 }
 
@@ -148,7 +149,7 @@ Item {
                     icon.name: "window-close"
                     icon.width: PlasmaCore.Units.iconSizes.smallMedium
                     icon.height: PlasmaCore.Units.iconSizes.smallMedium
-                    onClicked: delegate.closeApp()
+                    onClicked: delegate.window.closeApp()
                 }
             }
 

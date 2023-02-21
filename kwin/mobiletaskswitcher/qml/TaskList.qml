@@ -8,8 +8,12 @@ import org.kde.taskmanager 0.1 as TaskManager
 import org.kde.plasma.core 2.1 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
 
+import org.kde.kwin 3.0 as KWinComponents
+
 Item {
     id: root
+    readonly property int count: repeater.count
+
     required property real shellTopMargin
     required property real shellBottomMargin
 
@@ -50,6 +54,7 @@ Item {
                 taskSwitcher.hide();
             }
         }
+
         onPressedChanged: {
             if (pressed) {
                 // ensure animations aren't running when finger is pressed
@@ -104,7 +109,6 @@ Item {
             previewHeight: taskSwitcherState.previewHeight
 
             taskSwitcher: root.taskSwitcher
-            displaysModel: root.taskSwitcher.displaysModel
         }
     }
 }
