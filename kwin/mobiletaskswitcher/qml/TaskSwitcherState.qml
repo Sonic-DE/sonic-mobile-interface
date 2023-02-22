@@ -5,6 +5,8 @@ import QtQuick 2.15
 
 import org.kde.plasma.core 2.1 as PlasmaCore
 
+import org.kde.kwin 3.0 as KWinComponents
+
 /**
  * State object for the task switcher.
  */
@@ -133,9 +135,10 @@ QtObject {
         closeAnim.restart();
     }
 
-    function openApp(index) {
+    function openApp(index, window) {
         animateGoToTaskIndex(index, PlasmaCore.Units.shortDuration);
         openAppAnim.restart();
+        KWinComponents.Workspace.activeClient = window
     }
 
     // get the xPosition where the task will be centered on the screen
@@ -206,7 +209,6 @@ QtObject {
         easing.type: Easing.OutBack
 
         onFinished: {
-            console.log('position ' + root.yPosition + ' ' + openedYPosition)
             root.currentlyBeingOpened = false;
         }
     }

@@ -47,7 +47,7 @@ FocusScope {
         desktop: KWinComponents.Workspace.currentDesktop
         screenName: root.targetScreen.name
         windowModel: stackModel
-        minimizedWindows: true // !root.effect.ignoreMinimized
+        minimizedWindows: true
         windowType: ~KWinComponents.WindowFilterModel.Dock &
                     ~KWinComponents.WindowFilterModel.Desktop &
                     ~KWinComponents.WindowFilterModel.Notification &
@@ -59,7 +59,7 @@ FocusScope {
     // keep track of task list events
     property int oldTasksCount: tasksCount
     onTasksCountChanged: {
-        if (tasksCount == 0) {
+        if (tasksCount === 0 && oldTasksCount !== 0) {
             hide();
         } else if (tasksCount < oldTasksCount && taskSwitcherState.currentTaskIndex >= tasksCount - 1) {
             // if the user is on the last task, and it is closed, scroll left
@@ -69,99 +69,55 @@ FocusScope {
         oldTasksCount = tasksCount;
     }
 
-    Keys.onEscapePressed: {
-        root.taskSwitcherState.close();
-    }
+    Keys.onEscapePressed: hide();
 
     Component.onCompleted: {
-        // reset values
-        taskSwitcherState.cancelAnimations();
-        taskSwitcherState.yPosition = 0;
-        taskSwitcherState.xPosition = 0;
-        taskSwitcherState.wasInActiveTask = false; // root.tasksModel.activeTask.row >= 0; // TODO
-        taskSwitcherState.currentlyBeingOpened = true;
+        taskList.minimizeAll();
 
+        // reset values
+        taskSwitcherState.currentlyBeingOpened = true;
         taskSwitcherState.goToTaskIndex(0);
 
         // fully open the panel (if this is a button press, not gesture)
         taskSwitcherState.open();
     }
 
-    function stop() {
-        // TODO
+    // called by c++ plugin
+    function hideAnimation() {
+        closeAnim.restart();
     }
 
     function instantHide() {
-        closeAllButton.closeRequested = false;
-        // TODO hide
+        root.effect.deactivate(true);
     }
 
     function hide() {
-        // TODO
-        // closeAnim.restart();
+        root.effect.deactivate(false);
     }
 
     // scroll to delegate index, and activate it
-    function activateWindow(id) {
-        taskSwitcherState.openApp(id);
+    function activateWindow(index, window) {
+        KWinComponents.Workspace.activeClient = window;
+        taskSwitcherState.openApp(index, window);
     }
 
     function setSingleActiveWindow(id) {
-        if (id < 0) {
-            return;
-        }
-
-        var newActiveIdx = root.tasksModel.index(id, 0)
-        var newActiveGeo = root.tasksModel.data(newActiveIdx, TaskManager.AbstractTasksModel.ScreenGeometry)
-        for (var i = 0 ; i < root.tasksModel.count; i++) {
-            var idx = root.tasksModel.index(i, 0)
-            if (i == id) {
-                root.tasksModel.requestActivate(idx);
-                // ensure the window is in maximized state
-                if (!root.tasksModel.data(idx, TaskManager.AbstractTasksModel.IsMaximized)) {
-                    tasksModel.requestToggleMaximized(idx);
-                }
-            } else if (!root.tasksModel.data(idx, TaskManager.AbstractTasksModel.IsMinimized)) {
-                var geo = root.tasksModel.data(idx, TaskManager.AbstractTasksModel.ScreenGeometry)
-                // only minimize the other windows in the same screen
-                if (geo === newActiveGeo) {
-                    root.tasksModel.requestToggleMinimized(idx);
-                }
-            }
-        }
-
         instantHide();
-
-        if (taskSwitcherState.wasInActiveTask) {
-            reorderTimer.restart();
-        } else {
-            root.tasksModel.taskReorderingEnabled = true;
-        }
     }
-
-    // NumberAnimation on opacity {
-    //     id: closeAnim
-    //     to: 0
-    //     duration: PlasmaCore.Units.shortDuration
-    //     easing.type: Easing.InOutQuad
-    //
-    //     onFinished: {
-    //         root.visible = false;
-    //         closeAllButton.closeRequested = false;
-    //     }
-    // }
 
     KWinComponents.DesktopBackground {
         id: backgroundItem
         activity: KWinComponents.Workspace.currentActivity
         desktop: KWinComponents.Workspace.currentDesktop
         outputName: targetScreen.name
-        property real blurRadius: 50
+    }
 
-        layer.enabled: true // effect.blurBackground
-        layer.effect: FastBlur {
-            radius: 50 // backgroundItem.blurRadius
-        }
+    FastBlur {
+        source: backgroundItem
+        anchors.fill: parent
+        opacity: container.opacity
+        radius: 50
+        cached: true
     }
 
     // background colour
@@ -169,6 +125,7 @@ FocusScope {
         id: backgroundRect
         anchors.fill: parent
 
+        opacity: container.opacity
         color: {
             // animate background colour only if we are *not* opening from the homescreen
             if (taskSwitcherState.wasInActiveTask || !taskSwitcherState.currentlyBeingOpened) {
@@ -189,6 +146,18 @@ FocusScope {
         anchors.bottomMargin: root.bottomMargin
         anchors.topMargin: root.topMargin
 
+        NumberAnimation on opacity {
+            id: closeAnim
+            running: false
+            to: 0
+            duration: 200
+            easing.type: Easing.InOutQuad
+
+            onFinished: {
+                closeAllButton.closeRequested = false;
+            }
+        }
+
         FlickContainer {
             id: flickable
 
@@ -199,15 +168,11 @@ FocusScope {
             // the item is effectively anchored to the flickable bounds
             TaskList {
                 id: taskList
-
+                taskSwitcher: root
                 shellTopMargin: root.topMargin
                 shellBottomMargin: root.bottomMargin
 
-                taskSwitcher: root
-
                 opacity: {
-                    console.log(taskSwitcherState.currentlyBeingOpened);
-
                     // animate opacity only if we are *not* opening from the homescreen
                     if (taskSwitcherState.wasInActiveTask || !taskSwitcherState.currentlyBeingOpened) {
                         return 1;
@@ -219,13 +184,6 @@ FocusScope {
                 x: flickable.contentX
                 width: flickable.width
                 height: flickable.height
-
-                Rectangle {
-                    anchors.centerIn: parent
-                    height: 20
-                    width: 20
-                    color: "red"
-                }
 
                 PlasmaComponents.ToolButton {
                     id: closeAllButton
@@ -252,7 +210,7 @@ FocusScope {
                     icon.name: "edit-clear-history"
                     font.bold: true
 
-                    text: closeRequested ? "Confirm Close All" : "Close All"
+                    text: closeRequested ? i18n("Confirm Close All") : i18n("Close All")
 
                     onClicked: {
                         if (closeRequested) {

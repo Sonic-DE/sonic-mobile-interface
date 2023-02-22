@@ -44,6 +44,20 @@ Item {
         }
     }
 
+    function minimizeAll() {
+        for (var i = 0; i < repeater.count; i++) {
+            let item = repeater.itemAt(i);
+
+            // update property
+            if (!item.window.minimized) {
+                taskSwitcherState.wasInActiveTask = true;
+            }
+
+            // minimize window immediately if it shows up
+            item.window.minimized = true;
+        }
+    }
+
     // taphandler activates even if delegate touched
     TapHandler {
         enabled: !taskSwitcherState.currentlyBeingOpened
@@ -72,7 +86,6 @@ Item {
 
         delegate: Task {
             id: task
-
             readonly property int currentIndex: model.index
 
             // this is the x-position with respect to the list
@@ -87,7 +100,6 @@ Item {
 
             // this is the actual displayed x-position on screen
             x: listX + repeater.leftMargin - taskSwitcherState.xPosition
-
             y: root.taskY
 
             // ensure current task is above others

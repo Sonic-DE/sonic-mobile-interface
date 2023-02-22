@@ -33,13 +33,16 @@ Item {
 
 //BEGIN functions
     function closeApp() {
-        delegate.window.close();
+        delegate.window.closeWindow();
     }
 
     function activateApp() {
         taskSwitcherState.wasInActiveTask = false;
-        KWinComponents.Workspace.activeClient = delegate.window;
-        // taskSwitcher.activateWindow(model.index);
+        taskSwitcher.activateWindow(model.index, delegate.window);
+    }
+
+    function minimizeApp() {
+        delegate.window.minimize = true;
     }
 //END functions
 
@@ -149,7 +152,7 @@ Item {
                     icon.name: "window-close"
                     icon.width: PlasmaCore.Units.iconSizes.smallMedium
                     icon.height: PlasmaCore.Units.iconSizes.smallMedium
-                    onClicked: delegate.window.closeApp()
+                    onClicked: delegate.closeApp()
                 }
             }
 
