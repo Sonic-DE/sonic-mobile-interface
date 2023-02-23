@@ -10,14 +10,14 @@ add_library(plasma_containment_phone_taskpanel MODULE taskpanel.cpp ${DBUS_SRCS}
 target_link_libraries(plasma_containment_phone_taskpanel
                       Qt::Gui
                       Qt::DBus
-                      KF5::Plasma
                       Qt::Qml
                       Qt::Quick
+                      KF5::Plasma
+                      KF5::GlobalAccel
                       KF5::I18n
                       KF5::Service
                       KF5::WaylandClient
                      )
-
 
 install(TARGETS plasma_containment_phone_taskpanel DESTINATION ${KDE_INSTALL_PLUGINDIR}/plasma/applets)
 
