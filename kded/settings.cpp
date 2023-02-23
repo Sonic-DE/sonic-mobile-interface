@@ -164,15 +164,15 @@ void Settings::saveConfigSetting(const QString &fileName, const QString &group, 
 // NOTE: this deletes the stored value from the config after loading
 void Settings::loadSavedConfigSetting(KSharedConfig::Ptr &config, const QString &fileName, const QString &group, const QString &key)
 {
-    auto savedGroup = KConfigGroup{m_initialStartConfig, SAVED_CONFIG_GROUP};
-    auto fileGroup = KConfigGroup{&savedGroup, fileName};
-    auto keyGroup = KConfigGroup{&fileGroup, group};
+    const auto savedGroup = KConfigGroup{m_initialStartConfig, SAVED_CONFIG_GROUP};
+    const auto fileGroup = KConfigGroup{&savedGroup, fileName};
+    const auto keyGroup = KConfigGroup{&fileGroup, group};
 
     if (!keyGroup.hasKey(key)) {
         return;
     }
 
-    auto value = keyGroup.readEntry(key);
+    const auto value = keyGroup.readEntry(key);
 
     // write to real config
     auto configGroup = KConfigGroup{config, group};
@@ -180,7 +180,7 @@ void Settings::loadSavedConfigSetting(KSharedConfig::Ptr &config, const QString 
     if (!configGroup.hasKey(key) || configGroup.readEntry(key) != value) {
         qCDebug(LOGGING_CATEGORY) << "In" << fileName << "loading saved value of" << key << "which is" << value;
 
-        if (value == "") { // delete blank entries!
+        if (value.isEmpty()) { // delete blank entries!
             configGroup.deleteEntry(key);
         } else {
             configGroup.writeEntry(key, value, KConfigGroup::Notify);
