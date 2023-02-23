@@ -53,7 +53,7 @@ MobileShell.HomeScreen {
             if (MobileShellState.Shell.actionDrawerVisible) {
                 MobileShellState.Shell.closeActionDrawer();
             }
-            
+
             // Always close the search widget as well
             if (search.isOpen) {
                 search.close();
@@ -94,14 +94,6 @@ MobileShell.HomeScreen {
             bottomMargin: root.bottomMargin
             leftMargin: root.leftMargin
             rightMargin: root.rightMargin
-
-             // close search component when task switcher is shown or hidden
-            Connections {
-                target: MobileShellState.HomeScreenControls.taskSwitcher
-                function onVisibleChanged() {
-                    search.close();
-                }
-            }
         }
     }
 }

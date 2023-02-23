@@ -14,7 +14,7 @@ set(QT_MIN_VERSION "6.4.0")
 set(KF6_MIN_VERSION "5.240.0")
 set(KDE_COMPILERSETTINGS_LEVEL "5.82")
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(ECM ${KF6_MIN_VERSION} REQUIRED NO_MODULE)
@@ -53,6 +53,7 @@ find_package(Qt${QT_MAJOR_VERSION} ${QT_MIN_VERSION} CONFIG REQUIRED
 
 find_package(KF6 ${KF6_MIN_VERSION} REQUIRED COMPONENTS
     I18n
+    GlobalAccel
     KIO
     Config
     DBusAddons
@@ -67,6 +68,12 @@ find_package(KF6 ${KF6_MIN_VERSION} REQUIRED COMPONENTS
     Declarative
 )
 find_package(KF5KirigamiAddons 0.6 REQUIRED)
+
+find_package(epoxy REQUIRED)
+find_package(XCB REQUIRED COMPONENTS XCB)
+find_package(KWinEffects 5.27.0 REQUIRED COMPONENTS
+    kwineffects
+)
 
 find_package(LibKWorkspace CONFIG REQUIRED)
 
@@ -91,6 +98,7 @@ add_subdirectory(components)
 add_subdirectory(quicksettings)
 add_subdirectory(kcms)
 add_subdirectory(kded)
+add_subdirectory(kwin)
 
 find_program(PlasmaOpenSettings plasma-open-settings)
 set_package_properties(PlasmaOpenSettings PROPERTIES
