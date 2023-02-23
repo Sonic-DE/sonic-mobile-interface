@@ -60,7 +60,7 @@ MobileTaskSwitcherEffect::MobileTaskSwitcherEffect()
         }
     };
 
-    effects->registerTouchpadPinchShortcut(PinchDirection::Contracting, 4, m_realtimeToggleAction, progressCallback);
+    // effects->registerTouchpadPinchShortcut(PinchDirection::Contracting, 4, m_realtimeToggleAction, progressCallback);
     effects->registerTouchscreenSwipeShortcut(SwipeDirection::Up, 3, m_realtimeToggleAction, progressCallback);
 
     connect(effects, &EffectsHandler::screenAboutToLock, this, &MobileTaskSwitcherEffect::realDeactivate);
@@ -244,6 +244,7 @@ qreal MobileTaskSwitcherEffect::partialActivationFactor() const
 void MobileTaskSwitcherEffect::setPartialActivationFactor(qreal factor)
 {
     if (m_partialActivationFactor != factor) {
+        qDebug() << factor;
         m_partialActivationFactor = factor;
         Q_EMIT partialActivationFactorChanged();
     }

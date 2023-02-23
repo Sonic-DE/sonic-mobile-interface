@@ -55,6 +55,7 @@ Item {
 
             // minimize window immediately if it shows up
             item.window.minimized = true;
+            // item.minimizeApp();
         }
     }
 
