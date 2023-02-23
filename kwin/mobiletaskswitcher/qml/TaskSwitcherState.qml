@@ -220,7 +220,10 @@ QtObject {
         duration: PlasmaCore.Units.longDuration
         easing.type: Easing.InOutQuad
 
+        onStarted: root.currentlyBeingClosed = true
+
         onFinished: {
+            root.currentlyBeingClosed = false;
             root.currentlyBeingOpened = false;
             scrollingTasks = false;
             taskSwitcher.instantHide();

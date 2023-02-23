@@ -179,27 +179,24 @@ FocusScope {
         ColumnLayout {
             id: placeholder
             spacing: PlasmaCore.Units.gridUnit
-            opacity: root.tasksCount === 0 ? 0.9 : 0
+            opacity: (root.tasksCount === 0 && !taskSwitcherState.currentlyBeingClosed) ? 0.9 : 0
             Behavior on opacity { NumberAnimation { duration: 500 } }
 
-            anchors.fill: parent
-            // anchors.topMargin: Math.round(container.height * 0.1)
-            anchors.leftMargin: root.leftMargin
-            anchors.rightMargin: root.rightMargin
+            anchors.centerIn: parent
 
             Kirigami.Icon {
                 id: icon
-                Layout.alignment: Qt.AlignBottom | Qt.AlignHCenter
+                Layout.alignment: Qt.AlignHCenter
                 implicitWidth: PlasmaCore.Units.iconSizes.large
-                implicitHeight: width
+                implicitHeight: PlasmaCore.Units.iconSizes.large
                 source: "window"
                 color: "white"
             }
 
             PlasmaExtras.Heading {
                 Layout.fillWidth: true
-                Layout.maximumWidth: placeholder.width * 0.75
-                Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
+                Layout.maximumWidth: root.width * 0.75
+                Layout.alignment: Qt.AlignHCenter
                 color: "white"
                 level: 3
                 wrapMode: Text.Wrap
