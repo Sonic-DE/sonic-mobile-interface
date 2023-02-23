@@ -166,7 +166,7 @@ void Settings::loadSavedConfigSetting(KSharedConfig::Ptr &config, const QString 
 {
     const auto savedGroup = KConfigGroup{m_initialStartConfig, SAVED_CONFIG_GROUP};
     const auto fileGroup = KConfigGroup{&savedGroup, fileName};
-    const auto keyGroup = KConfigGroup{&fileGroup, group};
+    auto keyGroup = KConfigGroup{&fileGroup, group};
 
     if (!keyGroup.hasKey(key)) {
         return;
