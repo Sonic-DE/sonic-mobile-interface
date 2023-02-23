@@ -42,7 +42,7 @@ bool Settings::shouldStartWizard()
         return false;
     }
 
-    auto group = KConfigGroup{m_initialStartConfig, INITIAL_START_CONFIG_GROUP};
+    const auto group = KConfigGroup{m_initialStartConfig, INITIAL_START_CONFIG_GROUP};
     return !group.readEntry("wizardRun", false);
 }
 
