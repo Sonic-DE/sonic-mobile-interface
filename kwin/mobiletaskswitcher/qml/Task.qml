@@ -43,7 +43,7 @@ Item {
     }
 
     function minimizeApp() {
-        delegate.window.minimize = true;
+        delegate.window.minimized = true;
     }
 //END functions
 

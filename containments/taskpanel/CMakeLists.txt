@@ -19,7 +19,6 @@ target_link_libraries(plasma_containment_phone_taskpanel
                       KF5::WaylandClient
                      )
 
-
 install(TARGETS plasma_containment_phone_taskpanel DESTINATION ${KDE_INSTALL_PLUGINDIR}/plasma/applets)
 
 plasma_install_package(package org.kde.phone.taskpanel)

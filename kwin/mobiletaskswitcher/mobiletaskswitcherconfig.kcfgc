@@ -1,0 +1,5 @@
+File=mobiletaskswitcherconfig.kcfg
+ClassName=MobileTaskSwitcherConfig
+Singleton=true
+Mutators=true
+

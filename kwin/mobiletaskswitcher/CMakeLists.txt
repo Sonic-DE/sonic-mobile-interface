@@ -1,19 +1,15 @@
 # SPDX-FileCopyrightText: 2022 Devin Lin <devin@kde.org>
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-set(mobiletaskswitcher_SRCS
+kcoreaddons_add_plugin(kwin4_effect_mobiletaskswitcher INSTALL_NAMESPACE "kwin/effects/plugins")
+target_sources(kwin4_effect_mobiletaskswitcher PRIVATE
     main.cpp
     mobiletaskswitchereffect.cpp
 )
-# add_library(kwin_effect_taskswitcher SHARED ${mobiletaskswitcher_SRCS})
+kconfig_add_kcfg_files(kwin4_effect_mobiletaskswitcher mobiletaskswitcherconfig.kcfgc)
+# install(FILES metadata.json DESTINATION ${KDE_INSTALL_DATADIR}/kwin/builtin-effects/kwin4_effect_mobiletaskswitcher/)
 
-kcoreaddons_add_plugin(kwin_effect_taskswitcher STATIC SOURCES ${mobiletaskswitcher_SRCS} INSTALL_NAMESPACE "kwin/effects/plugins")
-install(FILES metadata.json DESTINATION ${KDE_INSTALL_DATADIR}/kwin/builtin-effects/kwin4_effect_mobiletaskswitcher/)
-
-target_link_libraries(kwin_effect_taskswitcher
-PRIVATE
-    KWinEffects::kwineffects
-
+target_link_libraries(kwin4_effect_mobiletaskswitcher
     KF5::ConfigGui
     KF5::GlobalAccel
     KF5::I18n
@@ -22,7 +18,9 @@ PRIVATE
 
     Qt::Quick
     Qt::Core
+
+    KWinEffects::kwineffects
 )
 
-# install(TARGETS kwin_effect_taskswitcher DESTINATION ${PLUGIN_INSTALL_DIR}/kwin/effects/plugins)
+# install(TARGETS kwin4_effect_taskswitcher DESTINATION ${PLUGIN_INSTALL_DIR}/kwin/effects/plugins)
 install(DIRECTORY qml DESTINATION ${KDE_INSTALL_DATADIR}/kwin/effects/mobiletaskswitcher)
