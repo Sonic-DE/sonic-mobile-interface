@@ -11,6 +11,8 @@ import QtGraphicalEffects 1.15
 import org.kde.taskmanager 0.1 as TaskManager
 import org.kde.plasma.core 2.1 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
+import org.kde.kirigami 2.19 as Kirigami
+import org.kde.plasma.extras 2.0 as PlasmaExtras
 
 import org.kde.kwin 3.0 as KWinComponents
 import org.kde.kwin.private.effects 1.0
@@ -72,14 +74,15 @@ FocusScope {
     Keys.onEscapePressed: hide();
 
     Component.onCompleted: {
+        taskList.jumpToFirstVisibleWindow();
         taskList.minimizeAll();
 
-        // reset values
         taskSwitcherState.currentlyBeingOpened = true;
-        taskSwitcherState.goToTaskIndex(0);
 
         // fully open the panel (if this is a button press, not gesture)
-        taskSwitcherState.open();
+        if (!root.effect.gestureInProgress) {
+            taskSwitcherState.open();
+        }
     }
 
     // called by c++ plugin
@@ -103,6 +106,20 @@ FocusScope {
 
     function setSingleActiveWindow(id) {
         instantHide();
+    }
+
+    Connections {
+        target: root.effect
+
+        function onPartialActivationFactorChanged() {
+            taskSwitcherState.positionY = taskSwitcherState.openedYPosition * root.effect.partialActivationFactor;
+        }
+
+        function onGestureInProgressChanged() {
+            if (!root.effect.gestureInProgress) {
+                taskSwitcherState.updateState();
+            }
+        }
     }
 
     KWinComponents.DesktopBackground {
@@ -158,9 +175,42 @@ FocusScope {
             }
         }
 
+        // placeholder message
+        ColumnLayout {
+            id: placeholder
+            spacing: PlasmaCore.Units.gridUnit
+            opacity: root.tasksCount === 0 ? 0.9 : 0
+            Behavior on opacity { NumberAnimation { duration: 500 } }
+
+            anchors.fill: parent
+            // anchors.topMargin: Math.round(container.height * 0.1)
+            anchors.leftMargin: root.leftMargin
+            anchors.rightMargin: root.rightMargin
+
+            Kirigami.Icon {
+                id: icon
+                Layout.alignment: Qt.AlignBottom | Qt.AlignHCenter
+                implicitWidth: PlasmaCore.Units.iconSizes.large
+                implicitHeight: width
+                source: "window"
+                color: "white"
+            }
+
+            PlasmaExtras.Heading {
+                Layout.fillWidth: true
+                Layout.maximumWidth: placeholder.width * 0.75
+                Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
+                color: "white"
+                level: 3
+                wrapMode: Text.Wrap
+                horizontalAlignment: Text.AlignHCenter
+                text: i18n("No applications are running.")
+            }
+        }
+
+        // flicking area for task switcher
         FlickContainer {
             id: flickable
-
             anchors.fill: parent
 
             taskSwitcherState: root.taskSwitcherState
@@ -187,8 +237,8 @@ FocusScope {
 
                 PlasmaComponents.ToolButton {
                     id: closeAllButton
-
                     property bool closeRequested: false
+                    visible: root.tasksCount !== 0
 
                     anchors {
                         bottom: parent.bottom
@@ -200,12 +250,7 @@ FocusScope {
                     PlasmaCore.ColorScope.inherit: false
 
                     opacity: (taskSwitcherState.currentlyBeingOpened || taskSwitcherState.currentlyBeingClosed) ? 0.0 : 1.0
-
-                    Behavior on opacity {
-                        NumberAnimation {
-                            duration: PlasmaCore.Units.shortDuration
-                        }
-                    }
+                    Behavior on opacity { NumberAnimation { duration: PlasmaCore.Units.shortDuration } }
 
                     icon.name: "edit-clear-history"
                     font.bold: true

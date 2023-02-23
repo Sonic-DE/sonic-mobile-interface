@@ -6,6 +6,7 @@ import QtQuick 2.15
 import QtQuick.Layouts 1.1
 import QtQuick.Window 2.2
 import QtQuick.Controls 2.2 as QQC2
+import QtGraphicalEffects 1.6
 
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
@@ -165,7 +166,7 @@ Item {
                 Layout.maximumWidth: delegate.previewWidth
                 Layout.maximumHeight: delegate.previewHeight
 
-                color: PlasmaCore.Theme.backgroundColor
+                color: "transparent"
                 clip: true
 
                 // scale animation on press
@@ -192,13 +193,13 @@ Item {
                         id: thumbSource
                         wId: delegate.window.internalId
                         anchors.fill: parent
-                    }
 
-                    // darken effect
-                    Rectangle {
-                        anchors.fill: parent
-                        color: "black"
-                        opacity: delegate.darken
+                        layer {
+                            enabled: true
+                            effect: ColorOverlay {
+                                color: Qt.rgba(0, 0, 0, delegate.darken)
+                            }
+                        }
                     }
 
                     TapHandler {

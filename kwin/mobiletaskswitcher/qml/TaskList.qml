@@ -31,13 +31,6 @@ Item {
         return baseY + diff / 2;
     }
 
-    transform: Scale {
-        origin.x: root.width / 2
-        origin.y: root.height / 2
-        xScale: taskSwitcherState.currentScale
-        yScale: taskSwitcherState.currentScale
-    }
-
     function closeAll() {
         for (var i = 0; i < repeater.count; i++) {
             repeater.itemAt(i).closeApp();
@@ -56,6 +49,24 @@ Item {
             // minimize window immediately if it shows up
             item.minimizeApp();
         }
+    }
+
+    function jumpToFirstVisibleWindow() {
+        for (var i = 0; i < repeater.count; i++) {
+            let item = repeater.itemAt(i);
+
+            if (!item.window.minimized) {
+                taskSwitcherState.goToTaskIndex(i);
+                break;
+            }
+        }
+    }
+
+    transform: Scale {
+        origin.x: root.width / 2
+        origin.y: root.height / 2
+        xScale: taskSwitcherState.currentScale
+        yScale: taskSwitcherState.currentScale
     }
 
     // taphandler activates even if delegate touched

@@ -21,6 +21,8 @@ namespace KWin
 class MobileTaskSwitcherEffect : public QuickSceneEffect
 {
     Q_OBJECT
+    Q_PROPERTY(qreal partialActivationFactor READ partialActivationFactor NOTIFY partialActivationFactorChanged)
+    Q_PROPERTY(bool gestureInProgress READ gestureInProgress NOTIFY gestureInProgressChanged)
 
 public:
     enum class Status { Inactive, Activating, Deactivating, Active };

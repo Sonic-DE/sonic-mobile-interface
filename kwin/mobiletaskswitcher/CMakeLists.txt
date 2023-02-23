@@ -6,8 +6,7 @@ target_sources(kwin4_effect_mobiletaskswitcher PRIVATE
     main.cpp
     mobiletaskswitchereffect.cpp
 )
-kconfig_add_kcfg_files(kwin4_effect_mobiletaskswitcher mobiletaskswitcherconfig.kcfgc)
-# install(FILES metadata.json DESTINATION ${KDE_INSTALL_DATADIR}/kwin/builtin-effects/kwin4_effect_mobiletaskswitcher/)
+install(FILES metadata.json DESTINATION ${KDE_INSTALL_DATADIR}/kwin/builtin-effects/kwin4_effect_mobiletaskswitcher/)
 
 target_link_libraries(kwin4_effect_mobiletaskswitcher
     KF5::ConfigGui
