@@ -16,12 +16,11 @@ MobileShell.QuickSetting {
     icon: "network-bluetooth"
     settingsCommand: "plasma-open-settings kcm_bluetooth"
     function toggle() {
-        var enable = !btManager.bluetoothOperational;
+        const enable = !btManager.bluetoothOperational;
         btManager.bluetoothBlocked = !enable;
 
         for (var i = 0; i < btManager.adapters.length; ++i) {
-            var adapter = btManager.adapters[i];
-            adapter.powered = enable;
+            btManager.adapters[i].powered = enable;
         }
     }
     enabled: btManager.bluetoothOperational
