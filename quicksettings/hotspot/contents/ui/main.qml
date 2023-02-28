@@ -15,11 +15,16 @@ MobileShell.QuickSetting {
         id: nmHandler
     }
 
+    PlasmaNM.WirelessStatus {
+        id: wirelessStatus
+    }
+
+
     text: i18n("Hotspot")
     icon: "network-wireless-hotspot"
 
-    enabled: false
-    status: defaultStatus
+    enabled: wirelessStatus.hotspotSSID.length !== 0
+    status: enabled ? wirelessStatus.hotspotSSID : defaultStatus
 
     function toggle() {
         if (!enabled) {
@@ -28,19 +33,4 @@ MobileShell.QuickSetting {
             nmHandler.stopHotspot();
         }
     }
-
-    Connections {
-        target: nmHandler
-
-        function onHotspotCreated() {
-            root.enabled = true;
-            root.status = "";
-        }
-
-        function onHotspotDisabled() {
-            root.enabled = false;
-            root.status = defaultStatus;
-        }
-    }
-
 }
