@@ -19,8 +19,6 @@
 #include <KWayland/Client/registry.h>
 #include <KWayland/Client/surface.h>
 
-#include <KGlobalAccel>
-
 #include <virtualkeyboardinterface.h>
 
 // register type for Keyboards.KWinVirtualKeyboard.forceActivate();

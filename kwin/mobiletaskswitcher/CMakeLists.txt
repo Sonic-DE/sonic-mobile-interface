@@ -9,11 +9,11 @@ target_sources(kwin4_effect_mobiletaskswitcher PRIVATE
 install(FILES metadata.json DESTINATION ${KDE_INSTALL_DATADIR}/kwin/builtin-effects/kwin4_effect_mobiletaskswitcher/)
 
 target_link_libraries(kwin4_effect_mobiletaskswitcher
-    KF5::ConfigGui
-    KF5::GlobalAccel
-    KF5::I18n
-    KF5::CoreAddons
-    KF5::WindowSystem
+    KF6::ConfigGui
+    KF6::GlobalAccel
+    KF6::I18n
+    KF6::CoreAddons
+    KF6::WindowSystem
 
     Qt::Quick
     Qt::Core
