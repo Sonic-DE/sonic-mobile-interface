@@ -7,7 +7,7 @@
 
 void HalcyonPlugin::registerTypes(const char *uri)
 {
-    Q_ASSERT(QLatin1String(uri) == QLatin1String("org.kde.private.plasma.mobile.homescreen.halcyon"));
+    Q_ASSERT(QLatin1String(uri) == QLatin1String("org.kde.private.mobile.homescreen.folio"));
 
     qmlRegisterSingletonType<ApplicationListModel>(uri, 1, 0, "ApplicationListModel", [](QQmlEngine *, QJSEngine *) -> QObject * {
         return ApplicationListModel::self();

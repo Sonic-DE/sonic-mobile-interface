@@ -17,7 +17,7 @@ import org.kde.draganddrop 2.0 as DragDrop
 import org.kde.plasma.private.containmentlayoutmanager 1.0 as ContainmentLayoutManager 
 
 import org.kde.plasma.private.mobileshell 1.0 as MobileShell
-import org.kde.private.plasma.mobile.homescreen.folio 1.0 as Folio
+import org.kde.private.mobile.homescreen.folio 1.0 as Folio
 
 import "private" as Private
 
