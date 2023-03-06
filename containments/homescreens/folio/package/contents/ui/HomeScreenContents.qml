@@ -52,6 +52,7 @@ DragDrop.DropArea {
         z: 999999
         appletsLayout: dropArea.appletsLayout
         favoriteStrip: dropArea.favoriteStrip
+        desktopModel: dropArea.desktopModel
     }
 
     property bool inAppletEditMode: false
