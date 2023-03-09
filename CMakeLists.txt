@@ -79,14 +79,6 @@ set_package_properties(PlasmaWaylandProtocols PROPERTIES
     URL "https://invent.kde.org/libraries/plasma-wayland-protocols/"
 )
 
-if (QT_MAJOR_VERSION EQUAL "5")
-    find_package(QtWaylandScanner)
-    set_package_properties(QtWaylandScanner PROPERTIES
-        TYPE REQUIRED
-        PURPOSE "Required for building with Wayland above-lock-screen support"
-    )
-endif()
-
 find_package(KWinEffects 5.26.0 CONFIG)
 set_package_properties(KWinEffects PROPERTIES DESCRIPTION "KWin (Effects)"
     TYPE RECOMMENDED

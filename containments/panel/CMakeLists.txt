@@ -23,10 +23,10 @@ target_link_libraries(org.kde.plasma.mobile.panel
                       Wayland::Client
                      )
 
-qt6_generate_wayland_protocol_client_sources(plasma_applet_phonepanel FILES
+qt6_generate_wayland_protocol_client_sources(org.kde.plasma.mobile.panel FILES
     ${PLASMA_WAYLAND_PROTOCOLS_DIR}/kde-lockscreen-overlay-v1.xml)
 
-install(TARGETS plasma_applet_phonepanel DESTINATION ${KDE_INSTALL_PLUGINDIR}/plasma/applets)
+install(TARGETS org.kde.plasma.mobile.panel DESTINATION ${KDE_INSTALL_PLUGINDIR}/plasma/applets)
 
 plasma_install_package(package org.kde.plasma.mobile.panel)
 
