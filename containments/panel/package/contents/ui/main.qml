@@ -87,6 +87,9 @@ ContainmentItem {
         MobileShellState.ShellDBusClient.panelState = fullscreen ? "hidden" : "default";
     }
 
+    // whether this is an overlay over the lockscreen
+    readonly property bool lockscreenShown: plasmoid.nativeInterface.lockscreenShown
+
     WindowPlugin.WindowMaximizedTracker {
         id: windowMaximizedTracker
         screenGeometry: Plasmoid.containment.screenGeometry
@@ -145,6 +148,9 @@ ContainmentItem {
         // Initialize notification popups.
         // Initialize action popup buttons.
         MobileShell.PopupProviderLoader.load();
+
+        // initialize lockscreen overlay
+        plasmoid.nativeInterface.initializeOverlay(plasmoid.Window.window);
     }
 
     MobileShell.StartupFeedbackPanelFill {
