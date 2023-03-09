@@ -16,22 +16,15 @@ target_link_libraries(org.kde.plasma.mobile.panel
                       Qt::Quick
                       Qt::WaylandClient
                       Qt::WaylandClientPrivate
-                      KF5::Plasma
-                      KF5::I18n
-                      KF5::Service
-                      KF5::WindowSystem
+                      KF6::Plasma
+                      KF6::I18n
+                      KF6::Service
+                      KF6::WindowSystem
                       Wayland::Client
                      )
 
-if (QT_MAJOR_VERSION EQUAL "5")
-    ecm_add_qtwayland_client_protocol(plasma_applet_phonepanel
-        PROTOCOL ${PLASMA_WAYLAND_PROTOCOLS_DIR}/kde-lockscreen-overlay-v1.xml
-        BASENAME kde-lockscreen-overlay-v1
-    )
-else()
-    qt6_generate_wayland_protocol_client_sources(plasma_applet_phonepanel FILES
-        ${PLASMA_WAYLAND_PROTOCOLS_DIR}/kde-lockscreen-overlay-v1.xml)
-endif()
+qt6_generate_wayland_protocol_client_sources(plasma_applet_phonepanel FILES
+    ${PLASMA_WAYLAND_PROTOCOLS_DIR}/kde-lockscreen-overlay-v1.xml)
 
 install(TARGETS plasma_applet_phonepanel DESTINATION ${KDE_INSTALL_PLUGINDIR}/plasma/applets)
 
