@@ -9,10 +9,6 @@ set(timeplugin_SRCS
 
 add_library(timeplugin ${timeplugin_SRCS})
 
-find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS
-    Declarative
-)
-
 target_link_libraries(timeplugin
     Qt::Core
     Qt::DBus

@@ -8,10 +8,6 @@ set(wifiplugin_SRCS
 
 add_library(wifiplugin ${wifiplugin_SRCS})
 
-find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS
-    Declarative
-)
-
 target_link_libraries(wifiplugin
     Qt::Core
     Qt::DBus

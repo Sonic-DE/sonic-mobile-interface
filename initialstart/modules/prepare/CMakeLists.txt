@@ -8,10 +8,6 @@ set(prepareplugin_SRCS
 
 add_library(prepareplugin ${prepareplugin_SRCS})
 
-find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS
-    Declarative
-)
-
 target_link_libraries(prepareplugin
     Qt::Core
     Qt::DBus
