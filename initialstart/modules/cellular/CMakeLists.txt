@@ -10,14 +10,14 @@ add_library(cellularplugin ${cellularplugin_SRCS})
 target_link_libraries(cellularplugin
     Qt::Core
     Qt::DBus
-    KF5::CoreAddons
-    KF5::QuickAddons
-    KF5::ConfigCore
-    KF5::ConfigGui
-    KF5::I18n
-    KF5::Notifications
-    KF5::NetworkManagerQt
-    KF5::ModemManagerQt
+    KF6::CoreAddons
+    KF6::QuickAddons
+    KF6::ConfigCore
+    KF6::ConfigGui
+    KF6::I18n
+    KF6::Notifications
+    KF6::NetworkManagerQt
+    KF6::ModemManagerQt
 )
 
 set_property(TARGET cellularplugin PROPERTY LIBRARY_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/org/kde/plasma/mobileinitialstart/cellular)

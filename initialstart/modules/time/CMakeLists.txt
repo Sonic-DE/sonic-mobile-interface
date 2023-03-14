@@ -16,12 +16,12 @@ find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS
 target_link_libraries(timeplugin
     Qt::Core
     Qt::DBus
-    KF5::CoreAddons
-    KF5::QuickAddons
-    KF5::ConfigCore
-    KF5::ConfigGui
-    KF5::I18n
-    KF5::Notifications
+    KF6::CoreAddons
+    KF6::QuickAddons
+    KF6::ConfigCore
+    KF6::ConfigGui
+    KF6::I18n
+    KF6::Notifications
 )
 
 set_property(TARGET timeplugin PROPERTY LIBRARY_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/org/kde/plasma/mobileinitialstart/time)

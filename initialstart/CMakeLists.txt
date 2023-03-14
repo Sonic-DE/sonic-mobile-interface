@@ -17,12 +17,12 @@ target_link_libraries(plasma-mobile-initial-start
     Qt::Gui
     Qt::Widgets
     Qt::Quick
-    KF5::I18n
-    KF5::ConfigCore
-    KF5::ConfigGui
-    KF5::CoreAddons
-    KF5::DBusAddons
-    KF5::Package
+    KF6::I18n
+    KF6::ConfigCore
+    KF6::ConfigGui
+    KF6::CoreAddons
+    KF6::DBusAddons
+    KF6::Package
 )
 
 target_include_directories(plasma-mobile-initial-start PRIVATE ${CMAKE_BINARY_DIR})
