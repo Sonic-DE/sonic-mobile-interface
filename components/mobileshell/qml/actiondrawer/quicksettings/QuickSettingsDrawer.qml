@@ -113,6 +113,15 @@ Components.BaseItem {
                 Layout.leftMargin: Kirigami.Units.largeSpacing
                 Layout.rightMargin: Kirigami.Units.largeSpacing
             }
+
+            MobileShell.DialerControlsWidget {
+                id: dialerWidget
+                property real fullHeight: height + Layout.topMargin
+                Layout.fillWidth: true
+                Layout.topMargin: PlasmaCore.Units.smallSpacing
+                Layout.leftMargin: Kirigami.Units.largeSpacing
+                Layout.rightMargin: Kirigami.Units.largeSpacing
+            }
             
             Handle {
                 id: handle
