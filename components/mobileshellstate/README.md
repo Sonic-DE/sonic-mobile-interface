@@ -1,3 +1,8 @@
+<!--
+- SPDX-FileCopyrightText: None
+- SPDX-License-Identifier: CC0-1.0
+-->
+
 # MobileShell State Plugin
 
 This plugin stores the state of the mobile shell.
