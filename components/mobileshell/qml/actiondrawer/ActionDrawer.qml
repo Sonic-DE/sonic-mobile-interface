@@ -234,7 +234,7 @@ Item {
         anchors.fill: parent
         
         contentWidth: root.width
-        contentHeight: root.height + 999999
+        contentHeight: root.height
         contentY: contentHeight / 2
         
         // if the recent root.offset change was due to this flickable
