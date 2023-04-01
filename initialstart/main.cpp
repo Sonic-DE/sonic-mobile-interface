@@ -11,6 +11,7 @@
 #include <KAboutData>
 #include <KLocalizedString>
 
+#include "settings.h"
 #include "version.h"
 #include "wizard.h"
 
@@ -33,13 +34,13 @@ int main(int argc, char *argv[])
 
     bool testWizard = parser->isSet(QStringLiteral("test-wizard"));
 
-    // if (!testWizard) {
-    //     // if the wizard has already been run, or we aren't in plasma mobile
-    //     if (!Settings::self()->shouldStartWizard()) {
-    //         qDebug() << "Wizard will not be started since either it has already been run, or the current session is not Plasma Mobile.";
-    //         return 0;
-    //     }
-    // }
+    if (!testWizard) {
+        // if the wizard has already been run, or we aren't in plasma mobile
+        if (!Settings::self()->shouldStartWizard()) {
+            qDebug() << "Wizard will not be started since either it has already been run, or the current session is not Plasma Mobile.";
+            return 0;
+        }
+    }
 
     // start wizard
     KLocalizedString::setApplicationDomain("plasma-mobile-initial-start");

@@ -4,6 +4,7 @@
 set(plasma-mobile-initial-start_SRCS
     main.cpp
     wizard.cpp
+    settings.cpp
     utils.h
 )
 
