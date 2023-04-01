@@ -11,8 +11,8 @@ add_library(prepareplugin ${prepareplugin_SRCS})
 target_link_libraries(prepareplugin
     Qt::Core
     Qt::DBus
+    Qt::Quick
     KF6::CoreAddons
-    KF6::QuickAddons
     KF6::ConfigCore
     KF6::ConfigGui
     KF6::I18n

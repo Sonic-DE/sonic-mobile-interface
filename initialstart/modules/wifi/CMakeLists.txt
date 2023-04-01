@@ -11,8 +11,8 @@ add_library(wifiplugin ${wifiplugin_SRCS})
 target_link_libraries(wifiplugin
     Qt::Core
     Qt::DBus
+    Qt::Quick
     KF6::CoreAddons
-    KF6::QuickAddons
     KF6::ConfigCore
     KF6::ConfigGui
     KF6::NetworkManagerQt
