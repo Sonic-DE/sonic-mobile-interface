@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include "wizard.h"
+#include "settings.h"
 #include "utils.h"
 
 #include <KPackage/PackageLoader>
@@ -94,5 +95,5 @@ QList<QQuickItem *> Wizard::steps()
 
 void Wizard::wizardFinished()
 {
-    // Settings::self()->setWizardFinished();
+    Settings::self()->setWizardFinished();
 }

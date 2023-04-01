@@ -18,7 +18,7 @@ Item {
         Label {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-            text: i18n("Your device is now ready. <br /><br />Enjoy <b>Plasma 5.27</b>!")
+            text: i18n("Your device is now ready. <br /><br />Enjoy <b>Plasma 6.0</b>!")
             wrapMode: Text.Wrap
             horizontalAlignment: Text.AlignHCenter
         }
