@@ -94,8 +94,8 @@ MobileShell.Flickable {
             bottomMargin: mainFlickable.footer ? mainFlickable.footer.height : 0
         }
         
-        PlasmaCore.ColorScope.inherit: false
-        PlasmaCore.ColorScope.colorGroup: PlasmaCore.Theme.ComplementaryColorGroup
+        Kirigami.Theme.inherit: false
+        Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
         
         parent: mainFlickable
         visible: count > 1
@@ -109,7 +109,7 @@ MobileShell.Flickable {
             implicitHeight: implicitWidth
             
             radius: width
-            color: isAddPageIndicator ? "transparent" : PlasmaCore.ColorScope.textColor
+            color: isAddPageIndicator ? "transparent" : Kirigami.Theme.textColor
 
             PlasmaComponents.Label {
                 anchors.centerIn: parent

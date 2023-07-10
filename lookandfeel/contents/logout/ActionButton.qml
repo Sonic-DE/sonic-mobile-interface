@@ -9,6 +9,7 @@ import QtQuick 2.8
 
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents3
+import org.kde.kirigami 2.20 as Kirigami
 
 Item {
     id: root
@@ -35,7 +36,7 @@ Item {
         width: root.width
         height: iconSize * 2.2
         radius: PlasmaCore.Units.smallSpacing
-        color: PlasmaCore.ColorScope.backgroundColor
+        color: Kirigami.Theme.backgroundColor
         opacity: mouseArea.containsPress ? 1 : 0.6
         border {
             color: Qt.rgba(255, 255, 255, 0.8)
@@ -53,7 +54,7 @@ Item {
         width: iconSize
         height: iconSize
 
-        colorGroup: PlasmaCore.ColorScope.colorGroup
+        colorSet: Kirigami.Theme.colorSet
     }
 
     PlasmaComponents3.Label {
@@ -63,7 +64,7 @@ Item {
             centerIn: buttonRect
         }
         style: softwareRendering ? Text.Outline : Text.Normal
-        styleColor: softwareRendering ? PlasmaCore.ColorScope.backgroundColor : "transparent" //no outline, doesn't matter
+        styleColor: softwareRendering ? Kirigami.Theme.backgroundColor : "transparent" //no outline, doesn't matter
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignTop
         wrapMode: Text.WordWrap

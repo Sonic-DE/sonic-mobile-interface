@@ -93,8 +93,9 @@ Item {
                             imageSource: mpris2Source.albumArt(playerItem.source)
                         }
                         
-                        contentItem: PlasmaCore.ColorScope {
-                            colorGroup: PlasmaCore.Theme.ComplementaryColorGroup
+                        contentItem: Item {
+                            Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
+                            Kirigami.Theme.inherit: false
                             width: playerItem.width - playerItem.leftPadding - playerItem.rightPadding
                             
                             RowLayout {

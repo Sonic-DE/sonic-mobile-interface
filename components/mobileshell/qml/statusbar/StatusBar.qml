@@ -97,10 +97,11 @@ Item {
     }
 
     // screen top panel
-    PlasmaCore.ColorScope {
+    Item {
         id: icons
         z: 1
-        colorGroup: root.colorGroup
+        Kirigami.Theme.colorSet: root.Kirigami.Theme.colorSet
+        Kirigami.Theme.inherit: false
         anchors.fill: parent
         
         Controls.Control {

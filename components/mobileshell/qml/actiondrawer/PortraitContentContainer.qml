@@ -19,7 +19,7 @@ import "quicksettings"
 /**
  * Root element that contains all of the ActionDrawer's contents, and is anchored to the screen.
  */
-PlasmaCore.ColorScope {
+Item {
     id: root
     
     required property var actionDrawer
@@ -32,7 +32,8 @@ PlasmaCore.ColorScope {
     // fully open position
     readonly property real maximizedQuickSettingsOffset: minimizedQuickSettingsOffset + quickSettings.maxAddedHeight
     
-    colorGroup: PlasmaCore.Theme.ViewColorGroup
+    Kirigami.Theme.colorSet: Kirigami.Theme.View
+    Kirigami.Theme.inherit: false
     
     function applyMinMax(val) {
         return Math.max(0, Math.min(1, val));

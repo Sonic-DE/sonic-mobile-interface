@@ -11,13 +11,14 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.plasma.extras 2.0 as PlasmaExtra
 
-PlasmaCore.ColorScope {
+Item {
     id: root
     
     signal switchToListRequested()
     signal switchToGridRequested()
     
-    colorGroup: PlasmaCore.Theme.ComplementaryColorGroup
+    Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
+    Kirigami.Theme.inherit: false
     
     // HACK: Here only to steal inputs the would normally be delivered to home
     MouseArea {

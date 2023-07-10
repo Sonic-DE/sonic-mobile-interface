@@ -333,8 +333,8 @@ FocusScope {
                         horizontalCenter: parent.horizontalCenter
                     }
 
-                    PlasmaCore.ColorScope.colorGroup: PlasmaCore.Theme.ComplementaryColorGroup
-                    PlasmaCore.ColorScope.inherit: false
+                    Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
+                    Kirigami.Theme.inherit: false
 
                     opacity: (taskSwitcherState.currentlyBeingOpened || taskSwitcherState.currentlyBeingClosed) ? 0.0 : 1.0
                     Behavior on opacity { NumberAnimation { duration: PlasmaCore.Units.shortDuration } }

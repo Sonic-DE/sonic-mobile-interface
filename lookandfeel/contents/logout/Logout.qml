@@ -16,10 +16,11 @@ import org.kde.coreaddons 1.0 as KCoreAddons
 
 import org.kde.plasma.private.sessions 2.0
 
-PlasmaCore.ColorScope {
+Item {
     id: root
 
-    colorGroup: PlasmaCore.Theme.ComplementaryColorGroup
+    Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
+    Kirigami.Theme.inherit: false
     signal logoutRequested()
     signal haltRequested()
     signal suspendRequested(int spdMethod)
@@ -44,7 +45,7 @@ PlasmaCore.ColorScope {
     Rectangle {
         id: background
         anchors.fill: parent
-        color: PlasmaCore.ColorScope.backgroundColor
+        color: Kirigami.Theme.backgroundColor
         opacity: 0
     }
 
