@@ -37,7 +37,7 @@ RowLayout {
         text: i18n("%1%", provider.percent)
         Layout.alignment: Qt.AlignVCenter
 
-        color: PlasmaCore.ColorScope.textColor
+        color: Kirigami.Theme.textColor
         font.pixelSize: textPixelSize
     }
 }

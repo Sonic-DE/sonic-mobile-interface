@@ -22,7 +22,7 @@ MobileShell.NavigationPanel {
     // - opaque if an app is shown or vkbd is shown
     // - translucent if the task switcher is open
     // - transparent if on the homescreen
-    backgroundColor: (Keyboards.KWinVirtualKeyboard.visible || opaqueBar) ? PlasmaCore.ColorScope.backgroundColor : "transparent";
+    backgroundColor: (Keyboards.KWinVirtualKeyboard.visible || opaqueBar) ? Kirigami.Theme.backgroundColor : "transparent";
     foregroundColorGroup: opaqueBar ? PlasmaCore.Theme.NormalColorGroup : PlasmaCore.Theme.ComplementaryColorGroup
     shadow: !opaqueBar
         

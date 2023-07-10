@@ -56,9 +56,10 @@ Item {
         }
     }
 
-    PlasmaCore.ColorScope {
+    Item {
         anchors.fill: parent
-        colorGroup: PlasmaCore.Theme.ComplementaryColorGroup
+        Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
+        Kirigami.Theme.inherit: false
 
         // header bar and action drawer
         Loader {

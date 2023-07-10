@@ -199,7 +199,7 @@ Item {
                     id: listView
                     queryString: queryField.text
                     clip: true
-                    PlasmaCore.ColorScope.colorGroup: PlasmaCore.Theme.NormalColorGroup
+                    Kirigami.Theme.colorSet: Kirigami.Theme.Window
 
                     highlight: activeFocus ? highlightComponent : null
                     Component{

@@ -23,6 +23,6 @@ PlasmaComponents.Label {
     property bool is24HourTime: MobileShell.ShellUtil.isSystem24HourFormat
     
     text: Qt.formatTime(source.data.Local.DateTime, is24HourTime ? "h:mm" : "h:mm ap")
-    color: PlasmaCore.ColorScope.textColor
+    color: Kirigami.Theme.textColor
     verticalAlignment: Qt.AlignVCenter
 }
