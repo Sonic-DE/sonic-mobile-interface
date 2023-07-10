@@ -11,6 +11,7 @@ import QtQuick.Window 2.2
 
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
+import org.kde.kirigami 2.20 as Kirigami
 
 import "../components" as Components
 import "../widgets/notifications" as Notifications
@@ -47,7 +48,7 @@ Item {
                        PlasmaCore.Theme.backgroundColor.g, 
                        PlasmaCore.Theme.backgroundColor.b, 
                        0.95)
-        Behavior on color { ColorAnimation { duration: PlasmaCore.Units.longDuration } }
+        Behavior on color { ColorAnimation { duration: Kirigami.Units.longDuration } }
         opacity: Math.max(0, Math.min(1, actionDrawer.offset / root.minimizedQuickSettingsOffset))
     }
     

@@ -8,6 +8,8 @@ import QtQuick 2.4
 import QtQuick.Layouts 1.1
 import QtQuick.Controls 2.3 as Controls
 
+import org.kde.kirigami 2.20 as Kirigami
+
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.kquickcontrolsaddons 2.0
@@ -18,9 +20,9 @@ Item {
     id: root
 
     readonly property int reservedSpaceForLabel: metrics.height
-    readonly property int cellWidth: root.width / Math.floor(root.width / ((availableCellHeight - reservedSpaceForLabel) + PlasmaCore.Units.smallSpacing*4))
+    readonly property int cellWidth: root.width / Math.floor(root.width / ((availableCellHeight - reservedSpaceForLabel) + Kirigami.Units.smallSpacing*4))
     readonly property int cellHeight: availableCellHeight
-    property int availableCellHeight: PlasmaCore.Units.iconSizes.huge + reservedSpaceForLabel
+    property int availableCellHeight: Kirigami.Units.iconSizes.huge + reservedSpaceForLabel
 
     property ContainmentLayoutManager.AppletsLayout appletsLayout
 
@@ -28,7 +30,7 @@ Item {
     property alias flow: applicationsFlow
 
     implicitWidth: frame.implicitWidth
-    implicitHeight: Math.max(PlasmaCore.Units.gridUnit*3, frame.implicitHeight)
+    implicitHeight: Math.max(Kirigami.Units.gridUnit*3, frame.implicitHeight)
 
     Controls.Label {
         id: metrics
@@ -39,7 +41,7 @@ Item {
 
     Item {
         id: spacer
-        width: PlasmaCore.Units.gridUnit * 4
+        width: Kirigami.Units.gridUnit * 4
         height: width
     }
 
@@ -67,7 +69,7 @@ Item {
 
                 move: Transition {
                     NumberAnimation {
-                        duration: PlasmaCore.Units.longDuration
+                        duration: Kirigami.Units.longDuration
                         easing.type: Easing.InOutQuad
                         properties: "x,y"
                     }
@@ -76,7 +78,7 @@ Item {
         }
         Behavior on implicitWidth {
             NumberAnimation {
-                duration: PlasmaCore.Units.longDuration
+                duration: Kirigami.Units.longDuration
                 easing.type: Easing.InOutQuad
             }
         }

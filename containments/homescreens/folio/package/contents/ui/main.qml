@@ -9,6 +9,8 @@ import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Layouts 1.1
 
+import org.kde.kirigami 2.20 as Kirigami
+
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
@@ -59,7 +61,7 @@ ContainmentItem {
         id: homeScreen
 
         onResetHomeScreenPosition: {
-            folioHomeScreen.homeScreenState.animateGoToPageIndex(0, PlasmaCore.Units.longDuration);
+            folioHomeScreen.homeScreenState.animateGoToPageIndex(0, Kirigami.Units.longDuration);
             folioHomeScreen.homeScreenState.closeAppDrawer();
         }
 

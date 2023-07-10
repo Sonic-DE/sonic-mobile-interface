@@ -39,7 +39,7 @@ AbstractAppDrawer {
         leftMargin: horizontalMargin
         rightMargin: horizontalMargin
         
-        cellWidth: effectiveContentWidth / Math.min(Math.floor(effectiveContentWidth / (PlasmaCore.Units.iconSizes.huge + Kirigami.Units.largeSpacing * 2)), 8)
+        cellWidth: effectiveContentWidth / Math.min(Math.floor(effectiveContentWidth / (Kirigami.Units.iconSizes.huge + Kirigami.Units.largeSpacing * 2)), 8)
         cellHeight: cellWidth + root.reservedSpaceForLabel
 
         readonly property int columns: Math.floor(effectiveContentWidth / cellWidth)
@@ -89,11 +89,11 @@ AbstractAppDrawer {
             enabled: true
             Behavior on opacity {
                 OpacityAnimator {
-                    duration: PlasmaCore.Units.longDuration * 2
+                    duration: Kirigami.Units.longDuration * 2
                     easing.type: Easing.InOutQuad
                 }
             }
-            implicitWidth: PlasmaCore.Units.smallSpacing
+            implicitWidth: Kirigami.Units.smallSpacing
             contentItem: Rectangle {
                 radius: width/2
                 color: Qt.rgba(1, 1, 1, 0.3)

@@ -60,7 +60,7 @@ MobileShell.GridView {
     
     header: MobileShell.BaseItem {
         topPadding: Math.round(root.height * 0.2)
-        bottomPadding: PlasmaCore.Units.largeSpacing
+        bottomPadding: Kirigami.Units.largeSpacing
         // leftPadding: root.leftMargin
         // rightPadding: root.rightMargin
         implicitWidth: root.width
@@ -261,7 +261,7 @@ MobileShell.GridView {
     
     ColumnLayout {
         id: placeholder
-        spacing: PlasmaCore.Units.gridUnit
+        spacing: Kirigami.Units.gridUnit
         visible: root.count == 0
         opacity: 0.9
         
@@ -276,7 +276,7 @@ MobileShell.GridView {
         Kirigami.Icon {
             id: icon
             Layout.alignment: Qt.AlignBottom | Qt.AlignHCenter
-            implicitWidth: PlasmaCore.Units.iconSizes.large
+            implicitWidth: Kirigami.Units.iconSizes.large
             implicitHeight: width
             source: "arrow-left"
             color: "white"

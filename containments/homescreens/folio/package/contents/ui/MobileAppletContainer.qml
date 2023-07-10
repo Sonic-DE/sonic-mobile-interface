@@ -9,6 +9,8 @@ import QtQuick.Window 2.12
 import QtQuick.Layouts 1.1
 import Qt5Compat.GraphicalEffects
 
+import org.kde.kirigami 2.20 as Kirigami
+
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
@@ -68,10 +70,10 @@ ContainmentLayoutManager.BasicAppletContainer {
         var pos = plasmoid.fullRepresentationItem.mapFromItem(appletContainer, dragCenter.x, dragCenter.y);
 
         //SCROLL LEFT
-        if (pos.x < PlasmaCore.Units.gridUnit) {
+        if (pos.x < Kirigami.Units.gridUnit) {
             launcherRepeater.scrollLeftRequested();
         //SCROLL RIGHT
-        } else if (pos.x > screenWidth - PlasmaCore.Units.gridUnit) {
+        } else if (pos.x > screenWidth - Kirigami.Units.gridUnit) {
             launcherRepeater.scrollRightRequested();
         //DON't SCROLL
         } else {

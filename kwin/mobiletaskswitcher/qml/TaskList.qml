@@ -4,6 +4,7 @@
 import QtQuick
 import QtQuick.Layouts
 
+import org.kde.kirigami 2.20 as Kirigami
 import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
 
@@ -103,7 +104,7 @@ MouseArea {
             property real listX: taskSwitcherState.xPositionFromTaskIndex(currentIndex);
             Behavior on listX {
                 NumberAnimation {
-                    duration: PlasmaCore.Units.longDuration
+                    duration: Kirigami.Units.longDuration
                     easing.type: Easing.InOutQuad
                 }
             }

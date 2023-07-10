@@ -5,6 +5,7 @@
 import QtQuick
 import QtQuick.Layouts
 
+import org.kde.kirigami 2.20 as Kirigami
 import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.plasma.extras as PlasmaExtras
@@ -66,7 +67,7 @@ FocusScope {
             hide();
         } else if (tasksCount < oldTasksCount && taskSwitcherState.currentTaskIndex >= tasksCount - 1) {
             // if the user is on the last task, and it is closed, scroll left
-            taskSwitcherState.animateGoToTaskIndex(tasksCount - 1, PlasmaCore.Units.longDuration);
+            taskSwitcherState.animateGoToTaskIndex(tasksCount - 1, Kirigami.Units.longDuration);
         }
 
         oldTasksCount = tasksCount;
@@ -265,7 +266,7 @@ FocusScope {
         // placeholder message
         ColumnLayout {
             id: placeholder
-            spacing: PlasmaCore.Units.gridUnit
+            spacing: Kirigami.Units.gridUnit
             opacity: (root.tasksCount === 0 && !taskSwitcherState.currentlyBeingClosed) ? 0.9 : 0
             Behavior on opacity { NumberAnimation { duration: 500 } }
 
@@ -274,8 +275,8 @@ FocusScope {
             PlasmaCore.IconItem {
                 id: icon
                 Layout.alignment: Qt.AlignHCenter
-                implicitWidth: PlasmaCore.Units.iconSizes.large
-                implicitHeight: PlasmaCore.Units.iconSizes.large
+                implicitWidth: Kirigami.Units.iconSizes.large
+                implicitHeight: Kirigami.Units.iconSizes.large
                 source: "window"
                 // color: "white"
             }
@@ -337,7 +338,7 @@ FocusScope {
                     Kirigami.Theme.inherit: false
 
                     opacity: (taskSwitcherState.currentlyBeingOpened || taskSwitcherState.currentlyBeingClosed) ? 0.0 : 1.0
-                    Behavior on opacity { NumberAnimation { duration: PlasmaCore.Units.shortDuration } }
+                    Behavior on opacity { NumberAnimation { duration: Kirigami.Units.shortDuration } }
 
                     icon.name: "edit-clear-history"
                     font.bold: true

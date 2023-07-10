@@ -26,7 +26,7 @@ Item {
     visible: mpris2Source.hasPlayer
     
     readonly property real padding: Kirigami.Units.largeSpacing + Kirigami.Units.smallSpacing
-    readonly property real contentHeight: PlasmaCore.Units.gridUnit * 2 + PlasmaCore.Units.smallSpacing
+    readonly property real contentHeight: Kirigami.Units.gridUnit * 2 + Kirigami.Units.smallSpacing
     implicitHeight: visible ? padding * 2 + contentHeight : 0
     
     MediaControlsSource {
@@ -149,8 +149,8 @@ Item {
                                     
                                     enabled: mpris2Source.canGoBack(playerItem.source)
                                     icon.name: LayoutMirroring.enabled ? "media-skip-forward" : "media-skip-backward"
-                                    icon.width: PlasmaCore.Units.iconSizes.small
-                                    icon.height: PlasmaCore.Units.iconSizes.small
+                                    icon.width: Kirigami.Units.iconSizes.small
+                                    icon.height: Kirigami.Units.iconSizes.small
                                     onClicked: mpris2Source.goPrevious(playerItem.source)
                                     visible: mpris2Source.canGoBack(playerItem.source) || mpris2Source.canGoNext(playerItem.source)
                                     Accessible.name: i18nd("plasma_lookandfeel_org.kde.lookandfeel", "Previous track")
@@ -161,8 +161,8 @@ Item {
                                     Layout.preferredWidth: height
                                     
                                     icon.name: mpris2Source.isPlaying(playerItem.source) ? "media-playback-pause" : "media-playback-start"
-                                    icon.width: PlasmaCore.Units.iconSizes.small
-                                    icon.height: PlasmaCore.Units.iconSizes.small
+                                    icon.width: Kirigami.Units.iconSizes.small
+                                    icon.height: Kirigami.Units.iconSizes.small
                                     onClicked: mpris2Source.playPause(playerItem.source)
                                     Accessible.name: i18nd("plasma_lookandfeel_org.kde.lookandfeel", "Play or Pause media")
                                 }
@@ -173,8 +173,8 @@ Item {
                                     
                                     enabled: mpris2Source.canGoBack(playerItem.source)
                                     icon.name: LayoutMirroring.enabled ? "media-skip-backward" : "media-skip-forward"
-                                    icon.width: PlasmaCore.Units.iconSizes.small
-                                    icon.height: PlasmaCore.Units.iconSizes.small
+                                    icon.width: Kirigami.Units.iconSizes.small
+                                    icon.height: Kirigami.Units.iconSizes.small
                                     onClicked: mpris2Source.goNext(playerItem.source)
                                     visible: mpris2Source.canGoBack(playerItem.source) || mpris2Source.canGoNext(playerItem.source)
                                     Accessible.name: i18nd("plasma_lookandfeel_org.kde.lookandfeel", "Next track")

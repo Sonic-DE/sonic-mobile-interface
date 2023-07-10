@@ -8,6 +8,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 
+import org.kde.kirigami 2.20 as Kirigami
 import org.kde.plasma.components 3.0 as PC3
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.private.mobileshell 1.0 as MobileShell
@@ -41,7 +42,7 @@ ApplicationWindow {
         anchors.left: parent.left
         anchors.right: parent.right
         
-        height: PlasmaCore.Units.gridUnit * 1.25
+        height: Kirigami.Units.gridUnit * 1.25
         
         colorGroup: PlasmaCore.Theme.ComplementaryColorGroup
         backgroundColor: "transparent"
@@ -70,7 +71,7 @@ ApplicationWindow {
     
     PC3.Label {
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: PlasmaCore.Units.largeSpacing
+        anchors.bottomMargin: Kirigami.Units.largeSpacing
         anchors.horizontalCenter: parent.horizontalCenter
         text: "Pull down the action drawer from the top."
         color: "white"

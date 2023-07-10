@@ -37,7 +37,7 @@ MobileShell.GridView {
     
     header: MobileShell.BaseItem {
         topPadding: Math.round(root.height * 0.2)
-        bottomPadding: PlasmaCore.Units.largeSpacing
+        bottomPadding: Kirigami.Units.largeSpacing
         leftPadding: 0
         rightPadding: 0
         implicitWidth: root.width
@@ -109,14 +109,14 @@ MobileShell.GridView {
         
         contentItem: RowLayout {
             id: rowLayout
-            spacing: PlasmaCore.Units.smallSpacing * 2
+            spacing: Kirigami.Units.smallSpacing * 2
             
             // close folder button
             MouseArea {
                 id: button
                 Layout.alignment: Qt.AlignVCenter
-                implicitHeight: PlasmaCore.Units.iconSizes.small + PlasmaCore.Units.largeSpacing
-                implicitWidth: PlasmaCore.Units.iconSizes.small + PlasmaCore.Units.largeSpacing
+                implicitHeight: Kirigami.Units.iconSizes.small + Kirigami.Units.largeSpacing
+                implicitWidth: Kirigami.Units.iconSizes.small + Kirigami.Units.largeSpacing
                 
                 cursorShape: Qt.PointingHandCursor
                 onClicked: root.closeRequested()
@@ -131,8 +131,8 @@ MobileShell.GridView {
                 // button icon
                 Kirigami.Icon {
                     anchors.centerIn: parent
-                    implicitHeight: PlasmaCore.Units.iconSizes.small
-                    implicitWidth: PlasmaCore.Units.iconSizes.small
+                    implicitHeight: Kirigami.Units.iconSizes.small
+                    implicitWidth: Kirigami.Units.iconSizes.small
                     isMask: true
                     color: 'white'
                     source: 'arrow-left'

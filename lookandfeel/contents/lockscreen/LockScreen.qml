@@ -65,7 +65,7 @@ Item {
         Loader {
             id: headerBarLoader
             z: 1 // on top of flick area
-            readonly property real statusBarHeight: PlasmaCore.Units.gridUnit * 1.25
+            readonly property real statusBarHeight: Kirigami.Units.gridUnit * 1.25
 
             anchors.fill: parent
             asynchronous: true
@@ -91,7 +91,7 @@ Item {
                 }
             }
 
-            keypadHeight: PlasmaCore.Units.gridUnit * 20
+            keypadHeight: Kirigami.Units.gridUnit * 20
 
             // go to closed position when loaded
             Component.onCompleted: {
@@ -166,13 +166,13 @@ Item {
                     asynchronous: true
 
                     anchors.bottom: parent.bottom
-                    anchors.bottomMargin: PlasmaCore.Units.gridUnit + flickable.position * 0.5
+                    anchors.bottomMargin: Kirigami.Units.gridUnit + flickable.position * 0.5
                     anchors.horizontalCenter: parent.horizontalCenter
 
                     sourceComponent: PlasmaCore.IconItem {
                         id: scrollUpIcon
-                        implicitWidth: PlasmaCore.Units.iconSizes.smallMedium
-                        implicitHeight: PlasmaCore.Units.iconSizes.smallMedium
+                        implicitWidth: Kirigami.Units.iconSizes.smallMedium
+                        implicitHeight: Kirigami.Units.iconSizes.smallMedium
                         opacity: 1 - flickable.openFactor
 
                         colorGroup: PlasmaCore.Theme.ComplementaryColorGroup
@@ -200,7 +200,7 @@ Item {
                             Layout.fillWidth: true
                             Layout.rightMargin: Kirigami.Units.largeSpacing
                             Layout.leftMargin: Kirigami.Units.largeSpacing
-                            Layout.bottomMargin: PlasmaCore.Units.smallSpacing * 2
+                            Layout.bottomMargin: Kirigami.Units.smallSpacing * 2
                             font.pointSize: 9
 
                             elide: Text.ElideRight
@@ -217,9 +217,9 @@ Item {
                         // scroll down icon
                         PlasmaCore.IconItem {
                             Layout.alignment: Qt.AlignHCenter
-                            Layout.bottomMargin: PlasmaCore.Units.gridUnit
-                            implicitWidth: PlasmaCore.Units.iconSizes.smallMedium
-                            implicitHeight: PlasmaCore.Units.iconSizes.smallMedium
+                            Layout.bottomMargin: Kirigami.Units.gridUnit
+                            implicitWidth: Kirigami.Units.iconSizes.smallMedium
+                            implicitHeight: Kirigami.Units.iconSizes.smallMedium
                             colorGroup: PlasmaCore.Theme.ComplementaryColorGroup
                             source: "arrow-down"
                             opacity: Math.sin((Math.PI / 2) * flickable.openFactor + 1.5 * Math.PI) + 1

@@ -22,7 +22,7 @@ Item {
     required property bool interactive
     required property var searchWidget
     
-    readonly property real twoColumnThreshold: PlasmaCore.Units.gridUnit * 16
+    readonly property real twoColumnThreshold: Kirigami.Units.gridUnit * 16
     readonly property bool twoColumn: root.width / 2 > twoColumnThreshold
     
     readonly property real cellWidth: twoColumn ? (root.width - leftMargin - rightMargin) / 2 : (root.width - leftMargin - rightMargin)
@@ -30,7 +30,7 @@ Item {
     
     readonly property real leftMargin: Math.round(width * 0.1)
     readonly property real rightMargin: Math.round(width * 0.1)
-    readonly property real delegateHeight: Math.round(PlasmaCore.Units.gridUnit * 3)
+    readonly property real delegateHeight: Math.round(Kirigami.Units.gridUnit * 3)
     
     property bool folderShown: false
     
@@ -85,7 +85,7 @@ Item {
             root.openFolder();
         }
         
-        property real translateX: openFolderProgress * -PlasmaCore.Units.gridUnit
+        property real translateX: openFolderProgress * -Kirigami.Units.gridUnit
         transform: Translate { x: favoritesGrid.translateX }
         opacity: 1 - openFolderProgress
         visible: opacity !== 0
@@ -115,7 +115,7 @@ Item {
         onOpenConfigureRequested: root.openConfigureRequested()
         onCloseRequested: root.closeFolder()
         
-        property real translateX: (1 - openProgress) * PlasmaCore.Units.gridUnit
+        property real translateX: (1 - openProgress) * Kirigami.Units.gridUnit
         transform: Translate { x: folderGrid.translateX }
         opacity: openProgress
         visible: opacity !== 0
@@ -136,7 +136,7 @@ Item {
         
         // when dragged
         onTranslationChanged: {
-            let moveAmount = Math.max(0, translation.x) / (PlasmaCore.Units.gridUnit * 5);
+            let moveAmount = Math.max(0, translation.x) / (Kirigami.Units.gridUnit * 5);
             folderGrid.openProgress = 1 - Math.min(1, Math.max(0, moveAmount));
             isClosing = translation.x > oldTranslationX;
             oldTranslationX = translation.x;

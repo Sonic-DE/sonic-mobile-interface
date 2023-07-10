@@ -11,6 +11,7 @@ import QtQuick.Controls as Controls
 import QtQuick.Layouts
 import QtQuick.Window
 
+import org.kde.kirigami 2.20 as Kirigami
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.extras 2.0 as PlasmaExtra
 import org.kde.plasma.components 3.0 as PlasmaComponents
@@ -99,24 +100,24 @@ NanoShell.FullScreenOverlay {
                 // osd card
                 PopupCard {
                     id: osd
-                    Layout.topMargin: PlasmaCore.Units.largeSpacing
+                    Layout.topMargin: Kirigami.Units.largeSpacing
                     Layout.alignment: Qt.AlignHCenter
 
                     contentItem: RowLayout {
                         id: containerLayout
-                        spacing: PlasmaCore.Units.smallSpacing
+                        spacing: Kirigami.Units.smallSpacing
 
-                        anchors.leftMargin: PlasmaCore.Units.smallSpacing * 2
-                        anchors.rightMargin: PlasmaCore.Units.smallSpacing
+                        anchors.leftMargin: Kirigami.Units.smallSpacing * 2
+                        anchors.rightMargin: Kirigami.Units.smallSpacing
 
                         PlasmaComponents.ToolButton {
                             icon.name: !audioInfo.paSinkModel.preferredSink || audioInfo.paSinkModel.preferredSink.muted ? "audio-volume-muted" : "audio-volume-high"
                             text: !audioInfo.paSinkModel.preferredSink || audioInfo.paSinkModel.preferredSink.muted ? i18n("Unmute") : i18n("Mute")
                             display: Controls.AbstractButton.IconOnly
                             Layout.alignment: Qt.AlignVCenter
-                            Layout.preferredWidth: PlasmaCore.Units.iconSizes.medium
-                            Layout.preferredHeight: PlasmaCore.Units.iconSizes.medium
-                            Layout.rightMargin: PlasmaCore.Units.smallSpacing
+                            Layout.preferredWidth: Kirigami.Units.iconSizes.medium
+                            Layout.preferredHeight: Kirigami.Units.iconSizes.medium
+                            Layout.rightMargin: Kirigami.Units.smallSpacing
                             onClicked: muteVolume()
                         }
 
@@ -124,11 +125,11 @@ NanoShell.FullScreenOverlay {
                             id: volumeSlider
                             Layout.fillWidth: true
                             Layout.alignment: Qt.AlignVCenter
-                            Layout.rightMargin: PlasmaCore.Units.smallSpacing * 2
+                            Layout.rightMargin: Kirigami.Units.smallSpacing * 2
                             value: window.volume
                             from: 0
                             to: 100
-                            Behavior on value { NumberAnimation { duration: PlasmaCore.Units.shortDuration } }
+                            Behavior on value { NumberAnimation { duration: Kirigami.Units.shortDuration } }
                         }
 
                         // Get the width of a three-digit number so we can size the label
@@ -143,7 +144,7 @@ NanoShell.FullScreenOverlay {
                             id: percentageLabel
                             Layout.preferredWidth: widestLabelSize.width
                             Layout.alignment: Qt.AlignVCenter
-                            Layout.rightMargin: PlasmaCore.Units.smallSpacing
+                            Layout.rightMargin: Kirigami.Units.smallSpacing
                             level: 3
                             text: i18nc("Percentage value", "%1%", window.volume)
 
@@ -170,15 +171,15 @@ NanoShell.FullScreenOverlay {
                             opacity: showFullApplet ? 1 : 0
                             display: Controls.AbstractButton.IconOnly
                             Layout.alignment: Qt.AlignVCenter
-                            Layout.preferredWidth: PlasmaCore.Units.iconSizes.medium
-                            Layout.preferredHeight: PlasmaCore.Units.iconSizes.medium
-                            Layout.rightMargin: PlasmaCore.Units.smallSpacing
+                            Layout.preferredWidth: Kirigami.Units.iconSizes.medium
+                            Layout.preferredHeight: Kirigami.Units.iconSizes.medium
+                            Layout.rightMargin: Kirigami.Units.smallSpacing
 
-                            Behavior on opacity { NumberAnimation { duration: PlasmaCore.Units.shortDuration } }
+                            Behavior on opacity { NumberAnimation { duration: Kirigami.Units.shortDuration } }
 
                             onClicked: {
                                 let coords = mapToItem(flickable, 0, 0);
-                                MobileShellState.ShellDBusClient.openAppLaunchAnimation("audio-volume-high", i18n("Audio Settings"), coords.x, coords.y, PlasmaCore.Units.iconSizes.medium);
+                                MobileShellState.ShellDBusClient.openAppLaunchAnimation("audio-volume-high", i18n("Audio Settings"), coords.x, coords.y, Kirigami.Units.iconSizes.medium);
                                 MobileShell.ShellUtil.executeCommand("plasma-open-settings kcm_pulseaudio");
                             }
                         }
@@ -188,8 +189,8 @@ NanoShell.FullScreenOverlay {
                             text: i18n("Toggle showing audio streams")
                             display: Controls.AbstractButton.IconOnly
                             Layout.alignment: Qt.AlignVCenter
-                            Layout.preferredWidth: PlasmaCore.Units.iconSizes.medium
-                            Layout.preferredHeight: PlasmaCore.Units.iconSizes.medium
+                            Layout.preferredWidth: Kirigami.Units.iconSizes.medium
+                            Layout.preferredHeight: Kirigami.Units.iconSizes.medium
                             onClicked: {
                                 window.showFullApplet = !window.showFullApplet
                                 // don't autohide applet when full applet is shown
@@ -206,7 +207,7 @@ NanoShell.FullScreenOverlay {
                 // other applet cards
                 AudioApplet {
                     id: applet
-                    Layout.topMargin: PlasmaCore.Units.largeSpacing
+                    Layout.topMargin: Kirigami.Units.largeSpacing
                     Layout.alignment: Qt.AlignHCenter
                     Layout.preferredWidth: cards.width
 
@@ -215,7 +216,7 @@ NanoShell.FullScreenOverlay {
                     opacity: window.showFullApplet ? 1 : 0
                     visible: opacity !== 0
                     transform: Translate {
-                        y: window.showFullApplet ? 0 : -PlasmaCore.Units.gridUnit
+                        y: window.showFullApplet ? 0 : -Kirigami.Units.gridUnit
                         Behavior on y { NumberAnimation {} }
                     }
 

@@ -71,7 +71,7 @@ BaseNotificationItem {
             // notification summary row
             RowLayout {
                 Layout.fillWidth: true
-                Layout.bottomMargin: PlasmaCore.Units.smallSpacing
+                Layout.bottomMargin: Kirigami.Units.smallSpacing
                 
                 // notification summary
                 PlasmaComponents.Label {
@@ -101,7 +101,7 @@ BaseNotificationItem {
             // notification contents
             RowLayout {
                 Layout.fillWidth: true
-                spacing: PlasmaCore.Units.smallSpacing
+                spacing: Kirigami.Units.smallSpacing
 
                 // notification text
                 NotificationBodyLabel {
@@ -121,10 +121,10 @@ BaseNotificationItem {
                 // notification icon
                 Item {
                     id: iconContainer
-                    Layout.preferredWidth: PlasmaCore.Units.iconSizes.large
-                    Layout.preferredHeight: PlasmaCore.Units.iconSizes.large
-                    Layout.topMargin: PlasmaCore.Units.smallSpacing
-                    Layout.bottomMargin: PlasmaCore.Units.smallSpacing
+                    Layout.preferredWidth: Kirigami.Units.iconSizes.large
+                    Layout.preferredHeight: Kirigami.Units.iconSizes.large
+                    Layout.topMargin: Kirigami.Units.smallSpacing
+                    Layout.bottomMargin: Kirigami.Units.smallSpacing
 
                     visible: iconItem.active
 

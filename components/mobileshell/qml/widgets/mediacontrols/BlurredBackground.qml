@@ -5,6 +5,7 @@ import QtQuick
 import QtQuick.Effects
 import Qt5Compat.GraphicalEffects
 
+import org.kde.kirigami 2.20 as Kirigami
 import org.kde.plasma.core 2.0 as PlasmaCore
 
 Item {
@@ -24,7 +25,7 @@ Item {
                 anchors.centerIn: parent
                 width: img.width
                 height: img.height
-                radius: PlasmaCore.Units.smallSpacing
+                radius: Kirigami.Units.smallSpacing
             }
         }
     }
