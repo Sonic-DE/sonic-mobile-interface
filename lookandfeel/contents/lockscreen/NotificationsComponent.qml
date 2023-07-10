@@ -56,13 +56,14 @@ Loader {
 
         property alias notificationsList: notificationsList
 
-        PlasmaCore.ColorScope {
+        Item {
             anchors.fill: parent
             anchors.topMargin: root.topMargin
             anchors.bottomMargin: root.bottomMargin
             anchors.leftMargin: root.leftMargin
             anchors.rightMargin: root.rightMargin
-            colorGroup: PlasmaCore.Theme.NormalColorGroup
+            Kirigami.Theme.colorSet: Kirigami.Theme.Window
+            Kirigami.Theme.inherit: false
 
             MobileShell.NotificationsWidget {
                 id: notificationsList

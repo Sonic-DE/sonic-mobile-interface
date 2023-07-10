@@ -61,7 +61,7 @@ MobileForm.AbstractFormDelegate {
                 svg: KSvg.Svg {
                     multipleImages: true
                     imagePath: "icons/network"
-                    colorGroup: PlasmaCore.ColorScope.colorGroup
+                    colorSet: Kirigami.Theme.colorSet
                 }
             }
 

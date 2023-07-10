@@ -33,8 +33,8 @@ BaseNotificationItem {
         anchors.left: parent.left
         anchors.right: parent.right
 
-        PlasmaCore.ColorScope.colorGroup: PlasmaCore.Theme.HeaderColorGroup
-        PlasmaCore.ColorScope.inherit: false
+        Kirigami.Theme.colorSet: Kirigami.Theme.Header
+        Kirigami.Theme.inherit: false
 
         visible: !notificationItem.inGroup
         height: visible ? implicitHeight : 0

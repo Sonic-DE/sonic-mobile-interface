@@ -105,11 +105,12 @@ ContainmentItem {
     // only opaque if there are no maximized windows on this screen
     readonly property bool opaqueBar: WindowPlugin.WindowMaximizedTracker.showingWindow
 
-    PlasmaCore.ColorScope {
+    Item {
         anchors.fill: parent
 
         // contrasting colour
-        colorGroup: opaqueBar ? PlasmaCore.Theme.NormalColorGroup : PlasmaCore.Theme.ComplementaryColorGroup
+        Kirigami.Theme.colorSet: opaqueBar ? PlasmaCore.Theme.Window : Kirigami.Theme.Complementary
+        Kirigami.Theme.inherit: false
 
         // load appropriate system navigation component
         Loader {

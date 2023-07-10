@@ -10,6 +10,7 @@ import QtQuick.Layouts
 
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
+import org.kde.kirigami 2.20 as Kirigami
 
 import "../../dataproviders" as DataProviders
 
@@ -29,7 +30,7 @@ Item {
 
     PlasmaCore.IconItem {
         id: strengthIcon
-        colorGroup: PlasmaCore.ColorScope.colorGroup
+        colorSet: Kirigami.Theme.colorSet
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
         width: height
@@ -50,7 +51,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
 
         text: provider.label
-        color: PlasmaCore.ColorScope.textColor
+        color: Kirigami.Theme.textColor
         font.pixelSize: textPixelSize
     }
 }
