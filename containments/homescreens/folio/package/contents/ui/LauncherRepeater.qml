@@ -77,10 +77,10 @@ Repeater {
             var pos = plasmoid.fullRepresentationItem.mapFromItem(delegate, dragCenter.x, dragCenter.y);
 
             //SCROLL LEFT
-            if (pos.x < PlasmaCore.Units.gridUnit) {
+            if (pos.x < Kirigami.Units.gridUnit) {
                 launcherRepeater.scrollLeftRequested();
             //SCROLL RIGHT
-            } else if (pos.x > homeScreenState.pageWidth - PlasmaCore.Units.gridUnit) {
+            } else if (pos.x > homeScreenState.pageWidth - Kirigami.Units.gridUnit) {
                 launcherRepeater.scrollRightRequested();
             //DON't SCROLL
             } else {

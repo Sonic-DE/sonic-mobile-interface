@@ -41,9 +41,9 @@ Item {
     signal dragStarted
 
     readonly property int reservedSpaceForLabel: metrics.height
-    property int availableCellHeight: PlasmaCore.Units.iconSizes.huge + reservedSpaceForLabel
+    property int availableCellHeight: Kirigami.Units.iconSizes.huge + reservedSpaceForLabel
 
-    readonly property real openFactor: factorNormalize(view.contentY / (PlasmaCore.Units.gridUnit * 10))
+    readonly property real openFactor: factorNormalize(view.contentY / (Kirigami.Units.gridUnit * 10))
 
     // height from top of screen that the drawer starts
     readonly property real drawerTopMargin: height - topPadding - bottomPadding - closedPositionOffset
@@ -137,7 +137,7 @@ Item {
                     opacity: 0.6 * root.openFactor
                     
                     // remove radius 
-                    radius: view.contentY > (topMargin.height - PlasmaCore.Units.gridUnit) ? 0 : PlasmaCore.Units.gridUnit
+                    radius: view.contentY > (topMargin.height - Kirigami.Units.gridUnit) ? 0 : Kirigami.Units.gridUnit
                     Behavior on radius {
                         NumberAnimation { duration: Kirigami.Units.shortDuration; easing.type: Easing.InOutQuad }
                     }

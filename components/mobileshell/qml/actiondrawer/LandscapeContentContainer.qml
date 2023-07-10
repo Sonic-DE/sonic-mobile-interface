@@ -49,7 +49,7 @@ Item {
                        PlasmaCore.Theme.backgroundColor.g, 
                        PlasmaCore.Theme.backgroundColor.b, 
                        notificationWidget.hasNotifications ? 0.95 : 0.9)
-        Behavior on color { ColorAnimation { duration: PlasmaCore.Units.longDuration } }
+        Behavior on color { ColorAnimation { duration: Kirigami.Units.longDuration } }
         opacity: opacityValue
     }
     
@@ -102,7 +102,7 @@ Item {
                 onBackgroundClicked: root.actionDrawer.close();
                 
                 // don't allow notifications widget to get too wide
-                Layout.maximumWidth: PlasmaCore.Units.gridUnit * 25
+                Layout.maximumWidth: Kirigami.Units.gridUnit * 25
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 Layout.topMargin: minWidthHeight * 0.02
@@ -138,7 +138,7 @@ Item {
                 left: parent.left
                 top: clock.bottom
                 bottom: isOnLargeScreen ? columnLayout.top : mediaWidget.top
-                topMargin: PlasmaCore.Units.smallSpacing
+                topMargin: Kirigami.Units.smallSpacing
                 leftMargin: columnLayout.anchors.margins
             }
 
@@ -148,7 +148,7 @@ Item {
         
         MediaControls.MediaControlsWidget {
             id: mediaWidget
-            property real fullHeight: visible ? height + PlasmaCore.Units.smallSpacing * 6 : 0
+            property real fullHeight: visible ? height + Kirigami.Units.smallSpacing * 6 : 0
             
             y: isOnLargeScreen ? date.y - height + date.implicitHeight : date.y + date.implicitHeight + columnLayout.anchors.margins / 2
             

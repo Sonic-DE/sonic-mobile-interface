@@ -3,6 +3,8 @@
 
 import QtQuick 2.15
 
+import org.kde.kirigami 2.20 as Kirigami
+
 import org.kde.plasma.core 2.1 as PlasmaCore
 
 import org.kde.kwin 3.0 as KWinComponents
@@ -83,10 +85,10 @@ QtObject {
     readonly property real taskWidth: previewWidth
 
     // spacing between each task preview
-    readonly property real taskSpacing: PlasmaCore.Units.largeSpacing
+    readonly property real taskSpacing: Kirigami.Units.largeSpacing
 
     // height of the task preview header
-    readonly property real taskHeaderHeight: PlasmaCore.Units.gridUnit * 2 + PlasmaCore.Units.smallSpacing * 2
+    readonly property real taskHeaderHeight: Kirigami.Units.gridUnit * 2 + Kirigami.Units.smallSpacing * 2
 
     // the scaling factor of the window preview compared to the actual window
     // we need to ensure that window previews always fit on screen
@@ -136,7 +138,7 @@ QtObject {
     }
 
     function openApp(index, window) {
-        animateGoToTaskIndex(index, PlasmaCore.Units.shortDuration);
+        animateGoToTaskIndex(index, Kirigami.Units.shortDuration);
         openAppAnim.restart();
         KWinComponents.Workspace.activeClient = window
     }
@@ -172,7 +174,7 @@ QtObject {
         }
 
         // update horizontal state
-        let duration = PlasmaCore.Units.longDuration * 2;
+        let duration = Kirigami.Units.longDuration * 2;
         if (currentlyBeingOpened) {
             animateGoToTaskIndex(currentTaskIndex, duration);
         } else {
@@ -217,7 +219,7 @@ QtObject {
         target: root
         property: "yPosition"
         to: 0
-        duration: PlasmaCore.Units.longDuration
+        duration: Kirigami.Units.longDuration
         easing.type: Easing.InOutQuad
 
         onStarted: root.currentlyBeingClosed = true

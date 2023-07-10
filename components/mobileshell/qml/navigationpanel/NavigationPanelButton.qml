@@ -50,7 +50,7 @@ Controls.AbstractButton {
         }
         NumberAnimation on opacity {
             id: opacityAnimator
-            duration: PlasmaCore.Units.shortDuration
+            duration: Kirigami.Units.shortDuration
             easing.type: Easing.InOutQuad
             onFinished: {
                 // animate the state back

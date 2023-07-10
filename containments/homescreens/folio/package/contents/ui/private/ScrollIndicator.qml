@@ -8,6 +8,7 @@ import QtQuick 2.4
 import Qt5Compat.GraphicalEffects
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.ksvg 1.0 as KSvg
+import org.kde.kirigami 2.20 as Kirigami
 
 KSvg.SvgItem {
     id: scrollIndicator
@@ -21,7 +22,7 @@ KSvg.SvgItem {
         colorGroup: PlasmaCore.Theme.ComplementaryColorGroup
     }
     elementId: "left-arrow"
-    width: PlasmaCore.Units.iconSizes.large
+    width: Kirigami.Units.iconSizes.large
     height: width
     layer.enabled: true
     layer.effect: DropShadow {
@@ -34,7 +35,7 @@ KSvg.SvgItem {
     }
     Behavior on opacity {
         OpacityAnimator {
-            duration: PlasmaCore.Units.longDuration * 2
+            duration: Kirigami.Units.longDuration * 2
             easing.type: Easing.InOutQuad
         }
     }

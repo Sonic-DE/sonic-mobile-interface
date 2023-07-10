@@ -14,6 +14,7 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.plasma.private.nanoshell 2.0 as NanoShell
 import org.kde.plasma.private.mobileshell 1.0 as MobileShell
+import org.kde.kirigami 2.20 as Kirigami
 
 import "../components" as Components
 
@@ -81,7 +82,7 @@ Item {
     /**
      * At some point, even if the screen is technically portrait, if we have a ton of width it'd be best to just show the landscape mode.
      */
-    readonly property real largePortraitThreshold: PlasmaCore.Units.gridUnit * 35
+    readonly property real largePortraitThreshold: Kirigami.Units.gridUnit * 35
     
     enum Mode {
         Portrait = 0,
@@ -167,10 +168,10 @@ Item {
     
     function updateState() {
         cancelAnimations();
-        let openThreshold = PlasmaCore.Units.gridUnit;
+        let openThreshold = Kirigami.Units.gridUnit;
         
         if (root.offset <= 0) {
-            // close immediately, so that we don't have to wait PlasmaCore.Units.longDuration 
+            // close immediately, so that we don't have to wait Kirigami.Units.longDuration 
             root.visible = false;
             close();
         } else if (root.direction === MobileShell.Direction.None || !root.opened) {
@@ -206,7 +207,7 @@ Item {
 
     PropertyAnimation on offset {
         id: closeAnim
-        duration: PlasmaCore.Units.veryLongDuration
+        duration: Kirigami.Units.veryLongDuration
         easing.type: Easing.OutExpo
         to: 0
         onFinished: {
@@ -216,14 +217,14 @@ Item {
     }
     PropertyAnimation on offset {
         id: openAnim
-        duration: PlasmaCore.Units.veryLongDuration
+        duration: Kirigami.Units.veryLongDuration
         easing.type: Easing.OutExpo
         to: contentContainerLoader.minimizedQuickSettingsOffset
         onFinished: root.opened = true
     }
     PropertyAnimation on offset {
         id: expandAnim
-        duration: PlasmaCore.Units.veryLongDuration
+        duration: Kirigami.Units.veryLongDuration
         easing.type: Easing.OutExpo
         to: contentContainerLoader.maximizedQuickSettingsOffset
         onFinished: root.opened = true;

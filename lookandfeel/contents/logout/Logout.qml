@@ -11,6 +11,7 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.8 as Controls
 
+import org.kde.kirigami 2.20 as Kirigami
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.coreaddons 1.0 as KCoreAddons
 
@@ -70,14 +71,14 @@ Item {
             target: buttons
             from: 0
             to: 1
-            duration: PlasmaCore.Units.longDuration
+            duration: Kirigami.Units.longDuration
             easing.type: Easing.InOutQuad
         }
         OpacityAnimator {
             target: background
             from: 0
             to: 0.6
-            duration: PlasmaCore.Units.longDuration
+            duration: Kirigami.Units.longDuration
             easing.type: Easing.InOutQuad
         }
     }
@@ -97,21 +98,21 @@ Item {
                 target: buttons
                 from: 1
                 to: 0
-                duration: PlasmaCore.Units.longDuration
+                duration: Kirigami.Units.longDuration
                 easing.type: Easing.InOutQuad
             }
             OpacityAnimator {
                 target: background
                 from: 0.6
                 to: 0
-                duration: PlasmaCore.Units.longDuration
+                duration: Kirigami.Units.longDuration
                 easing.type: Easing.InOutQuad
             }
             OpacityAnimator {
                 target: blackOverlay
                 from: 0
                 to: closeAnim.closeToBlack ? 1 : 0
-                duration: PlasmaCore.Units.longDuration
+                duration: Kirigami.Units.longDuration
                 easing.type: Easing.InOutQuad
             }
         }
@@ -133,7 +134,7 @@ Item {
         
         ColumnLayout {
             anchors.centerIn: parent
-            spacing: PlasmaCore.Units.gridUnit
+            spacing: Kirigami.Units.gridUnit
 
             ActionButton {
                 iconSource: "system-reboot"
@@ -166,7 +167,7 @@ Item {
         ActionButton {
             anchors {
                 bottom: parent.bottom
-                bottomMargin: PlasmaCore.Units.largeSpacing
+                bottomMargin: Kirigami.Units.largeSpacing
                 horizontalCenter: parent.horizontalCenter
             }
             iconSource: "dialog-cancel"
