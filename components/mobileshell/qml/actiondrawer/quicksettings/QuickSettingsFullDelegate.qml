@@ -19,7 +19,7 @@ import "../../components" as Components
 QuickSettingsDelegate {
     id: root
     
-    padding: PlasmaCore.Units.smallSpacing * 2
+    padding: Kirigami.Units.smallSpacing * 2
     iconItem: icon
     
     // scale animation on press
@@ -34,14 +34,14 @@ QuickSettingsDelegate {
             anchors.right: parent.right
             height: parent.height
             
-            radius: PlasmaCore.Units.smallSpacing
+            radius: Kirigami.Units.smallSpacing
             color: Qt.rgba(0, 0, 0, 0.075)
         }
     
         // background color
         Rectangle {
             anchors.fill: parent
-            radius: PlasmaCore.Units.smallSpacing
+            radius: Kirigami.Units.smallSpacing
             border.width: 1
             border.color: root.enabled ? root.enabledButtonBorderColor : root.disabledButtonBorderColor
             color: {
@@ -74,14 +74,14 @@ QuickSettingsDelegate {
             id: icon
             anchors.top: parent.top
             anchors.left: parent.left
-            implicitWidth: PlasmaCore.Units.iconSizes.small
+            implicitWidth: Kirigami.Units.iconSizes.small
             implicitHeight: width
             source: root.icon
         }
         
         ColumnLayout {
             id: column
-            spacing: PlasmaCore.Units.smallSpacing
+            spacing: Kirigami.Units.smallSpacing
             anchors.right: parent.right
             anchors.left: parent.left
             anchors.bottom: parent.bottom

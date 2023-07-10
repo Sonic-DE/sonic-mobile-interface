@@ -26,16 +26,16 @@ Item {
 
     activeFocusOnTab: true
 
-    property int iconSize: PlasmaCore.Units.gridUnit
+    property int iconSize: Kirigami.Units.gridUnit
 
-    implicitWidth: PlasmaCore.Units.gridUnit * 14
-    implicitHeight: iconSize + PlasmaCore.Units.smallSpacing + label.implicitHeight
+    implicitWidth: Kirigami.Units.gridUnit * 14
+    implicitHeight: iconSize + Kirigami.Units.smallSpacing + label.implicitHeight
 
     Rectangle {
         id: buttonRect
         width: root.width
         height: iconSize * 2.2
-        radius: PlasmaCore.Units.smallSpacing
+        radius: Kirigami.Units.smallSpacing
         color: Kirigami.Theme.backgroundColor
         opacity: mouseArea.containsPress ? 1 : 0.6
         border {
@@ -49,7 +49,7 @@ Item {
         anchors {
             verticalCenter: buttonRect.verticalCenter
             left: buttonRect.left
-            leftMargin: PlasmaCore.Units.mediumSpacing
+            leftMargin: Kirigami.Units.mediumSpacing
         }
         width: iconSize
         height: iconSize

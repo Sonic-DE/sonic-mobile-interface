@@ -8,6 +8,8 @@
 import QtQuick 2.6
 import QtQuick.Layouts 1.4
 
+import org.kde.kirigami 2.20 as Kirigami
+
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.plasma.workspace.components 2.0 as PW
@@ -16,7 +18,7 @@ import "../../dataproviders" as DataProviders
 
 RowLayout {
     readonly property var provider: DataProviders.BatteryInfo {}
-    property real textPixelSize: PlasmaCore.Units.gridUnit * 0.6
+    property real textPixelSize: Kirigami.Units.gridUnit * 0.6
     
     visible: provider.isVisible
 

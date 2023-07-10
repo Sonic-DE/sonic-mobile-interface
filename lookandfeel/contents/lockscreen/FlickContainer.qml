@@ -4,6 +4,7 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
 
+import org.kde.kirigami 2.20 as Kirigami
 import org.kde.plasma.core 2.1 as PlasmaCore
 
 Flickable {
@@ -42,7 +43,7 @@ Flickable {
     
     NumberAnimation on position {
         id: positionAnim
-        duration: PlasmaCore.Units.veryLongDuration
+        duration: Kirigami.Units.veryLongDuration
         easing.type: Easing.OutExpo
         
         onFinished: {

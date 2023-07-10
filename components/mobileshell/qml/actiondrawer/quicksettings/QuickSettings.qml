@@ -13,6 +13,7 @@ import QtQuick.Window 2.2
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.plasma.private.mobileshell.quicksettingsplugin as QS
+import org.kde.kirigami 2.20 as Kirigami
 
 import "../../components" as Components
 import "../../components/util.js" as Util
@@ -41,8 +42,8 @@ Item {
     readonly property real fullHeight: fullView.implicitHeight
     
     readonly property real intendedColumnWidth: 120
-    readonly property real intendedMinimizedColumnWidth: PlasmaCore.Units.gridUnit * 3 + PlasmaCore.Units.largeSpacing
-    readonly property real minimizedRowHeight: PlasmaCore.Units.gridUnit * 3 + PlasmaCore.Units.largeSpacing
+    readonly property real intendedMinimizedColumnWidth: Kirigami.Units.gridUnit * 3 + Kirigami.Units.largeSpacing
+    readonly property real minimizedRowHeight: Kirigami.Units.gridUnit * 3 + Kirigami.Units.largeSpacing
     
     property real minimizedViewProgress: 0
     property real fullViewProgress: 1
@@ -110,9 +111,9 @@ Item {
         
         BrightnessItem {
             id: brightnessItem
-            Layout.bottomMargin: PlasmaCore.Units.smallSpacing * 2
-            Layout.leftMargin: PlasmaCore.Units.smallSpacing
-            Layout.rightMargin: PlasmaCore.Units.smallSpacing
+            Layout.bottomMargin: Kirigami.Units.smallSpacing * 2
+            Layout.leftMargin: Kirigami.Units.smallSpacing
+            Layout.rightMargin: Kirigami.Units.smallSpacing
             Layout.fillWidth: true
         }
     }
@@ -139,8 +140,8 @@ Item {
                 
                 implicitHeight: root.minimizedRowHeight
                 implicitWidth: root.minimizedColumnWidth
-                horizontalPadding: (width - PlasmaCore.Units.gridUnit * 3) / 2
-                verticalPadding: (height - PlasmaCore.Units.gridUnit * 3) / 2
+                horizontalPadding: (width - Kirigami.Units.gridUnit * 3) / 2
+                verticalPadding: (height - Kirigami.Units.gridUnit * 3) / 2
                 
                 contentItem: QuickSettingsMinimizedDelegate {
                     restrictedPermissions: actionDrawer.restrictedPermissions
@@ -203,9 +204,9 @@ Item {
                 id: indicatorLoader
                 
                 Layout.alignment: Qt.AlignCenter
-                Layout.topMargin: PlasmaCore.Units.smallSpacing
-                Layout.leftMargin: PlasmaCore.Units.smallSpacing
-                Layout.rightMargin: PlasmaCore.Units.smallSpacing
+                Layout.topMargin: Kirigami.Units.smallSpacing
+                Layout.leftMargin: Kirigami.Units.smallSpacing
+                Layout.rightMargin: Kirigami.Units.smallSpacing
                 
                 // Avoid wasting space when not loaded
                 Layout.maximumHeight: active ? item.implicitHeight : 0
@@ -253,7 +254,7 @@ Item {
                     position: 0.1
                     
                     contentItem: Item {
-                        implicitWidth: PlasmaCore.Units.smallSpacing / 4
+                        implicitWidth: Kirigami.Units.smallSpacing / 4
                         Rectangle {
                             // shift over the indicator a bit to the right
                             anchors.fill: parent
@@ -296,7 +297,7 @@ Item {
         Components.BaseItem {
             height: root.rowHeight
             width: root.columnWidth
-            padding: PlasmaCore.Units.smallSpacing
+            padding: Kirigami.Units.smallSpacing
 
             contentItem: QuickSettingsFullDelegate {
                 restrictedPermissions: actionDrawer.restrictedPermissions

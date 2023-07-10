@@ -13,7 +13,7 @@ import org.kde.kirigami 2.12 as Kirigami
 
 Rectangle {
     id: root
-    implicitHeight: PlasmaCore.Units.gridUnit * 2.5
+    implicitHeight: Kirigami.Units.gridUnit * 2.5
     
     required property var lockScreenState
     
@@ -181,7 +181,7 @@ Rectangle {
             anchors.right: parent.right
             anchors.top: parent.top
             anchors.bottom: parent.bottom
-            anchors.margins: PlasmaCore.Units.smallSpacing
+            anchors.margins: Kirigami.Units.smallSpacing
             implicitWidth: height
             icon.name: root.isPinMode ? "input-keyboard-virtual-symbolic" : "input-dialpad-symbolic"
             onClicked: {
@@ -211,7 +211,7 @@ Rectangle {
             
             ListView {
                 id: dotDisplay
-                property int dotWidth: Math.round(PlasmaCore.Units.gridUnit * 0.35)
+                property int dotWidth: Math.round(Kirigami.Units.gridUnit * 0.35)
                 
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                 Layout.bottomMargin: Math.round(dotWidth / 2)

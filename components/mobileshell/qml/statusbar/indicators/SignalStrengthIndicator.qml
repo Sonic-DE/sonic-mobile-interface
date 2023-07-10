@@ -23,7 +23,7 @@ Item {
     readonly property bool isInternetIndicatorMobileData: internetIndicator && internetIndicator.icon && internetIndicator.icon.startsWith('network-mobile-')
     
     property bool showLabel: true
-    property real textPixelSize: PlasmaCore.Units.gridUnit * 0.6
+    property real textPixelSize: Kirigami.Units.gridUnit * 0.6
     
     width: strengthIcon.width + label.width
     Layout.minimumWidth: strengthIcon.width + label.width
@@ -46,7 +46,7 @@ Item {
         id: label
         visible: showLabel
         width: visible ? implicitWidth : 0
-        anchors.leftMargin: PlasmaCore.Units.smallSpacing
+        anchors.leftMargin: Kirigami.Units.smallSpacing
         anchors.left: strengthIcon.right
         anchors.verticalCenter: parent.verticalCenter
 

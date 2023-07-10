@@ -3,6 +3,7 @@
 
 import QtQuick
 
+import org.kde.kirigami 2.20 as Kirigami
 import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.private.mobileshell.shellsettingsplugin as ShellSettings
 
@@ -12,6 +13,6 @@ import org.kde.plasma.private.mobileshell.shellsettingsplugin as ShellSettings
 pragma Singleton
 
 QtObject {
-    readonly property real topPanelHeight: PlasmaCore.Units.gridUnit + PlasmaCore.Units.smallSpacing
-    readonly property real bottomPanelHeight: ShellSettings.Settings.navigationPanelEnabled ? PlasmaCore.Units.gridUnit * 2 : 0
+    readonly property real topPanelHeight: Kirigami.Units.gridUnit + Kirigami.Units.smallSpacing
+    readonly property real bottomPanelHeight: ShellSettings.Settings.navigationPanelEnabled ? Kirigami.Units.gridUnit * 2 : 0
 }

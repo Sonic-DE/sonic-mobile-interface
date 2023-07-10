@@ -7,13 +7,14 @@
 import QtQuick 2.15
 
 import org.kde.plasma.core 2.0 as PlasmaCore
+import org.kde.kirigami 2.20 as Kirigami
 
 Rectangle {
     id: handle
     
     signal tapped()
     
-    implicitWidth: PlasmaCore.Units.gridUnit * 3
+    implicitWidth: Kirigami.Units.gridUnit * 3
     implicitHeight: 3
     radius: height
     color: PlasmaCore.Theme.textColor
