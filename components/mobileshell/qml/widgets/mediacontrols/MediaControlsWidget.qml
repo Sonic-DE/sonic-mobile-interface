@@ -127,7 +127,7 @@ Item {
 
                                         inputText: mpris2Source.track(playerItem.source) || i18n("No media playing")
                                         textFormat: Text.PlainText
-                                        font.pointSize: PlasmaCore.Theme.defaultFont.pointSize
+                                        font.pointSize: Kirigami.Theme.defaultFont.pointSize
                                         color: "white"
                                     }
 
@@ -137,7 +137,7 @@ Item {
                                         // if no artist is given, show player name instead
                                         inputText: mpris2Source.artist(playerItem.source) || modelData.application || ""
                                         textFormat: Text.PlainText
-                                        font.pointSize: PlasmaCore.Theme.defaultFont.pointSize * 0.9
+                                        font.pointSize: Kirigami.Theme.defaultFont.pointSize * 0.9
                                         opacity: 0.9
                                         color: "white"
                                     }

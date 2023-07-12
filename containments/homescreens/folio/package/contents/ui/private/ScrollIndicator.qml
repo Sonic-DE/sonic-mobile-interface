@@ -19,7 +19,7 @@ KSvg.SvgItem {
     opacity: 0
     svg: KSvg.Svg {
         imagePath: "widgets/arrows"
-        colorGroup: PlasmaCore.Theme.ComplementaryColorGroup
+        colorGroup: Kirigami.Theme.ComplementaryColorGroup
     }
     elementId: "left-arrow"
     width: Kirigami.Units.iconSizes.large

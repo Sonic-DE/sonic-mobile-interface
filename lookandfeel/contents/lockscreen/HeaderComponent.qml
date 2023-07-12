@@ -31,7 +31,7 @@ Item {
 
         height: root.statusBarHeight
 
-        colorGroup: PlasmaCore.Theme.ComplementaryColorGroup
+        colorGroup: Kirigami.Theme.ComplementaryColorGroup
         backgroundColor: "transparent"
 
         showSecondRow: false

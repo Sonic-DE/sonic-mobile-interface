@@ -59,7 +59,7 @@ Item {
 
     PlasmaComponents3.Label {
         id: label
-        font.pointSize: PlasmaCore.Theme.defaultFont.pointSize + 1
+        font.pointSize: Kirigami.Theme.defaultFont.pointSize + 1
         anchors {
             centerIn: buttonRect
         }

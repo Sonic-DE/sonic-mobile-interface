@@ -162,7 +162,7 @@ Item {
                     Rectangle {
                         id: rectBackground
                         anchors.fill: parent
-                        color: PlasmaCore.Theme.backgroundColor
+                        color: Kirigami.Theme.backgroundColor
                         radius: Kirigami.Units.smallSpacing
                     }
                 }
@@ -275,7 +275,7 @@ Item {
                                     text: typeof modelData !== "undefined" ? modelData : model.display
                                     color: "white"
 
-                                    font.pointSize: PlasmaCore.Theme.defaultFont.pointSize
+                                    font.pointSize: Kirigami.Theme.defaultFont.pointSize
                                 }
                                 PlasmaComponents.Label {
                                     id: subtitle
@@ -289,7 +289,7 @@ Item {
                                     color: "white"
                                     opacity: 0.8
 
-                                    font.pointSize: Math.round(PlasmaCore.Theme.defaultFont.pointSize * 0.8)
+                                    font.pointSize: Math.round(Kirigami.Theme.defaultFont.pointSize * 0.8)
                                 }
                             }
 

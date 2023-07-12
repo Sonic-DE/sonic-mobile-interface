@@ -36,7 +36,7 @@ Item {
         id: metrics
         text: "M\nM"
         visible: false
-        font.pointSize: PlasmaCore.Theme.defaultFont.pointSize * 0.9
+        font.pointSize: Kirigami.Theme.defaultFont.pointSize * 0.9
     }
 
     Item {
