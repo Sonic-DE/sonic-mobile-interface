@@ -16,7 +16,6 @@ import org.kde.ksvg 1.0 as KSvg
 import org.kde.kquickcontrolsaddons 2.0
 import org.kde.plasma.core 2.1 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
-import org.kde.plasma.extras 2.0 as PlasmaExtra
 import org.kde.plasma.private.volume 0.1
 
 import "icon.js" as Icon
