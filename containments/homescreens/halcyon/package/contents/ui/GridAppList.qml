@@ -74,7 +74,7 @@ MobileShell.GridView {
         id: metrics
         text: "M\nM"
         visible: false
-        font.pointSize: PlasmaCore.Theme.defaultFont.pointSize * 0.85
+        font.pointSize: Kirigami.Theme.defaultFont.pointSize * 0.85
         font.weight: Font.Bold
     }
     

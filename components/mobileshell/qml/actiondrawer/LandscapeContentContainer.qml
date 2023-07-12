@@ -45,9 +45,9 @@ Item {
         anchors.fill: parent
         
         // darken if there are notifications
-        color: Qt.rgba(PlasmaCore.Theme.backgroundColor.r, 
-                       PlasmaCore.Theme.backgroundColor.g, 
-                       PlasmaCore.Theme.backgroundColor.b, 
+        color: Qt.rgba(Kirigami.Theme.backgroundColor.r, 
+                       Kirigami.Theme.backgroundColor.g, 
+                       Kirigami.Theme.backgroundColor.b, 
                        notificationWidget.hasNotifications ? 0.95 : 0.9)
         Behavior on color { ColorAnimation { duration: Kirigami.Units.longDuration } }
         opacity: opacityValue

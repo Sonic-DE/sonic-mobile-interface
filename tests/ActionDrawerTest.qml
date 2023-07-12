@@ -44,7 +44,7 @@ ApplicationWindow {
         
         height: Kirigami.Units.gridUnit * 1.25
         
-        colorGroup: PlasmaCore.Theme.ComplementaryColorGroup
+        colorGroup: Kirigami.Theme.ComplementaryColorGroup
         backgroundColor: "transparent"
         
         showSecondRow: false

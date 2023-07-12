@@ -111,7 +111,7 @@ ContainmentItem {
         anchors.fill: parent
 
         // contrasting colour
-        Kirigami.Theme.colorSet: opaqueBar ? PlasmaCore.Theme.Window : Kirigami.Theme.Complementary
+        Kirigami.Theme.colorSet: opaqueBar ? Kirigami.Theme.Window : Kirigami.Theme.Complementary
         Kirigami.Theme.inherit: false
 
         // load appropriate system navigation component

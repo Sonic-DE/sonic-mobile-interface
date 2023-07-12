@@ -186,7 +186,7 @@ MouseArea { // use mousearea to ensure clicks don't go behind
             PlasmaCore.IconItem {
                 id: icon
                 anchors.fill: parent
-                colorGroup: PlasmaCore.Theme.ComplementaryColorGroup
+                colorGroup: Kirigami.Theme.ComplementaryColorGroup
             }
 
             MultiEffect {

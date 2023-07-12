@@ -177,7 +177,7 @@ ContainmentLayoutManager.ItemContainer {
                     radius: width
                     width: Kirigami.Units.smallSpacing
                     height: width
-                    color: PlasmaCore.Theme.highlightColor
+                    color: Kirigami.Theme.highlightColor
                 }
                 
                 // darken effect when hovered/pressed
@@ -214,7 +214,7 @@ ContainmentLayoutManager.ItemContainer {
 
                 text: model.applicationName
 
-                font.pointSize: PlasmaCore.Theme.defaultFont.pointSize * 0.8
+                font.pointSize: Kirigami.Theme.defaultFont.pointSize * 0.8
                 font.weight: Font.Bold
                 color: "white"
 
