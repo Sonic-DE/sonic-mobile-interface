@@ -13,7 +13,6 @@ import QtQuick.Controls as Controls
 import org.kde.kirigami 2.20 as Kirigami
 import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
-import org.kde.plasma.extras as PlasmaExtra
 import org.kde.kquickcontrolsaddons as KQCAddons
 
 import org.kde.plasma.private.volume
@@ -59,7 +58,7 @@ ColumnLayout {
             anchors.rightMargin: Kirigami.Units.smallSpacing
             anchors.leftMargin: Kirigami.Units.smallSpacing
             
-            PlasmaExtra.Heading {
+            Kirigami.Heading {
                 level: 2
                 text: i18n("Outputs")
                 Layout.fillWidth: true
@@ -89,7 +88,7 @@ ColumnLayout {
             anchors.rightMargin: Kirigami.Units.smallSpacing
             anchors.leftMargin: Kirigami.Units.smallSpacing
             
-            PlasmaExtra.Heading {
+            Kirigami.Heading {
                 level: 2
                 text: i18n("Inputs")
                 Layout.fillWidth: true
@@ -120,7 +119,7 @@ ColumnLayout {
             anchors.rightMargin: Kirigami.Units.smallSpacing
             anchors.leftMargin: Kirigami.Units.smallSpacing
             
-            PlasmaExtra.Heading {
+            Kirigami.Heading {
                 level: 2
                 text: i18n("Playback Streams")
                 Layout.fillWidth: true
@@ -173,7 +172,7 @@ ColumnLayout {
             anchors.rightMargin: Kirigami.Units.smallSpacing
             anchors.leftMargin: Kirigami.Units.smallSpacing
             
-            PlasmaExtra.Heading {
+            Kirigami.Heading {
                 level: 2
                 text: i18n("Recording Streams")
                 Layout.fillWidth: true

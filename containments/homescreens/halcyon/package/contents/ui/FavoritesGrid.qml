@@ -7,7 +7,6 @@ import QtQuick.Layouts
 import QtQml.Models
 
 import org.kde.plasma.core as PlasmaCore
-import org.kde.plasma.extras as PlasmaExtras
 import org.kde.plasma.components 3.0 as PC3
 import org.kde.draganddrop as DragDrop
 
@@ -282,7 +281,7 @@ MobileShell.GridView {
             color: "white"
         }
         
-        PlasmaExtras.Heading {
+        Kirigami.Heading {
             Layout.fillWidth: true
             Layout.maximumWidth: placeholder.width * 0.75
             Layout.alignment: Qt.AlignTop | Qt.AlignHCenter

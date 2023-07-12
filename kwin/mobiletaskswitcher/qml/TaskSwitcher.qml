@@ -8,7 +8,6 @@ import QtQuick.Layouts
 import org.kde.kirigami 2.20 as Kirigami
 import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
-import org.kde.plasma.extras as PlasmaExtras
 import org.kde.plasma.private.mobileshell as MobileShell
 import org.kde.plasma.private.mobileshell.state as MobileShellState
 import org.kde.plasma.private.mobileshell.shellsettingsplugin as ShellSettings
@@ -281,7 +280,7 @@ FocusScope {
                 // color: "white"
             }
 
-            PlasmaExtras.Heading {
+            Kirigami.Heading {
                 Layout.fillWidth: true
                 Layout.maximumWidth: root.width * 0.75
                 Layout.alignment: Qt.AlignHCenter
