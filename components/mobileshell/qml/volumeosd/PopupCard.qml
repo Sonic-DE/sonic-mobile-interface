@@ -11,7 +11,6 @@ import QtQuick.Window
 
 import org.kde.kirigami 2.20 as Kirigami
 import org.kde.ksvg 1.0 as KSvg
-import org.kde.plasma.core 2.1 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
 
 // capture presses on the audio applet so it doesn't close the overlay
