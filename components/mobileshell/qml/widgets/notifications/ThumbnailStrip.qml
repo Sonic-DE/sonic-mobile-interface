@@ -96,7 +96,7 @@ MouseArea {
         PlasmaCore.IconItem {
             anchors.centerIn: parent
             width: height
-            height: Kirigami.Units.roundToIconSize(parent.height)
+            height: Kirigami.Units.iconSizes.roundedIconSize(parent.height)
             usesPlasmaTheme: false
             source: !thumbnailer.busy && !thumbnailer.hasPreview ? thumbnailer.iconName : ""
         }
