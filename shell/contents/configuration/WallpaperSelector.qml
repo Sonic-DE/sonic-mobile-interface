@@ -6,7 +6,6 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.0
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.3 as Controls
-import org.kde.plasma.extras 2.0 as PlasmaExtras
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.configuration 2.0
 
