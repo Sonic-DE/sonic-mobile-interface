@@ -11,7 +11,6 @@ import org.kde.kirigami 2.20 as Kirigami
 
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
-import org.kde.plasma.extras 2.0 as PlasmaExtra
 
 Item {
     id: root
@@ -34,7 +33,7 @@ Item {
         anchors.fill: parent
         spacing: Kirigami.Units.smallSpacing
         
-        PlasmaExtra.Heading {
+        Kirigami.Heading {
             color: "white"
             level: 1
             text: i18n("Applications")
