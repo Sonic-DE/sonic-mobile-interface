@@ -28,8 +28,8 @@ Item {
     
     RowLayout {
         anchors.topMargin: Kirigami.Units.smallSpacing
-        anchors.leftMargin: Kirigami.Units.largeSpacing
-        anchors.rightMargin: Kirigami.Units.largeSpacing
+        anchors.leftMargin: Kirigami.Units.gridUnit
+        anchors.rightMargin: Kirigami.Units.gridUnit
         anchors.fill: parent
         spacing: Kirigami.Units.smallSpacing
         

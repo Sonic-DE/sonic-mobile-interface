@@ -39,7 +39,7 @@ AbstractAppDrawer {
         leftMargin: horizontalMargin
         rightMargin: horizontalMargin
         
-        cellWidth: effectiveContentWidth / Math.min(Math.floor(effectiveContentWidth / (Kirigami.Units.iconSizes.huge + Kirigami.Units.largeSpacing * 2)), 8)
+        cellWidth: effectiveContentWidth / Math.min(Math.floor(effectiveContentWidth / (Kirigami.Units.iconSizes.huge + Kirigami.Units.gridUnit * 2)), 8)
         cellHeight: cellWidth + root.reservedSpaceForLabel
 
         readonly property int columns: Math.floor(effectiveContentWidth / cellWidth)

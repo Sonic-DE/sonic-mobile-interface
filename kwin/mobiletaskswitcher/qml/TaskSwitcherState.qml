@@ -85,7 +85,7 @@ QtObject {
     readonly property real taskWidth: previewWidth
 
     // spacing between each task preview
-    readonly property real taskSpacing: Kirigami.Units.largeSpacing
+    readonly property real taskSpacing: Kirigami.Units.gridUnit
 
     // height of the task preview header
     readonly property real taskHeaderHeight: Kirigami.Units.gridUnit * 2 + Kirigami.Units.smallSpacing * 2

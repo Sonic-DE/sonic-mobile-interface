@@ -159,7 +159,7 @@ Item {
         }
                 
         boundsBehavior: Flickable.StopAtBounds
-        spacing: Kirigami.Units.largeSpacing
+        spacing: Kirigami.Units.gridUnit
 
         // TODO keyboard focus
         highlightMoveDuration: 0
@@ -173,7 +173,7 @@ Item {
         
         PlasmaExtras.PlaceholderMessage {
             anchors.centerIn: parent
-            width: parent.width - (Kirigami.Units.largeSpacing * 4)
+            width: parent.width - (Kirigami.Units.gridUnit * 4)
 
             text: i18n("Notification service not available")
             visible: list.count === 0 && !NotificationManager.Server.valid && historyModelType === NotificationsModelType.NotificationsModel
@@ -230,9 +230,9 @@ Item {
             
             anchors {
                 left: parent ? parent.left : undefined
-                leftMargin: Kirigami.Units.largeSpacing
+                leftMargin: Kirigami.Units.gridUnit
                 right: parent ? parent.right : undefined
-                rightMargin: Kirigami.Units.largeSpacing
+                rightMargin: Kirigami.Units.gridUnit
             }
             
             height: model.isGroup ? groupDelegate.height : notificationDelegate.height
@@ -364,8 +364,8 @@ Item {
                 top: spacer.bottom
                 right: parent.right
                 left: parent.left
-                leftMargin: Kirigami.Units.largeSpacing
-                rightMargin: Kirigami.Units.largeSpacing
+                leftMargin: Kirigami.Units.gridUnit
+                rightMargin: Kirigami.Units.gridUnit
                 topMargin: list.spacing
                 bottomMargin: list.spacing
             }

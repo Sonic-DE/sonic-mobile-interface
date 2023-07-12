@@ -287,8 +287,8 @@ Kirigami.Page {
                     Layout.leftMargin: Kirigami.Units.gridUnit
                     Layout.bottomMargin: Kirigami.Units.gridUnit
 
-                    topPadding: Kirigami.Units.largeSpacing
-                    bottomPadding: Kirigami.Units.largeSpacing
+                    topPadding: Kirigami.Units.gridUnit
+                    bottomPadding: Kirigami.Units.gridUnit
                     leftPadding: Kirigami.Units.gridUnit
                     rightPadding: Kirigami.Units.gridUnit
 
@@ -305,8 +305,8 @@ Kirigami.Page {
                     Layout.rightMargin: Kirigami.Units.gridUnit
                     Layout.bottomMargin: Kirigami.Units.gridUnit
 
-                    topPadding: Kirigami.Units.largeSpacing
-                    bottomPadding: Kirigami.Units.largeSpacing
+                    topPadding: Kirigami.Units.gridUnit
+                    bottomPadding: Kirigami.Units.gridUnit
                     leftPadding: Kirigami.Units.gridUnit
                     rightPadding: Kirigami.Units.gridUnit
 
@@ -322,8 +322,8 @@ Kirigami.Page {
                     Layout.rightMargin: Kirigami.Units.gridUnit
                     Layout.bottomMargin: Kirigami.Units.gridUnit
 
-                    topPadding: Kirigami.Units.largeSpacing
-                    bottomPadding: Kirigami.Units.largeSpacing
+                    topPadding: Kirigami.Units.gridUnit
+                    bottomPadding: Kirigami.Units.gridUnit
                     leftPadding: Kirigami.Units.gridUnit
                     rightPadding: Kirigami.Units.gridUnit
 

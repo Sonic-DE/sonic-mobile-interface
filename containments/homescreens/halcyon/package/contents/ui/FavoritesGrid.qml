@@ -59,7 +59,7 @@ MobileShell.GridView {
     
     header: MobileShell.BaseItem {
         topPadding: Math.round(root.height * 0.2)
-        bottomPadding: Kirigami.Units.largeSpacing
+        bottomPadding: Kirigami.Units.gridUnit
         // leftPadding: root.leftMargin
         // rightPadding: root.rightMargin
         implicitWidth: root.width
