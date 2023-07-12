@@ -25,7 +25,7 @@ Item {
     id: root
     visible: mpris2Source.hasPlayer
     
-    readonly property real padding: Kirigami.Units.largeSpacing + Kirigami.Units.smallSpacing
+    readonly property real padding: Kirigami.Units.gridUnit + Kirigami.Units.smallSpacing
     readonly property real contentHeight: Kirigami.Units.gridUnit * 2 + Kirigami.Units.smallSpacing
     implicitHeight: visible ? padding * 2 + contentHeight : 0
     
@@ -118,7 +118,7 @@ Item {
                                 }
 
                                 ColumnLayout {
-                                    Layout.leftMargin: albumArt.visible ? Kirigami.Units.largeSpacing : 0
+                                    Layout.leftMargin: albumArt.visible ? Kirigami.Units.gridUnit : 0
                                     Layout.fillWidth: true
                                     spacing: Kirigami.Units.smallSpacing
 

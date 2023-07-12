@@ -54,7 +54,7 @@ SimpleKCM {
                             Kirigami.Icon {
                                 implicitWidth: Kirigami.Units.iconSizes.smallMedium
                                 implicitHeight: Kirigami.Units.iconSizes.smallMedium
-                                Layout.rightMargin: Kirigami.Units.largeSpacing
+                                Layout.rightMargin: Kirigami.Units.gridUnit
                                 source: {
                                     switch (model.battery.type) {
                                         case 3: return model.battery.chargeState === 1 ? "battery-full-charging" : "battery-full"
@@ -120,7 +120,7 @@ SimpleKCM {
 
         MobileForm.FormCard {
             Layout.fillWidth: true
-            Layout.topMargin: Kirigami.Units.largeSpacing
+            Layout.topMargin: Kirigami.Units.gridUnit
 
             contentItem: ColumnLayout {
                 spacing: 0

@@ -98,7 +98,7 @@ NanoShell.FullScreenOverlay {
                 // osd card
                 PopupCard {
                     id: osd
-                    Layout.topMargin: Kirigami.Units.largeSpacing
+                    Layout.topMargin: Kirigami.Units.gridUnit
                     Layout.alignment: Qt.AlignHCenter
 
                     contentItem: RowLayout {
@@ -205,7 +205,7 @@ NanoShell.FullScreenOverlay {
                 // other applet cards
                 AudioApplet {
                     id: applet
-                    Layout.topMargin: Kirigami.Units.largeSpacing
+                    Layout.topMargin: Kirigami.Units.gridUnit
                     Layout.alignment: Qt.AlignHCenter
                     Layout.preferredWidth: cards.width
 

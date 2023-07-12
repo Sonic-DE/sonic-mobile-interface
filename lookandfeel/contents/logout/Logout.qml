@@ -167,7 +167,7 @@ Item {
         ActionButton {
             anchors {
                 bottom: parent.bottom
-                bottomMargin: Kirigami.Units.largeSpacing
+                bottomMargin: Kirigami.Units.gridUnit
                 horizontalCenter: parent.horizontalCenter
             }
             iconSource: "dialog-cancel"
