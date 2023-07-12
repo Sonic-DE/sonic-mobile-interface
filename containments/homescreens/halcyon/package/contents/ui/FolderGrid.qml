@@ -37,7 +37,7 @@ MobileShell.GridView {
     
     header: MobileShell.BaseItem {
         topPadding: Math.round(root.height * 0.2)
-        bottomPadding: Kirigami.Units.largeSpacing
+        bottomPadding: Kirigami.Units.gridUnit
         leftPadding: 0
         rightPadding: 0
         implicitWidth: root.width
@@ -115,8 +115,8 @@ MobileShell.GridView {
             MouseArea {
                 id: button
                 Layout.alignment: Qt.AlignVCenter
-                implicitHeight: Kirigami.Units.iconSizes.small + Kirigami.Units.largeSpacing
-                implicitWidth: Kirigami.Units.iconSizes.small + Kirigami.Units.largeSpacing
+                implicitHeight: Kirigami.Units.iconSizes.small + Kirigami.Units.gridUnit
+                implicitWidth: Kirigami.Units.iconSizes.small + Kirigami.Units.gridUnit
                 
                 cursorShape: Qt.PointingHandCursor
                 onClicked: root.closeRequested()

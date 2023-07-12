@@ -94,7 +94,7 @@ MouseArea {
             Layout.fillWidth: true
             wrapMode: Text.WordWrap
             Layout.leftMargin: Kirigami.Units.smallSpacing * 2
-            Layout.rightMargin: Kirigami.Units.largeSpacing
+            Layout.rightMargin: Kirigami.Units.gridUnit
             maximumLineCount: 1
             elide: Text.ElideRight
 

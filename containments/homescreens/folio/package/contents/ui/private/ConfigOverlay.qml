@@ -67,7 +67,7 @@ ContainmentLayoutManager.ConfigOverlayWithHandles {
 
         RowLayout {
             id: layout
-            spacing: Kirigami.Units.largeSpacing
+            spacing: Kirigami.Units.gridUnit
             anchors {
                 fill: parent
                 topMargin: parent.margins.top

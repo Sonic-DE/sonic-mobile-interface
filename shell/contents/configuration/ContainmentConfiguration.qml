@@ -63,12 +63,12 @@ AppletConfiguration {
         Controls.Control {
             anchors.bottom: parent.bottom
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottomMargin: Kirigami.Units.largeSpacing
+            anchors.bottomMargin: Kirigami.Units.gridUnit
             
-            leftPadding: Kirigami.Units.largeSpacing
-            rightPadding: Kirigami.Units.largeSpacing
-            topPadding: Kirigami.Units.largeSpacing
-            bottomPadding: Kirigami.Units.largeSpacing
+            leftPadding: Kirigami.Units.gridUnit
+            rightPadding: Kirigami.Units.gridUnit
+            topPadding: Kirigami.Units.gridUnit
+            bottomPadding: Kirigami.Units.gridUnit
             
             NumberAnimation on opacity {
                 id: opacityAnim
