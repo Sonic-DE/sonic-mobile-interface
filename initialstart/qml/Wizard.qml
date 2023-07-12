@@ -5,7 +5,6 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
-import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.kirigami 2.20 as Kirigami
 import org.kde.plasma.private.mobileshell 1.0 as MobileShell
 

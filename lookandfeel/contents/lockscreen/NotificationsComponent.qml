@@ -4,7 +4,6 @@
 import QtQuick
 import QtQuick.Layouts
 
-import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.notificationmanager 1.1 as Notifications
 import org.kde.plasma.private.mobileshell 1.0 as MobileShell
 

@@ -6,7 +6,6 @@ import QtQuick.Layouts
 import QtQuick.Window
 
 import org.kde.plasma.plasmoid
-import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.workspace.keyboardlayout as Keyboards
 
 import org.kde.plasma.private.mobileshell as MobileShell
