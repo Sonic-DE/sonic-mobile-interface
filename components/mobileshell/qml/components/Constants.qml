@@ -4,7 +4,6 @@
 import QtQuick
 
 import org.kde.kirigami 2.20 as Kirigami
-import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.private.mobileshell.shellsettingsplugin as ShellSettings
 
 // NOTE: This is a singleton in the mobileshell library, so we need to be careful to
