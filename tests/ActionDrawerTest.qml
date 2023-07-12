@@ -71,7 +71,7 @@ ApplicationWindow {
     
     PC3.Label {
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: Kirigami.Units.largeSpacing
+        anchors.bottomMargin: Kirigami.Units.gridUnit
         anchors.horizontalCenter: parent.horizontalCenter
         text: "Pull down the action drawer from the top."
         color: "white"

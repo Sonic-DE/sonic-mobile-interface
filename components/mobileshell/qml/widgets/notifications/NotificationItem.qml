@@ -54,7 +54,7 @@ BaseNotificationItem {
     // notification
     NotificationCard {
         id: mainCard
-        anchors.topMargin: notificationHeading.visible ? Kirigami.Units.largeSpacing : 0
+        anchors.topMargin: notificationHeading.visible ? Kirigami.Units.gridUnit : 0
         anchors.top: notificationHeading.bottom
         anchors.left: parent.left
         anchors.right: parent.right
@@ -151,7 +151,7 @@ BaseNotificationItem {
             // thumbnails
             Loader {
                 id: thumbnailStripLoader
-                Layout.topMargin: Kirigami.Units.largeSpacing
+                Layout.topMargin: Kirigami.Units.gridUnit
                 Layout.fillWidth: true
                 active: notificationItem.urls.length > 0
                 visible: active

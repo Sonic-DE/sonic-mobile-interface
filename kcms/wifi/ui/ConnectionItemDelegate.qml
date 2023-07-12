@@ -24,8 +24,8 @@ Kirigami.SwipeListItem {
                                                      SecurityType == PlasmaNM.Enums.SAE)
 
     RowLayout {
-        anchors.leftMargin: Kirigami.Units.largeSpacing * 5
-        spacing: Kirigami.Units.largeSpacing
+        anchors.leftMargin: Kirigami.Units.gridUnit * 5
+        spacing: Kirigami.Units.gridUnit
         Kirigami.Separator {}
 
         Item {

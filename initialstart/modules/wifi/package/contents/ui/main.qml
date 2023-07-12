@@ -54,7 +54,7 @@ Item {
     ColumnLayout {
         anchors.fill: parent
         anchors.topMargin: Kirigami.Units.gridUnit
-        anchors.bottomMargin: Kirigami.Units.largeSpacing
+        anchors.bottomMargin: Kirigami.Units.gridUnit
         width: root.width
         spacing: Kirigami.Units.gridUnit
 
@@ -95,7 +95,7 @@ Item {
 
                     Kirigami.PlaceholderMessage {
                         anchors.centerIn: parent
-                        width: parent.width - (Kirigami.Units.largeSpacing * 4)
+                        width: parent.width - (Kirigami.Units.gridUnit * 4)
                         visible: !enabledConnections.wirelessEnabled
                         text: i18n("Wi-Fi is disabled")
                         icon.name: "network-wireless-disconnected"

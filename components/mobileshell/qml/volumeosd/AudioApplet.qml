@@ -53,7 +53,7 @@ ColumnLayout {
     
     PopupCard {
         Layout.alignment: Qt.AlignHCenter
-        Layout.bottomMargin: Kirigami.Units.largeSpacing
+        Layout.bottomMargin: Kirigami.Units.gridUnit
         contentItem: ColumnLayout {
             anchors.rightMargin: Kirigami.Units.smallSpacing
             anchors.leftMargin: Kirigami.Units.smallSpacing
@@ -83,7 +83,7 @@ ColumnLayout {
     
     PopupCard {
         Layout.alignment: Qt.AlignHCenter
-        Layout.bottomMargin: Kirigami.Units.largeSpacing
+        Layout.bottomMargin: Kirigami.Units.gridUnit
         contentItem: ColumnLayout {
             anchors.rightMargin: Kirigami.Units.smallSpacing
             anchors.leftMargin: Kirigami.Units.smallSpacing
@@ -114,7 +114,7 @@ ColumnLayout {
     PopupCard {
         visible: sourceInputView.model.count + sourceMediaInputView.model.count !== 0
         Layout.alignment: Qt.AlignHCenter
-        Layout.bottomMargin: Kirigami.Units.largeSpacing
+        Layout.bottomMargin: Kirigami.Units.gridUnit
         contentItem: ColumnLayout {
             anchors.rightMargin: Kirigami.Units.smallSpacing
             anchors.leftMargin: Kirigami.Units.smallSpacing
@@ -167,7 +167,7 @@ ColumnLayout {
     PopupCard {
         visible: sourceOutputView.model.count !== 0
         Layout.alignment: Qt.AlignHCenter
-        Layout.bottomMargin: Kirigami.Units.largeSpacing
+        Layout.bottomMargin: Kirigami.Units.gridUnit
         contentItem: ColumnLayout {
             anchors.rightMargin: Kirigami.Units.smallSpacing
             anchors.leftMargin: Kirigami.Units.smallSpacing

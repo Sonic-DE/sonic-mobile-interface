@@ -17,7 +17,7 @@ import org.kde.plasma.components 3.0 as PlasmaComponents
 // capture presses on the audio applet so it doesn't close the overlay
 Controls.Control {
     id: content
-    implicitWidth: Math.min(Kirigami.Units.gridUnit * 20, parent.width - Kirigami.Units.largeSpacing * 2)
+    implicitWidth: Math.min(Kirigami.Units.gridUnit * 20, parent.width - Kirigami.Units.gridUnit * 2)
     padding: Kirigami.Units.smallSpacing * 2
     background: KSvg.FrameSvgItem {
         imagePath: "widgets/background"

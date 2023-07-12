@@ -249,8 +249,8 @@ Item {
                             anchors.top: parent.top
                             anchors.left: parent.left
                             anchors.right: parent.right
-                            anchors.leftMargin: Kirigami.Units.largeSpacing
-                            anchors.rightMargin: Kirigami.Units.largeSpacing
+                            anchors.leftMargin: Kirigami.Units.gridUnit
+                            anchors.rightMargin: Kirigami.Units.gridUnit
 
                             Kirigami.Icon {
                                 Layout.alignment: Qt.AlignVCenter
@@ -268,7 +268,7 @@ Item {
                                     id: title
                                     Layout.fillWidth: true
                                     Layout.leftMargin: Kirigami.Units.smallSpacing * 2
-                                    Layout.rightMargin: Kirigami.Units.largeSpacing
+                                    Layout.rightMargin: Kirigami.Units.gridUnit
 
                                     maximumLineCount: 1
                                     elide: Text.ElideRight
@@ -281,7 +281,7 @@ Item {
                                     id: subtitle
                                     Layout.fillWidth: true
                                     Layout.leftMargin: Kirigami.Units.smallSpacing * 2
-                                    Layout.rightMargin: Kirigami.Units.largeSpacing
+                                    Layout.rightMargin: Kirigami.Units.gridUnit
 
                                     maximumLineCount: 1
                                     elide: Text.ElideRight

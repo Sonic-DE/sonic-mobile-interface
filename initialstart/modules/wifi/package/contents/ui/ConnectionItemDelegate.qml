@@ -48,7 +48,7 @@ MobileForm.AbstractFormDelegate {
     }
 
     contentItem: RowLayout {
-        spacing: Kirigami.Units.largeSpacing
+        spacing: Kirigami.Units.gridUnit
 
         Item {
             Layout.preferredWidth: Kirigami.Units.gridUnit
