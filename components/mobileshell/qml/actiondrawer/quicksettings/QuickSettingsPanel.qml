@@ -63,7 +63,7 @@ Components.BaseItem {
                 Layout.preferredHeight: Kirigami.Units.gridUnit * 1.5
                 Layout.maximumHeight: Kirigami.Units.gridUnit * 1.5
                 
-                colorGroup: PlasmaCore.Theme.NormalColorGroup
+                colorGroup: Kirigami.Theme.NormalColorGroup
                 backgroundColor: "transparent"
                 showSecondRow: false
                 showDropShadow: false

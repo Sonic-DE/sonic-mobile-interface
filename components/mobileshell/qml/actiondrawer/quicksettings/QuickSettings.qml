@@ -223,7 +223,7 @@ Item {
                         implicitHeight: count > 1 ? 8 : 0
 
                         radius: parent.width / 2
-                        color: PlasmaCore.Theme.disabledTextColor
+                        color: Kirigami.Theme.disabledTextColor
 
                         opacity: index === currentIndex ? 0.95 : 0.45
                     }
@@ -261,7 +261,7 @@ Item {
                             anchors.leftMargin: 2
                             anchors.rightMargin: -2
                             
-                            color: PlasmaCore.Theme.textColor
+                            color: Kirigami.Theme.textColor
                             opacity: scrollIndicator.active ? 0.5 : 0
                             
                             Behavior on opacity { NumberAnimation {} }

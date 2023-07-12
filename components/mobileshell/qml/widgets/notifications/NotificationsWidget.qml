@@ -354,7 +354,7 @@ Item {
             visible: list.listOverflowing
             height: 1            
             opacity: 0.25
-            color: PlasmaCore.Theme.textColor
+            color: Kirigami.Theme.textColor
         }
         
         RowLayout {

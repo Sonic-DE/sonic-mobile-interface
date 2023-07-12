@@ -52,7 +52,7 @@ Item {
         shadowEnabled: true
         shadowVerticalOffset: 1
         shadowOpacity: 0.5
-        shadowColor: Qt.lighter(PlasmaCore.Theme.backgroundColor, 0.1)
+        shadowColor: Qt.lighter(Kirigami.Theme.backgroundColor, 0.1)
     }
 
     // shadow
@@ -63,7 +63,7 @@ Item {
         anchors.rightMargin: -1
         anchors.bottomMargin: -1
 
-        color: Qt.darker(PlasmaCore.Theme.backgroundColor, 1.3)
+        color: Qt.darker(Kirigami.Theme.backgroundColor, 1.3)
         radius: Kirigami.Units.smallSpacing
     }
 
@@ -76,7 +76,7 @@ Item {
         anchors.rightMargin: root.dragOffset < 0 ? -root.dragOffset : 0
         anchors.top: parent.top
         
-        color: (root.tapEnabled && mouseArea.pressed) ? Qt.darker(PlasmaCore.Theme.backgroundColor, 1.1) : PlasmaCore.Theme.backgroundColor
+        color: (root.tapEnabled && mouseArea.pressed) ? Qt.darker(Kirigami.Theme.backgroundColor, 1.1) : Kirigami.Theme.backgroundColor
         radius: Kirigami.Units.smallSpacing 
         implicitHeight: contentParent.implicitHeight
         clip: true

@@ -90,7 +90,7 @@ QuickSettingsDelegate {
                 Layout.fillWidth: true
                 elide: Text.ElideRight
                 text: root.text
-                font.pointSize: PlasmaCore.Theme.defaultFont.pointSize * 0.75 // TODO base height off of size of delegate
+                font.pointSize: Kirigami.Theme.defaultFont.pointSize * 0.75 // TODO base height off of size of delegate
                 font.weight: Font.Bold
             }
             
@@ -100,7 +100,7 @@ QuickSettingsDelegate {
                 opacity: 0.6
                 
                 Layout.fillWidth: true
-                font.pointSize: PlasmaCore.Theme.defaultFont.pointSize * 0.75
+                font.pointSize: Kirigami.Theme.defaultFont.pointSize * 0.75
             }
         }
     }

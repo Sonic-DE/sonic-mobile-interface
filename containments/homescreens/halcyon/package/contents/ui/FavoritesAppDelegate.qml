@@ -230,7 +230,7 @@ Item {
 
                 text: delegate.isFolder ? delegate.folderName : delegate.applicationName
 
-                font.pointSize: PlasmaCore.Theme.defaultFont.pointSize
+                font.pointSize: Kirigami.Theme.defaultFont.pointSize
                 font.weight: Font.Bold
                 color: "white"
                 
@@ -293,7 +293,7 @@ Item {
                     radius: width
                     width: Kirigami.Units.smallSpacing
                     height: width
-                    color: PlasmaCore.Theme.highlightColor
+                    color: Kirigami.Theme.highlightColor
                 }
                 
                 layer.enabled: true

@@ -29,8 +29,8 @@ Rectangle {
     
     property bool keypadOpen
     
-    readonly property color headerTextColor: Kirigami.ColorUtils.adjustColor(PlasmaCore.Theme.textColor, {"alpha": 0.75*255})
-    readonly property color headerTextInactiveColor: Kirigami.ColorUtils.adjustColor(PlasmaCore.Theme.textColor, {"alpha": 0.4*255})
+    readonly property color headerTextColor: Kirigami.ColorUtils.adjustColor(Kirigami.Theme.textColor, {"alpha": 0.75*255})
+    readonly property color headerTextInactiveColor: Kirigami.ColorUtils.adjustColor(Kirigami.Theme.textColor, {"alpha": 0.4*255})
     
     // model for shown dots
     // we need to use a listmodel to avoid all delegates from reloading

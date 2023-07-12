@@ -155,11 +155,11 @@ NanoShell.FullScreenOverlay {
                             // and plasma-pa:VolumeSlider.qml
                             color: {
                                 if (volumeSlider.value <= 100) {
-                                    return PlasmaCore.Theme.textColor
+                                    return Kirigami.Theme.textColor
                                 } else if (volumeSlider.value > 100 && volumeSlider.value <= 125) {
-                                    return PlasmaCore.Theme.neutralTextColor
+                                    return Kirigami.Theme.neutralTextColor
                                 } else {
-                                    return PlasmaCore.Theme.negativeTextColor
+                                    return Kirigami.Theme.negativeTextColor
                                 }
                             }
                         }

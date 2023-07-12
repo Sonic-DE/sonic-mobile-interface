@@ -112,7 +112,7 @@ BaseNotificationItem {
                     // HACK RichText does not allow to specify link color and since LineEdit
                     // does not support StyledText, we have to inject some CSS to force the color,
                     // cf. QTBUG-81463 and to some extent QTBUG-80354
-                    text: "<style>a { color: " + PlasmaCore.Theme.linkColor + "; }</style>" + notificationItem.body
+                    text: "<style>a { color: " + Kirigami.Theme.linkColor + "; }</style>" + notificationItem.body
 
                     // Cannot do text !== "" because RichText adds some HTML tags even when empty
                     visible: notificationItem.body !== ""

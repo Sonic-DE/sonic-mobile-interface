@@ -175,7 +175,7 @@ Item {
                         implicitHeight: Kirigami.Units.iconSizes.smallMedium
                         opacity: 1 - flickable.openFactor
 
-                        colorGroup: PlasmaCore.Theme.ComplementaryColorGroup
+                        colorGroup: Kirigami.Theme.ComplementaryColorGroup
                         source: "arrow-up"
                     }
                 }
@@ -220,7 +220,7 @@ Item {
                             Layout.bottomMargin: Kirigami.Units.gridUnit
                             implicitWidth: Kirigami.Units.iconSizes.smallMedium
                             implicitHeight: Kirigami.Units.iconSizes.smallMedium
-                            colorGroup: PlasmaCore.Theme.ComplementaryColorGroup
+                            colorGroup: Kirigami.Theme.ComplementaryColorGroup
                             source: "arrow-down"
                             opacity: Math.sin((Math.PI / 2) * flickable.openFactor + 1.5 * Math.PI) + 1
                         }

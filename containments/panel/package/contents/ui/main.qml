@@ -78,7 +78,7 @@ ContainmentItem {
         anchors.fill: parent
 
         showDropShadow: !root.showingApp
-        colorGroup: root.showingApp ? PlasmaCore.Theme.HeaderColorGroup : PlasmaCore.Theme.ComplementaryColorGroup
+        colorGroup: root.showingApp ? Kirigami.Theme.HeaderColorGroup : Kirigami.Theme.ComplementaryColorGroup
         backgroundColor: !root.showingApp ? "transparent" : root.backgroundColor
     }
 

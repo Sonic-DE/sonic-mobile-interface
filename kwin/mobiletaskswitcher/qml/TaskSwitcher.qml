@@ -147,7 +147,7 @@ FocusScope {
     // MobileShell.StatusBar {
     //     id: statusBar
     //     z: 1
-    //     colorGroup: PlasmaCore.Theme.ComplementaryColorGroup
+    //     colorGroup: Kirigami.Theme.ComplementaryColorGroup
     //     backgroundColor: "transparent"
     //
     //     height: root.topMargin
@@ -162,7 +162,7 @@ FocusScope {
         z: 1
         visible: ShellSettings.Settings.navigationPanelEnabled
         backgroundColor: Qt.rgba(0, 0, 0, 0.1)
-        foregroundColorGroup: PlasmaCore.Theme.ComplementaryColorGroup
+        foregroundColorGroup: Kirigami.Theme.ComplementaryColorGroup
         shadow: false
 
         leftAction: MobileShell.NavigationPanelAction {
