@@ -24,14 +24,14 @@ Rectangle {
     property double swipeProgress
     
     // slightly translucent background, for key contrast
-    color: Kirigami.ColorUtils.adjustColor(PlasmaCore.Theme.backgroundColor, {"alpha": 0.9*255})
+    color: Kirigami.ColorUtils.adjustColor(Kirigami.Theme.backgroundColor, {"alpha": 0.9*255})
     
     // colour calculations
-    readonly property color buttonColor: Qt.lighter(PlasmaCore.Theme.backgroundColor, 1.3)
-    readonly property color buttonPressedColor: Qt.darker(PlasmaCore.Theme.backgroundColor, 1.08)
-    readonly property color buttonTextColor: PlasmaCore.Theme.textColor
-    readonly property color dropShadowColor: Qt.darker(PlasmaCore.Theme.backgroundColor, 1.2)
-    readonly property color headerBackgroundColor: Qt.lighter(PlasmaCore.Theme.backgroundColor, 1.3)
+    readonly property color buttonColor: Qt.lighter(Kirigami.Theme.backgroundColor, 1.3)
+    readonly property color buttonPressedColor: Qt.darker(Kirigami.Theme.backgroundColor, 1.08)
+    readonly property color buttonTextColor: Kirigami.Theme.textColor
+    readonly property color dropShadowColor: Qt.darker(Kirigami.Theme.backgroundColor, 1.2)
+    readonly property color headerBackgroundColor: Qt.lighter(Kirigami.Theme.backgroundColor, 1.3)
     
     opacity: Math.sin((Math.PI / 2) * swipeProgress + 1.5 * Math.PI) + 1
     

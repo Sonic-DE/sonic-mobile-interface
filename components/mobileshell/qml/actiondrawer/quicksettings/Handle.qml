@@ -17,7 +17,7 @@ Rectangle {
     implicitWidth: Kirigami.Units.gridUnit * 3
     implicitHeight: 3
     radius: height
-    color: PlasmaCore.Theme.textColor
+    color: Kirigami.Theme.textColor
     opacity: 0.5
     
     TapHandler {

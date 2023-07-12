@@ -44,9 +44,9 @@ Item {
     Rectangle {
         anchors.fill: parent
         // darken if there are notifications
-        color: Qt.rgba(PlasmaCore.Theme.backgroundColor.r, 
-                       PlasmaCore.Theme.backgroundColor.g, 
-                       PlasmaCore.Theme.backgroundColor.b, 
+        color: Qt.rgba(Kirigami.Theme.backgroundColor.r, 
+                       Kirigami.Theme.backgroundColor.g, 
+                       Kirigami.Theme.backgroundColor.b, 
                        0.95)
         Behavior on color { ColorAnimation { duration: Kirigami.Units.longDuration } }
         opacity: Math.max(0, Math.min(1, actionDrawer.offset / root.minimizedQuickSettingsOffset))

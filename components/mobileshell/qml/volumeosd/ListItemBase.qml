@@ -232,11 +232,11 @@ Controls.ItemDelegate {
                     text: i18nc("volume percentage", "%1%", displayValue)
                     color: {
                         if (displayValue <= 100) {
-                            return PlasmaCore.Theme.textColor
+                            return Kirigami.Theme.textColor
                         } else if (displayValue > 100 && displayValue <= 125) {
-                            return PlasmaCore.Theme.neutralTextColor
+                            return Kirigami.Theme.neutralTextColor
                         } else {
-                            return PlasmaCore.Theme.negativeTextColor
+                            return Kirigami.Theme.negativeTextColor
                         }
                     }
                 }

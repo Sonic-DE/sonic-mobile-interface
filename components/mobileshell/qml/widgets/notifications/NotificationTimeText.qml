@@ -47,7 +47,7 @@ PlasmaComponents.Label {
         ageLabel.agoText = Util.generateNotificationHeaderAgoText(time, jobState);
     }
     
-    font.pixelSize: PlasmaCore.Theme.defaultFont.pixelSize * 0.8
+    font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 0.8
 
     // the "n minutes ago" text, for jobs we show remaining time instead
     // updated periodically by a Timer hence this property with generate() function

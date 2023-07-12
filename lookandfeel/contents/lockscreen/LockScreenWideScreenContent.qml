@@ -56,7 +56,7 @@ Loader {
                         shadowEnabled: true
                         shadowVerticalOffset: 1
                         shadowOpacity: 0.5
-                        shadowColor: Qt.lighter(PlasmaCore.Theme.backgroundColor, 0.1)
+                        shadowColor: Qt.lighter(Kirigami.Theme.backgroundColor, 0.1)
                     }
                 }
             }
