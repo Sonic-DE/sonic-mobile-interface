@@ -88,7 +88,7 @@ void DesktopModel::load()
             data.storageId = service->storageId();
             data.uniqueId = uniqueId;
             data.entryPath = service->exec();
-            data.startupNotify = service->property(QStringLiteral("StartupNotify")).toBool();
+            data.startupNotify = service->property<bool>(QStringLiteral("StartupNotify"));
 
             if (m_favorites.contains(uniqueId)) {
                 data.location = Favorites;
@@ -250,7 +250,7 @@ void DesktopModel::addFavorite(const QString &storageId, int row, LauncherLocati
         data.storageId = service->storageId();
         data.uniqueId = uniqueId;
         data.entryPath = service->exec();
-        data.startupNotify = service->property(QStringLiteral("StartupNotify")).toBool();
+        data.startupNotify = service->property<bool>(QStringLiteral("StartupNotify"));
 
         bool favChanged = false;
         if (location == Favorites) {
