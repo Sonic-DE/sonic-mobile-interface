@@ -3,7 +3,7 @@
 
 #include "folioplugin.h"
 #include "applicationlistmodel.h"
-#include "homescreenstate.h"
+#include "desktopmodel.h"
 
 void HalcyonPlugin::registerTypes(const char *uri)
 {
@@ -13,5 +13,5 @@ void HalcyonPlugin::registerTypes(const char *uri)
         return ApplicationListModel::self();
     });
 
-    qmlRegisterType<HomeScreenState>(uri, 1, 0, "HomeScreenState");
+    qmlRegisterType<DesktopModel>(uri, 1, 0, "DesktopModel");
 }

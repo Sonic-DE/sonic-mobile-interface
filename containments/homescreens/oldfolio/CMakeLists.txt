@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023 Devin Lin <devin@kde.org>
+# SPDX-FileCopyrightText: 2015-2021 Marco Martin <mart@kde.org>
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 set(homescreen_SRCS
@@ -20,6 +20,7 @@ target_link_libraries(org.kde.plasma.mobile.homescreen.folio
                       KF6::WaylandClient
                       KF6::WindowSystem
 )
+
 
 install(TARGETS org.kde.plasma.mobile.homescreen.folio DESTINATION ${KDE_INSTALL_PLUGINDIR}/plasma/applets)
 
