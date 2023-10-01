@@ -38,6 +38,12 @@ bool SwipeArea::interactive()
     return m_interactive;
 }
 
+void SwipeArea::setInteractive(bool interactive)
+{
+    m_interactive = interactive;
+    Q_EMIT interactiveChanged();
+}
+
 bool SwipeArea::moving()
 {
     return m_moving;
@@ -205,12 +211,6 @@ void SwipeArea::touchUngrabEvent()
     QQuickItem::touchUngrabEvent();
 }
 
-void SwipeArea::setInteractive(bool interactive)
-{
-    m_interactive = interactive;
-    Q_EMIT interactiveChanged();
-}
-
 void SwipeArea::setMoving(bool moving)
 {
     m_moving = moving;
@@ -258,11 +258,6 @@ void SwipeArea::handleReleaseEvent(QPointerEvent *event, QPointF point)
 
 void SwipeArea::handleMoveEvent(QPointerEvent *event, QPointF point)
 {
-    const QVector2D totalDelta = QVector2D(point - m_startPos);
-    const QVector2D delta = QVector2D(point - m_lastPos);
-
-    m_lastPos = point;
-
     if (!m_stealMouse) {
         // if we haven't reached the swipe registering threshold yet, don't start the swipe
         if (m_mode == Mode::VerticalOnly && qAbs(point.y() - m_pressPos.y()) < SWIPE_REGISTER_THRESHOLD) {
@@ -276,10 +271,15 @@ void SwipeArea::handleMoveEvent(QPointerEvent *event, QPointF point)
         // we now start the swipe, stealing it from children
 
         m_startPos = point;
+        m_lastPos = point;
         m_stealMouse = true;
         setMoving(true);
         Q_EMIT swipeStarted(m_startPos);
     }
+
+    const QVector2D totalDelta = QVector2D(point - m_startPos);
+    const QVector2D delta = QVector2D(point - m_lastPos);
+    m_lastPos = point;
 
     // ensure it's called AFTER swipeStarted()
     Q_EMIT swipeMove(totalDelta.x(), totalDelta.y(), delta.x(), delta.y());
