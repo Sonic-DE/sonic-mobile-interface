@@ -23,7 +23,7 @@ class SwipeArea : public QQuickItem
 {
     Q_OBJECT
     Q_PROPERTY(SwipeArea::Mode mode READ mode WRITE setMode NOTIFY modeChanged)
-    Q_PROPERTY(bool interactive READ interactive NOTIFY interactiveChanged)
+    Q_PROPERTY(bool interactive READ interactive WRITE setInteractive NOTIFY interactiveChanged)
     Q_PROPERTY(bool moving READ moving NOTIFY movingChanged)
     Q_PROPERTY(bool pressed READ pressed NOTIFY pressedChanged)
 
@@ -39,6 +39,8 @@ public:
     void setMode(Mode mode);
 
     bool interactive();
+    void setInteractive(bool interactive);
+
     bool moving();
     bool pressed();
 
@@ -65,7 +67,6 @@ protected:
     void touchUngrabEvent() override;
 
 private:
-    void setInteractive(bool interactive);
     void setMoving(bool moving);
     void setPressed(bool pressed);
 
