@@ -261,8 +261,14 @@ void HomeScreenState::determineSwipeTypeAfterThreshold(qreal totalDeltaX, qreal 
             // moving up
             switch (m_viewState) {
             case ViewState::PageView:
-                setSwipeState(SwipeState::SwipingOpenSearchWidget);
-                cancelSearchWidgetAnimations();
+                // if the app drawer is still being opened
+                if (m_openAppDrawerAnim->state() == QPropertyAnimation::Running) {
+                    setSwipeState(SwipeState::SwipingOpenAppDrawer);
+                    cancelAppDrawerAnimations();
+                } else {
+                    setSwipeState(SwipeState::SwipingOpenSearchWidget);
+                    cancelSearchWidgetAnimations();
+                }
                 break;
             case ViewState::AppDrawerView:
                 setSwipeState(SwipeState::SwipingCloseAppDrawer);
@@ -278,8 +284,13 @@ void HomeScreenState::determineSwipeTypeAfterThreshold(qreal totalDeltaX, qreal 
             // moving down
             switch (m_viewState) {
             case ViewState::PageView:
-                setSwipeState(SwipeState::SwipingOpenAppDrawer);
-                cancelAppDrawerAnimations();
+                if (m_openSearchWidgetAnim->state() == QPropertyAnimation::Running) {
+                    setSwipeState(SwipeState::SwipingOpenSearchWidget);
+                    cancelSearchWidgetAnimations();
+                } else {
+                    setSwipeState(SwipeState::SwipingOpenAppDrawer);
+                    cancelAppDrawerAnimations();
+                }
                 break;
             case ViewState::SearchWidgetView:
                 setSwipeState(SwipeState::SwipingCloseSearchWidget);
