@@ -5,6 +5,11 @@ set(folioplugin_SRCS
     folioplugin.cpp
     applicationlistmodel.cpp
     homescreenstate.cpp
+    windowlistener.cpp
+    favouritesmodel.cpp
+    folioapplication.cpp
+    folioapplicationfolder.cpp
+    foliodelegate.cpp
 )
 
 install(FILES qmldir DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/private/mobile/homescreen/folio)
