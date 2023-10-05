@@ -73,7 +73,7 @@ Repeater {
             delegate.width = appletsLayout.cellWidth;
             delegate.height = appletsLayout.cellHeight;
 
-            var pos = plasmoid.fullRepresentationItem.mapFromItem(delegate, dragCenter.x, dragCenter.y);
+            var pos = Plasmoid.fullRepresentationItem.mapFromItem(delegate, dragCenter.x, dragCenter.y);
 
             //SCROLL LEFT
             if (pos.x < Kirigami.Units.gridUnit) {
@@ -95,7 +95,7 @@ Repeater {
                 launcherDragManager.currentlyDraggedDelegate = delegate;
             } else {
                 launcherDragManager.dropItem(delegate, dragCenterX, dragCenterY);
-                plasmoid.editMode = false;
+                Plasmoid.editMode = false;
                 editMode = false;
                 launcherRepeater.stopScrollRequested();
                 launcherDragManager.currentlyDraggedDelegate = null;

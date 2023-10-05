@@ -55,7 +55,7 @@ ContainmentLayoutManager.BasicAppletContainer {
             appletContainer.forceActiveFocus();
         } else {
             launcherDragManager.dropItem(appletContainer, dragCenterX, dragCenterY);
-            plasmoid.editMode = false;
+            Plasmoid.editMode = false;
             launcherRepeater.stopScrollRequested();
             launcherDragManager.currentlyDraggedDelegate = null;
             forceActiveFocus();
@@ -66,7 +66,7 @@ ContainmentLayoutManager.BasicAppletContainer {
         dragCenterY = dragCenter.y;
         launcherDragManager.dragItem(appletContainer, dragCenter.x, dragCenter.y);
 
-        var pos = plasmoid.fullRepresentationItem.mapFromItem(appletContainer, dragCenter.x, dragCenter.y);
+        var pos = Plasmoid.fullRepresentationItem.mapFromItem(appletContainer, dragCenter.x, dragCenter.y);
 
         //SCROLL LEFT
         if (pos.x < Kirigami.Units.gridUnit) {
