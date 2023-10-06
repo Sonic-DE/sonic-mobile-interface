@@ -5,6 +5,7 @@ import QtQuick 2.15
 import QtQuick.Layouts 1.1
 import QtQuick.Controls 2.3 as Controls
 import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 
 import org.kde.kirigami 2.20 as Kirigami
 
@@ -17,8 +18,13 @@ import org.kde.plasma.private.mobileshell.shellsettingsplugin as ShellSettings
 
 MouseArea {
     id: delegate
-    width: GridView.view.cellWidth
-    height: GridView.view.cellHeight
+
+    property string name
+    property string icon
+    property string storageId
+    property bool applicationRunning
+
+    property bool shadow: false
 
     property int reservedSpaceForLabel
     property alias iconItem: icon
@@ -30,17 +36,17 @@ MouseArea {
 
     function launchApp() {
         // launch app
-        if (model.applicationRunning) {
-            delegate.launch(0, 0, "", model.applicationName, model.applicationStorageId);
+        if (applicationRunning) {
+            delegate.launch(0, 0, "", delegate.name, delegate.storageId);
         } else {
-            delegate.launch(delegate.x + (Kirigami.Units.smallSpacing * 2), delegate.y + (Kirigami.Units.smallSpacing * 2), icon.source, model.applicationName, model.applicationStorageId);
+            delegate.launch(delegate.x + (Kirigami.Units.smallSpacing * 2), delegate.y + (Kirigami.Units.smallSpacing * 2), icon.source, delegate.name, delegate.storageId);
         }
     }
 
     onPressAndHold: {
         delegate.grabToImage(function(result) {
             delegate.Drag.imageSource = result.url
-            dragStarted(result.url, width/2, height/2, model.applicationStorageId)
+            dragStarted(result.url, width/2, height/2, delegate.storageId)
         })
     }
 
@@ -93,7 +99,15 @@ MouseArea {
     // launch app handled by press animation
     onClicked: launchAppRequested = true;
 
-    //preventStealing: true
+
+    layer.enabled: delegate.shadow
+    layer.effect: MultiEffect {
+        shadowEnabled: true
+        shadowVerticalOffset: 1
+        blurMax: 16
+        shadowOpacity: 0.5
+    }
+
     ColumnLayout {
         anchors {
             fill: parent
@@ -112,14 +126,14 @@ MouseArea {
             Layout.minimumHeight: Math.floor(parent.height - delegate.reservedSpaceForLabel)
             Layout.preferredHeight: Layout.minimumHeight
 
-            source: model.applicationIcon
+            source: delegate.icon
 
             Rectangle {
                 anchors {
                     horizontalCenter: parent.horizontalCenter
                     bottom: parent.bottom
                 }
-                visible: model.applicationRunning
+                visible: delegate.applicationRunning
                 radius: width
                 width: Kirigami.Units.smallSpacing
                 height: width
@@ -151,7 +165,7 @@ MouseArea {
             verticalAlignment: Text.AlignTop
             elide: Text.ElideRight
 
-            text: model.applicationName
+            text: delegate.name
 
             font.pointSize: Kirigami.Theme.defaultFont.pointSize * 0.8
             font.weight: Font.Bold

@@ -21,6 +21,10 @@ ContainmentItem {
     property Folio.HomeScreenState homeScreenState: Folio.HomeScreenState {}
 
     Component.onCompleted: {
+        Folio.FolioSettings.setApplet(root.plasmoid);
+        Folio.FavouritesModel.setApplet(root.plasmoid);
+        Folio.PageListModel.setApplet(root.plasmoid);
+
         // ensure the gestures work immediately on load
         forceActiveFocus();
     }

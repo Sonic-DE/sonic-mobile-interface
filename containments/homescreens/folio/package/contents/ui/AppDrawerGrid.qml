@@ -50,6 +50,10 @@ MobileShell.GridView {
 
     delegate: AppDrawerDelegate {
         id: delegate
+        name: model.applicationName
+        applicationRunning: model.applicationRunning
+        storageId: model.applicationStorageId
+        icon: model.applicationIcon
 
         width: root.cellWidth
         height: root.cellHeight
