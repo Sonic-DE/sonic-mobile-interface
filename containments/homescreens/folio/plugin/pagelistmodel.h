@@ -3,47 +3,43 @@
 
 #pragma once
 
-#include <QObject>
+#include "pagemodel.h"
 
 #include <QAbstractListModel>
 #include <QList>
-#include <QObject>
-#include <QQuickItem>
-#include <QSet>
 
 #include <Plasma/Applet>
 
-#include "foliodelegate.h"
-
-class FavouritesModel : public QAbstractListModel
+class PageListModel : public QAbstractListModel
 {
     Q_OBJECT
 
 public:
-    enum Roles {
-        DelegateRole = Qt::UserRole + 1,
-    };
+    enum Roles { PageRole = Qt::UserRole + 1 };
 
-    FavouritesModel(QObject *parent = nullptr);
-    static FavouritesModel *self();
+    PageListModel(QObject *parent = nullptr);
+
+    static PageListModel *self();
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int, QByteArray> roleNames() const override;
 
-    Q_INVOKABLE void addApp(const QString &storageId, int row);
-    Q_INVOKABLE void removeEntry(int row);
-    Q_INVOKABLE void moveEntry(int fromRow, int toRow);
+    void removePage(int index);
+    Q_INVOKABLE void addPageAtEnd();
+
     void save();
 
     // called by QML
     Q_INVOKABLE void setApplet(Plasma::Applet *applet);
 
+Q_SIGNALS:
+    void appletChanged();
+
 private:
     void load();
 
-    int m_columns;
-    QList<FolioDelegate *> m_delegates;
+    QList<PageModel *> m_pages;
 
     Plasma::Applet *m_applet;
 };

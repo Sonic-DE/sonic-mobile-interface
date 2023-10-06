@@ -58,6 +58,8 @@ public:
     ViewState viewState();
 
     // the current horizontal position of the pageview
+    // starts at 0, each page is m_pageWidth wide
+    // first page is at -m_pageWidth, second is at -m_pageWidth * 2, etc.
     qreal pageViewX();
     void setPageViewX(qreal pageViewX);
 
@@ -100,6 +102,8 @@ public Q_SLOTS:
     void closeAppDrawer();
     void openSearchWidget();
     void closeSearchWidget();
+    void snapPage(); // snaps to closest page
+    void goToPage(int page);
 
     // from SwipeArea
     void swipeStarted();
@@ -125,6 +129,8 @@ private:
     qreal m_searchWidgetOpenProgress{0};
     qreal m_searchWidgetY{0};
 
+    int m_pageNum{0};
+
     bool m_movingUp{false};
     bool m_movingRight{false};
 
@@ -132,6 +138,7 @@ private:
     QPropertyAnimation *m_closeAppDrawerAnim{nullptr};
     QPropertyAnimation *m_openSearchWidgetAnim{nullptr};
     QPropertyAnimation *m_closeSearchWidgetAnim{nullptr};
+    QPropertyAnimation *m_pageAnim{nullptr};
 
     QList<QObject *> m_children;
 };

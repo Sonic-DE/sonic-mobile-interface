@@ -38,22 +38,71 @@ Item {
         interactive: root.interactive
 
         onSwipeStarted: {
-            console.log('vertical start');
             homeScreenState.swipeStarted();
         }
         onSwipeEnded: {
-            console.log('vertical end');
             homeScreenState.swipeEnded();
         }
         onSwipeMove: (totalDeltaX, totalDeltaY, deltaX, deltaY) => {
-            // console.log('vertical swipe');
             homeScreenState.swipeMoved(totalDeltaX, totalDeltaY, deltaX, deltaY);
+        }
+
+        Item {
+            id: mainHomeScreen
+            anchors.fill: parent
+
+            // we stop showing halfway through the animation
+            opacity: 1 - Math.max(homeScreenState.appDrawerOpenProgress, homeScreenState.searchWidgetOpenProgress) * 2
+            visible: opacity > 0 // prevent handlers from picking up events
+
+            transform: [
+                Scale {
+                    origin.x: mainHomeScreen.width / 2
+                    origin.y: mainHomeScreen.height / 2
+                    yScale: 1 - (homeScreenState.appDrawerOpenProgress * 2) * 0.1
+                    xScale: 1 - (homeScreenState.appDrawerOpenProgress * 2) * 0.1
+                }
+            ]
+
+            HomeScreenPages {
+                id: homeScreenPages
+                homeScreenState: root.homeScreenState
+
+                anchors.bottom: favouritesBar.top
+                anchors.top: parent.top
+                anchors.topMargin: root.topMargin
+                anchors.left: parent.left
+                anchors.leftMargin: root.leftMargin
+                anchors.right: parent.right
+                anchors.rightMargin: root.rightMargin
+
+                onWidthChanged: {
+                    // update the model
+                    homeScreenState.pageWidth = homeScreenPages.width;
+                }
+            }
+
+            FavouritesBar {
+                id: favouritesBar
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: root.bottomMargin
+                anchors.left: parent.left
+                anchors.leftMargin: root.leftMargin
+                anchors.right: parent.right
+                anchors.rightMargin: root.rightMargin
+            }
         }
 
         AppDrawer {
             id: appDrawer
             anchors.fill: parent
             homeScreenState: root.homeScreenState
+
+            // we only start showing it halfway through
+            opacity: homeScreenState.appDrawerOpenProgress < 0.5 ? 0 : (homeScreenState.appDrawerOpenProgress - 0.5) * 2
+            visible: opacity > 0 // prevent handlers from picking up events
+
+            transform: Translate { y: (1 - homeScreenState.appDrawerOpenProgress) * (Kirigami.Units.gridUnit * 2) }
 
             headerHeight: Math.round(Kirigami.Units.gridUnit * 5)
             headerItem: AppDrawerHeader {}
@@ -71,7 +120,7 @@ Item {
             anchors.fill: parent
 
             opacity: homeScreenState.searchWidgetOpenProgress
-            visible: homeScreenState.searchWidgetOpenProgress > 0
+            visible: opacity > 0
             transform: Translate { y: (1 - homeScreenState.searchWidgetOpenProgress) * (-Kirigami.Units.gridUnit * 2) }
 
             onRequestedClose: {
