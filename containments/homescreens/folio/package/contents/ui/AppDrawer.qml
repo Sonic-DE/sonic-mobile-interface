@@ -13,8 +13,6 @@ import org.kde.plasma.private.mobileshell 1.0 as MobileShell
 
 Item {
     id: root
-    opacity: homeScreenState.appDrawerOpenProgress
-    visible: homeScreenState.appDrawerOpenProgress > 0 // prevent handlers from picking up events
 
     required property var homeScreenState
 
@@ -43,8 +41,6 @@ Item {
 
     Item {
         anchors.fill: parent
-
-        transform: Translate { y: (1 - homeScreenState.appDrawerOpenProgress) * (Kirigami.Units.gridUnit * 2) }
 
         anchors.leftMargin: root.leftPadding
         anchors.topMargin: root.topPadding

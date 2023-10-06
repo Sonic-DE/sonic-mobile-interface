@@ -5,37 +5,70 @@
 
 #include "folioapplication.h"
 #include "folioapplicationfolder.h"
+#include "foliodelegate.h"
 
 #include <QAbstractListModel>
+#include <QJsonArray>
 #include <QList>
 
 #include <Plasma/Applet>
+
+class FolioPageDelegate : public FolioDelegate
+{
+    Q_OBJECT
+    Q_PROPERTY(int row READ row NOTIFY rowChanged)
+    Q_PROPERTY(int column READ column NOTIFY columnChanged)
+
+public:
+    FolioPageDelegate(int row = 0, int column = 0, QObject *parent = nullptr);
+    FolioPageDelegate(int row, int column, FolioApplication *application, QObject *parent);
+    FolioPageDelegate(int row, int column, FolioApplicationFolder *folder, QObject *parent);
+
+    static FolioPageDelegate *fromJson(QJsonObject &obj, QObject *parent);
+
+    virtual QJsonObject toJson() const override;
+
+    int row();
+    void setRow(int row);
+
+    int column();
+    void setColumn(int column);
+
+Q_SIGNALS:
+    void rowChanged();
+    void columnChanged();
+
+private:
+    int m_row;
+    int m_column;
+};
 
 class PageModel : public QAbstractListModel
 {
     Q_OBJECT
 public:
-    enum Roles { IsFolderRole = Qt::UserRole + 1, ApplicationRole, FolderRole };
+    enum Roles { DelegateRole = Qt::UserRole + 1 };
 
-    PageModel(int page = 0, QObject *parent = nullptr);
-    ~PageModel() override;
+    PageModel(QList<FolioPageDelegate *> delegates = QList<FolioPageDelegate *>{}, QObject *parent = nullptr);
+    ~PageModel();
+
+    static PageModel *fromJson(QJsonArray &arr, QObject *parent);
+
+    QJsonArray toJson() const;
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int, QByteArray> roleNames() const override;
 
+    Q_INVOKABLE void addAppDelegate(int row, int col, QString storageId);
+    Q_INVOKABLE void removeDelegate(int row, int col);
+
+public Q_SLOTS:
     void save();
 
-    Plasma::Applet *applet();
-    void setApplet(Plasma::Applet *applet);
-
 Q_SIGNALS:
-    void appletChanged();
+    void saveRequested();
 
 private:
-    void load();
-
-    QList<QList<FolioDelegate *>> m_applications;
-
-    Plasma::Applet *m_applet;
+    QList<FolioPageDelegate *> m_delegates;
 };

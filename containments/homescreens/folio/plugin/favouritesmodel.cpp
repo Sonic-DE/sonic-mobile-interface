@@ -32,6 +32,7 @@ FavouritesModel::FavouritesModel(QObject *parent)
 
 int FavouritesModel::rowCount(const QModelIndex &parent) const
 {
+    Q_UNUSED(parent)
     return m_delegates.count();
 }
 
@@ -43,7 +44,7 @@ QVariant FavouritesModel::data(const QModelIndex &index, int role) const
 
     switch (role) {
     case DelegateRole:
-        return m_delegates.at(index.row()) != nullptr;
+        return QVariant::fromValue(m_delegates.at(index.row()));
     }
 
     return QVariant();
@@ -62,7 +63,7 @@ void FavouritesModel::addApp(const QString &storageId, int row)
 
     if (KService::Ptr service = KService::serviceByStorageId(storageId)) {
         FolioApplication *app = new FolioApplication{this, service};
-        FolioDelegate *delegate = new FolioDelegate{app, nullptr, this};
+        FolioDelegate *delegate = new FolioDelegate{app, this};
 
         beginInsertRows(QModelIndex(), row, row);
         m_delegates.insert(row, delegate);
@@ -125,17 +126,7 @@ void FavouritesModel::save()
             continue;
         }
 
-        switch (m_delegates[i]->type()) {
-        case FolioDelegate::Application:
-            arr.push_back(m_delegates[i]->application()->toJson());
-            break;
-        case FolioDelegate::Folder:
-            arr.push_back(m_delegates[i]->folder()->toJson());
-            break;
-        case FolioDelegate::None:
-        default:
-            break;
-        }
+        arr.append(m_delegates[i]->toJson());
     }
     QByteArray data = QJsonDocument(arr).toJson(QJsonDocument::Compact);
 
@@ -156,38 +147,22 @@ void FavouritesModel::load()
     for (QJsonValueRef r : doc.array()) {
         QJsonObject obj = r.toObject();
 
-        if (obj[QStringLiteral("type")].toString() == "application") {
-            // read application
-            FolioApplication *app = FolioApplication::fromJson(obj, this);
+        FolioDelegate *delegate = FolioDelegate::fromJson(obj, this);
 
-            if (app) {
-                FolioDelegate *delegate = new FolioDelegate{app, nullptr, this};
-                m_delegates.append(delegate);
+        if (delegate) {
+            if (delegate->type() == FolioDelegate::Folder) {
+                connect(delegate->folder(), &FolioApplicationFolder::saveRequested, this, &FavouritesModel::save);
             }
 
-        } else if (obj[QStringLiteral("type")].toString() == "folder") {
-            // read folder
-            FolioApplicationFolder *folder = FolioApplicationFolder::fromJson(obj, this);
-            connect(folder, &FolioApplicationFolder::saveRequested, this, &FavouritesModel::save);
-
-            if (folder) {
-                FolioDelegate *delegate = new FolioDelegate{nullptr, folder, this};
-                m_delegates.append(delegate);
-            }
+            m_delegates.append(delegate);
         }
     }
 
     endResetModel();
 }
 
-Plasma::Applet *FavouritesModel::applet()
-{
-    return m_applet;
-}
-
 void FavouritesModel::setApplet(Plasma::Applet *applet)
 {
     m_applet = applet;
-    Q_EMIT appletChanged();
     load();
 }

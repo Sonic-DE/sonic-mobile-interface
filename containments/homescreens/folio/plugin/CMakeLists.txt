@@ -10,6 +10,9 @@ set(folioplugin_SRCS
     folioapplication.cpp
     folioapplicationfolder.cpp
     foliodelegate.cpp
+    foliosettings.cpp
+    pagemodel.cpp
+    pagelistmodel.cpp
 )
 
 install(FILES qmldir DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/private/mobile/homescreen/folio)
