@@ -23,7 +23,13 @@ public:
     };
     Q_ENUM(Type)
 
-    FolioDelegate(FolioApplication *application = nullptr, FolioApplicationFolder *folder = nullptr, QObject *parent = nullptr);
+    FolioDelegate(QObject *parent = nullptr);
+    FolioDelegate(FolioApplication *application, QObject *parent);
+    FolioDelegate(FolioApplicationFolder *folder, QObject *parent);
+
+    static FolioDelegate *fromJson(QJsonObject &obj, QObject *parent);
+
+    virtual QJsonObject toJson() const;
 
     FolioDelegate::Type type();
     FolioApplication *application();

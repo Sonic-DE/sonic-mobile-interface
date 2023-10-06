@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include "homescreenstate.h"
+#include "pagelistmodel.h"
 
 #include <algorithm>
 
@@ -52,6 +53,10 @@ HomeScreenState::HomeScreenState(QObject *parent)
     connect(m_closeSearchWidgetAnim, &QPropertyAnimation::finished, this, [this]() {
         setViewState(ViewState::PageView);
     });
+
+    m_pageAnim = new QPropertyAnimation{this, "pageViewX", this};
+    m_pageAnim->setDuration(200 * 2); // TODO use kirigami longDuration * 2
+    m_pageAnim->setEasingCurve(QEasingCurve::OutCubic);
 }
 
 HomeScreenState::ViewState HomeScreenState::viewState()
@@ -96,6 +101,9 @@ void HomeScreenState::setPageWidth(qreal pageWidth)
 {
     m_pageWidth = pageWidth;
     Q_EMIT pageWidthChanged();
+
+    // make sure we snap
+    snapPage();
 }
 
 qreal HomeScreenState::appDrawerOpenProgress()
@@ -155,7 +163,6 @@ void HomeScreenState::closeAppDrawer()
 
 void HomeScreenState::openSearchWidget()
 {
-    qDebug() << "request open search";
     cancelSearchWidgetAnimations();
     m_openSearchWidgetAnim->setStartValue(m_searchWidgetY);
     m_openSearchWidgetAnim->start();
@@ -163,10 +170,48 @@ void HomeScreenState::openSearchWidget()
 
 void HomeScreenState::closeSearchWidget()
 {
-    qDebug() << "request close search";
     cancelSearchWidgetAnimations();
     m_closeSearchWidgetAnim->setStartValue(m_searchWidgetY);
     m_closeSearchWidgetAnim->start();
+}
+
+void HomeScreenState::snapPage()
+{
+    int numOfPages = PageListModel::self()->rowCount();
+
+    int leftPage = std::max((qreal)0, std::min((qreal)numOfPages - 1, m_pageViewX / m_pageWidth));
+    qreal leftPagePos = -leftPage * m_pageWidth;
+
+    if (leftPage == numOfPages + 1) {
+        // if we are past the last page
+        goToPage(leftPage);
+    } else {
+        qreal rightPagePos = leftPagePos - m_pageWidth;
+
+        // go to the closer page (right or left)
+        if (qAbs(rightPagePos - m_pageViewX) < qAbs(leftPagePos - m_pageViewX)) {
+            goToPage(leftPage + 1);
+        } else {
+            goToPage(leftPage);
+        }
+    }
+}
+
+void HomeScreenState::goToPage(int page)
+{
+    if (page < 0) {
+        page = 0;
+    }
+
+    int numOfPages = PageListModel::self()->rowCount();
+    if (page >= numOfPages) {
+        page = std::max(0, numOfPages - 1);
+    }
+
+    m_pageNum = page;
+    m_pageAnim->setStartValue(m_pageViewX);
+    m_pageAnim->setEndValue(-page * m_pageWidth);
+    m_pageAnim->start();
 }
 
 void HomeScreenState::swipeStarted()
@@ -201,9 +246,19 @@ void HomeScreenState::swipeEnded()
             closeSearchWidget();
         }
         break;
-    case SwipeState::SwipingPages:
+    case SwipeState::SwipingPages: {
         qDebug() << "swiping pages end";
+
+        int page = -m_pageViewX / m_pageWidth;
+
+        // m_movingRight refers to finger movement
+        if (m_movingRight) {
+            goToPage(page);
+        } else {
+            goToPage(page + 1);
+        }
         break;
+    }
     case SwipeState::DeterminingSwipeType:
         break;
     default:
@@ -234,7 +289,10 @@ void HomeScreenState::swipeMoved(qreal totalDeltaX, qreal totalDeltaY, qreal del
         setAppDrawerY(m_appDrawerY + deltaY);
         break;
     case SwipeState::SwipingPages:
-        // TODO add x movement
+        m_movingRight = deltaX > 0;
+        setPageViewX(m_pageViewX + deltaX);
+        break;
+    default:
         break;
     }
 }
@@ -250,7 +308,7 @@ void HomeScreenState::determineSwipeTypeAfterThreshold(qreal totalDeltaX, qreal 
         setSwipeState(SwipeState::SwipingPages);
 
         // ensure no animations are running when starting a swipe
-        // TODO cancelAnimations(); but for horizontal
+        m_pageAnim->stop();
 
     } else if (qAbs(totalDeltaY) >= DETERMINE_SWIPE_THRESHOLD) {
         // select vertical swipe mode
