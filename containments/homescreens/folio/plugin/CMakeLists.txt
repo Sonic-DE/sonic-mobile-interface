@@ -13,6 +13,8 @@ set(folioplugin_SRCS
     foliosettings.cpp
     pagemodel.cpp
     pagelistmodel.cpp
+    delegatetoucharea.cpp
+    dragstate.cpp
 )
 
 install(FILES qmldir DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/private/mobile/homescreen/folio)

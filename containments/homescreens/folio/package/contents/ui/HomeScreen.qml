@@ -15,10 +15,6 @@ import org.kde.plasma.private.mobileshell 1.0 as MobileShell
 
 import org.kde.private.mobile.homescreen.folio 1.0 as Folio
 
-// homescreen:
-// - allow whitespace
-// app drawer:
-
 Item {
     id: root
 
@@ -30,6 +26,26 @@ Item {
     property bool interactive: true
 
     required property Folio.HomeScreenState homeScreenState
+
+    // called by any delegates when starting drag
+    // returns the mapped coordinates to be used in the home screen state
+    function prepareStartDelegateDrag(item) {
+        let mapped = root.mapFromItem(item, 0, 0);
+        delegateDragItem.height = item.height;
+        delegateDragItem.width = item.width;
+        delegateDragItem.source = item;
+
+        mapped.x -= root.leftMargin;
+        mapped.y -= root.topMargin;
+        return mapped;
+    }
+
+    Connections {
+        target: homeScreenState
+        function onDelegateDragEnded() {
+            delegateDragItem.source = null;
+        }
+    }
 
     MobileShell.SwipeArea {
         id: swipeArea
@@ -67,6 +83,7 @@ Item {
             HomeScreenPages {
                 id: homeScreenPages
                 homeScreenState: root.homeScreenState
+                homeScreen: root
 
                 anchors.bottom: favouritesBar.top
                 anchors.top: parent.top
@@ -76,14 +93,22 @@ Item {
                 anchors.right: parent.right
                 anchors.rightMargin: root.rightMargin
 
+                // update the model with page dimensions
                 onWidthChanged: {
-                    // update the model
                     homeScreenState.pageWidth = homeScreenPages.width;
+                    homeScreenState.pageContentWidth = homeScreenPages.pageContentWidth;
+                }
+                onHeightChanged: {
+                    homeScreenState.pageHeight = homeScreenPages.height;
+                    homeScreenState.pageContentHeight = homeScreenPages.pageContentHeight;
                 }
             }
 
             FavouritesBar {
                 id: favouritesBar
+                homeScreenState: root.homeScreenState
+                homeScreen: root
+
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: root.bottomMargin
                 anchors.left: parent.left
@@ -93,14 +118,27 @@ Item {
             }
         }
 
+        // drag and drop component
+        DelegateDragItem {
+            id: delegateDragItem
+            visible: homeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate
+
+            x: Math.round(homeScreenState.delegateDragX)
+            y: Math.round(homeScreenState.delegateDragY)
+        }
+
         AppDrawer {
             id: appDrawer
             anchors.fill: parent
+
             homeScreenState: root.homeScreenState
+            homeScreen: root
 
             // we only start showing it halfway through
             opacity: homeScreenState.appDrawerOpenProgress < 0.5 ? 0 : (homeScreenState.appDrawerOpenProgress - 0.5) * 2
-            visible: opacity > 0 // prevent handlers from picking up events
+
+            // prevent handlers from picking up events
+            visible: opacity > 0
 
             transform: Translate { y: (1 - homeScreenState.appDrawerOpenProgress) * (Kirigami.Units.gridUnit * 2) }
 

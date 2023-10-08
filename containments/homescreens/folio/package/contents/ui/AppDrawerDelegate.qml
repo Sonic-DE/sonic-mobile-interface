@@ -14,9 +14,10 @@ import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.kquickcontrolsaddons 2.0
 
+import org.kde.private.mobile.homescreen.folio 1.0 as Folio
 import org.kde.plasma.private.mobileshell.shellsettingsplugin as ShellSettings
 
-MouseArea {
+Folio.DelegateTouchArea {
     id: delegate
 
     property string name
@@ -28,11 +29,13 @@ MouseArea {
 
     property int reservedSpaceForLabel
     property alias iconItem: icon
+    property alias delegateItem: delegateWrapper
+
+    property alias labelOpacity: label.opacity
 
     readonly property real margins: Math.floor(width * 0.2)
 
     signal launch(int x, int y, var source, string title, string storageId)
-    signal dragStarted(string imageSource, int x, int y, string mimeData)
 
     function launchApp() {
         // launch app
@@ -43,22 +46,8 @@ MouseArea {
         }
     }
 
-    onPressAndHold: {
-        delegate.grabToImage(function(result) {
-            delegate.Drag.imageSource = result.url
-            dragStarted(result.url, width/2, height/2, delegate.storageId)
-        })
-    }
-
     // grow/shrink animation
     property real zoomScale: 1
-    transform: Scale {
-        origin.x: delegate.width / 2;
-        origin.y: delegate.height / 2;
-        xScale: delegate.zoomScale
-        yScale: delegate.zoomScale
-    }
-
     property bool launchAppRequested: false
 
     NumberAnimation on zoomScale {
@@ -87,8 +76,7 @@ MouseArea {
     }
 
     cursorShape: Qt.PointingHandCursor
-    hoverEnabled: true
-    onPressedChanged: {
+    onPressedChanged: (pressed) => {
         if (pressed) {
             growAnim.stop();
             shrinkAnim.restart();
@@ -99,77 +87,83 @@ MouseArea {
     // launch app handled by press animation
     onClicked: launchAppRequested = true;
 
-
     layer.enabled: delegate.shadow
-    layer.effect: MultiEffect {
-        shadowEnabled: true
-        shadowVerticalOffset: 1
-        blurMax: 16
-        shadowOpacity: 0.5
-    }
+    layer.effect: DelegateShadow {}
 
-    ColumnLayout {
-        anchors {
-            fill: parent
-            leftMargin: margins
-            topMargin: margins
-            rightMargin: margins
-            bottomMargin: margins
-        }
-        spacing: 0
+    Item {
+        id: delegateWrapper
+        anchors.fill: parent
 
-        Kirigami.Icon {
-            id: icon
-
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-            Layout.fillWidth: true
-            Layout.minimumHeight: Math.floor(parent.height - delegate.reservedSpaceForLabel)
-            Layout.preferredHeight: Layout.minimumHeight
-
-            source: delegate.icon
-
-            Rectangle {
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                    bottom: parent.bottom
-                }
-                visible: delegate.applicationRunning
-                radius: width
-                width: Kirigami.Units.smallSpacing
-                height: width
-                color: Kirigami.Theme.highlightColor
-            }
-
-            // darken effect when hovered/pressed
-            layer {
-                enabled: delegate.pressed || delegate.containsMouse
-                effect: ColorOverlay {
-                    color: Qt.rgba(0, 0, 0, 0.3)
-                }
-            }
+        transform: Scale {
+            origin.x: delegate.width / 2;
+            origin.y: delegate.height / 2;
+            xScale: delegate.zoomScale
+            yScale: delegate.zoomScale
         }
 
-        PlasmaComponents.Label {
-            id: label
-            visible: text.length > 0
+        ColumnLayout {
+            anchors {
+                fill: parent
+                leftMargin: margins
+                topMargin: margins
+                rightMargin: margins
+                bottomMargin: margins
+            }
+            spacing: 0
 
-            Layout.fillWidth: true
-            Layout.preferredHeight: delegate.reservedSpaceForLabel
-            Layout.topMargin: Kirigami.Units.smallSpacing
-            Layout.leftMargin: -parent.anchors.leftMargin + Kirigami.Units.smallSpacing
-            Layout.rightMargin: -parent.anchors.rightMargin + Kirigami.Units.smallSpacing
+            Kirigami.Icon {
+                id: icon
 
-            wrapMode: Text.WordWrap
-            maximumLineCount: 2
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignTop
-            elide: Text.ElideRight
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+                Layout.fillWidth: true
+                Layout.minimumHeight: Math.floor(parent.height - delegate.reservedSpaceForLabel)
+                Layout.preferredHeight: Layout.minimumHeight
 
-            text: delegate.name
+                source: delegate.icon
 
-            font.pointSize: Kirigami.Theme.defaultFont.pointSize * 0.8
-            font.weight: Font.Bold
-            color: "white"
+                Rectangle {
+                    anchors {
+                        horizontalCenter: parent.horizontalCenter
+                        bottom: parent.bottom
+                    }
+                    visible: delegate.applicationRunning
+                    radius: width
+                    width: Kirigami.Units.smallSpacing
+                    height: width
+                    color: Kirigami.Theme.highlightColor
+                }
+
+                // darken effect when hovered/pressed
+                layer {
+                    enabled: delegate.pressed || delegate.hovered
+                    effect: ColorOverlay {
+                        color: Qt.rgba(0, 0, 0, 0.3)
+                    }
+                }
+            }
+
+            PlasmaComponents.Label {
+                id: label
+                visible: text.length > 0
+
+                Layout.fillWidth: true
+                Layout.preferredHeight: delegate.reservedSpaceForLabel
+                Layout.topMargin: Kirigami.Units.smallSpacing
+                Layout.leftMargin: -parent.anchors.leftMargin + Kirigami.Units.smallSpacing
+                Layout.rightMargin: -parent.anchors.rightMargin + Kirigami.Units.smallSpacing
+
+                wrapMode: Text.WordWrap
+                maximumLineCount: 2
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignTop
+                elide: Text.ElideRight
+
+                text: delegate.name
+
+                font.pointSize: Kirigami.Theme.defaultFont.pointSize * 0.8
+                font.weight: Font.Bold
+                color: "white"
+            }
         }
     }
 }

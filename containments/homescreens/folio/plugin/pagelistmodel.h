@@ -25,6 +25,7 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int, QByteArray> roleNames() const override;
 
+    PageModel *getPage(int index);
     void removePage(int index);
     Q_INVOKABLE void addPageAtEnd();
 
