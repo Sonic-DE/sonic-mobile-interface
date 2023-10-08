@@ -15,6 +15,7 @@ Item {
     id: root
 
     required property var homeScreenState
+    property var homeScreen
 
     property real leftPadding: 0
     property real topPadding: 0
@@ -26,18 +27,6 @@ Item {
 
     // height from top of screen that the drawer starts
     readonly property real drawerTopMargin: height - topPadding - bottomPadding
-
-    Drag.dragType: Drag.Automatic
-
-    // // bottom divider
-    // GradientBar {
-    //     opacity: (homeScreenState.currentView !== HomeScreenState.PageView || homeScreenState.currentSwipeState === HomeScreenState.SwipingAppDrawerVisibility) ? 0.6 : 0
-    //     visible: root.bottomPadding > 0
-    //     anchors.left: parent.left
-    //     anchors.right: parent.right
-    //     anchors.bottom: parent.bottom
-    //     anchors.bottomMargin: root.bottomPadding - height
-    // }
 
     Item {
         anchors.fill: parent
@@ -60,6 +49,8 @@ Item {
         }
 
         AppDrawerGrid {
+            homeScreenState: root.homeScreenState
+            homeScreen: root.homeScreen
             height: parent.height - drawerHeader.height
             anchors.left: parent.left
             anchors.right: parent.right
