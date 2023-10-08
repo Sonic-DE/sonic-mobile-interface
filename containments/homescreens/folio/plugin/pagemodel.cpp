@@ -25,34 +25,25 @@ FolioPageDelegate::FolioPageDelegate(int row, int column, FolioApplicationFolder
 {
 }
 
+FolioPageDelegate::FolioPageDelegate(int row, int column, FolioDelegate *delegate, QObject *parent)
+    : FolioDelegate{parent}
+    , m_row{row}
+    , m_column{column}
+{
+    m_type = delegate->type();
+    m_application = delegate->application();
+    m_folder = delegate->folder();
+}
+
 FolioPageDelegate *FolioPageDelegate::fromJson(QJsonObject &obj, QObject *parent)
 {
-    FolioPageDelegate *delegate = nullptr;
+    FolioDelegate *fd = FolioDelegate::fromJson(obj, parent);
 
     int row = obj[QStringLiteral("row")].toInt();
     int column = obj[QStringLiteral("column")].toInt();
 
-    // TODO remove duplication from FolioDelegate with some shared function
-    QString type = obj[QStringLiteral("type")].toString();
-    if (type == "application") {
-        // read application
-        FolioApplication *app = FolioApplication::fromJson(obj, parent);
-
-        if (app) {
-            delegate = new FolioPageDelegate{row, column, app, parent};
-        }
-
-    } else if (type == "folder") {
-        // read folder
-        FolioApplicationFolder *folder = FolioApplicationFolder::fromJson(obj, parent);
-
-        if (folder) {
-            delegate = new FolioPageDelegate{row, column, folder, parent};
-        }
-
-    } else if (type == "none") {
-        delegate = new FolioPageDelegate{row, column, parent};
-    }
+    FolioPageDelegate *delegate = new FolioPageDelegate{row, column, fd, parent};
+    fd->deleteLater();
 
     return delegate;
 }
@@ -164,32 +155,6 @@ QHash<int, QByteArray> PageModel::roleNames() const
     return {{DelegateRole, "delegate"}};
 }
 
-void PageModel::addAppDelegate(int row, int col, QString storageId)
-{
-    if (row < 0 || row > FolioSettings::self()->homeScreenRows() || col < 0 || col > FolioSettings::self()->homeScreenColumns()) {
-        return;
-    }
-
-    // check if there already exists a delegate in this space
-    for (FolioPageDelegate *delegate : m_delegates) {
-        if (row == delegate->row() && col == delegate->column()) {
-            return;
-        }
-    }
-
-    // insert if the app is valid
-    if (KService::Ptr service = KService::serviceByStorageId(storageId)) {
-        FolioApplication *app = new FolioApplication{this, service};
-        FolioPageDelegate *delegate = new FolioPageDelegate{row, col, app, this};
-
-        beginInsertRows(QModelIndex(), row, row);
-        m_delegates.append(delegate);
-        endInsertRows();
-
-        save();
-    }
-}
-
 void PageModel::removeDelegate(int row, int col)
 {
     bool removed = false;
@@ -207,6 +172,32 @@ void PageModel::removeDelegate(int row, int col)
     if (removed) {
         save();
     }
+}
+
+void PageModel::addDelegate(FolioPageDelegate *delegate)
+{
+    // check if there already exists a delegate in this space
+    for (FolioPageDelegate *d : m_delegates) {
+        if (d->row() == delegate->row() && d->column() == delegate->column()) {
+            return;
+        }
+    }
+
+    beginInsertRows(QModelIndex(), m_delegates.size(), m_delegates.size());
+    m_delegates.append(delegate);
+    endInsertRows();
+
+    save();
+}
+
+FolioDelegate *PageModel::getDelegate(int row, int col)
+{
+    for (FolioPageDelegate *d : m_delegates) {
+        if (d->row() == row && d->column() == col) {
+            return d;
+        }
+    }
+    return nullptr;
 }
 
 void PageModel::save()

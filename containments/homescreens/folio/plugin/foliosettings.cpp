@@ -17,6 +17,7 @@ FolioSettings *FolioSettings::self()
 int FolioSettings::homeScreenRows()
 {
     // TODO
+    // ensure that this is fetched fast and cached (it is called extremely often)
     return 6;
 }
 

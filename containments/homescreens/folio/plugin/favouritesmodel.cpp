@@ -91,7 +91,7 @@ void FavouritesModel::removeEntry(int row)
 
 void FavouritesModel::moveEntry(int fromRow, int toRow)
 {
-    if (fromRow < 0 || toRow < 0 || fromRow >= m_delegates.length() || toRow >= m_delegates.length() || fromRow == toRow) {
+    if (fromRow < 0 || toRow < 0 || fromRow >= m_delegates.size() || toRow >= m_delegates.size() || fromRow == toRow) {
         return;
     }
     if (toRow > fromRow) {
@@ -111,6 +111,24 @@ void FavouritesModel::moveEntry(int fromRow, int toRow)
     endMoveRows();
 
     save();
+}
+
+void FavouritesModel::addEntry(int row, FolioDelegate *delegate)
+{
+    beginInsertRows(QModelIndex(), row, row);
+    m_delegates.insert(row, delegate);
+    endInsertRows();
+
+    save();
+}
+
+FolioDelegate *FavouritesModel::getEntryAt(int row)
+{
+    if (row < 0 || row >= m_delegates.size()) {
+        return nullptr;
+    }
+
+    return m_delegates[row];
 }
 
 void FavouritesModel::save()
