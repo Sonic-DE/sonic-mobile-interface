@@ -42,6 +42,15 @@ QHash<int, QByteArray> PageListModel::roleNames() const
     return {{PageRole, "delegate"}};
 }
 
+PageModel *PageListModel::getPage(int index)
+{
+    if (index < 0 || index >= m_pages.size()) {
+        return nullptr;
+    }
+
+    return m_pages[index];
+}
+
 void PageListModel::removePage(int index)
 {
     if (index < 0 || index >= m_pages.size()) {

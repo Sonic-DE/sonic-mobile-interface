@@ -15,6 +15,7 @@ const qreal DETERMINE_SWIPE_THRESHOLD = 10;
 
 HomeScreenState::HomeScreenState(QObject *parent)
     : QObject{parent}
+    , m_dragState{new DragState{this, this}}
     , m_appDrawerY{APP_DRAWER_OPEN_DIST}
     , m_searchWidgetY{SEARCH_WIDGET_OPEN_DIST}
 {
@@ -66,8 +67,10 @@ HomeScreenState::ViewState HomeScreenState::viewState()
 
 void HomeScreenState::setViewState(ViewState viewState)
 {
-    m_viewState = viewState;
-    Q_EMIT viewStateChanged();
+    if (viewState != m_viewState) {
+        m_viewState = viewState;
+        Q_EMIT viewStateChanged();
+    }
 }
 
 HomeScreenState::SwipeState HomeScreenState::swipeState()
@@ -77,8 +80,15 @@ HomeScreenState::SwipeState HomeScreenState::swipeState()
 
 void HomeScreenState::setSwipeState(SwipeState swipeState)
 {
-    m_swipeState = swipeState;
-    Q_EMIT swipeStateChanged();
+    if (swipeState != m_swipeState) {
+        m_swipeState = swipeState;
+        Q_EMIT swipeStateChanged();
+    }
+}
+
+DragState *HomeScreenState::dragState()
+{
+    return m_dragState;
 }
 
 qreal HomeScreenState::pageViewX()
@@ -92,7 +102,7 @@ void HomeScreenState::setPageViewX(qreal pageViewX)
     Q_EMIT pageViewXChanged();
 }
 
-qreal HomeScreenState::pageWidth()
+qreal HomeScreenState::pageWidth() const
 {
     return m_pageWidth;
 }
@@ -104,6 +114,61 @@ void HomeScreenState::setPageWidth(qreal pageWidth)
 
     // make sure we snap
     snapPage();
+}
+
+qreal HomeScreenState::pageHeight() const
+{
+    return m_pageHeight;
+}
+
+void HomeScreenState::setPageHeight(qreal pageHeight)
+{
+    m_pageHeight = pageHeight;
+    Q_EMIT pageHeightChanged();
+}
+
+qreal HomeScreenState::pageContentWidth() const
+{
+    return m_pageContentWidth;
+}
+
+void HomeScreenState::setPageContentWidth(qreal pageContentWidth)
+{
+    m_pageContentWidth = pageContentWidth;
+    Q_EMIT pageContentWidthChanged();
+}
+
+qreal HomeScreenState::pageContentHeight() const
+{
+    return m_pageContentHeight;
+}
+
+void HomeScreenState::setPageContentHeight(qreal pageContentHeight)
+{
+    m_pageContentHeight = pageContentHeight;
+    Q_EMIT pageContentHeightChanged();
+}
+
+qreal HomeScreenState::pageCellWidth() const
+{
+    return m_pageCellWidth;
+}
+
+void HomeScreenState::setPageCellWidth(qreal pageCellWidth)
+{
+    m_pageCellWidth = pageCellWidth;
+    Q_EMIT pageCellWidthChanged();
+}
+
+qreal HomeScreenState::pageCellHeight() const
+{
+    return m_pageCellHeight;
+}
+
+void HomeScreenState::setPageCellHeight(qreal pageCellHeight)
+{
+    m_pageCellHeight = pageCellHeight;
+    Q_EMIT pageCellHeightChanged();
 }
 
 qreal HomeScreenState::appDrawerOpenProgress()
@@ -140,6 +205,33 @@ void HomeScreenState::setSearchWidgetY(qreal searchWidgetY)
     m_searchWidgetOpenProgress = 1 - std::min(std::max(m_searchWidgetY, 0.0), SEARCH_WIDGET_OPEN_DIST) / SEARCH_WIDGET_OPEN_DIST;
     Q_EMIT searchWidgetYChanged();
     Q_EMIT searchWidgetOpenProgressChanged();
+}
+
+qreal HomeScreenState::delegateDragX()
+{
+    return m_delegateDragX;
+}
+
+void HomeScreenState::setDelegateDragX(qreal delegateDragX)
+{
+    m_delegateDragX = delegateDragX;
+    Q_EMIT delegateDragXChanged();
+}
+
+qreal HomeScreenState::delegateDragY()
+{
+    return m_delegateDragY;
+}
+
+void HomeScreenState::setDelegateDragY(qreal delegateDragY)
+{
+    m_delegateDragY = delegateDragY;
+    Q_EMIT delegateDragYChanged();
+}
+
+int HomeScreenState::currentPage()
+{
+    return m_pageNum;
 }
 
 QQmlListProperty<QObject> HomeScreenState::children()
@@ -199,6 +291,7 @@ void HomeScreenState::snapPage()
 
 void HomeScreenState::goToPage(int page)
 {
+    qDebug() << "go to page" << page;
     if (page < 0) {
         page = 0;
     }
@@ -209,9 +302,42 @@ void HomeScreenState::goToPage(int page)
     }
 
     m_pageNum = page;
+    Q_EMIT pageNumChanged();
+
     m_pageAnim->setStartValue(m_pageViewX);
     m_pageAnim->setEndValue(-page * m_pageWidth);
     m_pageAnim->start();
+}
+
+void HomeScreenState::startDelegateDrag(qreal startX, qreal startY)
+{
+    // start drag and drop positions
+    setDelegateDragX(startX);
+    setDelegateDragY(startY);
+
+    // end current swipe
+    swipeEnded();
+
+    // start the delegate drag
+    setSwipeState(SwipeState::AwaitingDraggingDelegate);
+}
+
+void HomeScreenState::startDelegatePageDrag(qreal startX, qreal startY, int page, int row, int column)
+{
+    startDelegateDrag(startX, startY);
+    Q_EMIT delegateDragFromPageStarted(page, row, column);
+}
+
+void HomeScreenState::startDelegateFavouritesDrag(qreal startX, qreal startY, int position)
+{
+    startDelegateDrag(startX, startY);
+    Q_EMIT delegateDragFromFavouritesStarted(position);
+}
+
+void HomeScreenState::startDelegateAppDrawerDrag(qreal startX, qreal startY, QString storageId)
+{
+    startDelegateDrag(startX, startY);
+    Q_EMIT delegateDragFromAppDrawerStarted(storageId);
 }
 
 void HomeScreenState::swipeStarted()
@@ -228,18 +354,14 @@ void HomeScreenState::swipeEnded()
     switch (m_swipeState) {
     case SwipeState::SwipingOpenAppDrawer:
     case SwipeState::SwipingCloseAppDrawer:
-        qDebug() << "swiping drawer close end";
         if (m_movingUp) {
-            qDebug() << "start close anim";
             closeAppDrawer();
         } else {
-            qDebug() << "start open anim";
             openAppDrawer();
         }
         break;
     case SwipeState::SwipingOpenSearchWidget:
     case SwipeState::SwipingCloseSearchWidget:
-        qDebug() << "swiping search close end";
         if (m_movingUp) {
             openSearchWidget();
         } else {
@@ -247,18 +369,20 @@ void HomeScreenState::swipeEnded()
         }
         break;
     case SwipeState::SwipingPages: {
-        qDebug() << "swiping pages end";
-
-        int page = -m_pageViewX / m_pageWidth;
+        int page = std::max(0.0, -m_pageViewX) / m_pageWidth;
 
         // m_movingRight refers to finger movement
-        if (m_movingRight) {
+        if (m_movingRight || m_pageViewX > 0) {
             goToPage(page);
         } else {
             goToPage(page + 1);
         }
         break;
     }
+    case SwipeState::DraggingDelegate:
+        Q_EMIT delegateDragEnded();
+        break;
+    case SwipeState::AwaitingDraggingDelegate:
     case SwipeState::DeterminingSwipeType:
         break;
     default:
@@ -273,13 +397,11 @@ void HomeScreenState::swipeMoved(qreal totalDeltaX, qreal totalDeltaY, qreal del
 {
     m_movingUp = deltaY > 0;
 
-    if (m_swipeState == SwipeState::DeterminingSwipeType) {
+    switch (m_swipeState) {
+    case SwipeState::DeterminingSwipeType:
         // check if we can determine the type of swipe this is
         determineSwipeTypeAfterThreshold(totalDeltaX, totalDeltaY);
-        return;
-    }
-
-    switch (m_swipeState) {
+        break;
     case SwipeState::SwipingOpenSearchWidget:
     case SwipeState::SwipingCloseSearchWidget:
         setSearchWidgetY(m_searchWidgetY - deltaY);
@@ -291,6 +413,13 @@ void HomeScreenState::swipeMoved(qreal totalDeltaX, qreal totalDeltaY, qreal del
     case SwipeState::SwipingPages:
         m_movingRight = deltaX > 0;
         setPageViewX(m_pageViewX + deltaX);
+        break;
+    case SwipeState::AwaitingDraggingDelegate:
+        setSwipeState(SwipeState::DraggingDelegate);
+        break;
+    case SwipeState::DraggingDelegate:
+        setDelegateDragX(m_delegateDragX + deltaX);
+        setDelegateDragY(m_delegateDragY + deltaY);
         break;
     default:
         break;

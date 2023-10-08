@@ -1,13 +1,13 @@
 // SPDX-FileCopyrightText: 2023 Devin Lin <devin@kde.org>
 // SPDX-License-Identifier: LGPL-2.0-or-later
 
-import QtQuick 2.15
-import QtQuick.Layouts 1.1
-import QtQuick.Controls 2.15 as Controls
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls as Controls
 
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.components 3.0 as PC3
-import org.kde.kirigami 2.10 as Kirigami
+import org.kde.kirigami as Kirigami
 
 import org.kde.plasma.private.mobileshell 1.0 as MobileShell
 import org.kde.plasma.private.mobileshell.state 1.0 as MobileShellState
@@ -18,6 +18,9 @@ MobileShell.GridView {
     cacheBuffer: cellHeight * 20
     reuseItems: true
     layer.enabled: true
+
+    property var homeScreenState
+    property var homeScreen
 
     // /*
     // * HACK: When the number of apps is less than the one that would fit in the first shown part of the drawer, make
@@ -59,16 +62,14 @@ MobileShell.GridView {
         height: root.cellHeight
         reservedSpaceForLabel: root.reservedSpaceForLabel
 
-        onDragStarted: (imageSource, x, y, mimeData) => {
-            // root.Drag.imageSource = imageSource;
-            // root.Drag.hotSpot.x = x;
-            // root.Drag.hotSpot.y = y;
-            // root.Drag.mimeData = { "text/x-plasma-phone-homescreen-launcher": mimeData };
-            //
-            // root.homeScreenState.closeAppDrawer()
-            //
-            // root.dragStarted()
-            // root.Drag.active = true;
+        onPressAndHold: {
+            homeScreenState.closeAppDrawer();
+            let mappedCoords = root.homeScreen.prepareStartDelegateDrag(delegate.delegateItem);
+            root.homeScreenState.startDelegateAppDrawerDrag(
+                mappedCoords.x,
+                mappedCoords.y,
+                model.applicationStorageId
+            );
         }
         onLaunch: (x, y, icon, title, storageId) => {
             if (icon !== "") {

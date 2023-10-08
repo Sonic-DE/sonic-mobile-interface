@@ -3,6 +3,7 @@
 
 #include "folioplugin.h"
 #include "applicationlistmodel.h"
+#include "delegatetoucharea.h"
 #include "favouritesmodel.h"
 #include "folioapplication.h"
 #include "folioapplicationfolder.h"
@@ -38,4 +39,6 @@ void HalcyonPlugin::registerTypes(const char *uri)
     qmlRegisterType<FolioDelegate>(uri, 1, 0, "FolioDelegate");
     qmlRegisterType<PageModel>(uri, 1, 0, "PageModel");
     qmlRegisterType<FolioPageDelegate>(uri, 1, 0, "FolioPageDelegate");
+    qmlRegisterType<DelegateTouchArea>(uri, 1, 0, "DelegateTouchArea");
+    qmlRegisterType<DelegateDragPosition>(uri, 1, 0, "DelegateDragPosition");
 }

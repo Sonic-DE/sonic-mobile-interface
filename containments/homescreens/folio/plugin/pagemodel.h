@@ -23,6 +23,7 @@ public:
     FolioPageDelegate(int row = 0, int column = 0, QObject *parent = nullptr);
     FolioPageDelegate(int row, int column, FolioApplication *application, QObject *parent);
     FolioPageDelegate(int row, int column, FolioApplicationFolder *folder, QObject *parent);
+    FolioPageDelegate(int row, int column, FolioDelegate *delegate, QObject *parent);
 
     static FolioPageDelegate *fromJson(QJsonObject &obj, QObject *parent);
 
@@ -60,8 +61,9 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int, QByteArray> roleNames() const override;
 
-    Q_INVOKABLE void addAppDelegate(int row, int col, QString storageId);
     Q_INVOKABLE void removeDelegate(int row, int col);
+    void addDelegate(FolioPageDelegate *delegate);
+    FolioDelegate *getDelegate(int row, int col);
 
 public Q_SLOTS:
     void save();

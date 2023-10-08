@@ -35,7 +35,7 @@ public:
     FolioApplication *application();
     FolioApplicationFolder *folder();
 
-private:
+protected:
     FolioDelegate::Type m_type;
     FolioApplication *m_application;
     FolioApplicationFolder *m_folder;

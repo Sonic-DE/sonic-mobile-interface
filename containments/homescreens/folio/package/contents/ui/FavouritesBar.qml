@@ -8,11 +8,15 @@ import QtQuick.Layouts 1.1
 import org.kde.plasma.components 3.0 as PC3
 import org.kde.plasma.private.mobileshell.state 1.0 as MobileShellState
 import org.kde.private.mobile.homescreen.folio 1.0 as Folio
+import org.kde.plasma.private.mobileshell 1.0 as MobileShell
 import org.kde.kirigami 2.10 as Kirigami
 
 Item {
     id: root
     height: rowLayout.height
+
+    property var homeScreenState
+    property var homeScreen
 
     readonly property int reservedSpaceForLabel: metrics.height
     readonly property real effectiveContentWidth: width - leftMargin - rightMargin
@@ -24,6 +28,8 @@ Item {
 
     readonly property real cellWidth: effectiveContentWidth / Math.min(Math.floor(effectiveContentWidth / (Kirigami.Units.iconSizes.large + Kirigami.Units.gridUnit * 2)), 8)
     readonly property real cellHeight: cellWidth + reservedSpaceForLabel
+
+    signal delegateDragRequested(var item)
 
     PC3.Label {
         id: metrics
@@ -62,16 +68,13 @@ Item {
                 height: root.cellHeight
                 reservedSpaceForLabel: root.reservedSpaceForLabel
 
-                onDragStarted: (imageSource, x, y, mimeData) => {
-                    // root.Drag.imageSource = imageSource;
-                    // root.Drag.hotSpot.x = x;
-                    // root.Drag.hotSpot.y = y;
-                    // root.Drag.mimeData = { "text/x-plasma-phone-homescreen-launcher": mimeData };
-                    //
-                    // root.homeScreenState.closeAppDrawer()
-                    //
-                    // root.dragStarted()
-                    // root.Drag.active = true;
+                onPressAndHold: {
+                    let mappedCoords = root.homeScreen.prepareStartDelegateDrag(delegate.delegateItem);
+                    root.homeScreenState.startDelegateFavouritesDrag(
+                        mappedCoords.x,
+                        mappedCoords.y,
+                        model.index
+                    );
                 }
                 onLaunch: (x, y, icon, title, storageId) => {
                     if (icon !== "") {
@@ -83,7 +86,7 @@ Item {
                                 Math.min(delegate.iconItem.width, delegate.iconItem.height));
                     }
 
-                    model.delegate.application.setMinimizedDelegate(index, delegate);
+                    model.delegate.application.setMinimizedDelegate(delegate);
                     MobileShell.AppLaunch.launchOrActivateApp(storageId);
                 }
             }
