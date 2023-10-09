@@ -116,6 +116,11 @@ void PageListModel::load()
     }
 
     endResetModel();
+
+    // add page if there are no pages
+    if (m_pages.size() == 0) {
+        addPageAtEnd();
+    }
 }
 
 // called by QML

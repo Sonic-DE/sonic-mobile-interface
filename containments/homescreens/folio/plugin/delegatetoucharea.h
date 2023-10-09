@@ -38,6 +38,7 @@ Q_SIGNALS:
     void clicked();
     void rightMousePress();
     void pressAndHold();
+    void pressAndHoldReleased();
     void drag(qreal x, qreal y);
     void pressedChanged(bool pressed);
     void hoveredChanged(bool hovered);
