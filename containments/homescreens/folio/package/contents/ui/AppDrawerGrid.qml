@@ -71,6 +71,7 @@ MobileShell.GridView {
                 model.applicationStorageId
             );
         }
+
         onLaunch: (x, y, icon, title, storageId) => {
             if (icon !== "") {
                 MobileShellState.ShellDBusClient.openAppLaunchAnimation(

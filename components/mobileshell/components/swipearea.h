@@ -35,14 +35,16 @@ public:
     enum Mode { BothAxis = 0, VerticalOnly, HorizontalOnly };
     Q_ENUM(Mode)
 
-    Mode mode();
+    Mode mode() const;
     void setMode(Mode mode);
 
-    bool interactive();
+    bool interactive() const;
     void setInteractive(bool interactive);
 
-    bool moving();
-    bool pressed();
+    bool moving() const;
+    bool pressed() const;
+
+    Q_INVOKABLE void setSkipSwipeThreshold(bool value);
 
 Q_SIGNALS:
     void modeChanged();
@@ -96,6 +98,9 @@ private:
 
     // the previous point where interaction was at
     QPointF m_lastPos;
+
+    // whether to skip trying to measure the swipe threshold
+    bool m_skipSwipeThreshold;
 };
 
 QML_DECLARE_TYPE(SwipeArea)

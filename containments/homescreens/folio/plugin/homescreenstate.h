@@ -158,9 +158,11 @@ public Q_SLOTS:
     void closeSearchWidget();
     void snapPage(); // snaps to closest page
     void goToPage(int page);
+
     void startDelegatePageDrag(qreal startX, qreal startY, int page, int row, int column);
     void startDelegateFavouritesDrag(qreal startX, qreal startY, int position);
     void startDelegateAppDrawerDrag(qreal startX, qreal startY, QString storageId);
+    void cancelDelegateDrag();
 
     // from SwipeArea
     void swipeStarted();

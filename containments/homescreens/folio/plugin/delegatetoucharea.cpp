@@ -280,6 +280,10 @@ void DelegateTouchArea::handleReleaseEvent(QPointerEvent *event, bool click)
         Q_EMIT clicked();
     }
 
+    if (m_pressAndHeld) {
+        Q_EMIT pressAndHoldReleased();
+    }
+
     m_pressAndHoldTimer->stop();
     m_pressAndHeld = false;
 }
