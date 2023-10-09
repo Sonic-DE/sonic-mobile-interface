@@ -68,6 +68,15 @@ Item {
                 height: root.cellHeight
                 reservedSpaceForLabel: root.reservedSpaceForLabel
 
+                // don't show when in drag and drop mode
+                property var startPosition: root.homeScreenState.dragState.startPosition
+                opacity: (root.homeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate &&
+                            startPosition.location === Folio.DelegateDragPosition.Favourites &&
+                            startPosition.favouritesPosition === model.index) ? 0 : 1
+
+                // don't show label in drag and drop mode
+                labelOpacity: opacity
+
                 onPressAndHold: {
                     let mappedCoords = root.homeScreen.prepareStartDelegateDrag(delegate.delegateItem);
                     root.homeScreenState.startDelegateFavouritesDrag(
@@ -75,7 +84,16 @@ Item {
                         mappedCoords.y,
                         model.index
                     );
+
+                    contextMenu.open();
                 }
+                onPressAndHoldReleased: {
+                    // cancel the event if the delegate is not dragged
+                    if (root.homeScreenState.swipeState === Folio.HomeScreenState.AwaitingDraggingDelegate) {
+                        homeScreen.cancelDelegateDrag();
+                    }
+                }
+
                 onLaunch: (x, y, icon, title, storageId) => {
                     if (icon !== "") {
                         MobileShellState.ShellDBusClient.openAppLaunchAnimation(
@@ -88,6 +106,29 @@ Item {
 
                     model.delegate.application.setMinimizedDelegate(delegate);
                     MobileShell.AppLaunch.launchOrActivateApp(storageId);
+                }
+
+                ContextMenuLoader {
+                    id: contextMenu
+
+                    // close menu when drag starts
+                    Connections {
+                        target: root.homeScreenState
+
+                        function onSwipeStateChanged() {
+                            if (root.homeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate) {
+                                contextMenu.close();
+                            }
+                        }
+                    }
+
+                    actions: [
+                        Kirigami.Action {
+                            icon.name: "emblem-favorite"
+                            text: i18n("Remove")
+                            onTriggered: root.pageModel.removeDelegate(delegate.row, delegate.column)
+                        }
+                    ]
                 }
             }
         }
