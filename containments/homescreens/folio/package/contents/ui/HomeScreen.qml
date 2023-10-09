@@ -30,6 +30,8 @@ Item {
     // called by any delegates when starting drag
     // returns the mapped coordinates to be used in the home screen state
     function prepareStartDelegateDrag(item) {
+        swipeArea.setSkipSwipeThreshold(true);
+
         let mapped = root.mapFromItem(item, 0, 0);
         delegateDragItem.height = item.height;
         delegateDragItem.width = item.width;
@@ -38,6 +40,10 @@ Item {
         mapped.x -= root.leftMargin;
         mapped.y -= root.topMargin;
         return mapped;
+    }
+
+    function cancelDelegateDrag() {
+        homeScreenState.cancelDelegateDrag();
     }
 
     Connections {
@@ -129,7 +135,9 @@ Item {
 
         AppDrawer {
             id: appDrawer
-            anchors.fill: parent
+            // anchors.fill: parent
+            width: parent.width
+            height: parent.height
 
             homeScreenState: root.homeScreenState
             homeScreen: root
@@ -137,10 +145,13 @@ Item {
             // we only start showing it halfway through
             opacity: homeScreenState.appDrawerOpenProgress < 0.5 ? 0 : (homeScreenState.appDrawerOpenProgress - 0.5) * 2
 
-            // prevent handlers from picking up events
-            visible: opacity > 0
+            // position for animation
+            property real animationY: (1 - homeScreenState.appDrawerOpenProgress) * (Kirigami.Units.gridUnit * 2)
 
-            transform: Translate { y: (1 - homeScreenState.appDrawerOpenProgress) * (Kirigami.Units.gridUnit * 2) }
+            // move the app drawer out of the way if it is not visible
+            // HACK: we do this instead of setting visible to false, because
+            //       it doesn't mess with app drag and drop from the app drawer
+            y: (opacity > 0) ? animationY : parent.height
 
             headerHeight: Math.round(Kirigami.Units.gridUnit * 5)
             headerItem: AppDrawerHeader {}

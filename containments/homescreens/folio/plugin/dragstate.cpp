@@ -231,7 +231,6 @@ void DragState::onDelegateDropped()
     // add dropped delegate
     switch (m_candidateDropPosition->location()) {
     case DelegateDragPosition::Pages: {
-        qDebug() << "drop pages" << m_candidateDropPosition->page() << m_candidateDropPosition->pageRow() << m_candidateDropPosition->pageColumn();
         PageModel *page = PageListModel::self()->getPage(m_candidateDropPosition->page());
         if (page) {
             FolioPageDelegate *delegate =

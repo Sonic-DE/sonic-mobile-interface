@@ -22,7 +22,7 @@ SwipeArea::SwipeArea(QQuickItem *parent)
     setFiltersChildMouseEvents(true);
 }
 
-SwipeArea::Mode SwipeArea::mode()
+SwipeArea::Mode SwipeArea::mode() const
 {
     return m_mode;
 }
@@ -33,7 +33,7 @@ void SwipeArea::setMode(Mode mode)
     Q_EMIT modeChanged();
 }
 
-bool SwipeArea::interactive()
+bool SwipeArea::interactive() const
 {
     return m_interactive;
 }
@@ -44,14 +44,19 @@ void SwipeArea::setInteractive(bool interactive)
     Q_EMIT interactiveChanged();
 }
 
-bool SwipeArea::moving()
+bool SwipeArea::moving() const
 {
     return m_moving;
 }
 
-bool SwipeArea::pressed()
+bool SwipeArea::pressed() const
 {
     return m_pressed;
+}
+
+void SwipeArea::setSkipSwipeThreshold(bool value)
+{
+    m_skipSwipeThreshold = value;
 }
 
 bool SwipeArea::childMouseEventFilter(QQuickItem *item, QEvent *event)
@@ -225,6 +230,7 @@ void SwipeArea::setPressed(bool pressed)
 
 void SwipeArea::resetSwipe()
 {
+    m_skipSwipeThreshold = false;
     m_stealMouse = false;
     if (m_pressed) {
         setPressed(false);
@@ -260,14 +266,17 @@ void SwipeArea::handleReleaseEvent(QPointerEvent *event, QPointF point)
 void SwipeArea::handleMoveEvent(QPointerEvent *event, QPointF point)
 {
     if (!m_stealMouse) {
-        // if we haven't reached the swipe registering threshold yet, don't start the swipe
-        if (m_mode == Mode::VerticalOnly && qAbs(point.y() - m_pressPos.y()) < SWIPE_REGISTER_THRESHOLD) {
-            return;
-        } else if (m_mode == Mode::HorizontalOnly && qAbs(point.x() - m_pressPos.x()) < SWIPE_REGISTER_THRESHOLD) {
-            return;
-        } else if (m_mode == Mode::BothAxis && qAbs(point.manhattanLength() - m_pressPos.manhattanLength()) < SWIPE_REGISTER_THRESHOLD) {
-            return;
+        if (!m_skipSwipeThreshold) {
+            // if we haven't reached the swipe registering threshold yet, don't start the swipe
+            if (m_mode == Mode::VerticalOnly && qAbs(point.y() - m_pressPos.y()) < SWIPE_REGISTER_THRESHOLD) {
+                return;
+            } else if (m_mode == Mode::HorizontalOnly && qAbs(point.x() - m_pressPos.x()) < SWIPE_REGISTER_THRESHOLD) {
+                return;
+            } else if (m_mode == Mode::BothAxis && qAbs(point.manhattanLength() - m_pressPos.manhattanLength()) < SWIPE_REGISTER_THRESHOLD) {
+                return;
+            }
         }
+        m_skipSwipeThreshold = false;
 
         // we now start the swipe, stealing it from children
 

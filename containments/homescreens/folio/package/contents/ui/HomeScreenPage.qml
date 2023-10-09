@@ -32,10 +32,17 @@ Item {
         height: root.cellHeight
 
         property var dropPosition: root.homeScreenState.dragState.candidateDropPosition
+        property var startPosition: root.homeScreenState.dragState.startPosition
+
+        property bool dropIsStartPosition: startPosition.location === Folio.DelegateDragPosition.Pages &&
+                                            startPosition.location === dropPosition.location &&
+                                            startPosition.pageRow === dropPosition.pageRow &&
+                                            startPosition.pageColumn === dropPosition.pageColumn
 
         visible: root.homeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate &&
                     dropPosition.location === Folio.DelegateDragPosition.Pages &&
-                    dropPosition.page === root.pageNum
+                    dropPosition.page === root.pageNum // &&
+                    // TODO !dropIsStartPosition
 
         x: dropPosition.pageColumn * root.cellWidth
         y: dropPosition.pageRow * root.cellHeight
@@ -117,6 +124,12 @@ Item {
 
                         contextMenu.open();
                     }
+                    onPressAndHoldReleased: {
+                        // cancel the event if the delegate is not dragged
+                        if (root.homeScreenState.swipeState === Folio.HomeScreenState.AwaitingDraggingDelegate) {
+                            homeScreen.cancelDelegateDrag();
+                        }
+                    }
 
                     onLaunch: (x, y, icon, title, storageId) => {
                         if (icon !== "") {
@@ -136,6 +149,7 @@ Item {
                         contextMenu.open();
                     }
 
+                    // TODO don't use loader, and move outside to a page to make it more performant
                     ContextMenuLoader {
                         id: contextMenu
 

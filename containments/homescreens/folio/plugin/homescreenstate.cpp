@@ -337,7 +337,15 @@ void HomeScreenState::startDelegateFavouritesDrag(qreal startX, qreal startY, in
 void HomeScreenState::startDelegateAppDrawerDrag(qreal startX, qreal startY, QString storageId)
 {
     startDelegateDrag(startX, startY);
+    // we start dragging the delegate immediately from the app drawer
+    // because we don't have a context menu to deal with
+    setSwipeState(SwipeState::DraggingDelegate);
     Q_EMIT delegateDragFromAppDrawerStarted(storageId);
+}
+
+void HomeScreenState::cancelDelegateDrag()
+{
+    swipeEnded();
 }
 
 void HomeScreenState::swipeStarted()
