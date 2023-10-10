@@ -28,6 +28,8 @@ Item {
     // height from top of screen that the drawer starts
     readonly property real drawerTopMargin: height - topPadding - bottomPadding
 
+    property alias flickable: appDrawerGrid
+
     Item {
         anchors.fill: parent
 
@@ -49,6 +51,7 @@ Item {
         }
 
         AppDrawerGrid {
+            id: appDrawerGrid
             homeScreenState: root.homeScreenState
             homeScreen: root.homeScreen
             height: parent.height - drawerHeader.height

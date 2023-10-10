@@ -63,7 +63,7 @@ public:
 
     Q_INVOKABLE void removeDelegate(int row, int col);
     bool addDelegate(FolioPageDelegate *delegate);
-    FolioDelegate *getDelegate(int row, int col);
+    FolioPageDelegate *getDelegate(int row, int col);
 
     bool isPageEmpty();
 
