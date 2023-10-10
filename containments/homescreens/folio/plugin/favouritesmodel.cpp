@@ -63,6 +63,11 @@ void FavouritesModel::addApp(const QString &storageId, int row)
 
     if (KService::Ptr service = KService::serviceByStorageId(storageId)) {
         FolioApplication *app = new FolioApplication{this, service};
+
+        if (!app) {
+            return;
+        }
+
         FolioDelegate *delegate = new FolioDelegate{app, this};
 
         beginInsertRows(QModelIndex(), row, row);
@@ -113,13 +118,19 @@ void FavouritesModel::moveEntry(int fromRow, int toRow)
     save();
 }
 
-void FavouritesModel::addEntry(int row, FolioDelegate *delegate)
+bool FavouritesModel::addEntry(int row, FolioDelegate *delegate)
 {
+    if (!delegate) {
+        return false;
+    }
+
     beginInsertRows(QModelIndex(), row, row);
     m_delegates.insert(row, delegate);
     endInsertRows();
 
     save();
+
+    return true;
 }
 
 FolioDelegate *FavouritesModel::getEntryAt(int row)

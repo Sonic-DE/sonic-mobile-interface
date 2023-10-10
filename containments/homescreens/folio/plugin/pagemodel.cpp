@@ -174,12 +174,17 @@ void PageModel::removeDelegate(int row, int col)
     }
 }
 
-void PageModel::addDelegate(FolioPageDelegate *delegate)
+bool PageModel::addDelegate(FolioPageDelegate *delegate)
 {
+    if (delegate->row() < 0 || delegate->row() >= FolioSettings::self()->homeScreenRows() || delegate->column() < 0
+        || delegate->column() >= FolioSettings::self()->homeScreenColumns()) {
+        return false;
+    }
+
     // check if there already exists a delegate in this space
     for (FolioPageDelegate *d : m_delegates) {
         if (d->row() == delegate->row() && d->column() == delegate->column()) {
-            return;
+            return false;
         }
     }
 
@@ -188,6 +193,8 @@ void PageModel::addDelegate(FolioPageDelegate *delegate)
     endInsertRows();
 
     save();
+
+    return true;
 }
 
 FolioDelegate *PageModel::getDelegate(int row, int col)
@@ -198,6 +205,11 @@ FolioDelegate *PageModel::getDelegate(int row, int col)
         }
     }
     return nullptr;
+}
+
+bool PageModel::isPageEmpty()
+{
+    return m_delegates.size() == 0;
 }
 
 void PageModel::save()
