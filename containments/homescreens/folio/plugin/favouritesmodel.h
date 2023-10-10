@@ -34,7 +34,7 @@ public:
     Q_INVOKABLE void addApp(const QString &storageId, int row);
     Q_INVOKABLE void removeEntry(int row);
     Q_INVOKABLE void moveEntry(int fromRow, int toRow);
-    void addEntry(int row, FolioDelegate *delegate);
+    bool addEntry(int row, FolioDelegate *delegate);
     FolioDelegate *getEntryAt(int row);
     void save();
 
