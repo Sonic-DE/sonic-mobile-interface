@@ -28,6 +28,7 @@ public:
     PageModel *getPage(int index);
     void removePage(int index);
     Q_INVOKABLE void addPageAtEnd();
+    bool isLastPageEmpty();
 
     void save();
 
