@@ -197,7 +197,7 @@ bool PageModel::addDelegate(FolioPageDelegate *delegate)
     return true;
 }
 
-FolioDelegate *PageModel::getDelegate(int row, int col)
+FolioPageDelegate *PageModel::getDelegate(int row, int col)
 {
     for (FolioPageDelegate *d : m_delegates) {
         if (d->row() == row && d->column() == col) {

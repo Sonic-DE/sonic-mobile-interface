@@ -17,7 +17,7 @@
 #include <KWayland/Client/surface.h>
 
 /**
- * @short Object that represents an application folder on the main page.
+ * @short Object that represents an application folder.
  */
 
 class ApplicationFolderModel;

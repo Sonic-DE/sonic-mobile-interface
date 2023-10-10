@@ -9,46 +9,33 @@ import QtQuick.Effects
 
 import org.kde.kirigami 2.20 as Kirigami
 
-import org.kde.plasma.plasmoid 2.0
-import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.kquickcontrolsaddons 2.0
 
 import org.kde.private.mobile.homescreen.folio 1.0 as Folio
 import org.kde.plasma.private.mobileshell.shellsettingsplugin as ShellSettings
+import org.kde.plasma.private.mobileshell 1.0 as MobileShell
 
 Folio.DelegateTouchArea {
     id: delegate
 
     property string name
-    property string icon
-    property string storageId
-    property bool applicationRunning
+    property alias contentItem: visualItem.contentItem
 
     property bool shadow: false
 
     property int reservedSpaceForLabel
-    property alias iconItem: icon
     property alias delegateItem: delegateWrapper
 
     property alias labelOpacity: label.opacity
 
     readonly property real margins: Math.floor(width * 0.2)
 
-    signal launch(int x, int y, var source, string title, string storageId)
-
-    function launchApp() {
-        // launch app
-        if (applicationRunning) {
-            delegate.launch(0, 0, "", delegate.name, delegate.storageId);
-        } else {
-            delegate.launch(delegate.x + (Kirigami.Units.smallSpacing * 2), delegate.y + (Kirigami.Units.smallSpacing * 2), icon.source, delegate.name, delegate.storageId);
-        }
-    }
+    signal afterClickAnimation()
 
     // grow/shrink animation
     property real zoomScale: 1
-    property bool launchAppRequested: false
+    property bool clickRequested: false
 
     NumberAnimation on zoomScale {
         id: shrinkAnim
@@ -68,9 +55,9 @@ Folio.DelegateTouchArea {
         duration: ShellSettings.Settings.animationsEnabled ? 80 : 1
         to: 1
         onFinished: {
-            if (delegate.launchAppRequested) {
-                delegate.launchApp();
-                delegate.launchAppRequested = false;
+            if (delegate.clickRequested) {
+                delegate.afterClickAnimation();
+                delegate.clickRequested = false;
             }
         }
     }
@@ -84,8 +71,8 @@ Folio.DelegateTouchArea {
             growAnim.restart();
         }
     }
-    // launch app handled by press animation
-    onClicked: launchAppRequested = true;
+    // trigger handled by press animation
+    onClicked: clickRequested = true;
 
     layer.enabled: delegate.shadow
     layer.effect: DelegateShadow {}
@@ -111,27 +98,13 @@ Folio.DelegateTouchArea {
             }
             spacing: 0
 
-            Kirigami.Icon {
-                id: icon
+            MobileShell.BaseItem {
+                id: visualItem
 
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
                 Layout.fillWidth: true
                 Layout.minimumHeight: Math.floor(parent.height - delegate.reservedSpaceForLabel)
                 Layout.preferredHeight: Layout.minimumHeight
-
-                source: delegate.icon
-
-                Rectangle {
-                    anchors {
-                        horizontalCenter: parent.horizontalCenter
-                        bottom: parent.bottom
-                    }
-                    visible: delegate.applicationRunning
-                    radius: width
-                    width: Kirigami.Units.smallSpacing
-                    height: width
-                    color: Kirigami.Theme.highlightColor
-                }
 
                 // darken effect when hovered/pressed
                 layer {

@@ -1,9 +1,9 @@
 // SPDX-FileCopyrightText: 2023 Devin Lin <devin@kde.org>
 // SPDX-License-Identifier: LGPL-2.0-or-later
 
-import QtQuick 2.12
-import QtQuick.Window 2.12
-import QtQuick.Layouts 1.1
+import QtQuick
+import QtQuick.Window
+import QtQuick.Layouts
 
 import org.kde.plasma.components 3.0 as PC3
 import org.kde.kirigami 2.10 as Kirigami
@@ -55,6 +55,10 @@ Item {
             anchors.topMargin: root.verticalMargin
             anchors.bottomMargin: root.verticalMargin
 
+            // animation so that full opacity is only when the page is in view
+            opacity: 1 - Math.min(1, Math.max(0, Math.abs(-homeScreenState.pageViewX - root.width * pageNum) / root.width))
+
+            // x position of page
             transform: Translate {
                 x: root.width * index + homeScreenState.pageViewX
             }

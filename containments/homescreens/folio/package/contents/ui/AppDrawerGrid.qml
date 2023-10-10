@@ -51,7 +51,7 @@ MobileShell.GridView {
         font.weight: Font.Bold
     }
 
-    delegate: AppDrawerDelegate {
+    delegate: AppDelegate {
         id: delegate
         name: model.applicationName
         applicationRunning: model.applicationRunning
