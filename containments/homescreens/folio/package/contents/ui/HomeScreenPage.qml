@@ -66,13 +66,21 @@ Item {
             x: column * root.cellWidth
             y: row * root.cellHeight
 
+            // don't show when in drag and drop mode
+            property var startPosition: root.homeScreenState.dragState.startPosition
+            opacity: (root.homeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate &&
+                        startPosition.location === Folio.DelegateDragPosition.Pages &&
+                        startPosition.page === root.pageNum &&
+                        startPosition.pageRow === delegate.pageDelegate.row &&
+                        startPosition.pageColumn === delegate.pageDelegate.column) ? 0 : 1
+
             Loader {
                 anchors.fill: parent
 
                 sourceComponent: {
                     if (delegate.pageDelegate.type === Folio.FolioDelegate.Application) {
                         return appComponent;
-                    } else if (delegate.pageDelegate.type === Folio.FolioDelegate.Application.Folder) {
+                    } else if (delegate.pageDelegate.type === Folio.FolioDelegate.Folder) {
                         return folderComponent;
                     } else {
                         return noneComponent;
@@ -89,7 +97,7 @@ Item {
             Component {
                 id: appComponent
 
-                AppDrawerDelegate {
+                AppDelegate {
                     id: appDelegate
 
                     name: delegate.pageDelegate.application.name
@@ -101,16 +109,8 @@ Item {
 
                     reservedSpaceForLabel: root.reservedSpaceForLabel
 
-                    // don't show when in drag and drop mode
-                    property var startPosition: root.homeScreenState.dragState.startPosition
-                    opacity: (root.homeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate &&
-                                startPosition.location === Folio.DelegateDragPosition.Pages &&
-                                startPosition.page === root.pageNum &&
-                                startPosition.pageRow === delegate.pageDelegate.row &&
-                                startPosition.pageColumn === delegate.pageDelegate.column) ? 0 : 1
-
                     // don't show label in drag and drop mode
-                    labelOpacity: opacity
+                    labelOpacity: delegate.opacity
 
                     onPressAndHold: {
                         let mappedCoords = root.homeScreen.prepareStartDelegateDrag(appDelegate.delegateItem);
@@ -178,7 +178,38 @@ Item {
             Component {
                 id: folderComponent
 
-                Item {}
+                AppFolderDelegate {
+                    id: appFolderDelegate
+                    shadow: true
+
+                    folder: delegate.pageDelegate.folder
+                    name: delegate.pageDelegate.folder.name
+
+                    reservedSpaceForLabel: root.reservedSpaceForLabel
+
+                    // don't show label in drag and drop mode
+                    labelOpacity: delegate.opacity
+
+                    onPressAndHold: {
+                        let mappedCoords = root.homeScreen.prepareStartDelegateDrag(appFolderDelegate.delegateItem);
+                        root.homeScreenState.startDelegatePageDrag(
+                            mappedCoords.x,
+                            mappedCoords.y,
+                            root.pageNum,
+                            delegate.pageDelegate.row,
+                            delegate.pageDelegate.column
+                        );
+
+                        contextMenu.open();
+                    }
+
+                    onPressAndHoldReleased: {
+                        // cancel the event if the delegate is not dragged
+                        if (root.homeScreenState.swipeState === Folio.HomeScreenState.AwaitingDraggingDelegate) {
+                            homeScreen.cancelDelegateDrag();
+                        }
+                    }
+                }
             }
         }
     }

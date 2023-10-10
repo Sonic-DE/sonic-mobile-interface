@@ -50,7 +50,7 @@ Item {
         Repeater {
             model: Folio.FavouritesModel
 
-            delegate: AppDrawerDelegate {
+            delegate: AppDelegate {
                 id: delegate
 
                 name: Folio.FolioSettings.showFavouritesAppLabels ? model.delegate.application.name : ""
