@@ -62,8 +62,10 @@ public:
     QHash<int, QByteArray> roleNames() const override;
 
     Q_INVOKABLE void removeDelegate(int row, int col);
-    void addDelegate(FolioPageDelegate *delegate);
+    bool addDelegate(FolioPageDelegate *delegate);
     FolioDelegate *getDelegate(int row, int col);
+
+    bool isPageEmpty();
 
 public Q_SLOTS:
     void save();

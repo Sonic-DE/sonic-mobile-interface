@@ -27,6 +27,8 @@ public:
     DelegateDragPosition(QObject *parent = nullptr);
     ~DelegateDragPosition();
 
+    void copyFrom(DelegateDragPosition *position);
+
     Location location() const;
     void setLocation(Location location);
 
@@ -80,8 +82,9 @@ private Q_SLOTS:
     void onChangePageTimerFinished();
 
 private:
-    qreal getLeftPagePosition();
-    qreal getRightPagePosition();
+    void deleteStartPositionDelegate();
+    void createDropPositionDelegate();
+    bool isStartPositionEqualDropPosition();
 
     // we need to adjust so that the coord is in the center of the delegate
     qreal getDraggedDelegateX();
@@ -92,6 +95,6 @@ private:
     HomeScreenState *m_state;
 
     FolioDelegate *m_dropDelegate;
-    DelegateDragPosition *m_candidateDropPosition;
-    DelegateDragPosition *m_startPosition;
+    DelegateDragPosition *const m_candidateDropPosition;
+    DelegateDragPosition *const m_startPosition;
 };

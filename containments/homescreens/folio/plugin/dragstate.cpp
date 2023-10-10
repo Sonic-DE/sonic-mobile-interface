@@ -18,6 +18,15 @@ DelegateDragPosition::DelegateDragPosition(QObject *parent)
 
 DelegateDragPosition::~DelegateDragPosition() = default;
 
+void DelegateDragPosition::copyFrom(DelegateDragPosition *position)
+{
+    setPage(position->page());
+    setPageRow(position->pageRow());
+    setPageColumn(position->pageColumn());
+    setFavouritesPosition(position->favouritesPosition());
+    setLocation(position->location());
+}
+
 DelegateDragPosition::Location DelegateDragPosition::location() const
 {
     return m_location;
@@ -143,6 +152,7 @@ void DragState::onDelegateDragPositionChanged()
         int row = (y - pageVerticalMargin) / cellHeight;
         int column = (x - pageHorizontalMargin) / cellWidth;
 
+        // ensure it's in bounds
         row = std::max(0, std::min(FolioSettings::self()->homeScreenRows() - 1, row));
         column = std::max(0, std::min(FolioSettings::self()->homeScreenColumns() - 1, column));
 
@@ -153,9 +163,12 @@ void DragState::onDelegateDragPositionChanged()
         m_candidateDropPosition->setLocation(DelegateDragPosition::Pages);
     }
 
+    const int leftPagePosition = 0;
+    const int rightPagePosition = m_state->pageWidth();
+
     // determine if the delegate is near the edge of a page (to switch pages)
     // start the change page timer if we are
-    if (qAbs(getLeftPagePosition() - x) <= PAGE_CHANGE_THRESHOLD || qAbs(getRightPagePosition() - x) <= PAGE_CHANGE_THRESHOLD) {
+    if (qAbs(leftPagePosition - x) <= PAGE_CHANGE_THRESHOLD || qAbs(rightPagePosition - x) <= PAGE_CHANGE_THRESHOLD) {
         if (!m_changePageTimer->isActive()) {
             m_changePageTimer->start();
         }
@@ -211,7 +224,57 @@ void DragState::onDelegateDropped()
 
     qDebug() << "delegate drop" << m_candidateDropPosition->location();
 
+    // add dropped delegate
+    createDropPositionDelegate();
+
     // remove old delegate
+    if (!isStartPositionEqualDropPosition()) {
+        deleteStartPositionDelegate();
+    }
+
+    // delete empty pages at the end if they exist
+    // (it can be created if user drags app to new page, but doesn't place it there)
+    while (PageListModel::self()->isLastPageEmpty() && PageListModel::self()->rowCount() > 1) {
+        PageListModel::self()->removePage(PageListModel::self()->rowCount() - 1);
+    }
+}
+
+void DragState::onChangePageTimerFinished()
+{
+    if (!m_state) {
+        return;
+    }
+
+    const int leftPagePosition = 0;
+    const int rightPagePosition = m_state->pageWidth();
+
+    qreal x = getDraggedDelegateX();
+    if (qAbs(leftPagePosition - x) <= PAGE_CHANGE_THRESHOLD) {
+        // if we are at the left edge, go left
+        int page = m_state->currentPage() - 1;
+        if (page >= 0) {
+            m_state->goToPage(page);
+        }
+
+    } else if (qAbs(rightPagePosition - x) <= PAGE_CHANGE_THRESHOLD) {
+        // if we are at the right edge, go right
+        int page = m_state->currentPage() + 1;
+
+        // if we are at the right-most page, try to create a new one if the current page isn't empty
+        if (page == PageListModel::self()->rowCount() && !PageListModel::self()->isLastPageEmpty()) {
+            PageListModel::self()->addPageAtEnd();
+        }
+
+        // go to page if it exists
+        if (page < PageListModel::self()->rowCount()) {
+            m_state->goToPage(page);
+        }
+    }
+}
+
+void DragState::deleteStartPositionDelegate()
+{
+    // delete the delegate at the start position
     switch (m_startPosition->location()) {
     case DelegateDragPosition::Pages: {
         PageModel *page = PageListModel::self()->getPage(m_startPosition->page());
@@ -227,69 +290,59 @@ void DragState::onDelegateDropped()
     default:
         break;
     }
+}
 
-    // add dropped delegate
+void DragState::createDropPositionDelegate()
+{
+    // creates the delegate at the drop position
     switch (m_candidateDropPosition->location()) {
     case DelegateDragPosition::Pages: {
         PageModel *page = PageListModel::self()->getPage(m_candidateDropPosition->page());
         if (page) {
             FolioPageDelegate *delegate =
                 new FolioPageDelegate{m_candidateDropPosition->pageRow(), m_candidateDropPosition->pageColumn(), m_dropDelegate, page};
-            page->addDelegate(delegate);
+
+            bool added = page->addDelegate(delegate);
+
+            // if we couldn't add the delegate, try again but at the start position
+            if (!added && !isStartPositionEqualDropPosition()) {
+                m_candidateDropPosition->copyFrom(m_startPosition);
+                createDropPositionDelegate();
+            }
         }
         break;
     }
-    case DelegateDragPosition::Favourites:
-        FavouritesModel::self()->addEntry(m_candidateDropPosition->favouritesPosition(), m_dropDelegate);
+    case DelegateDragPosition::Favourites: {
+        bool added = FavouritesModel::self()->addEntry(m_candidateDropPosition->favouritesPosition(), m_dropDelegate);
+
+        // if we couldn't add the delegate, try again but at the start position
+        if (!added && !isStartPositionEqualDropPosition()) {
+            m_candidateDropPosition->copyFrom(m_startPosition);
+            createDropPositionDelegate();
+        }
         break;
+    }
     case DelegateDragPosition::AppDrawer:
     default:
         break;
     }
 }
 
-void DragState::onChangePageTimerFinished()
+bool DragState::isStartPositionEqualDropPosition()
 {
-    if (!m_state) {
-        return;
-    }
-
-    // we don't use m_state->pageNum() because that may differ from the current page position
-    // as it changes prior to animations fully finishing
-
-    qreal x = getDraggedDelegateX();
-    if (qAbs(getLeftPagePosition() - x) <= PAGE_CHANGE_THRESHOLD) {
-        int page = getLeftPagePosition() / m_state->pageWidth();
-        if (page >= 0) {
-            m_state->goToPage(page);
-        }
-    } else if (qAbs(getRightPagePosition() - x) <= PAGE_CHANGE_THRESHOLD) {
-        int page = getRightPagePosition() / m_state->pageWidth();
-        if (page < PageListModel::self()->rowCount()) {
-            m_state->goToPage(page);
-        }
-    }
-}
-
-qreal DragState::getLeftPagePosition()
-{
-    qreal x = -m_state->delegateDragX();
-    int leftPositionalPage = std::max(0.0, x / m_state->pageWidth());
-
-    return leftPositionalPage * m_state->pageWidth();
-}
-
-qreal DragState::getRightPagePosition()
-{
-    return getLeftPagePosition() + m_state->pageWidth();
+    return m_startPosition->location() == m_candidateDropPosition->location() && m_startPosition->page() == m_candidateDropPosition->page()
+        && m_startPosition->pageRow() == m_candidateDropPosition->pageRow() && m_startPosition->pageColumn() == m_candidateDropPosition->pageColumn()
+        && m_startPosition->favouritesPosition() == m_candidateDropPosition->favouritesPosition();
 }
 
 qreal DragState::getDraggedDelegateX()
 {
+    // adjust to get the position of the center of the delegate
     return m_state->delegateDragX() + m_state->pageCellWidth() / 2;
 }
 
 qreal DragState::getDraggedDelegateY()
 {
+    // adjust to get the position of the center of the delegate
     return m_state->delegateDragY() + m_state->pageCellHeight() / 2;
 }

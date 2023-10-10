@@ -79,6 +79,11 @@ Q_INVOKABLE void PageListModel::addPageAtEnd()
     save();
 }
 
+bool PageListModel::isLastPageEmpty()
+{
+    return m_pages.size() == 0 ? true : m_pages[m_pages.size() - 1]->isPageEmpty();
+}
+
 void PageListModel::save()
 {
     if (!m_applet) {
