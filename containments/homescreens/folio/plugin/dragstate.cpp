@@ -6,6 +6,7 @@
 #include "foliosettings.h"
 #include "pagelistmodel.h"
 
+#include <KLocalizedString>
 #include <algorithm>
 
 // TODO don't hardcode, use page widths
@@ -297,18 +298,56 @@ void DragState::createDropPositionDelegate()
     // creates the delegate at the drop position
     switch (m_candidateDropPosition->location()) {
     case DelegateDragPosition::Pages: {
+        // locate the page we are dropping on
         PageModel *page = PageListModel::self()->getPage(m_candidateDropPosition->page());
-        if (page) {
-            FolioPageDelegate *delegate =
-                new FolioPageDelegate{m_candidateDropPosition->pageRow(), m_candidateDropPosition->pageColumn(), m_dropDelegate, page};
+        if (!page) {
+            break;
+        }
 
-            bool added = page->addDelegate(delegate);
+        int row = m_candidateDropPosition->pageRow();
+        int column = m_candidateDropPosition->pageColumn();
 
-            // if we couldn't add the delegate, try again but at the start position
-            if (!added && !isStartPositionEqualDropPosition()) {
-                m_candidateDropPosition->copyFrom(m_startPosition);
-                createDropPositionDelegate();
+        // delegate to add
+        FolioPageDelegate *delegate = new FolioPageDelegate{row, column, m_dropDelegate, page};
+
+        // delegate that exists at the drop position
+        FolioPageDelegate *existingDelegate = page->getDelegate(row, column);
+
+        // if a delegate already exists at the spot
+        if (existingDelegate) {
+            if (delegate->type() == FolioDelegate::Application) {
+                if (existingDelegate->type() == FolioDelegate::Folder) {
+                    // add the app to the existing folder
+
+                    auto existingFolder = existingDelegate->folder();
+                    existingFolder->addApp(delegate->application()->storageId(), existingFolder->applications()->rowCount());
+                    delegate->deleteLater();
+
+                    break;
+                } else if (existingDelegate->type() == FolioDelegate::Application && !isStartPositionEqualDropPosition()) {
+                    // create a folder from the two apps
+
+                    FolioApplicationFolder *folder = new FolioApplicationFolder(this, i18n("Folder")); // TODO folder name
+                    folder->addApp(delegate->application()->storageId(), 0);
+                    folder->addApp(existingDelegate->application()->storageId(), 0);
+                    FolioPageDelegate *folderDelegate = new FolioPageDelegate{row, column, folder, this};
+
+                    page->removeDelegate(row, column);
+                    page->addDelegate(folderDelegate);
+
+                    break;
+                }
             }
+        }
+
+        // default behavior for folders or dropping an app at an empty spot
+
+        bool added = page->addDelegate(delegate);
+
+        // if we couldn't add the delegate, try again but at the start position (return to start)
+        if (!added && !isStartPositionEqualDropPosition()) {
+            m_candidateDropPosition->copyFrom(m_startPosition);
+            createDropPositionDelegate();
         }
         break;
     }
