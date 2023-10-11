@@ -13,6 +13,12 @@ const qreal SEARCH_WIDGET_OPEN_DIST = 200;
 // pixels to move before we determine the swipe type
 const qreal DETERMINE_SWIPE_THRESHOLD = 10;
 
+HomeScreenState *HomeScreenState::self()
+{
+    static HomeScreenState *inst = new HomeScreenState{nullptr};
+    return inst;
+}
+
 HomeScreenState::HomeScreenState(QObject *parent)
     : QObject{parent}
     , m_dragState{new DragState{this, this}}
@@ -232,11 +238,6 @@ void HomeScreenState::setDelegateDragY(qreal delegateDragY)
 int HomeScreenState::currentPage()
 {
     return m_pageNum;
-}
-
-QQmlListProperty<QObject> HomeScreenState::children()
-{
-    return QQmlListProperty<QObject>(this, &m_children);
 }
 
 void HomeScreenState::openAppDrawer()

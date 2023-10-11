@@ -86,6 +86,7 @@ void DelegateDragPosition::setFavouritesPosition(int favouritesPosition)
 DragState::DragState(HomeScreenState *state, QObject *parent)
     : QObject{parent}
     , m_changePageTimer{new QTimer{this}}
+    , m_favouritesInsertBetweenTimer{new QTimer{this}}
     , m_state{state}
     , m_candidateDropPosition{new DelegateDragPosition{this}}
     , m_startPosition{new DelegateDragPosition{this}}
@@ -98,7 +99,11 @@ DragState::DragState(HomeScreenState *state, QObject *parent)
     m_changePageTimer->setInterval(500);
     m_changePageTimer->setSingleShot(true);
 
+    m_favouritesInsertBetweenTimer->setInterval(500);
+    m_favouritesInsertBetweenTimer->setSingleShot(true);
+
     connect(m_changePageTimer, &QTimer::timeout, this, &DragState::onChangePageTimerFinished);
+    connect(m_favouritesInsertBetweenTimer, &QTimer::timeout, this, &DragState::onFavouritesInsertBetweenTimerFinished);
 
     connect(m_state, &HomeScreenState::delegateDragFromPageStarted, this, &DragState::onDelegateDragFromPageStarted);
     connect(m_state, &HomeScreenState::delegateDragFromAppDrawerStarted, this, &DragState::onDelegateDragFromAppDrawerStarted);
@@ -124,22 +129,67 @@ DelegateDragPosition *DragState::startPosition() const
     return m_startPosition;
 }
 
+void DragState::onFavouritesInsertBetweenTimerFinished()
+{
+    qDebug() << "favourites inserttimer finished";
+
+    // update the candidate drop position
+    m_candidateDropPosition->setFavouritesPosition(m_favouritesInsertBetweenIndex);
+    m_candidateDropPosition->setLocation(DelegateDragPosition::Favourites);
+
+    if (isStartPositionEqualDropPosition()) {
+        return;
+    }
+
+    // insert it at this position, shifting existing apps to the side
+    FavouritesModel::self()->setGhostEntry(m_favouritesInsertBetweenIndex);
+}
+
 void DragState::onDelegateDragPositionChanged()
 {
     if (!m_state) {
         return;
     }
 
-    // we need to update the candidate drop position
+    // we want to update the candidate drop position variable in this function!
+
     qreal x = getDraggedDelegateX();
     qreal y = getDraggedDelegateY();
 
-    if (y > m_state->pageHeight()) {
+    bool inFavouritesArea = y > m_state->pageHeight();
+
+    // stop the favourites insertion timer if the delegate has moved out
+    if (!inFavouritesArea) {
+        m_favouritesInsertBetweenTimer->stop();
+    }
+
+    if (inFavouritesArea) {
         // we are in the favourites bar area
 
-        // update the current drop position
-        m_candidateDropPosition->setFavouritesPosition(0); // TODO positioning
-        m_candidateDropPosition->setLocation(DelegateDragPosition::Favourites);
+        int dropIndex = FavouritesModel::self()->dropInsertPosition(x);
+
+        // if the delegate has moved to another position, cancel the insert timer
+        if (dropIndex != m_favouritesInsertBetweenIndex) {
+            m_favouritesInsertBetweenTimer->stop();
+        }
+
+        // if we need to make space for the delegate
+        if (FavouritesModel::self()->dropPositionIsEdge(x)) {
+            // start the insertion timer (so that the user has time to move the delegate away)
+            if (!m_favouritesInsertBetweenTimer->isActive()) {
+                m_favouritesInsertBetweenTimer->start();
+                m_favouritesInsertBetweenIndex = dropIndex;
+            }
+        } else {
+            // if we are hovering over the center of a folder or app
+
+            // update the current drop position
+            m_candidateDropPosition->setFavouritesPosition(dropIndex);
+            m_candidateDropPosition->setLocation(DelegateDragPosition::Favourites);
+
+            // delete ghost entry when hovering over a folder
+            FavouritesModel::self()->deleteGhostEntry();
+        }
     } else {
         // we are in the homescreen pages area
         int page = m_state->currentPage();
@@ -167,8 +217,8 @@ void DragState::onDelegateDragPositionChanged()
     const int leftPagePosition = 0;
     const int rightPagePosition = m_state->pageWidth();
 
-    // determine if the delegate is near the edge of a page (to switch pages)
-    // start the change page timer if we are
+    // determine if the delegate is near the edge of a page (to switch pages).
+    // -> start the change page timer if we at the page edge.
     if (qAbs(leftPagePosition - x) <= PAGE_CHANGE_THRESHOLD || qAbs(rightPagePosition - x) <= PAGE_CHANGE_THRESHOLD) {
         if (!m_changePageTimer->isActive()) {
             m_changePageTimer->start();
@@ -219,14 +269,13 @@ void DragState::onDelegateDragFromAppDrawerStarted(QString storageId)
 
 void DragState::onDelegateDropped()
 {
+    qDebug() << "dropped" << m_dropDelegate;
     if (!m_dropDelegate) {
         return;
     }
 
-    qDebug() << "delegate drop" << m_candidateDropPosition->location();
-
     // add dropped delegate
-    createDropPositionDelegate();
+    createDropPositionDelegate(true);
 
     // remove old delegate
     if (!isStartPositionEqualDropPosition()) {
@@ -293,11 +342,15 @@ void DragState::deleteStartPositionDelegate()
     }
 }
 
-void DragState::createDropPositionDelegate()
+void DragState::createDropPositionDelegate(bool modifyFolders)
 {
+    qDebug() << "drop location:" << m_candidateDropPosition->location();
+
     // creates the delegate at the drop position
     switch (m_candidateDropPosition->location()) {
     case DelegateDragPosition::Pages: {
+        qDebug() << "drop at page" << m_candidateDropPosition->page() << m_candidateDropPosition->pageRow() << m_candidateDropPosition->pageColumn();
+
         // locate the page we are dropping on
         PageModel *page = PageListModel::self()->getPage(m_candidateDropPosition->page());
         if (!page) {
@@ -313,8 +366,8 @@ void DragState::createDropPositionDelegate()
         // delegate that exists at the drop position
         FolioPageDelegate *existingDelegate = page->getDelegate(row, column);
 
-        // if a delegate already exists at the spot
-        if (existingDelegate) {
+        // if a delegate already exists at the spot, check if we can insert/create a folder
+        if (existingDelegate && modifyFolders) {
             if (delegate->type() == FolioDelegate::Application) {
                 if (existingDelegate->type() == FolioDelegate::Folder) {
                     // add the app to the existing folder
@@ -347,17 +400,51 @@ void DragState::createDropPositionDelegate()
         // if we couldn't add the delegate, try again but at the start position (return to start)
         if (!added && !isStartPositionEqualDropPosition()) {
             m_candidateDropPosition->copyFrom(m_startPosition);
-            createDropPositionDelegate();
+            createDropPositionDelegate(modifyFolders);
         }
         break;
     }
     case DelegateDragPosition::Favourites: {
+        qDebug() << "creating favourite at" << m_candidateDropPosition->favouritesPosition();
+
+        // delegate that exists at the drop position
+        FolioDelegate *existingDelegate = FavouritesModel::self()->getEntryAt(m_candidateDropPosition->favouritesPosition());
+
+        // if a delegate already exists at the spot, check if we can insert/create a folder
+        if (existingDelegate && modifyFolders) {
+            if (m_dropDelegate->type() == FolioDelegate::Application) {
+                if (existingDelegate->type() == FolioDelegate::Folder) {
+                    // add the app to the existing folder
+
+                    auto existingFolder = existingDelegate->folder();
+                    existingFolder->addApp(m_dropDelegate->application()->storageId(), existingFolder->applications()->rowCount());
+                    m_dropDelegate->deleteLater();
+
+                    break;
+                } else if (existingDelegate->type() == FolioDelegate::Application && !isStartPositionEqualDropPosition()) {
+                    // create a folder from the two apps
+
+                    FolioApplicationFolder *folder = new FolioApplicationFolder(this, i18n("Folder")); // TODO folder name
+                    folder->addApp(m_dropDelegate->application()->storageId(), 0);
+                    folder->addApp(existingDelegate->application()->storageId(), 0);
+                    FolioDelegate *folderDelegate = new FolioDelegate{folder, this};
+
+                    FavouritesModel::self()->removeEntry(m_candidateDropPosition->favouritesPosition());
+                    FavouritesModel::self()->addEntry(m_candidateDropPosition->favouritesPosition(), folderDelegate);
+
+                    break;
+                }
+            }
+        }
+
+        // otherwise, just add the delegate at this position
+
         bool added = FavouritesModel::self()->addEntry(m_candidateDropPosition->favouritesPosition(), m_dropDelegate);
 
         // if we couldn't add the delegate, try again but at the start position
         if (!added && !isStartPositionEqualDropPosition()) {
             m_candidateDropPosition->copyFrom(m_startPosition);
-            createDropPositionDelegate();
+            createDropPositionDelegate(modifyFolders);
         }
         break;
     }

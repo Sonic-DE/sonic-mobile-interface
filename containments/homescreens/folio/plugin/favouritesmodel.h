@@ -15,6 +15,11 @@
 
 #include "foliodelegate.h"
 
+struct FavouritesDelegate {
+    FolioDelegate *delegate;
+    qreal xPosition;
+};
+
 class FavouritesModel : public QAbstractListModel
 {
     Q_OBJECT
@@ -22,6 +27,7 @@ class FavouritesModel : public QAbstractListModel
 public:
     enum Roles {
         DelegateRole = Qt::UserRole + 1,
+        XPositionRole,
     };
 
     FavouritesModel(QObject *parent = nullptr);
@@ -31,21 +37,35 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int, QByteArray> roleNames() const override;
 
-    Q_INVOKABLE void addApp(const QString &storageId, int row);
     Q_INVOKABLE void removeEntry(int row);
-    Q_INVOKABLE void moveEntry(int fromRow, int toRow);
+    void moveEntry(int fromRow, int toRow);
     bool addEntry(int row, FolioDelegate *delegate);
     FolioDelegate *getEntryAt(int row);
-    void save();
+
+    // for use with drag and drop, as the delegate is dragged around
+    void setGhostEntry(int row);
+    void replaceGhostEntry(FolioDelegate *delegate);
+    void deleteGhostEntry();
+
+    // whether the position given is in between 2 delegates, or at the edge.
+    // this would return false if dropping should place the delegate into a folder/create a folder.
+    bool dropPositionIsEdge(qreal x);
+
+    // the index that dropping at the position given would place the delegate at.
+    int dropInsertPosition(qreal x);
 
     // called by QML
     Q_INVOKABLE void setApplet(Plasma::Applet *applet);
 
 private:
+    void save();
     void load();
+    void evaluateDelegatePositions();
 
-    int m_columns;
-    QList<FolioDelegate *> m_delegates;
+    // get the x position where delegates start being placed
+    qreal getDelegateRowStartX();
+
+    QList<FavouritesDelegate> m_delegates;
 
     Plasma::Applet *m_applet;
 };

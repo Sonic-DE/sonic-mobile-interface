@@ -16,7 +16,6 @@ Item {
     property int pageNum
 
     property var pageModel
-    property var homeScreenState
     property var homeScreen
 
     property int reservedSpaceForLabel
@@ -31,15 +30,15 @@ Item {
         width: root.cellWidth
         height: root.cellHeight
 
-        property var dropPosition: root.homeScreenState.dragState.candidateDropPosition
-        property var startPosition: root.homeScreenState.dragState.startPosition
+        property var dropPosition: Folio.HomeScreenState.dragState.candidateDropPosition
+        property var startPosition: Folio.HomeScreenState.dragState.startPosition
 
         property bool dropIsStartPosition: startPosition.location === Folio.DelegateDragPosition.Pages &&
                                             startPosition.location === dropPosition.location &&
                                             startPosition.pageRow === dropPosition.pageRow &&
                                             startPosition.pageColumn === dropPosition.pageColumn
 
-        visible: root.homeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate &&
+        visible: Folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate &&
                     dropPosition.location === Folio.DelegateDragPosition.Pages &&
                     dropPosition.page === root.pageNum // &&
                     // TODO !dropIsStartPosition
@@ -67,8 +66,8 @@ Item {
             y: row * root.cellHeight
 
             // don't show when in drag and drop mode
-            property var startPosition: root.homeScreenState.dragState.startPosition
-            opacity: (root.homeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate &&
+            property var startPosition: Folio.HomeScreenState.dragState.startPosition
+            opacity: (Folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate &&
                         startPosition.location === Folio.DelegateDragPosition.Pages &&
                         startPosition.page === root.pageNum &&
                         startPosition.pageRow === delegate.pageDelegate.row &&
@@ -114,7 +113,7 @@ Item {
 
                     onPressAndHold: {
                         let mappedCoords = root.homeScreen.prepareStartDelegateDrag(appDelegate.delegateItem);
-                        root.homeScreenState.startDelegatePageDrag(
+                        Folio.HomeScreenState.startDelegatePageDrag(
                             mappedCoords.x,
                             mappedCoords.y,
                             root.pageNum,
@@ -126,7 +125,7 @@ Item {
                     }
                     onPressAndHoldReleased: {
                         // cancel the event if the delegate is not dragged
-                        if (root.homeScreenState.swipeState === Folio.HomeScreenState.AwaitingDraggingDelegate) {
+                        if (Folio.HomeScreenState.swipeState === Folio.HomeScreenState.AwaitingDraggingDelegate) {
                             homeScreen.cancelDelegateDrag();
                         }
                     }
@@ -155,10 +154,10 @@ Item {
 
                         // close menu when drag starts
                         Connections {
-                            target: root.homeScreenState
+                            target: Folio.HomeScreenState
 
                             function onSwipeStateChanged() {
-                                if (root.homeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate) {
+                                if (Folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate) {
                                     contextMenu.close();
                                 }
                             }
@@ -190,9 +189,13 @@ Item {
                     // don't show label in drag and drop mode
                     labelOpacity: delegate.opacity
 
+                    onAfterClickAnimation: {
+                        root.homeScreen.openFolder(delegate.pageDelegate.folder);
+                    }
+
                     onPressAndHold: {
                         let mappedCoords = root.homeScreen.prepareStartDelegateDrag(appFolderDelegate.delegateItem);
-                        root.homeScreenState.startDelegatePageDrag(
+                        Folio.HomeScreenState.startDelegatePageDrag(
                             mappedCoords.x,
                             mappedCoords.y,
                             root.pageNum,
@@ -205,7 +208,7 @@ Item {
 
                     onPressAndHoldReleased: {
                         // cancel the event if the delegate is not dragged
-                        if (root.homeScreenState.swipeState === Folio.HomeScreenState.AwaitingDraggingDelegate) {
+                        if (Folio.HomeScreenState.swipeState === Folio.HomeScreenState.AwaitingDraggingDelegate) {
                             homeScreen.cancelDelegateDrag();
                         }
                     }
