@@ -80,10 +80,11 @@ private Q_SLOTS:
     void onDelegateDragFromAppDrawerStarted(QString storageId);
     void onDelegateDropped();
     void onChangePageTimerFinished();
+    void onFavouritesInsertBetweenTimerFinished();
 
 private:
     void deleteStartPositionDelegate();
-    void createDropPositionDelegate();
+    void createDropPositionDelegate(bool modifyFolders);
     bool isStartPositionEqualDropPosition();
 
     // we need to adjust so that the coord is in the center of the delegate
@@ -91,10 +92,15 @@ private:
     qreal getDraggedDelegateY();
 
     QTimer *m_changePageTimer;
+    QTimer *m_favouritesInsertBetweenTimer; // inserting between apps
+    int m_favouritesInsertBetweenIndex;
 
     HomeScreenState *m_state;
 
     FolioDelegate *m_dropDelegate;
+
+    // where we are hovering over, potentially to drop the delegate
     DelegateDragPosition *const m_candidateDropPosition;
+    // this is the original start position of the drag
     DelegateDragPosition *const m_startPosition;
 };

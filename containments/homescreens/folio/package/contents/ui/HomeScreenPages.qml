@@ -12,7 +12,6 @@ import org.kde.private.mobile.homescreen.folio 1.0 as Folio
 Item {
     id: root
 
-    property var homeScreenState
     property var homeScreen
 
     readonly property real verticalMargin: Kirigami.Units.gridUnit
@@ -24,8 +23,8 @@ Item {
     readonly property real cellWidth: Math.round(pageContentWidth / Folio.FolioSettings.homeScreenColumns)
     readonly property real cellHeight: cellWidth + reservedSpaceForLabel
 
-    onCellWidthChanged: homeScreenState.pageCellWidth = cellWidth
-    onCellHeightChanged: homeScreenState.pageCellHeight = cellHeight
+    onCellWidthChanged: Folio.HomeScreenState.pageCellWidth = cellWidth
+    onCellHeightChanged: Folio.HomeScreenState.pageCellHeight = cellHeight
 
     PC3.Label {
         id: metrics
@@ -42,7 +41,6 @@ Item {
             id: homeScreenPage
             pageNum: model.index
             pageModel: model.delegate
-            homeScreenState: root.homeScreenState
             homeScreen: root.homeScreen
 
             reservedSpaceForLabel: root.reservedSpaceForLabel
@@ -56,11 +54,11 @@ Item {
             anchors.bottomMargin: root.verticalMargin
 
             // animation so that full opacity is only when the page is in view
-            opacity: 1 - Math.min(1, Math.max(0, Math.abs(-homeScreenState.pageViewX - root.width * pageNum) / root.width))
+            opacity: 1 - Math.min(1, Math.max(0, Math.abs(-Folio.HomeScreenState.pageViewX - root.width * pageNum) / root.width))
 
             // x position of page
             transform: Translate {
-                x: root.width * index + homeScreenState.pageViewX
+                x: root.width * index + Folio.HomeScreenState.pageViewX
             }
         }
     }

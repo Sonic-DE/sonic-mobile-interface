@@ -14,7 +14,6 @@ import org.kde.plasma.private.mobileshell 1.0 as MobileShell
 Item {
     id: root
 
-    required property var homeScreenState
     property var homeScreen
 
     property real leftPadding: 0
@@ -52,7 +51,6 @@ Item {
 
         AppDrawerGrid {
             id: appDrawerGrid
-            homeScreenState: root.homeScreenState
             homeScreen: root.homeScreen
             height: parent.height - drawerHeader.height
             anchors.left: parent.left
