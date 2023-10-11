@@ -19,7 +19,6 @@ MobileShell.GridView {
     reuseItems: true
     layer.enabled: true
 
-    property var homeScreenState
     property var homeScreen
 
     // /*
@@ -63,9 +62,9 @@ MobileShell.GridView {
         reservedSpaceForLabel: root.reservedSpaceForLabel
 
         onPressAndHold: {
-            homeScreenState.closeAppDrawer();
+            Folio.HomeScreenState.closeAppDrawer();
             let mappedCoords = root.homeScreen.prepareStartDelegateDrag(delegate.delegateItem);
-            root.homeScreenState.startDelegateAppDrawerDrag(
+            Folio.HomeScreenState.startDelegateAppDrawerDrag(
                 mappedCoords.x,
                 mappedCoords.y,
                 model.applicationStorageId

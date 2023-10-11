@@ -33,7 +33,10 @@ void HalcyonPlugin::registerTypes(const char *uri)
         return FolioSettings::self();
     });
 
-    qmlRegisterType<HomeScreenState>(uri, 1, 0, "HomeScreenState");
+    qmlRegisterSingletonType<HomeScreenState>(uri, 1, 0, "HomeScreenState", [](QQmlEngine *, QJSEngine *) -> QObject * {
+        return HomeScreenState::self();
+    });
+
     qmlRegisterType<FolioApplication>(uri, 1, 0, "FolioApplication");
     qmlRegisterType<FolioApplicationFolder>(uri, 1, 0, "FolioApplicationFolder");
     qmlRegisterType<FolioDelegate>(uri, 1, 0, "FolioDelegate");

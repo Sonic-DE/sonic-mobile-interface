@@ -41,10 +41,6 @@ class HomeScreenState : public QObject
     Q_PROPERTY(qreal delegateDragX READ delegateDragX NOTIFY delegateDragXChanged)
     Q_PROPERTY(qreal delegateDragY READ delegateDragY NOTIFY delegateDragYChanged)
 
-    Q_PROPERTY(QQmlListProperty<QObject> children READ children CONSTANT)
-    Q_CLASSINFO("DefaultProperty", "children")
-    QML_NAMED_ELEMENT("HomeScreenState")
-
 public:
     enum SwipeState {
         None,
@@ -65,6 +61,8 @@ public:
         AppDrawerView,
     };
     Q_ENUM(ViewState)
+
+    static HomeScreenState *self();
 
     HomeScreenState(QObject *parent = nullptr);
 
@@ -126,8 +124,6 @@ public:
     void setDelegateDragY(qreal delegateDragY);
 
     int currentPage();
-
-    QQmlListProperty<QObject> children();
 
 Q_SIGNALS:
     void swipeStateChanged();
@@ -211,8 +207,4 @@ private:
     QPropertyAnimation *m_openSearchWidgetAnim{nullptr};
     QPropertyAnimation *m_closeSearchWidgetAnim{nullptr};
     QPropertyAnimation *m_pageAnim{nullptr};
-
-    QList<QObject *> m_children;
 };
-
-QML_DECLARE_TYPE(HomeScreenState)

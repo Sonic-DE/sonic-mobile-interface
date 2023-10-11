@@ -1,18 +1,14 @@
 // SPDX-FileCopyrightText: 2023 Devin Lin <devin@kde.org>
 // SPDX-License-Identifier: LGPL-2.0-or-later
 
-import QtQuick 2.12
-import QtQuick.Window 2.12
-import QtQuick.Layouts 1.1
+import QtQuick
+import QtQuick.Window
+import QtQuick.Layouts
 
-import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.components 3.0 as PlasmaComponents
-import org.kde.draganddrop 2.0 as DragDrop
 import org.kde.kirigami 2.20 as Kirigami
 
-import org.kde.plasma.private.containmentlayoutmanager 1.0 as ContainmentLayoutManager
 import org.kde.plasma.private.mobileshell 1.0 as MobileShell
-
 import org.kde.private.mobile.homescreen.folio 1.0 as Folio
 
 Item {
@@ -25,7 +21,7 @@ Item {
 
     property bool interactive: true
 
-    required property Folio.HomeScreenState homeScreenState
+    property Folio.HomeScreenState homeScreenState: Folio.HomeScreenState
 
     // called by any delegates when starting drag
     // returns the mapped coordinates to be used in the home screen state
@@ -46,12 +42,18 @@ Item {
         homeScreenState.cancelDelegateDrag();
     }
 
+    function openFolder(folder) {
+        folderView.open(folder);
+    }
+
     Connections {
         target: homeScreenState
         function onDelegateDragEnded() {
-            delegateDragItem.source = null;
+            delegateDragItem.source = emptyItem;
         }
     }
+
+    Item { id: emptyItem }
 
     MobileShell.SwipeArea {
         id: swipeArea
@@ -88,7 +90,6 @@ Item {
 
             HomeScreenPages {
                 id: homeScreenPages
-                homeScreenState: root.homeScreenState
                 homeScreen: root
 
                 anchors.bottom: favouritesBar.top
@@ -112,7 +113,6 @@ Item {
 
             FavouritesBar {
                 id: favouritesBar
-                homeScreenState: root.homeScreenState
                 homeScreen: root
 
                 anchors.bottom: parent.bottom
@@ -124,6 +124,12 @@ Item {
             }
         }
 
+        // folder view
+        FolderView {
+            id: folderView
+            anchors.fill: parent
+        }
+
         // drag and drop component
         DelegateDragItem {
             id: delegateDragItem
@@ -133,13 +139,12 @@ Item {
             y: Math.round(homeScreenState.delegateDragY)
         }
 
+        // bottom app drawer
         AppDrawer {
             id: appDrawer
-            // anchors.fill: parent
             width: parent.width
             height: parent.height
 
-            homeScreenState: root.homeScreenState
             homeScreen: root
 
             // we only start showing it halfway through

@@ -18,8 +18,6 @@ import org.kde.plasma.private.mobileshell.windowplugin as WindowPlugin
 ContainmentItem {
     id: root
 
-    property Folio.HomeScreenState homeScreenState: Folio.HomeScreenState {}
-
     Component.onCompleted: {
         Folio.FolioSettings.setApplet(root.plasmoid);
         Folio.FavouritesModel.setApplet(root.plasmoid);
@@ -62,7 +60,7 @@ ContainmentItem {
         anchors.fill: parent
         color: Qt.rgba(0, 0, 0, 0.6)
 
-        opacity: root.homeScreenState.appDrawerOpenProgress
+        opacity: Folio.HomeScreenState.appDrawerOpenProgress
     }
 
     Rectangle {
@@ -70,7 +68,7 @@ ContainmentItem {
         anchors.fill: parent
         color: Qt.rgba(0, 0, 0, 0.3)
 
-        opacity: root.homeScreenState.searchWidgetOpenProgress
+        opacity: Folio.HomeScreenState.searchWidgetOpenProgress
     }
 
     MobileShell.HomeScreen {
@@ -80,11 +78,11 @@ ContainmentItem {
         plasmoidItem: root
         onResetHomeScreenPosition: {
             // folioHomeScreen.homeScreenState.animateGoToPageIndex(0, Kirigami.Units.longDuration);
-            root.homeScreenState.closeAppDrawer();
+            Folio.HomeScreenState.closeAppDrawer();
         }
 
         onHomeTriggered: {
-            root.homeScreenState.closeSearchWidget();
+            Folio.HomeScreenState.closeSearchWidget();
         }
 
         contentItem: Item {
@@ -92,7 +90,6 @@ ContainmentItem {
             // homescreen component
             HomeScreen {
                 id: folioHomeScreen
-                homeScreenState: root.homeScreenState
                 anchors.fill: parent
 
                 topMargin: homeScreen.topMargin
