@@ -69,9 +69,10 @@ Item {
 
                 // don't show when in drag and drop mode
                 property var startPosition: Folio.HomeScreenState.dragState.startPosition
-                opacity: (Folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate &&
+                opacity: ((Folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate &&
                             startPosition.location === Folio.DelegateDragPosition.Favourites &&
-                            startPosition.favouritesPosition === delegate.index) ? 0 : 1
+                            startPosition.favouritesPosition === delegate.index) ||
+                            model.hidden) ? 0 : 1
 
                 Loader {
                     anchors.fill: parent
@@ -188,7 +189,7 @@ Item {
                         labelOpacity: delegate.opacity
 
                         onAfterClickAnimation: {
-                            root.homeScreen.openFolder(delegate.delegateModel.folder);
+                            Folio.HomeScreenState.openFolder(delegate.delegateModel.folder);
                         }
 
                         onPressAndHold: {
@@ -199,7 +200,7 @@ Item {
                                 delegate.index
                             );
 
-                            // contextMenu.open();
+                            contextMenu.open();
                         }
 
                         onPressAndHoldReleased: {
@@ -207,6 +208,34 @@ Item {
                             if (Folio.HomeScreenState.swipeState === Folio.HomeScreenState.AwaitingDraggingDelegate) {
                                 homeScreen.cancelDelegateDrag();
                             }
+                        }
+
+                        onRightMousePress: {
+                            contextMenu.open();
+                        }
+
+                        // TODO don't use loader, and move outside to a page to make it more performant
+                        ContextMenuLoader {
+                            id: contextMenu
+
+                            // close menu when drag starts
+                            Connections {
+                                target: Folio.HomeScreenState
+
+                                function onSwipeStateChanged() {
+                                    if (Folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate) {
+                                        contextMenu.close();
+                                    }
+                                }
+                            }
+
+                            actions: [
+                                Kirigami.Action {
+                                    icon.name: "emblem-favorite"
+                                    text: i18n("Remove")
+                                    onTriggered: Folio.FavouritesModel.removeEntry(delegate.index)
+                                }
+                            ]
                         }
                     }
                 }

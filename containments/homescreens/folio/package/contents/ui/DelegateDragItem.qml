@@ -4,16 +4,22 @@
 import QtQuick
 import QtQuick.Effects
 
+import org.kde.private.mobile.homescreen.folio 1.0 as Folio
+
 Item {
     id: root
 
-    property alias source: effect.source
+    property var source
 
     MultiEffect {
         id: effect
         anchors.fill: parent
 
+        // HACK: prevents crashes if the soruce is invalid
+        source: Folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate ? root.source : emptyItem
     }
+
+    Item { id: emptyItem }
 
     layer.enabled: true
     layer.effect: DelegateShadow {}

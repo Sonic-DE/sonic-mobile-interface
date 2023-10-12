@@ -84,7 +84,7 @@ private Q_SLOTS:
 
 private:
     void deleteStartPositionDelegate();
-    void createDropPositionDelegate(bool modifyFolders);
+    void createDropPositionDelegate();
     bool isStartPositionEqualDropPosition();
 
     // we need to adjust so that the coord is in the center of the delegate
@@ -93,7 +93,7 @@ private:
 
     QTimer *m_changePageTimer;
     QTimer *m_favouritesInsertBetweenTimer; // inserting between apps
-    int m_favouritesInsertBetweenIndex;
+    int m_favouritesInsertBetweenIndex{0};
 
     HomeScreenState *m_state;
 
