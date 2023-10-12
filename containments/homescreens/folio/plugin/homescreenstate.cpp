@@ -64,9 +64,32 @@ HomeScreenState::HomeScreenState(QObject *parent)
     m_pageAnim = new QPropertyAnimation{this, "pageViewX", this};
     m_pageAnim->setDuration(200 * 2); // TODO use kirigami longDuration * 2
     m_pageAnim->setEasingCurve(QEasingCurve::OutCubic);
+
+    m_openFolderAnim = new QPropertyAnimation{this, "folderOpenProgress", this};
+    m_openFolderAnim->setDuration(200 * 2); // TODO use kirigami longDuration * 2
+    m_openFolderAnim->setEndValue(1.0);
+    m_openFolderAnim->setEasingCurve(QEasingCurve::OutCubic);
+
+    connect(m_openFolderAnim, &QPropertyAnimation::finished, this, [this]() {
+        setViewState(ViewState::FolderView);
+    });
+
+    m_closeFolderAnim = new QPropertyAnimation{this, "folderOpenProgress", this};
+    m_closeFolderAnim->setDuration(200 * 2); // TODO use kirigami longDuration * 2
+    m_closeFolderAnim->setEndValue(0.0);
+    m_closeFolderAnim->setEasingCurve(QEasingCurve::OutCubic);
+
+    connect(m_closeFolderAnim, &QPropertyAnimation::finished, this, [this]() {
+        setViewState(ViewState::PageView);
+        setCurrentFolder(nullptr);
+    });
+
+    m_folderPageAnim = new QPropertyAnimation{this, "folderViewX", this};
+    m_folderPageAnim->setDuration(200 * 2); // TODO use kirigami longDuration * 2
+    m_folderPageAnim->setEasingCurve(QEasingCurve::OutCubic);
 }
 
-HomeScreenState::ViewState HomeScreenState::viewState()
+HomeScreenState::ViewState HomeScreenState::viewState() const
 {
     return m_viewState;
 }
@@ -79,7 +102,7 @@ void HomeScreenState::setViewState(ViewState viewState)
     }
 }
 
-HomeScreenState::SwipeState HomeScreenState::swipeState()
+HomeScreenState::SwipeState HomeScreenState::swipeState() const
 {
     return m_swipeState;
 }
@@ -92,20 +115,22 @@ void HomeScreenState::setSwipeState(SwipeState swipeState)
     }
 }
 
-DragState *HomeScreenState::dragState()
+DragState *HomeScreenState::dragState() const
 {
     return m_dragState;
 }
 
-qreal HomeScreenState::pageViewX()
+qreal HomeScreenState::pageViewX() const
 {
     return m_pageViewX;
 }
 
 void HomeScreenState::setPageViewX(qreal pageViewX)
 {
-    m_pageViewX = pageViewX;
-    Q_EMIT pageViewXChanged();
+    if (m_pageViewX != pageViewX) {
+        m_pageViewX = pageViewX;
+        Q_EMIT pageViewXChanged();
+    }
 }
 
 qreal HomeScreenState::pageWidth() const
@@ -115,11 +140,13 @@ qreal HomeScreenState::pageWidth() const
 
 void HomeScreenState::setPageWidth(qreal pageWidth)
 {
-    m_pageWidth = pageWidth;
-    Q_EMIT pageWidthChanged();
+    if (m_pageWidth != pageWidth) {
+        m_pageWidth = pageWidth;
+        Q_EMIT pageWidthChanged();
 
-    // make sure we snap
-    snapPage();
+        // make sure we snap
+        snapPage();
+    }
 }
 
 qreal HomeScreenState::pageHeight() const
@@ -129,8 +156,10 @@ qreal HomeScreenState::pageHeight() const
 
 void HomeScreenState::setPageHeight(qreal pageHeight)
 {
-    m_pageHeight = pageHeight;
-    Q_EMIT pageHeightChanged();
+    if (m_pageHeight != pageHeight) {
+        m_pageHeight = pageHeight;
+        Q_EMIT pageHeightChanged();
+    }
 }
 
 qreal HomeScreenState::pageContentWidth() const
@@ -140,8 +169,10 @@ qreal HomeScreenState::pageContentWidth() const
 
 void HomeScreenState::setPageContentWidth(qreal pageContentWidth)
 {
-    m_pageContentWidth = pageContentWidth;
-    Q_EMIT pageContentWidthChanged();
+    if (m_pageContentWidth != pageContentWidth) {
+        m_pageContentWidth = pageContentWidth;
+        Q_EMIT pageContentWidthChanged();
+    }
 }
 
 qreal HomeScreenState::pageContentHeight() const
@@ -151,8 +182,10 @@ qreal HomeScreenState::pageContentHeight() const
 
 void HomeScreenState::setPageContentHeight(qreal pageContentHeight)
 {
-    m_pageContentHeight = pageContentHeight;
-    Q_EMIT pageContentHeightChanged();
+    if (m_pageContentHeight != pageContentHeight) {
+        m_pageContentHeight = pageContentHeight;
+        Q_EMIT pageContentHeightChanged();
+    }
 }
 
 qreal HomeScreenState::pageCellWidth() const
@@ -162,8 +195,10 @@ qreal HomeScreenState::pageCellWidth() const
 
 void HomeScreenState::setPageCellWidth(qreal pageCellWidth)
 {
-    m_pageCellWidth = pageCellWidth;
-    Q_EMIT pageCellWidthChanged();
+    if (m_pageCellWidth != pageCellWidth) {
+        m_pageCellWidth = pageCellWidth;
+        Q_EMIT pageCellWidthChanged();
+    }
 }
 
 qreal HomeScreenState::pageCellHeight() const
@@ -173,8 +208,75 @@ qreal HomeScreenState::pageCellHeight() const
 
 void HomeScreenState::setPageCellHeight(qreal pageCellHeight)
 {
-    m_pageCellHeight = pageCellHeight;
-    Q_EMIT pageCellHeightChanged();
+    if (m_pageCellHeight != pageCellHeight) {
+        m_pageCellHeight = pageCellHeight;
+        Q_EMIT pageCellHeightChanged();
+    }
+}
+
+qreal HomeScreenState::folderViewX() const
+{
+    return m_folderViewX;
+}
+
+void HomeScreenState::setFolderViewX(qreal folderViewX)
+{
+    if (m_folderViewX != folderViewX) {
+        m_folderViewX = folderViewX;
+        Q_EMIT folderViewXChanged();
+    }
+}
+
+qreal HomeScreenState::folderPageWidth() const
+{
+    return m_folderPageWidth;
+}
+
+void HomeScreenState::setFolderPageWidth(qreal folderPageWidth)
+{
+    if (m_folderPageWidth != folderPageWidth) {
+        m_folderPageWidth = folderPageWidth;
+        Q_EMIT folderPageWidthChanged();
+    }
+}
+
+qreal HomeScreenState::folderPageHeight() const
+{
+    return m_folderPageHeight;
+}
+
+void HomeScreenState::setFolderPageHeight(qreal folderPageHeight)
+{
+    if (m_folderPageHeight != folderPageHeight) {
+        m_folderPageHeight = folderPageHeight;
+        Q_EMIT folderPageHeightChanged();
+    }
+}
+
+qreal HomeScreenState::folderOpenProgress() const
+{
+    return m_folderOpenProgress;
+}
+
+void HomeScreenState::setFolderOpenProgress(qreal folderOpenProgress)
+{
+    if (m_folderOpenProgress != folderOpenProgress) {
+        m_folderOpenProgress = folderOpenProgress;
+        Q_EMIT folderOpenProgressChanged();
+    }
+}
+
+FolioApplicationFolder *HomeScreenState::currentFolder() const
+{
+    return m_currentFolder;
+}
+
+void HomeScreenState::setCurrentFolder(FolioApplicationFolder *folder)
+{
+    if (m_currentFolder != folder) {
+        m_currentFolder = folder;
+        Q_EMIT currentFolderChanged();
+    }
 }
 
 qreal HomeScreenState::appDrawerOpenProgress()
@@ -310,6 +412,47 @@ void HomeScreenState::goToPage(int page)
     m_pageAnim->start();
 }
 
+void HomeScreenState::goToFolderPage(int page)
+{
+    if (!m_currentFolder) {
+        return;
+    }
+
+    if (page < 0) {
+        page = 0;
+    }
+
+    int numOfPages = m_currentFolder->applications()->rowCount();
+    if (page >= numOfPages) {
+        page = std::max(0, numOfPages - 1);
+    }
+
+    m_folderPageNum = page;
+    Q_EMIT folderPageNumChanged();
+
+    m_folderPageAnim->setStartValue(m_folderViewX);
+    m_folderPageAnim->setEndValue(-page * m_folderPageWidth);
+    m_folderPageAnim->start();
+}
+
+void HomeScreenState::openFolder(FolioApplicationFolder *folder)
+{
+    setCurrentFolder(folder);
+
+    m_openFolderAnim->stop();
+    m_closeFolderAnim->stop();
+    m_openFolderAnim->setStartValue(m_folderOpenProgress);
+    m_openFolderAnim->start();
+}
+
+void HomeScreenState::closeFolder()
+{
+    m_openFolderAnim->stop();
+    m_closeFolderAnim->stop();
+    m_closeFolderAnim->setStartValue(m_folderOpenProgress);
+    m_closeFolderAnim->start();
+}
+
 void HomeScreenState::startDelegateDrag(qreal startX, qreal startY)
 {
     // start drag and drop positions
@@ -342,6 +485,12 @@ void HomeScreenState::startDelegateAppDrawerDrag(qreal startX, qreal startY, QSt
     // because we don't have a context menu to deal with
     setSwipeState(SwipeState::DraggingDelegate);
     Q_EMIT delegateDragFromAppDrawerStarted(storageId);
+}
+
+void HomeScreenState::startDelegateFolderDrag(qreal startX, qreal startY, int position)
+{
+    startDelegateDrag(startX, startY);
+    Q_EMIT delegateDragFromFolderStarted(position);
 }
 
 void HomeScreenState::cancelDelegateDrag()
@@ -388,6 +537,17 @@ void HomeScreenState::swipeEnded()
         }
         break;
     }
+    case SwipeState::SwipingFolderPages: {
+        int page = std::max(0.0, -m_folderViewX) / m_folderPageWidth;
+
+        // m_movingRight refers to finger movement
+        if (m_movingRight || m_folderViewX > 0) {
+            goToFolderPage(page);
+        } else {
+            goToFolderPage(page + 1);
+        }
+        break;
+    }
     case SwipeState::DraggingDelegate:
         Q_EMIT delegateDragEnded();
         break;
@@ -423,6 +583,10 @@ void HomeScreenState::swipeMoved(qreal totalDeltaX, qreal totalDeltaY, qreal del
         m_movingRight = deltaX > 0;
         setPageViewX(m_pageViewX + deltaX);
         break;
+    case SwipeState::SwipingFolderPages:
+        m_movingRight = deltaX > 0;
+        setFolderViewX(m_folderViewX + deltaX);
+        break;
     case SwipeState::AwaitingDraggingDelegate:
         setSwipeState(SwipeState::DraggingDelegate);
         break;
@@ -448,6 +612,13 @@ void HomeScreenState::determineSwipeTypeAfterThreshold(qreal totalDeltaX, qreal 
         // ensure no animations are running when starting a swipe
         m_pageAnim->stop();
 
+    } else if (qAbs(totalDeltaX) >= DETERMINE_SWIPE_THRESHOLD && m_viewState == ViewState::FolderView) {
+        // select horizontal swipe mode (only if in page view)
+        setSwipeState(SwipeState::SwipingFolderPages);
+
+        // ensure no animations are running when starting a swipe
+        m_folderPageAnim->stop();
+
     } else if (qAbs(totalDeltaY) >= DETERMINE_SWIPE_THRESHOLD) {
         // select vertical swipe mode
 
@@ -471,9 +642,11 @@ void HomeScreenState::determineSwipeTypeAfterThreshold(qreal totalDeltaX, qreal 
                 cancelAppDrawerAnimations();
                 break;
             case ViewState::SearchWidgetView:
-            default:
                 setSwipeState(SwipeState::SwipingCloseSearchWidget);
                 cancelSearchWidgetAnimations();
+            case ViewState::FolderView:
+                // no vertical behaviour in folder view
+            default:
                 break;
             }
         } else {
@@ -493,9 +666,11 @@ void HomeScreenState::determineSwipeTypeAfterThreshold(qreal totalDeltaX, qreal 
                 cancelSearchWidgetAnimations();
                 break;
             case ViewState::AppDrawerView:
-            default:
                 setSwipeState(SwipeState::SwipingCloseAppDrawer);
                 cancelAppDrawerAnimations();
+            case ViewState::FolderView:
+                // no vertical behaviour in folder view
+            default:
                 break;
             }
         }
