@@ -29,8 +29,12 @@ FavouritesModel *FavouritesModel::self()
 FavouritesModel::FavouritesModel(QObject *parent)
     : QAbstractListModel{parent}
 {
-    connect(HomeScreenState::self(), &HomeScreenState::pageWidthChanged, this, &FavouritesModel::evaluateDelegatePositions);
-    connect(HomeScreenState::self(), &HomeScreenState::pageCellWidthChanged, this, &FavouritesModel::evaluateDelegatePositions);
+    connect(HomeScreenState::self(), &HomeScreenState::pageWidthChanged, this, [this]() {
+        evaluateDelegatePositions(true);
+    });
+    connect(HomeScreenState::self(), &HomeScreenState::pageCellWidthChanged, this, [this]() {
+        evaluateDelegatePositions(true);
+    });
 }
 
 int FavouritesModel::rowCount(const QModelIndex &parent) const
@@ -41,7 +45,7 @@ int FavouritesModel::rowCount(const QModelIndex &parent) const
 
 QVariant FavouritesModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid()) {
+    if (!index.isValid() || index.row() < 0 || index.row() >= m_delegates.size()) {
         return QVariant();
     }
 
@@ -50,6 +54,8 @@ QVariant FavouritesModel::data(const QModelIndex &index, int role) const
         return QVariant::fromValue(m_delegates.at(index.row()).delegate);
     case XPositionRole:
         return QVariant::fromValue(m_delegates.at(index.row()).xPosition);
+    case HiddenRole:
+        return m_delegates.at(index.row()).delegate == m_invisibleDelegate;
     }
 
     return QVariant();
@@ -57,7 +63,7 @@ QVariant FavouritesModel::data(const QModelIndex &index, int role) const
 
 QHash<int, QByteArray> FavouritesModel::roleNames() const
 {
-    return {{DelegateRole, "delegate"}, {XPositionRole, "xPosition"}};
+    return {{DelegateRole, "delegate"}, {XPositionRole, "xPosition"}, {HiddenRole, "hidden"}};
 }
 
 void FavouritesModel::removeEntry(int row)
@@ -117,12 +123,14 @@ bool FavouritesModel::addEntry(int row, FolioDelegate *delegate)
     if (row == m_delegates.size()) {
         beginInsertRows(QModelIndex(), row, row);
         m_delegates.append({delegate, 0});
+        evaluateDelegatePositions(false);
         endInsertRows();
     } else if (m_delegates[row].delegate->type() == FolioDelegate::None) {
         replaceGhostEntry(delegate);
     } else {
         beginInsertRows(QModelIndex(), row, row);
         m_delegates.insert(row, {delegate, 0});
+        evaluateDelegatePositions(false);
         endInsertRows();
     }
 
@@ -142,16 +150,32 @@ FolioDelegate *FavouritesModel::getEntryAt(int row)
     return m_delegates[row].delegate;
 }
 
+int FavouritesModel::getGhostEntryPosition()
+{
+    for (int i = 0; i < m_delegates.size(); i++) {
+        if (m_delegates[i].delegate->type() == FolioDelegate::None) {
+            return i;
+        }
+    }
+    return -1;
+}
+
 void FavouritesModel::setGhostEntry(int row)
 {
     bool found = false;
+
+    // check if a ghost entry already exists, then swap them
     for (int i = 0; i < m_delegates.size(); i++) {
         if (m_delegates[i].delegate->type() == FolioDelegate::None) {
             found = true;
-            moveEntry(i, row);
+
+            if (row != i) {
+                moveEntry(i, row);
+            }
         }
     }
 
+    // if it doesn't, add a new empty delegate
     if (!found) {
         FolioDelegate *ghost = new FolioDelegate{this};
         addEntry(row, ghost);
@@ -179,6 +203,22 @@ void FavouritesModel::deleteGhostEntry()
     }
 }
 
+void FavouritesModel::setInvisiblePosition(int row)
+{
+    if (row < 0 || row >= m_delegates.size()) {
+        return;
+    }
+
+    m_invisibleDelegate = m_delegates[row].delegate;
+    evaluateDelegatePositions();
+}
+
+void FavouritesModel::clearInvisiblePosition()
+{
+    m_invisibleDelegate = nullptr;
+    evaluateDelegatePositions();
+}
+
 void FavouritesModel::save()
 {
     if (!m_applet) {
@@ -187,12 +227,14 @@ void FavouritesModel::save()
 
     QJsonArray arr;
     for (int i = 0; i < m_delegates.size(); i++) {
+        FolioDelegate *delegate = m_delegates[i].delegate;
+
         // if this delegate is empty, ignore it
-        if (!m_delegates[i].delegate || m_delegates[i].delegate->type() == FolioDelegate::None) {
+        if (!delegate || delegate->type() == FolioDelegate::None) {
             continue;
         }
 
-        arr.append(m_delegates[i].delegate->toJson());
+        arr.append(delegate->toJson());
     }
     QByteArray data = QJsonDocument(arr).toJson(QJsonDocument::Compact);
 
@@ -238,11 +280,27 @@ bool FavouritesModel::dropPositionIsEdge(qreal x)
         return true;
     }
 
-    int index = x / cellWidth;
-    qreal delegateCentre = index * cellWidth + cellWidth / 2;
+    qreal currentX = startPosition;
 
-    // if it is within the centre 70% of a delegate, it is not at an edge
-    return qAbs(delegateCentre - x) >= cellWidth * 0.35; // 0.35 since we are measuring from centre
+    for (int i = 0; i < m_delegates.size(); i++) {
+        // ignore invisible delegate
+        if (m_delegates[i].delegate == m_invisibleDelegate) {
+            continue;
+        }
+
+        qDebug() << "drop position compare" << x << currentX << cellWidth;
+
+        // if it is within the centre 70% of a delegate, it is not at an edge
+        if (x >= currentX + cellWidth * 0.15 && x <= currentX + cellWidth * 0.85) {
+            return false;
+        }
+
+        currentX += cellWidth;
+    }
+
+    qDebug() << "false";
+
+    return true;
 }
 
 int FavouritesModel::dropInsertPosition(qreal x)
@@ -250,8 +308,26 @@ int FavouritesModel::dropInsertPosition(qreal x)
     qreal startPosition = getDelegateRowStartX();
     qreal cellWidth = HomeScreenState::self()->pageCellWidth();
 
-    int pos = (x - startPosition) / cellWidth;
-    return std::min((int)m_delegates.size(), std::max(0, pos));
+    if (x < startPosition) {
+        return 0;
+    }
+
+    qreal currentX = startPosition;
+    for (int i = 0; i < m_delegates.size(); i++) {
+        // ignore invisible delegate
+        if (m_delegates[i].delegate == m_invisibleDelegate) {
+            continue;
+        }
+
+        if (x < currentX + cellWidth * 0.85) {
+            return i;
+        } else if (x < currentX + cellWidth) {
+            return i + 1;
+        }
+
+        currentX += cellWidth;
+    }
+    return m_delegates.size();
 }
 
 void FavouritesModel::setApplet(Plasma::Applet *applet)
@@ -260,16 +336,25 @@ void FavouritesModel::setApplet(Plasma::Applet *applet)
     load();
 }
 
-void FavouritesModel::evaluateDelegatePositions()
+void FavouritesModel::evaluateDelegatePositions(bool emitSignal)
 {
     qreal cellWidth = HomeScreenState::self()->pageCellWidth();
     qreal startPosition = getDelegateRowStartX();
 
+    qreal currentX = startPosition;
+
     for (int i = 0; i < m_delegates.size(); ++i) {
-        m_delegates[i].xPosition = qRound(startPosition + cellWidth * i);
+        m_delegates[i].xPosition = qRound(currentX);
+
+        if (m_delegates[i].delegate != m_invisibleDelegate) {
+            currentX += cellWidth;
+        }
     }
 
-    Q_EMIT dataChanged(createIndex(0, 0), createIndex(m_delegates.size() - 1, 0), {XPositionRole});
+    if (emitSignal) {
+        Q_EMIT dataChanged(createIndex(0, 0), createIndex(m_delegates.size() - 1, 0), {HiddenRole});
+        Q_EMIT dataChanged(createIndex(0, 0), createIndex(m_delegates.size() - 1, 0), {XPositionRole});
+    }
 }
 
 qreal FavouritesModel::getDelegateRowStartX()
@@ -277,6 +362,10 @@ qreal FavouritesModel::getDelegateRowStartX()
     int length = m_delegates.size();
     qreal cellWidth = HomeScreenState::self()->pageCellWidth();
     qreal pageWidth = HomeScreenState::self()->pageWidth();
+
+    if (m_invisibleDelegate != nullptr) {
+        length--;
+    }
 
     return (pageWidth / 2) - (((qreal)length) / 2) * cellWidth;
 }

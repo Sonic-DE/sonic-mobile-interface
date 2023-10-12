@@ -42,10 +42,6 @@ Item {
         homeScreenState.cancelDelegateDrag();
     }
 
-    function openFolder(folder) {
-        folderView.open(folder);
-    }
-
     Connections {
         target: homeScreenState
         function onDelegateDragEnded() {
@@ -76,7 +72,7 @@ Item {
             anchors.fill: parent
 
             // we stop showing halfway through the animation
-            opacity: 1 - Math.max(homeScreenState.appDrawerOpenProgress, homeScreenState.searchWidgetOpenProgress) * 2
+            opacity: 1 - Math.max(homeScreenState.appDrawerOpenProgress, homeScreenState.searchWidgetOpenProgress, homeScreenState.folderOpenProgress) * 2
             visible: opacity > 0 // prevent handlers from picking up events
 
             transform: [
@@ -128,6 +124,9 @@ Item {
         FolderView {
             id: folderView
             anchors.fill: parent
+
+            opacity: homeScreenState.folderOpenProgress
+            transform: Translate { y: folderView.opacity > 0 ? 0 : folderView.height }
         }
 
         // drag and drop component

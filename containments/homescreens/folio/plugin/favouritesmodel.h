@@ -28,6 +28,7 @@ public:
     enum Roles {
         DelegateRole = Qt::UserRole + 1,
         XPositionRole,
+        HiddenRole,
     };
 
     FavouritesModel(QObject *parent = nullptr);
@@ -43,9 +44,15 @@ public:
     FolioDelegate *getEntryAt(int row);
 
     // for use with drag and drop, as the delegate is dragged around
+    // ghost - fake delegate exists at an index, so a gap is created
+    // invisible - existing delegate looks like it doesn't exist
+    int getGhostEntryPosition();
     void setGhostEntry(int row);
     void replaceGhostEntry(FolioDelegate *delegate);
     void deleteGhostEntry();
+
+    void setInvisiblePosition(int row);
+    void clearInvisiblePosition();
 
     // whether the position given is in between 2 delegates, or at the edge.
     // this would return false if dropping should place the delegate into a folder/create a folder.
@@ -60,7 +67,9 @@ public:
 private:
     void save();
     void load();
-    void evaluateDelegatePositions();
+    void evaluateDelegatePositions(bool emitSignal = true);
+
+    FolioDelegate *m_invisibleDelegate{nullptr};
 
     // get the x position where delegates start being placed
     qreal getDelegateRowStartX();

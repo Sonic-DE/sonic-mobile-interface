@@ -18,19 +18,14 @@ Folio.DelegateTouchArea {
 
     property bool inFolderTitleEditMode: false
 
+    // TODO FILL FOLDER page WIDTH AND HEIGHT FIELDS
+
     onClicked: {
         close();
     }
 
-    opacity: 0
-    visible: opacity > 0
-
-    function open() {
-        opacity = 1
-    }
-
     function close() {
-        opacity = 0
+        Folio.HomeScreenState.closeFolder();
     }
 
     MobileShell.BaseItem {

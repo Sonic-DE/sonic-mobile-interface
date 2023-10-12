@@ -32,6 +32,12 @@ class HomeScreenState : public QObject
     Q_PROPERTY(qreal pageCellWidth READ pageCellWidth WRITE setPageCellWidth NOTIFY pageCellWidthChanged)
     Q_PROPERTY(qreal pageCellHeight READ pageCellHeight WRITE setPageCellHeight NOTIFY pageCellHeightChanged)
 
+    Q_PROPERTY(qreal folderViewX READ folderViewX WRITE setFolderViewX NOTIFY folderViewXChanged)
+    Q_PROPERTY(qreal folderPageWidth READ folderPageWidth WRITE setFolderPageWidth NOTIFY folderPageWidthChanged)
+    Q_PROPERTY(qreal folderPageHeight READ folderPageHeight WRITE setFolderPageHeight NOTIFY folderPageHeightChanged)
+    Q_PROPERTY(qreal folderOpenProgress READ folderOpenProgress WRITE setFolderOpenProgress NOTIFY folderOpenProgressChanged)
+    Q_PROPERTY(FolioApplicationFolder *currentFolder READ currentFolder NOTIFY currentFolderChanged)
+
     Q_PROPERTY(qreal appDrawerOpenProgress READ appDrawerOpenProgress NOTIFY appDrawerOpenProgressChanged)
     Q_PROPERTY(qreal appDrawerY READ appDrawerY WRITE setAppDrawerY NOTIFY appDrawerYChanged)
 
@@ -50,6 +56,7 @@ public:
         SwipingCloseAppDrawer,
         SwipingOpenSearchWidget,
         SwipingCloseSearchWidget,
+        SwipingFolderPages,
         AwaitingDraggingDelegate,
         DraggingDelegate,
     };
@@ -59,6 +66,7 @@ public:
         SearchWidgetView,
         PageView,
         AppDrawerView,
+        FolderView,
     };
     Q_ENUM(ViewState)
 
@@ -67,17 +75,17 @@ public:
     HomeScreenState(QObject *parent = nullptr);
 
     // the current state of swipe interaction
-    SwipeState swipeState();
+    SwipeState swipeState() const;
 
     // the current view
-    ViewState viewState();
+    ViewState viewState() const;
 
-    DragState *dragState();
+    DragState *dragState() const;
 
     // the current horizontal position of the pageview
     // starts at 0, each page is m_pageWidth wide
     // first page is at -m_pageWidth, second is at -m_pageWidth * 2, etc.
-    qreal pageViewX();
+    qreal pageViewX() const;
     void setPageViewX(qreal pageViewX);
 
     // the width of a single pageview page (set from QML)
@@ -98,6 +106,21 @@ public:
 
     qreal pageCellHeight() const;
     void setPageCellHeight(qreal pageCellHeight);
+
+    qreal folderViewX() const;
+    void setFolderViewX(qreal folderViewX);
+
+    qreal folderPageWidth() const;
+    void setFolderPageWidth(qreal folderPageWidth);
+
+    qreal folderPageHeight() const;
+    void setFolderPageHeight(qreal folderPageHeight);
+
+    qreal folderOpenProgress() const;
+    void setFolderOpenProgress(qreal folderOpenProgress);
+
+    FolioApplicationFolder *currentFolder() const;
+    void setCurrentFolder(FolioApplicationFolder *folder);
 
     // between 0-1, the progress for the opening of the app drawer
     qreal appDrawerOpenProgress();
@@ -135,6 +158,11 @@ Q_SIGNALS:
     void pageContentHeightChanged();
     void pageCellWidthChanged();
     void pageCellHeightChanged();
+    void folderViewXChanged();
+    void folderPageWidthChanged();
+    void folderPageHeightChanged();
+    void folderOpenProgressChanged();
+    void currentFolderChanged();
     void appDrawerOpenProgressChanged();
     void appDrawerYChanged();
     void searchWidgetOpenProgressChanged();
@@ -145,19 +173,27 @@ Q_SIGNALS:
     void delegateDragFromPageStarted(int page, int row, int column);
     void delegateDragFromFavouritesStarted(int position);
     void delegateDragFromAppDrawerStarted(QString storageId);
+    void delegateDragFromFolderStarted(int position);
     void pageNumChanged();
+    void folderPageNumChanged();
 
 public Q_SLOTS:
     void openAppDrawer();
     void closeAppDrawer();
     void openSearchWidget();
     void closeSearchWidget();
+
     void snapPage(); // snaps to closest page
     void goToPage(int page);
+
+    void goToFolderPage(int page);
+    void openFolder(FolioApplicationFolder *folder);
+    void closeFolder();
 
     void startDelegatePageDrag(qreal startX, qreal startY, int page, int row, int column);
     void startDelegateFavouritesDrag(qreal startX, qreal startY, int position);
     void startDelegateAppDrawerDrag(qreal startX, qreal startY, QString storageId);
+    void startDelegateFolderDrag(qreal startX, qreal startY, int position);
     void cancelDelegateDrag();
 
     // from SwipeArea
@@ -190,6 +226,12 @@ private:
     qreal m_pageCellWidth{0};
     qreal m_pageCellHeight{0};
 
+    qreal m_folderViewX{0};
+    qreal m_folderPageWidth{0};
+    qreal m_folderPageHeight{0};
+    qreal m_folderOpenProgress{0};
+    FolioApplicationFolder *m_currentFolder{nullptr};
+
     qreal m_appDrawerOpenProgress{0};
     qreal m_appDrawerY{0};
     qreal m_searchWidgetOpenProgress{0};
@@ -198,6 +240,7 @@ private:
     qreal m_delegateDragY{0};
 
     int m_pageNum{0};
+    int m_folderPageNum{0};
 
     bool m_movingUp{false};
     bool m_movingRight{false};
@@ -207,4 +250,7 @@ private:
     QPropertyAnimation *m_openSearchWidgetAnim{nullptr};
     QPropertyAnimation *m_closeSearchWidgetAnim{nullptr};
     QPropertyAnimation *m_pageAnim{nullptr};
+    QPropertyAnimation *m_openFolderAnim{nullptr};
+    QPropertyAnimation *m_closeFolderAnim{nullptr};
+    QPropertyAnimation *m_folderPageAnim{nullptr};
 };

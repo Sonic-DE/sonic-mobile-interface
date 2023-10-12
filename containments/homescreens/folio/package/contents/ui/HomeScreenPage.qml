@@ -190,7 +190,7 @@ Item {
                     labelOpacity: delegate.opacity
 
                     onAfterClickAnimation: {
-                        root.homeScreen.openFolder(delegate.pageDelegate.folder);
+                        Folio.HomeScreenState.openFolder(delegate.pageDelegate.folder);
                     }
 
                     onPressAndHold: {
@@ -211,6 +211,34 @@ Item {
                         if (Folio.HomeScreenState.swipeState === Folio.HomeScreenState.AwaitingDraggingDelegate) {
                             homeScreen.cancelDelegateDrag();
                         }
+                    }
+
+                    onRightMousePress: {
+                        contextMenu.open();
+                    }
+
+                    // TODO don't use loader, and move outside to a page to make it more performant
+                    ContextMenuLoader {
+                        id: contextMenu
+
+                        // close menu when drag starts
+                        Connections {
+                            target: Folio.HomeScreenState
+
+                            function onSwipeStateChanged() {
+                                if (Folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate) {
+                                    contextMenu.close();
+                                }
+                            }
+                        }
+
+                        actions: [
+                            Kirigami.Action {
+                                icon.name: "emblem-favorite"
+                                text: i18n("Remove")
+                                onTriggered: root.pageModel.removeDelegate(delegate.row, delegate.column)
+                            }
+                        ]
                     }
                 }
             }
