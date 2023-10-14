@@ -4,6 +4,7 @@
 #pragma once
 
 #include "folioapplication.h"
+#include "foliodelegate.h"
 
 #include <QAbstractListModel>
 #include <QObject>
@@ -21,6 +22,8 @@
  */
 
 class ApplicationFolderModel;
+struct ApplicationDelegate;
+class FolioDelegate;
 class FolioApplicationFolder : public QObject
 {
     Q_OBJECT
@@ -42,24 +45,31 @@ public:
     ApplicationFolderModel *applications();
     void setApplications(QList<FolioApplication *> applications);
 
-    Q_INVOKABLE void moveEntry(int fromRow, int toRow);
-    Q_INVOKABLE void addApp(const QString &storageId, int row);
-    Q_INVOKABLE void removeApp(int row);
-    Q_INVOKABLE void moveAppOut(int row); // moves app to main page
+    void moveEntry(int fromRow, int toRow);
+    bool addDelegate(FolioDelegate *delegate, int row);
+    Q_INVOKABLE void removeDelegate(int row);
+
+    int dropInsertPosition(qreal x, qreal y);
+    bool isDropPositionOutside(qreal x, qreal y);
 
 Q_SIGNALS:
     void nameChanged();
     void saveRequested();
-    void moveAppOutRequested(const QString &storageId);
     void applicationsChanged();
     void applicationsReset();
 
 private:
     QString m_name;
-    QList<FolioApplication *> m_applications;
+    QList<ApplicationDelegate> m_delegates;
     ApplicationFolderModel *m_applicationFolderModel;
 
     friend class ApplicationFolderModel;
+};
+
+struct ApplicationDelegate {
+    FolioDelegate *delegate;
+    qreal xPosition;
+    qreal yPosition;
 };
 
 class ApplicationFolderModel : public QAbstractListModel
@@ -67,7 +77,11 @@ class ApplicationFolderModel : public QAbstractListModel
     Q_OBJECT
 
 public:
-    enum Roles { ApplicationRole = Qt::UserRole + 1 };
+    enum Roles {
+        DelegateRole = Qt::UserRole + 1,
+        XPositionRole,
+        YPositionRole,
+    };
     ApplicationFolderModel(FolioApplicationFolder *folder);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -75,10 +89,34 @@ public:
     QHash<int, QByteArray> roleNames() const override;
 
     void moveEntry(int fromRow, int toRow);
-    void addApp(const QString &storageId, int row);
-    void removeApp(int row);
+    bool addDelegate(FolioDelegate *delegate, int row);
+    void removeDelegate(int row);
+
+    // the index that dropping at the position given would place the delegate at.
+    int dropInsertPosition(qreal x, qreal y);
+
+    // whether this position is outside of the folder area
+    bool isDropPositionOutside(qreal x, qreal y);
+
+    // distance between page content to screen edge
+    qreal leftMarginFromScreenEdge();
+    qreal topMarginFromScreenEdge();
+
+    int numTotalPages();
 
 private:
+    void evaluateDelegatePositions(bool emitSignal = true);
+
+    // get the position where delegates start being placed
+    QPointF getDelegateStartPosition(int page);
+
+    int numRowsOnPage();
+    int numColumnsOnPage();
+
+    // distance between folder edge and page content
+    qreal horizontalPageMargin();
+    qreal verticalPageMargin();
+
     FolioApplicationFolder *m_folder;
 
     friend class FolioApplicationFolder;

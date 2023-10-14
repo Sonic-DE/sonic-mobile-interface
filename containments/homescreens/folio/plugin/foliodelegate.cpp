@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include "foliodelegate.h"
+#include "homescreenstate.h"
 
 FolioDelegate::FolioDelegate(QObject *parent)
     : QObject{parent}

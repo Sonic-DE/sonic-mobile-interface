@@ -2,8 +2,10 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include "folioapplicationfolder.h"
+#include "homescreenstate.h"
 
 #include <QJsonArray>
+#include <algorithm>
 
 FolioApplicationFolder::FolioApplicationFolder(QObject *parent, QString name)
     : QObject{parent}
@@ -34,8 +36,11 @@ QJsonObject FolioApplicationFolder::toJson()
     obj[QStringLiteral("name")] = m_name;
 
     QJsonArray arr;
-    for (auto *application : m_applications) {
-        arr.append(QJsonValue::fromVariant(application->storageId()));
+    for (auto delegate : m_delegates) {
+        if (delegate.delegate->type() != FolioDelegate::Application) {
+            continue;
+        }
+        arr.append(QJsonValue::fromVariant(delegate.delegate->application()->storageId()));
     }
 
     obj[QStringLiteral("apps")] = arr;
@@ -59,8 +64,11 @@ QList<FolioApplication *> FolioApplicationFolder::appPreviews()
 {
     QList<FolioApplication *> previews;
     // we give a maximum of 4 icons
-    for (int i = 0; i < std::min<int>(m_applications.length(), 4); ++i) {
-        previews.push_back(m_applications[i]);
+    for (int i = 0; i < std::min<int>(m_delegates.size(), 4); ++i) {
+        if (!m_delegates[i].delegate->application()) {
+            continue;
+        }
+        previews.push_back(m_delegates[i].delegate->application());
     }
     return previews;
 }
@@ -76,8 +84,12 @@ void FolioApplicationFolder::setApplications(QList<FolioApplication *> applicati
         m_applicationFolderModel->deleteLater();
     }
 
-    m_applications = applications;
+    m_delegates.clear();
+    for (auto *app : applications) {
+        m_delegates.append({new FolioDelegate{app, this}, 0, 0});
+    }
     m_applicationFolderModel = new ApplicationFolderModel{this};
+    m_applicationFolderModel->evaluateDelegatePositions();
 
     Q_EMIT applicationsChanged();
     Q_EMIT applicationsReset();
@@ -89,35 +101,59 @@ void FolioApplicationFolder::moveEntry(int fromRow, int toRow)
     m_applicationFolderModel->moveEntry(fromRow, toRow);
 }
 
-void FolioApplicationFolder::addApp(const QString &storageId, int row)
+bool FolioApplicationFolder::addDelegate(FolioDelegate *delegate, int row)
 {
-    m_applicationFolderModel->addApp(storageId, row);
+    return m_applicationFolderModel->addDelegate(delegate, row);
 }
 
-void FolioApplicationFolder::removeApp(int row)
+void FolioApplicationFolder::removeDelegate(int row)
 {
-    m_applicationFolderModel->removeApp(row);
+    m_applicationFolderModel->removeDelegate(row);
 }
 
-void FolioApplicationFolder::moveAppOut(int row)
+int FolioApplicationFolder::dropInsertPosition(qreal x, qreal y)
 {
-    if (row < 0 || row >= m_applications.size()) {
-        return;
-    }
+    return m_applicationFolderModel->dropInsertPosition(x, y);
+}
 
-    Q_EMIT moveAppOutRequested(m_applications[row]->storageId());
-    removeApp(row);
+bool FolioApplicationFolder::isDropPositionOutside(qreal x, qreal y)
+{
+    return m_applicationFolderModel->isDropPositionOutside(x, y);
 }
 
 ApplicationFolderModel::ApplicationFolderModel(FolioApplicationFolder *folder)
     : QAbstractListModel{folder}
     , m_folder{folder}
 {
+    connect(HomeScreenState::self(), &HomeScreenState::folderPageWidthChanged, this, [this]() {
+        evaluateDelegatePositions();
+    });
+    connect(HomeScreenState::self(), &HomeScreenState::folderPageHeightChanged, this, [this]() {
+        evaluateDelegatePositions();
+    });
+    connect(HomeScreenState::self(), &HomeScreenState::folderPageContentWidthChanged, this, [this]() {
+        evaluateDelegatePositions();
+    });
+    connect(HomeScreenState::self(), &HomeScreenState::folderPageContentHeightChanged, this, [this]() {
+        evaluateDelegatePositions();
+    });
+    connect(HomeScreenState::self(), &HomeScreenState::viewWidthChanged, this, [this]() {
+        evaluateDelegatePositions();
+    });
+    connect(HomeScreenState::self(), &HomeScreenState::viewHeightChanged, this, [this]() {
+        evaluateDelegatePositions();
+    });
+    connect(HomeScreenState::self(), &HomeScreenState::pageCellWidthChanged, this, [this]() {
+        evaluateDelegatePositions();
+    });
+    connect(HomeScreenState::self(), &HomeScreenState::pageCellHeightChanged, this, [this]() {
+        evaluateDelegatePositions();
+    });
 }
 
 int ApplicationFolderModel::rowCount(const QModelIndex &parent) const
 {
-    return m_folder->m_applications.size();
+    return m_folder->m_delegates.size();
 }
 
 QVariant ApplicationFolderModel::data(const QModelIndex &index, int role) const
@@ -127,8 +163,12 @@ QVariant ApplicationFolderModel::data(const QModelIndex &index, int role) const
     }
 
     switch (role) {
-    case ApplicationRole:
-        return QVariant::fromValue(m_folder->m_applications.at(index.row()));
+    case DelegateRole:
+        return QVariant::fromValue(m_folder->m_delegates.at(index.row()).delegate);
+    case XPositionRole:
+        return QVariant::fromValue(m_folder->m_delegates.at(index.row()).xPosition);
+    case YPositionRole:
+        return QVariant::fromValue(m_folder->m_delegates.at(index.row()).yPosition);
     }
 
     return QVariant();
@@ -136,12 +176,12 @@ QVariant ApplicationFolderModel::data(const QModelIndex &index, int role) const
 
 QHash<int, QByteArray> ApplicationFolderModel::roleNames() const
 {
-    return {{ApplicationRole, "application"}};
+    return {{DelegateRole, "delegate"}, {XPositionRole, "xPosition"}, {YPositionRole, "yPosition"}};
 }
 
 void ApplicationFolderModel::moveEntry(int fromRow, int toRow)
 {
-    if (fromRow < 0 || toRow < 0 || fromRow >= m_folder->m_applications.length() || toRow >= m_folder->m_applications.length() || fromRow == toRow) {
+    if (fromRow < 0 || toRow < 0 || fromRow >= m_folder->m_delegates.size() || toRow >= m_folder->m_delegates.size() || fromRow == toRow) {
         return;
     }
     if (toRow > fromRow) {
@@ -150,46 +190,192 @@ void ApplicationFolderModel::moveEntry(int fromRow, int toRow)
 
     beginMoveRows(QModelIndex(), fromRow, fromRow, QModelIndex(), toRow);
     if (toRow > fromRow) {
-        FolioApplication *app = m_folder->m_applications.at(fromRow);
-        m_folder->m_applications.insert(toRow, app);
-        m_folder->m_applications.takeAt(fromRow);
+        auto delegate = m_folder->m_delegates.at(fromRow);
+        m_folder->m_delegates.insert(toRow, delegate);
+        m_folder->m_delegates.takeAt(fromRow);
     } else {
-        FolioApplication *app = m_folder->m_applications.takeAt(fromRow);
-        m_folder->m_applications.insert(toRow, app);
+        auto delegate = m_folder->m_delegates.takeAt(fromRow);
+        m_folder->m_delegates.insert(toRow, delegate);
     }
     endMoveRows();
+
+    evaluateDelegatePositions();
+
     Q_EMIT m_folder->applicationsChanged();
     Q_EMIT m_folder->saveRequested();
 }
 
-void ApplicationFolderModel::addApp(const QString &storageId, int row)
+bool ApplicationFolderModel::addDelegate(FolioDelegate *delegate, int row)
 {
-    if (row < 0 || row > m_folder->m_applications.size()) {
-        return;
+    if (row < 0 || row > m_folder->m_delegates.size()) {
+        return false;
     }
 
-    if (KService::Ptr service = KService::serviceByStorageId(storageId)) {
-        beginInsertRows(QModelIndex(), row, row);
-        FolioApplication *app = new FolioApplication(this, service);
-        m_folder->m_applications.insert(row, app);
-        endInsertRows();
-
-        Q_EMIT m_folder->applicationsChanged();
-        Q_EMIT m_folder->saveRequested();
+    if (!delegate) {
+        return false;
     }
+
+    beginInsertRows(QModelIndex(), row, row);
+    m_folder->m_delegates.insert(row, {delegate, 0, 0});
+    evaluateDelegatePositions(false);
+    endInsertRows();
+
+    Q_EMIT m_folder->applicationsChanged();
+    Q_EMIT m_folder->saveRequested();
+
+    return true;
 }
 
-void ApplicationFolderModel::removeApp(int row)
+void ApplicationFolderModel::removeDelegate(int row)
 {
-    if (row < 0 || row >= m_folder->m_applications.size()) {
+    if (row < 0 || row >= m_folder->m_delegates.size()) {
         return;
     }
 
     beginRemoveRows(QModelIndex(), row, row);
-    m_folder->m_applications[row]->deleteLater();
-    m_folder->m_applications.removeAt(row);
+    // HACK: do not deleteLater(), because the delegate might still be used somewhere else
+    // m_folder->m_delegates[row].app->deleteLater();
+    m_folder->m_delegates.removeAt(row);
     endRemoveRows();
+
+    evaluateDelegatePositions();
 
     Q_EMIT m_folder->applicationsChanged();
     Q_EMIT m_folder->saveRequested();
+}
+
+int ApplicationFolderModel::dropInsertPosition(qreal x, qreal y)
+{
+    qreal pageWidth = HomeScreenState::self()->folderPageWidth();
+    qreal cellWidth = HomeScreenState::self()->pageCellWidth();
+    qreal cellHeight = HomeScreenState::self()->pageCellHeight();
+
+    int page = x / pageWidth;
+    page = std::max(0, std::min(numTotalPages(), page));
+
+    int row = (y - topMarginFromScreenEdge()) / cellHeight;
+    row = std::max(0, std::min(numRowsOnPage(), row));
+
+    // the index that the position is over
+    int leftColumn = std::max(0.0, x - leftMarginFromScreenEdge()) / cellWidth;
+    leftColumn = std::min(numColumnsOnPage() - 1, leftColumn);
+
+    qreal leftColumnPosition = leftColumn * cellWidth + leftMarginFromScreenEdge();
+
+    int column = leftColumn + 1;
+
+    // if it's the left half of this position or it's the last column on this row, return itself
+    if ((x < leftColumnPosition + cellWidth * 0.5) || (leftColumn == numColumnsOnPage() - 1)) {
+        column = leftColumn;
+    }
+
+    // calculate the position based on the page, row and column it is at
+    return (page * numRowsOnPage() * numColumnsOnPage()) + (row * numColumnsOnPage()) + column;
+}
+
+bool ApplicationFolderModel::isDropPositionOutside(qreal x, qreal y)
+{
+    return (x < leftMarginFromScreenEdge()) || x > (HomeScreenState::self()->folderPageWidth() - leftMarginFromScreenEdge()) || (y < topMarginFromScreenEdge())
+        || (y > HomeScreenState::self()->folderPageHeight() - topMarginFromScreenEdge());
+}
+
+void ApplicationFolderModel::evaluateDelegatePositions(bool emitSignal)
+{
+    qreal pageWidth = HomeScreenState::self()->folderPageWidth();
+    qreal topMargin = verticalPageMargin();
+    qreal leftMargin = horizontalPageMargin();
+
+    qreal cellWidth = HomeScreenState::self()->pageCellWidth();
+    qreal cellHeight = HomeScreenState::self()->pageCellHeight();
+
+    int rows = numRowsOnPage();
+    int columns = numColumnsOnPage();
+    int numOfDelegates = m_folder->m_delegates.size();
+
+    int index = 0;
+    int page = 0;
+
+    while (index < m_folder->m_delegates.size()) {
+        int prevIndex = index;
+        for (int row = 0; row < rows && index < numOfDelegates; row++) {
+            for (int column = 0; column < columns && index < numOfDelegates; column++) {
+                m_folder->m_delegates[index].xPosition = qRound(page * pageWidth + leftMargin + column * cellWidth);
+                m_folder->m_delegates[index].yPosition = qRound(topMargin + row * cellHeight);
+                index++;
+            }
+        }
+        // prevent infinite loop
+        if (prevIndex == index) {
+            break;
+        }
+        page++;
+    }
+
+    if (emitSignal) {
+        Q_EMIT dataChanged(createIndex(0, 0), createIndex(m_folder->m_delegates.size() - 1, 0), {XPositionRole});
+        Q_EMIT dataChanged(createIndex(0, 0), createIndex(m_folder->m_delegates.size() - 1, 0), {YPositionRole});
+    }
+}
+
+QPointF ApplicationFolderModel::getDelegateStartPosition(int page)
+{
+    qreal pageWidth = HomeScreenState::self()->folderPageWidth();
+
+    qreal x = pageWidth * page + leftMarginFromScreenEdge();
+    qreal y = topMarginFromScreenEdge();
+    return QPointF{x, y};
+}
+
+int ApplicationFolderModel::numTotalPages()
+{
+    int numOfDelegatesOnPage = numRowsOnPage() * numColumnsOnPage();
+    return std::ceil(((qreal)m_folder->m_delegates.size()) / numOfDelegatesOnPage);
+}
+
+int ApplicationFolderModel::numRowsOnPage()
+{
+    qreal contentHeight = HomeScreenState::self()->folderPageContentHeight();
+    qreal cellHeight = HomeScreenState::self()->pageCellHeight();
+
+    return std::max(0.0, contentHeight / cellHeight);
+}
+
+int ApplicationFolderModel::numColumnsOnPage()
+{
+    qreal contentWidth = HomeScreenState::self()->folderPageContentWidth();
+    qreal cellWidth = HomeScreenState::self()->pageCellWidth();
+
+    return std::max(0.0, contentWidth / cellWidth);
+}
+
+qreal ApplicationFolderModel::leftMarginFromScreenEdge()
+{
+    qreal viewWidth = HomeScreenState::self()->viewWidth();
+    qreal folderPageWidth = HomeScreenState::self()->folderPageWidth();
+
+    return (viewWidth - folderPageWidth) / 2 + horizontalPageMargin();
+}
+
+qreal ApplicationFolderModel::topMarginFromScreenEdge()
+{
+    qreal viewHeight = HomeScreenState::self()->viewHeight();
+    qreal folderPageHeight = HomeScreenState::self()->folderPageHeight();
+
+    return (viewHeight - folderPageHeight) / 2 + verticalPageMargin();
+}
+
+qreal ApplicationFolderModel::horizontalPageMargin()
+{
+    qreal pageWidth = HomeScreenState::self()->folderPageWidth();
+    qreal pageContentWidth = HomeScreenState::self()->folderPageContentWidth();
+
+    return (pageWidth - pageContentWidth) / 2;
+}
+
+qreal ApplicationFolderModel::verticalPageMargin()
+{
+    qreal pageHeight = HomeScreenState::self()->folderPageHeight();
+    qreal pageContentHeight = HomeScreenState::self()->folderPageContentHeight();
+
+    return (pageHeight - pageContentHeight) / 2;
 }

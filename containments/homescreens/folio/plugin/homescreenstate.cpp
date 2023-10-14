@@ -120,6 +120,32 @@ DragState *HomeScreenState::dragState() const
     return m_dragState;
 }
 
+qreal HomeScreenState::viewWidth() const
+{
+    return m_viewWidth;
+}
+
+void HomeScreenState::setViewWidth(qreal viewWidth)
+{
+    if (m_viewWidth != viewWidth) {
+        m_viewWidth = viewWidth;
+        Q_EMIT viewWidthChanged();
+    }
+}
+
+qreal HomeScreenState::viewHeight() const
+{
+    return m_viewHeight;
+}
+
+void HomeScreenState::setViewHeight(qreal viewHeight)
+{
+    if (m_viewHeight != viewHeight) {
+        m_viewHeight = viewHeight;
+        Q_EMIT viewHeightChanged();
+    }
+}
+
 qreal HomeScreenState::pageViewX() const
 {
     return m_pageViewX;
@@ -253,6 +279,32 @@ void HomeScreenState::setFolderPageHeight(qreal folderPageHeight)
     }
 }
 
+qreal HomeScreenState::folderPageContentWidth() const
+{
+    return m_folderPageContentWidth;
+}
+
+void HomeScreenState::setFolderPageContentWidth(qreal folderPageContentWidth)
+{
+    if (m_folderPageContentWidth != folderPageContentWidth) {
+        m_folderPageContentWidth = folderPageContentWidth;
+        Q_EMIT folderPageContentWidthChanged();
+    }
+}
+
+qreal HomeScreenState::folderPageContentHeight() const
+{
+    return m_folderPageContentHeight;
+}
+
+void HomeScreenState::setFolderPageContentHeight(qreal folderPageContentHeight)
+{
+    if (m_folderPageContentHeight != folderPageContentHeight) {
+        m_folderPageContentHeight = folderPageContentHeight;
+        Q_EMIT folderPageContentHeightChanged();
+    }
+}
+
 qreal HomeScreenState::folderOpenProgress() const
 {
     return m_folderOpenProgress;
@@ -342,6 +394,16 @@ int HomeScreenState::currentPage()
     return m_pageNum;
 }
 
+int HomeScreenState::currentFolderPage()
+{
+    return m_folderPageNum;
+}
+
+FolioDelegate *HomeScreenState::getDelegate(FolioApplication *application)
+{
+    return new FolioDelegate(application, HomeScreenState::self());
+}
+
 void HomeScreenState::openAppDrawer()
 {
     cancelAppDrawerAnimations();
@@ -422,7 +484,7 @@ void HomeScreenState::goToFolderPage(int page)
         page = 0;
     }
 
-    int numOfPages = m_currentFolder->applications()->rowCount();
+    int numOfPages = m_currentFolder->applications()->numTotalPages();
     if (page >= numOfPages) {
         page = std::max(0, numOfPages - 1);
     }
@@ -487,10 +549,10 @@ void HomeScreenState::startDelegateAppDrawerDrag(qreal startX, qreal startY, QSt
     Q_EMIT delegateDragFromAppDrawerStarted(storageId);
 }
 
-void HomeScreenState::startDelegateFolderDrag(qreal startX, qreal startY, int position)
+void HomeScreenState::startDelegateFolderDrag(qreal startX, qreal startY, FolioApplicationFolder *folder, int position)
 {
     startDelegateDrag(startX, startY);
-    Q_EMIT delegateDragFromFolderStarted(position);
+    Q_EMIT delegateDragFromFolderStarted(folder, position);
 }
 
 void HomeScreenState::cancelDelegateDrag()

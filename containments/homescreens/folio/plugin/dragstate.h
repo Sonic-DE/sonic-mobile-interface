@@ -6,6 +6,7 @@
 #include <QObject>
 #include <QTimer>
 
+#include "folioapplicationfolder.h"
 #include "foliodelegate.h"
 #include "homescreenstate.h"
 
@@ -19,9 +20,11 @@ class DelegateDragPosition : public QObject
     Q_PROPERTY(int pageRow READ pageRow NOTIFY pageRowChanged)
     Q_PROPERTY(int pageColumn READ pageColumn NOTIFY pageColumnChanged)
     Q_PROPERTY(int favouritesPosition READ favouritesPosition NOTIFY favouritesPositionChanged)
+    Q_PROPERTY(int folderPosition READ folderPosition NOTIFY folderPositionChanged)
+    Q_PROPERTY(FolioApplicationFolder *folder READ folder NOTIFY folderChanged)
 
 public:
-    enum Location { Pages, Favourites, AppDrawer };
+    enum Location { Pages, Favourites, AppDrawer, Folder };
     Q_ENUM(Location)
 
     DelegateDragPosition(QObject *parent = nullptr);
@@ -44,19 +47,30 @@ public:
     int favouritesPosition() const;
     void setFavouritesPosition(int favouritesPosition);
 
+    int folderPosition() const;
+    void setFolderPosition(int folderPosition);
+
+    // TODO: what if the folder becomes invalid? we need to clear it
+    FolioApplicationFolder *folder() const;
+    void setFolder(FolioApplicationFolder *folder);
+
 Q_SIGNALS:
     void locationChanged();
     void pageChanged();
     void pageRowChanged();
     void pageColumnChanged();
     void favouritesPositionChanged();
+    void folderPositionChanged();
+    void folderChanged();
 
 private:
     Location m_location{DelegateDragPosition::Pages};
-    int m_page;
-    int m_pageRow;
-    int m_pageColumn;
-    int m_favouritesPosition;
+    int m_page{0};
+    int m_pageRow{0};
+    int m_pageColumn{0};
+    int m_favouritesPosition{0};
+    int m_folderPosition{0};
+    FolioApplicationFolder *m_folder{nullptr};
 };
 
 Q_DECLARE_METATYPE(DelegateDragPosition);
@@ -78,8 +92,12 @@ private Q_SLOTS:
     void onDelegateDragFromPageStarted(int page, int row, int column);
     void onDelegateDragFromFavouritesStarted(int position);
     void onDelegateDragFromAppDrawerStarted(QString storageId);
+    void onDelegateDragFromFolderStarted(FolioApplicationFolder *folder, int position);
     void onDelegateDropped();
     void onChangePageTimerFinished();
+    void onLeaveFolderTimerFinished();
+    void onChangeFolderPageTimerFinished();
+    void onFolderInsertBetweenTimerFinished();
     void onFavouritesInsertBetweenTimerFinished();
 
 private:
@@ -92,6 +110,12 @@ private:
     qreal getDraggedDelegateY();
 
     QTimer *m_changePageTimer;
+
+    QTimer *m_leaveFolderTimer;
+    QTimer *m_changeFolderPageTimer;
+    QTimer *m_folderInsertBetweenTimer;
+    int m_folderInsertBetweenIndex{0};
+
     QTimer *m_favouritesInsertBetweenTimer; // inserting between apps
     int m_favouritesInsertBetweenIndex{0};
 

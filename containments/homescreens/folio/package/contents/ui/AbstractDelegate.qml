@@ -102,8 +102,8 @@ Folio.DelegateTouchArea {
                 id: visualItem
 
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-                Layout.fillWidth: true
-                Layout.minimumHeight: Math.floor(parent.height - delegate.reservedSpaceForLabel)
+                Layout.minimumWidth: Folio.FolioSettings.homeScreenIconSize
+                Layout.minimumHeight: Folio.FolioSettings.homeScreenIconSize
                 Layout.preferredHeight: Layout.minimumHeight
 
                 // darken effect when hovered/pressed
