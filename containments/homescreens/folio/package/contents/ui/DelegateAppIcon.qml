@@ -6,22 +6,17 @@ import QtQuick.Layouts
 import QtQuick.Controls as Controls
 import QtQuick.Effects
 
+import org.kde.kirigami 2.20 as Kirigami
+
 import org.kde.private.mobile.homescreen.folio 1.0 as Folio
 
-AbstractDelegate {
+Kirigami.Icon {
     id: root
-    name: folder.name
-    shadow: true
 
-    property Folio.FolioApplicationFolder folder
+    property Folio.FolioApplication application
 
-    onAfterClickAnimation: {
-        Folio.HomeScreenState.openFolder(folder);
-    }
+    height: Folio.FolioSettings.homeScreenIconSize
+    width: Folio.FolioSettings.homeScreenIconSize
 
-    contentItem: DelegateFolderIcon {
-        folder: root.folder
-    }
+    source: application.icon
 }
-
-

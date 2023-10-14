@@ -8,19 +8,18 @@ import org.kde.private.mobile.homescreen.folio 1.0 as Folio
 
 Item {
     id: root
+    width: Folio.HomeScreenState.pageCellWidth
+    height: Folio.HomeScreenState.pageCellHeight
 
-    property var source
+    property Folio.FolioDelegate delegate
 
-    MultiEffect {
-        id: effect
-        anchors.fill: parent
+    DelegateIconLoader {
+        id: loader
+        anchors.centerIn: parent
 
-        // HACK: prevents crashes if the soruce is invalid
-        source: Folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate ? root.source : emptyItem
+        delegate: root.delegate
+
+        layer.enabled: true
+        layer.effect: DelegateShadow {}
     }
-
-    Item { id: emptyItem }
-
-    layer.enabled: true
-    layer.effect: DelegateShadow {}
 }

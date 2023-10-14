@@ -8,6 +8,8 @@
 #include "folioapplication.h"
 #include "folioapplicationfolder.h"
 
+class FolioApplication;
+class FolioApplicationFolder;
 class FolioDelegate : public QObject
 {
     Q_OBJECT

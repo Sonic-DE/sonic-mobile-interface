@@ -98,21 +98,14 @@ Item {
 
                 AppDelegate {
                     id: appDelegate
-
-                    name: delegate.pageDelegate.application.name
-                    icon: delegate.pageDelegate.application.icon
-                    storageId: delegate.pageDelegate.application.storageId
-                    applicationRunning: delegate.pageDelegate.application.running
-
-                    shadow: true
-
+                    application: delegate.pageDelegate.application
                     reservedSpaceForLabel: root.reservedSpaceForLabel
 
                     // don't show label in drag and drop mode
                     labelOpacity: delegate.opacity
 
                     onPressAndHold: {
-                        let mappedCoords = root.homeScreen.prepareStartDelegateDrag(appDelegate.delegateItem);
+                        let mappedCoords = root.homeScreen.prepareStartDelegateDrag(delegate.pageDelegate, appDelegate.delegateItem);
                         Folio.HomeScreenState.startDelegatePageDrag(
                             mappedCoords.x,
                             mappedCoords.y,
@@ -128,20 +121,6 @@ Item {
                         if (Folio.HomeScreenState.swipeState === Folio.HomeScreenState.AwaitingDraggingDelegate) {
                             homeScreen.cancelDelegateDrag();
                         }
-                    }
-
-                    onLaunch: (x, y, icon, title, storageId) => {
-                        if (icon !== "") {
-                            MobileShellState.ShellDBusClient.openAppLaunchAnimation(
-                                    icon,
-                                    title,
-                                    appDelegate.iconItem.Kirigami.ScenePosition.x + appDelegate.iconItem.width/2,
-                                    appDelegate.iconItem.Kirigami.ScenePosition.y + appDelegate.iconItem.height/2,
-                                    Math.min(appDelegate.iconItem.width, appDelegate.iconItem.height));
-                        }
-
-                        delegate.pageDelegate.application.setMinimizedDelegate(appDelegate);
-                        MobileShell.AppLaunch.launchOrActivateApp(storageId);
                     }
 
                     onRightMousePress: {
@@ -179,22 +158,14 @@ Item {
 
                 AppFolderDelegate {
                     id: appFolderDelegate
-                    shadow: true
-
                     folder: delegate.pageDelegate.folder
-                    name: delegate.pageDelegate.folder.name
-
                     reservedSpaceForLabel: root.reservedSpaceForLabel
 
                     // don't show label in drag and drop mode
                     labelOpacity: delegate.opacity
 
-                    onAfterClickAnimation: {
-                        Folio.HomeScreenState.openFolder(delegate.pageDelegate.folder);
-                    }
-
                     onPressAndHold: {
-                        let mappedCoords = root.homeScreen.prepareStartDelegateDrag(appFolderDelegate.delegateItem);
+                        let mappedCoords = root.homeScreen.prepareStartDelegateDrag(delegate.pageDelegate, appFolderDelegate.delegateItem);
                         Folio.HomeScreenState.startDelegatePageDrag(
                             mappedCoords.x,
                             mappedCoords.y,

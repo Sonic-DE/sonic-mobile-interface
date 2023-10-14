@@ -162,6 +162,7 @@ void PageModel::removeDelegate(int row, int col)
     for (int i = 0; i < m_delegates.size(); ++i) {
         if (m_delegates[i]->row() == row && m_delegates[i]->column() == col) {
             beginRemoveRows(QModelIndex(), i, i);
+            // HACK: do not deleteLater(), because the delegate might still be used somewhere else
             m_delegates.removeAt(i);
             endRemoveRows();
 

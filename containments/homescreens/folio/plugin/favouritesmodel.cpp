@@ -73,9 +73,8 @@ void FavouritesModel::removeEntry(int row)
     }
 
     beginRemoveRows(QModelIndex(), row, row);
-    if (m_delegates[row].delegate) {
-        m_delegates[row].delegate->deleteLater();
-    }
+    // HACK: do not deleteLater(), because the delegate might still be used somewhere else
+    // m_delegates[row].delegate->deleteLater();
     m_delegates.removeAt(row);
     endRemoveRows();
 

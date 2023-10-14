@@ -69,10 +69,10 @@ private:
     void load();
     void evaluateDelegatePositions(bool emitSignal = true);
 
-    FolioDelegate *m_invisibleDelegate{nullptr};
-
     // get the x position where delegates start being placed
     qreal getDelegateRowStartX();
+
+    FolioDelegate *m_invisibleDelegate{nullptr};
 
     QList<FavouritesDelegate> m_delegates;
 

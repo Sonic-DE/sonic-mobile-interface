@@ -25,16 +25,16 @@ Item {
 
     // called by any delegates when starting drag
     // returns the mapped coordinates to be used in the home screen state
-    function prepareStartDelegateDrag(item) {
+    function prepareStartDelegateDrag(delegate, item) {
         swipeArea.setSkipSwipeThreshold(true);
 
         let mapped = root.mapFromItem(item, 0, 0);
-        delegateDragItem.height = item.height;
-        delegateDragItem.width = item.width;
-        delegateDragItem.source = item;
+        delegateDragItem.delegate = delegate;
 
         mapped.x -= root.leftMargin;
         mapped.y -= root.topMargin;
+        // mapped.x += Folio.FolioSettings.homeScreenIconSize / 2;
+        // mapped.y += Folio.FolioSettings.homeScreenIconSize / 2;
         return mapped;
     }
 
@@ -42,14 +42,17 @@ Item {
         homeScreenState.cancelDelegateDrag();
     }
 
-    Connections {
-        target: homeScreenState
-        function onDelegateDragEnded() {
-            delegateDragItem.source = emptyItem;
+    Item {
+        id: screenDimensions
+        anchors.fill: parent
+
+        onWidthChanged: {
+            homeScreenState.viewWidth = width;
+        }
+        onHeightChanged: {
+            homeScreenState.viewHeight = height;
         }
     }
-
-    Item { id: emptyItem }
 
     MobileShell.SwipeArea {
         id: swipeArea
@@ -124,7 +127,12 @@ Item {
         FolderView {
             id: folderView
             anchors.fill: parent
+            anchors.topMargin: root.topMargin
+            anchors.leftMargin: root.leftMargin
+            anchors.rightMargin: root.rightMargin
+            anchors.bottomMargin: root.bottomMargin
 
+            homeScreen: root
             opacity: homeScreenState.folderOpenProgress
             transform: Translate { y: folderView.opacity > 0 ? 0 : folderView.height }
         }
