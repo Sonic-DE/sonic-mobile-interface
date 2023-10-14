@@ -9,42 +9,47 @@ import QtQuick.Effects
 import org.kde.kirigami 2.20 as Kirigami
 
 import org.kde.private.mobile.homescreen.folio 1.0 as Folio
-import org.kde.plasma.private.mobileshell.shellsettingsplugin as ShellSettings
+import org.kde.plasma.private.mobileshell.state 1.0 as MobileShellState
+import org.kde.plasma.private.mobileshell 1.0 as MobileShell
 
 AbstractDelegate {
-    id: delegate
+    id: root
+    shadow: true
+    name: application.name
 
-    property string icon
-    property string storageId
-    property bool applicationRunning
+    property Folio.FolioApplication application
 
     property alias iconItem: icon
 
-    signal launch(int x, int y, var source, string title, string storageId)
-
     function launchApp() {
-        // launch app
-        if (applicationRunning) {
-            delegate.launch(0, 0, "", delegate.name, delegate.storageId);
-        } else {
-            delegate.launch(delegate.x + (Kirigami.Units.smallSpacing * 2), delegate.y + (Kirigami.Units.smallSpacing * 2), icon.source, delegate.name, delegate.storageId);
+        if (application.icon !== "") {
+            MobileShellState.ShellDBusClient.openAppLaunchAnimation(
+                    application.icon,
+                    application.name,
+                    root.iconItem.Kirigami.ScenePosition.x + root.iconItem.width/2,
+                    root.iconItem.Kirigami.ScenePosition.y + root.iconItem.height/2,
+                    Math.min(root.iconItem.width, root.iconItem.height));
         }
+
+        application.setMinimizedDelegate(root);
+        MobileShell.AppLaunch.launchOrActivateApp(application.storageId);
     }
 
     onAfterClickAnimation: {
         launchApp();
     }
 
-    contentItem: Kirigami.Icon {
+    contentItem: DelegateAppIcon {
         id: icon
-        source: delegate.icon
+        application: root.application
 
         Rectangle {
             anchors {
                 horizontalCenter: parent.horizontalCenter
                 bottom: parent.bottom
+                bottomMargin: Kirigami.Units.smallSpacing
             }
-            visible: delegate.applicationRunning
+            visible: root.application.running
             radius: width
             width: Kirigami.Units.smallSpacing
             height: width

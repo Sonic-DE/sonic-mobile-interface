@@ -52,10 +52,8 @@ MobileShell.GridView {
 
     delegate: AppDelegate {
         id: delegate
-        name: model.applicationName
-        applicationRunning: model.applicationRunning
-        storageId: model.applicationStorageId
-        icon: model.applicationIcon
+        shadow: false
+        application: model.delegate.application
 
         width: root.cellWidth
         height: root.cellHeight
@@ -63,26 +61,12 @@ MobileShell.GridView {
 
         onPressAndHold: {
             Folio.HomeScreenState.closeAppDrawer();
-            let mappedCoords = root.homeScreen.prepareStartDelegateDrag(delegate.delegateItem);
+            let mappedCoords = root.homeScreen.prepareStartDelegateDrag(model.delegate, delegate.delegateItem);
             Folio.HomeScreenState.startDelegateAppDrawerDrag(
                 mappedCoords.x,
                 mappedCoords.y,
-                model.applicationStorageId
+                model.delegate.application.storageId
             );
-        }
-
-        onLaunch: (x, y, icon, title, storageId) => {
-            if (icon !== "") {
-                MobileShellState.ShellDBusClient.openAppLaunchAnimation(
-                        icon,
-                        title,
-                        delegate.iconItem.Kirigami.ScenePosition.x + delegate.iconItem.width/2,
-                        delegate.iconItem.Kirigami.ScenePosition.y + delegate.iconItem.height/2,
-                        Math.min(delegate.iconItem.width, delegate.iconItem.height));
-            }
-
-            Folio.ApplicationListModel.setMinimizedDelegate(index, delegate);
-            MobileShell.AppLaunch.launchOrActivateApp(storageId);
         }
     }
 

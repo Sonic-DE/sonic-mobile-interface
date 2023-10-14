@@ -99,21 +99,16 @@ Item {
 
                     AppDelegate {
                         id: appDelegate
-
+                        application: delegate.delegateModel.application
                         name: Folio.FolioSettings.showFavouritesAppLabels ? delegate.delegateModel.application.name : ""
-                        icon: delegate.delegateModel.application.icon
-                        storageId: delegate.delegateModel.application.storageId
-                        applicationRunning: delegate.delegateModel.application.running
-
                         shadow: true
-
                         reservedSpaceForLabel: root.reservedSpaceForLabel
 
                         // don't show label in drag and drop mode
                         labelOpacity: delegate.opacity
 
                         onPressAndHold: {
-                            let mappedCoords = root.homeScreen.prepareStartDelegateDrag(appDelegate.delegateItem);
+                            let mappedCoords = root.homeScreen.prepareStartDelegateDrag(delegate.delegateModel, appDelegate.delegateItem);
                             Folio.HomeScreenState.startDelegateFavouritesDrag(
                                 mappedCoords.x,
                                 mappedCoords.y,
@@ -128,20 +123,6 @@ Item {
                             if (Folio.HomeScreenState.swipeState === Folio.HomeScreenState.AwaitingDraggingDelegate) {
                                 homeScreen.cancelDelegateDrag();
                             }
-                        }
-
-                        onLaunch: (x, y, icon, title, storageId) => {
-                            if (icon !== "") {
-                                MobileShellState.ShellDBusClient.openAppLaunchAnimation(
-                                        icon,
-                                        title,
-                                        appDelegate.iconItem.Kirigami.ScenePosition.x + appDelegate.iconItem.width/2,
-                                        appDelegate.iconItem.Kirigami.ScenePosition.y + appDelegate.iconItem.height/2,
-                                        Math.min(appDelegate.iconItem.width, appDelegate.iconItem.height));
-                            }
-
-                            delegate.delegateModel.application.setMinimizedDelegate(appDelegate);
-                            MobileShell.AppLaunch.launchOrActivateApp(storageId);
                         }
 
                         onRightMousePress: {
@@ -179,21 +160,15 @@ Item {
                     AppFolderDelegate {
                         id: appFolderDelegate
                         shadow: true
-
                         folder: delegate.delegateModel.folder
                         name: delegate.delegateModel.folder.name
-
                         reservedSpaceForLabel: root.reservedSpaceForLabel
 
                         // don't show label in drag and drop mode
                         labelOpacity: delegate.opacity
 
-                        onAfterClickAnimation: {
-                            Folio.HomeScreenState.openFolder(delegate.delegateModel.folder);
-                        }
-
                         onPressAndHold: {
-                            let mappedCoords = root.homeScreen.prepareStartDelegateDrag(appFolderDelegate.delegateItem);
+                            let mappedCoords = root.homeScreen.prepareStartDelegateDrag(delegate.delegateModel, appFolderDelegate.delegateItem);
                             Folio.HomeScreenState.startDelegateFavouritesDrag(
                                 mappedCoords.x,
                                 mappedCoords.y,
@@ -206,7 +181,7 @@ Item {
                         onPressAndHoldReleased: {
                             // cancel the event if the delegate is not dragged
                             if (Folio.HomeScreenState.swipeState === Folio.HomeScreenState.AwaitingDraggingDelegate) {
-                                homeScreen.cancelDelegateDrag();
+                                root.homeScreen.cancelDelegateDrag();
                             }
                         }
 

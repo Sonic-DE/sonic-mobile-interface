@@ -33,6 +33,12 @@ bool FolioSettings::showFavouritesAppLabels()
     return false;
 }
 
+qreal FolioSettings::homeScreenIconSize()
+{
+    // TODO
+    return 48;
+}
+
 void FolioSettings::setApplet(Plasma::Applet *applet)
 {
     m_applet = applet;
