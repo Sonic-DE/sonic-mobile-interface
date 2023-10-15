@@ -4,6 +4,7 @@
 import QtQuick
 import QtQuick.Window
 import QtQuick.Layouts
+import QtQuick.Controls as QQC2
 
 import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.kirigami 2.20 as Kirigami
@@ -120,6 +121,17 @@ Item {
                 anchors.leftMargin: root.leftMargin
                 anchors.right: parent.right
                 anchors.rightMargin: root.rightMargin
+            }
+
+            QQC2.PageIndicator {
+                Kirigami.Theme.inherit: false
+                Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
+
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottom: favouritesBar.top
+
+                currentIndex: Folio.HomeScreenState.currentPage
+                count: Folio.PageListModel.length
             }
         }
 
