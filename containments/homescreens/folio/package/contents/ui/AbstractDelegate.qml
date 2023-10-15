@@ -20,13 +20,10 @@ Folio.DelegateTouchArea {
     id: delegate
 
     property string name
-    property alias contentItem: visualItem.contentItem
-
     property bool shadow: false
 
-    property int reservedSpaceForLabel
+    property alias contentItem: visualItem.contentItem
     property alias delegateItem: delegateWrapper
-
     property alias labelOpacity: label.opacity
 
     readonly property real margins: Math.floor(width * 0.2)
@@ -106,7 +103,7 @@ Folio.DelegateTouchArea {
                 Layout.minimumHeight: Folio.FolioSettings.homeScreenIconSize
                 Layout.preferredHeight: Layout.minimumHeight
 
-                // darken effect when hovered/pressed
+                // darken effect when hovered
                 layer {
                     enabled: delegate.hovered
                     effect: ColorOverlay {
@@ -120,8 +117,8 @@ Folio.DelegateTouchArea {
                 visible: text.length > 0
 
                 Layout.fillWidth: true
-                Layout.preferredHeight: delegate.reservedSpaceForLabel
-                Layout.topMargin: Kirigami.Units.smallSpacing
+                Layout.preferredHeight: Folio.HomeScreenState.pageDelegateLabelHeight
+                Layout.topMargin: Folio.HomeScreenState.pageDelegateLabelSpacing
                 Layout.leftMargin: -parent.anchors.leftMargin + Kirigami.Units.smallSpacing
                 Layout.rightMargin: -parent.anchors.rightMargin + Kirigami.Units.smallSpacing
 

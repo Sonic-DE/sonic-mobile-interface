@@ -9,6 +9,7 @@ import QtQuick.Controls as QQC2
 import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.kirigami 2.20 as Kirigami
 
+import org.kde.plasma.components 3.0 as PC3
 import org.kde.plasma.private.mobileshell 1.0 as MobileShell
 import org.kde.private.mobile.homescreen.folio 1.0 as Folio
 
@@ -34,8 +35,6 @@ Item {
 
         mapped.x -= root.leftMargin;
         mapped.y -= root.topMargin;
-        // mapped.x += Folio.FolioSettings.homeScreenIconSize / 2;
-        // mapped.y += Folio.FolioSettings.homeScreenIconSize / 2;
         return mapped;
     }
 
@@ -43,16 +42,27 @@ Item {
         homeScreenState.cancelDelegateDrag();
     }
 
+    // determine how tall an app label is, for delegate measurements
+    PC3.Label {
+        id: appLabelMetrics
+        text: "M\nM"
+        visible: false
+        font.pointSize: Kirigami.Theme.defaultFont.pointSize * 0.8
+        font.weight: Font.Bold
+
+        onHeightChanged: Folio.HomeScreenState.pageDelegateLabelHeight = appLabelMetrics.height
+
+        Component.onCompleted: {
+            Folio.HomeScreenState.pageDelegateLabelWidth = Kirigami.Units.smallSpacing;
+        }
+    }
+
     Item {
         id: screenDimensions
         anchors.fill: parent
 
-        onWidthChanged: {
-            homeScreenState.viewWidth = width;
-        }
-        onHeightChanged: {
-            homeScreenState.viewHeight = height;
-        }
+        onWidthChanged: Folio.HomeScreenState.viewWidth = width;
+        onHeightChanged: Folio.HomeScreenState.viewHeight = height;
     }
 
     MobileShell.SwipeArea {
@@ -195,6 +205,20 @@ Item {
             opacity: homeScreenState.searchWidgetOpenProgress
             visible: opacity > 0
             transform: Translate { y: (1 - homeScreenState.searchWidgetOpenProgress) * (-Kirigami.Units.gridUnit * 2) }
+
+            // focus the search bar if it opens
+            Connections {
+                target: Folio.HomeScreenState
+
+                function onSearchWidgetOpenProgressChanged() {
+                    if (homeScreenState.searchWidgetOpenProgress === 1.0) {
+                        searchWidget.requestFocus();
+                    } else {
+                        // TODO this gets called a lot, can we have a more performant way?
+                        root.forceActiveFocus();
+                    }
+                }
+            }
 
             onRequestedClose: {
                 homeScreenState.closeSearchWidget();

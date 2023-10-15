@@ -8,7 +8,6 @@ import QtQuick.Controls as QQC2
 
 import org.kde.kirigami 2.20 as Kirigami
 
-import org.kde.plasma.components 3.0 as PC3
 import org.kde.plasma.private.mobileshell 1.0 as MobileShell
 import org.kde.private.mobile.homescreen.folio 1.0 as Folio
 
@@ -17,7 +16,6 @@ Folio.DelegateTouchArea {
 
     property var homeScreen
 
-    readonly property int reservedSpaceForLabel: metrics.height
     property Folio.FolioApplicationFolder folder: Folio.HomeScreenState.currentFolder
 
     property bool inFolderTitleEditMode: false
@@ -26,14 +24,6 @@ Folio.DelegateTouchArea {
 
     function close() {
         Folio.HomeScreenState.closeFolder();
-    }
-
-    PC3.Label {
-        id: metrics
-        text: "M\nM"
-        visible: false
-        font.pointSize: Kirigami.Theme.defaultFont.pointSize * 0.8
-        font.weight: Font.Bold
     }
 
     FolderViewTitle {
@@ -177,7 +167,6 @@ Folio.DelegateTouchArea {
                             AppDelegate {
                                 id: appDelegate
                                 application: delegate.delegateModel.application
-                                reservedSpaceForLabel: root.reservedSpaceForLabel
 
                                 // don't show label in drag and drop mode
                                 labelOpacity: delegate.opacity

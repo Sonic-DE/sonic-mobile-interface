@@ -10,3 +10,6 @@ As such, all of the positioning and placement of delegates on the screen are top
 
 #### TODO
 - If an app gets uninstalled, the homescreen UI needs to ensure that delegates are updated
+- Folder pages
+- Fix drawer scrolling
+- Drop animation (delegate moves to spot)

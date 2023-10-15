@@ -27,7 +27,7 @@ MobileShell.GridView {
     // */
     // interactive: contentHeight <= height ? true : root.homeScreenState.appDrawerInteractive
 
-    readonly property int reservedSpaceForLabel: metrics.height
+    readonly property int reservedSpaceForLabel: Folio.HomeScreenState.pageDelegateLabelHeight
     readonly property real effectiveContentWidth: width - leftMargin - rightMargin
     readonly property real horizontalMargin: Math.round(width * 0.05)
 
@@ -42,14 +42,6 @@ MobileShell.GridView {
 
     model: Folio.ApplicationListModel
 
-    PC3.Label {
-        id: metrics
-        text: "M\nM"
-        visible: false
-        font.pointSize: Kirigami.Theme.defaultFont.pointSize * 0.8
-        font.weight: Font.Bold
-    }
-
     delegate: AppDelegate {
         id: delegate
         shadow: false
@@ -57,7 +49,6 @@ MobileShell.GridView {
 
         width: root.cellWidth
         height: root.cellHeight
-        reservedSpaceForLabel: root.reservedSpaceForLabel
 
         onPressAndHold: {
             Folio.HomeScreenState.closeAppDrawer();
