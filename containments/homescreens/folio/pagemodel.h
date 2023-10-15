@@ -40,6 +40,10 @@ Q_SIGNALS:
     void columnChanged();
 
 private:
+    void init();
+
+    int m_realRow;
+    int m_realColumn;
     int m_row;
     int m_column;
 };

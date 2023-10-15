@@ -20,8 +20,12 @@ public:
 
     static FolioSettings *self();
 
+    // number of rows and columns in the config for the homescreen
+    // NOTE: use HomeScreenState.pageRows() instead in UI logic since we may have the rows and
+    //       columns swapped (in landscape layouts)
     int homeScreenRows();
     int homeScreenColumns();
+
     bool showFavouritesAppLabels();
 
     qreal homeScreenIconSize();
@@ -35,5 +39,5 @@ Q_SIGNALS:
     void homeScreenIconSizeChanged();
 
 private:
-    Plasma::Applet *m_applet;
+    Plasma::Applet *m_applet{nullptr};
 };

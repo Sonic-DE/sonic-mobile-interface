@@ -16,11 +16,6 @@ PageListModel *PageListModel::self()
 PageListModel::PageListModel(QObject *parent)
     : QAbstractListModel{parent}
 {
-    connect(HomeScreenState::self(), &HomeScreenState::appletChanged, this, [this]() {
-        if (HomeScreenState::self()->applet()) {
-            load();
-        }
-    });
 }
 
 int PageListModel::rowCount(const QModelIndex &parent) const
@@ -92,7 +87,7 @@ bool PageListModel::isLastPageEmpty()
 
 void PageListModel::save()
 {
-    if (!HomeScreenState::self()->applet()) {
+    if (!m_applet) {
         return;
     }
 
@@ -102,17 +97,17 @@ void PageListModel::save()
     }
     QByteArray data = QJsonDocument(arr).toJson(QJsonDocument::Compact);
 
-    HomeScreenState::self()->applet()->config().writeEntry("Pages", QString::fromStdString(data.toStdString()));
-    Q_EMIT HomeScreenState::self()->applet()->configNeedsSaving();
+    m_applet->config().writeEntry("Pages", QString::fromStdString(data.toStdString()));
+    Q_EMIT m_applet->configNeedsSaving();
 }
 
 void PageListModel::load()
 {
-    if (!HomeScreenState::self()->applet()) {
+    if (!m_applet) {
         return;
     }
 
-    QJsonDocument doc = QJsonDocument::fromJson(HomeScreenState::self()->applet()->config().readEntry("Pages", "{}").toUtf8());
+    QJsonDocument doc = QJsonDocument::fromJson(m_applet->config().readEntry("Pages", "{}").toUtf8());
 
     beginResetModel();
 
@@ -134,4 +129,9 @@ void PageListModel::load()
     if (m_pages.size() == 0) {
         addPageAtEnd();
     }
+}
+
+void PageListModel::setApplet(Plasma::Applet *applet)
+{
+    m_applet = applet;
 }

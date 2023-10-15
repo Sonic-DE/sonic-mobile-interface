@@ -58,13 +58,18 @@ public:
     // the index that dropping at the position given would place the delegate at.
     int dropInsertPosition(qreal x);
 
+    Q_INVOKABLE void load();
+
+    void setApplet(Plasma::Applet *applet);
+
 private:
     void save();
-    void load();
     void evaluateDelegatePositions(bool emitSignal = true);
 
     // get the x position where delegates start being placed
     qreal getDelegateRowStartX();
 
     QList<FavouritesDelegate> m_delegates;
+
+    Plasma::Applet *m_applet{nullptr};
 };

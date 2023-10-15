@@ -126,7 +126,7 @@ private:
     qreal horizontalPageMargin();
     qreal verticalPageMargin();
 
-    FolioApplicationFolder *m_folder;
+    FolioApplicationFolder *m_folder{nullptr};
 
     friend class FolioApplicationFolder;
 };

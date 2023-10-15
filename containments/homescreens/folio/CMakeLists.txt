@@ -3,6 +3,18 @@
 
 set(homescreen_SRCS
     homescreen.cpp
+    applicationlistmodel.cpp
+    homescreenstate.cpp
+    windowlistener.cpp
+    favouritesmodel.cpp
+    folioapplication.cpp
+    folioapplicationfolder.cpp
+    foliodelegate.cpp
+    foliosettings.cpp
+    pagemodel.cpp
+    pagelistmodel.cpp
+    delegatetoucharea.cpp
+    dragstate.cpp
 )
 
 add_library(org.kde.plasma.mobile.homescreen.folio MODULE ${homescreen_SRCS})
@@ -19,10 +31,9 @@ target_link_libraries(org.kde.plasma.mobile.homescreen.folio
                       KF6::Notifications
                       KF6::WaylandClient
                       KF6::WindowSystem
+                      KF6::JobWidgets
 )
 
 install(TARGETS org.kde.plasma.mobile.homescreen.folio DESTINATION ${KDE_INSTALL_PLUGINDIR}/plasma/applets)
 
 plasma_install_package(package org.kde.plasma.mobile.homescreen.folio)
-
-add_subdirectory(plugin)
