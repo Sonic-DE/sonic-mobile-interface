@@ -18,15 +18,11 @@ Item {
     property var pageModel
     property var homeScreen
 
-    property int reservedSpaceForLabel
-    property real cellWidth
-    property real cellHeight
-
     // rectangle that shows when hovering over a spot to drop a delegate on
     Rectangle {
         id: dragDropFeedback
-        width: root.cellWidth
-        height: root.cellHeight
+        width: Folio.HomeScreenState.pageCellWidth
+        height: Folio.HomeScreenState.pageCellHeight
         color: Qt.rgba(255, 255, 255, 0.3)
         radius: Kirigami.Units.largeSpacing
 
@@ -35,8 +31,8 @@ Item {
                     dropPosition.location === Folio.DelegateDragPosition.Pages &&
                     dropPosition.page === root.pageNum
 
-        x: dropPosition.pageColumn * root.cellWidth
-        y: dropPosition.pageRow * root.cellHeight
+        x: dropPosition.pageColumn * Folio.HomeScreenState.pageCellWidth
+        y: dropPosition.pageRow * Folio.HomeScreenState.pageCellHeight
     }
 
     Repeater {
@@ -58,13 +54,13 @@ Item {
                                             dragState.candidateDropPosition.pageRow === delegate.pageDelegate.row &&
                                             dragState.candidateDropPosition.pageColumn === delegate.pageDelegate.column
 
-            implicitWidth: root.cellWidth
-            implicitHeight: root.cellHeight
-            width: root.cellWidth
-            height: root.cellHeight
+            implicitWidth: Folio.HomeScreenState.pageCellWidth
+            implicitHeight: Folio.HomeScreenState.pageCellHeight
+            width: Folio.HomeScreenState.pageCellWidth
+            height: Folio.HomeScreenState.pageCellHeight
 
-            x: column * root.cellWidth
-            y: row * root.cellHeight
+            x: column * Folio.HomeScreenState.pageCellWidth
+            y: row * Folio.HomeScreenState.pageCellHeight
 
             Loader {
                 anchors.fill: parent
@@ -92,7 +88,6 @@ Item {
                 AppDelegate {
                     id: appDelegate
                     application: delegate.pageDelegate.application
-                    reservedSpaceForLabel: root.reservedSpaceForLabel
                     turnToFolder: delegate.isAppHoveredOver
                     turnToFolderAnimEnabled: Folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate
 
@@ -154,7 +149,6 @@ Item {
                 AppFolderDelegate {
                     id: appFolderDelegate
                     folder: delegate.pageDelegate.folder
-                    reservedSpaceForLabel: root.reservedSpaceForLabel
 
                     // don't show label in drag and drop mode
                     labelOpacity: delegate.opacity

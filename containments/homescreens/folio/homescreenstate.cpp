@@ -8,8 +8,8 @@
 #include <algorithm>
 
 // TODO don't hardcode, use something more device dependent?
-const qreal APP_DRAWER_OPEN_DIST = 200;
-const qreal SEARCH_WIDGET_OPEN_DIST = 200;
+const qreal APP_DRAWER_OPEN_DIST = 300;
+const qreal SEARCH_WIDGET_OPEN_DIST = 300;
 
 // pixels to move before we determine the swipe type
 const qreal DETERMINE_SWIPE_THRESHOLD = 10;
@@ -291,6 +291,32 @@ void HomeScreenState::setPageCellHeight(qreal pageCellHeight)
     if (m_pageCellHeight != pageCellHeight) {
         m_pageCellHeight = pageCellHeight;
         Q_EMIT pageCellHeightChanged();
+    }
+}
+
+qreal HomeScreenState::pageDelegateLabelHeight() const
+{
+    return m_pageDelegateLabelHeight;
+}
+
+void HomeScreenState::setPageDelegateLabelHeight(qreal pageDelegateLabelHeight)
+{
+    if (m_pageDelegateLabelHeight != pageDelegateLabelHeight) {
+        m_pageDelegateLabelHeight = pageDelegateLabelHeight;
+        Q_EMIT pageDelegateLabelHeightChanged();
+    }
+}
+
+qreal HomeScreenState::pageDelegateLabelSpacing() const
+{
+    return m_pageDelegateLabelSpacing;
+}
+
+void HomeScreenState::setPageDelegateLabelSpacing(qreal pageDelegateLabelSpacing)
+{
+    if (m_pageDelegateLabelSpacing != pageDelegateLabelSpacing) {
+        m_pageDelegateLabelSpacing = pageDelegateLabelSpacing;
+        Q_EMIT pageDelegateLabelSpacingChanged();
     }
 }
 
