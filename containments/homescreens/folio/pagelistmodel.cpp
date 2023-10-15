@@ -43,6 +43,11 @@ QHash<int, QByteArray> PageListModel::roleNames() const
     return {{PageRole, "delegate"}};
 }
 
+int PageListModel::length()
+{
+    return m_pages.size();
+}
+
 PageModel *PageListModel::getPage(int index)
 {
     if (index < 0 || index >= m_pages.size()) {
@@ -63,6 +68,8 @@ void PageListModel::removePage(int index)
     m_pages.removeAt(index);
     endRemoveRows();
 
+    Q_EMIT lengthChanged();
+
     save();
 }
 
@@ -76,6 +83,8 @@ Q_INVOKABLE void PageListModel::addPageAtEnd()
     m_pages.append(page);
 
     endInsertRows();
+
+    Q_EMIT lengthChanged();
 
     save();
 }
@@ -124,6 +133,8 @@ void PageListModel::load()
     }
 
     endResetModel();
+
+    Q_EMIT lengthChanged();
 
     // add page if there are no pages
     if (m_pages.size() == 0) {
