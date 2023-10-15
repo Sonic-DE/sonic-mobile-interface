@@ -448,6 +448,14 @@ int HomeScreenState::currentPage()
     return m_pageNum;
 }
 
+void HomeScreenState::setCurrentPage(int currentPage)
+{
+    if (m_pageNum != currentPage) {
+        m_pageNum = currentPage;
+        Q_EMIT pageNumChanged();
+    }
+}
+
 int HomeScreenState::currentFolderPage()
 {
     return m_folderPageNum;
@@ -505,7 +513,6 @@ void HomeScreenState::snapPage()
 
 void HomeScreenState::goToPage(int page)
 {
-    qDebug() << "go to page" << page;
     if (page < 0) {
         page = 0;
     }
@@ -515,8 +522,7 @@ void HomeScreenState::goToPage(int page)
         page = std::max(0, numOfPages - 1);
     }
 
-    m_pageNum = page;
-    Q_EMIT pageNumChanged();
+    setCurrentPage(page);
 
     m_pageAnim->setStartValue(m_pageViewX);
     m_pageAnim->setEndValue(-page * m_pageWidth);
@@ -666,7 +672,6 @@ void HomeScreenState::swipeEnded()
     case SwipeState::DeterminingSwipeType:
         break;
     default:
-        qDebug() << "swiping was not in state end";
         break;
     }
 

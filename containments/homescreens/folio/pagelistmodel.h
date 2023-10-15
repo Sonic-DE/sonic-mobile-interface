@@ -13,6 +13,7 @@
 class PageListModel : public QAbstractListModel
 {
     Q_OBJECT
+    Q_PROPERTY(int length READ length NOTIFY lengthChanged)
 
 public:
     enum Roles { PageRole = Qt::UserRole + 1 };
@@ -25,6 +26,8 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int, QByteArray> roleNames() const override;
 
+    int length();
+
     PageModel *getPage(int index);
     void removePage(int index);
     Q_INVOKABLE void addPageAtEnd();
@@ -34,6 +37,9 @@ public:
     Q_INVOKABLE void load();
 
     void setApplet(Plasma::Applet *applet);
+
+Q_SIGNALS:
+    void lengthChanged();
 
 private:
     QList<PageModel *> m_pages;
