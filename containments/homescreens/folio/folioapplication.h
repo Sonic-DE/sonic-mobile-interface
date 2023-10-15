@@ -58,5 +58,5 @@ private:
     QString m_name;
     QString m_icon;
     QString m_storageId;
-    KWayland::Client::PlasmaWindow *m_window = nullptr;
+    KWayland::Client::PlasmaWindow *m_window{nullptr};
 };

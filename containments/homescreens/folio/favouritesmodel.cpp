@@ -35,12 +35,6 @@ FavouritesModel::FavouritesModel(QObject *parent)
     connect(HomeScreenState::self(), &HomeScreenState::pageCellWidthChanged, this, [this]() {
         evaluateDelegatePositions(true);
     });
-
-    connect(HomeScreenState::self(), &HomeScreenState::appletChanged, this, [this]() {
-        if (HomeScreenState::self()->applet()) {
-            load();
-        }
-    });
 }
 
 int FavouritesModel::rowCount(const QModelIndex &parent) const
@@ -208,7 +202,7 @@ void FavouritesModel::deleteGhostEntry()
 
 void FavouritesModel::save()
 {
-    if (!HomeScreenState::self()->applet()) {
+    if (!m_applet) {
         return;
     }
 
@@ -225,17 +219,17 @@ void FavouritesModel::save()
     }
     QByteArray data = QJsonDocument(arr).toJson(QJsonDocument::Compact);
 
-    HomeScreenState::self()->applet()->config().writeEntry("Favourites", QString::fromStdString(data.toStdString()));
-    Q_EMIT HomeScreenState::self()->applet()->configNeedsSaving();
+    m_applet->config().writeEntry("Favourites", QString::fromStdString(data.toStdString()));
+    Q_EMIT m_applet->configNeedsSaving();
 }
 
 void FavouritesModel::load()
 {
-    if (!HomeScreenState::self()->applet()) {
+    if (!m_applet) {
         return;
     }
 
-    QJsonDocument doc = QJsonDocument::fromJson(HomeScreenState::self()->applet()->config().readEntry("Favourites", "{}").toUtf8());
+    QJsonDocument doc = QJsonDocument::fromJson(m_applet->config().readEntry("Favourites", "{}").toUtf8());
 
     beginResetModel();
 
@@ -243,7 +237,6 @@ void FavouritesModel::load()
 
     for (QJsonValueRef r : doc.array()) {
         QJsonObject obj = r.toObject();
-
         FolioDelegate *delegate = FolioDelegate::fromJson(obj, this);
 
         if (delegate) {
@@ -257,6 +250,11 @@ void FavouritesModel::load()
 
     evaluateDelegatePositions(false);
     endResetModel();
+}
+
+void FavouritesModel::setApplet(Plasma::Applet *applet)
+{
+    m_applet = applet;
 }
 
 bool FavouritesModel::dropPositionIsEdge(qreal x)

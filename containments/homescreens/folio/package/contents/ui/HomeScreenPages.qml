@@ -20,7 +20,7 @@ Item {
     readonly property real pageContentHeight: height - verticalMargin * 2
 
     readonly property int reservedSpaceForLabel: metrics.height
-    readonly property real cellWidth: Math.round(pageContentWidth / Folio.FolioSettings.homeScreenColumns)
+    readonly property real cellWidth: Math.round(pageContentWidth / Folio.HomeScreenState.pageColumns)
     readonly property real cellHeight: cellWidth + reservedSpaceForLabel
 
     onCellWidthChanged: Folio.HomeScreenState.pageCellWidth = cellWidth

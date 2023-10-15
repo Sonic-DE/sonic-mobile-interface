@@ -55,6 +55,13 @@ Item {
                 property var delegateModel: model.delegate
                 property int index: model.index
 
+                property var dragState: Folio.HomeScreenState.dragState
+                property bool isAppHoveredOver: Folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate &&
+                                                dragState.dropDelegate &&
+                                                dragState.dropDelegate.type === Folio.FolioDelegate.Application &&
+                                                dragState.candidateDropPosition.location === Folio.DelegateDragPosition.Favourites &&
+                                                dragState.candidateDropPosition.favouritesPosition === delegate.index
+
                 x: model.xPosition
                 anchors.verticalCenter: parent.verticalCenter
 
@@ -96,6 +103,9 @@ Item {
                         name: Folio.FolioSettings.showFavouritesAppLabels ? delegate.delegateModel.application.name : ""
                         shadow: true
                         reservedSpaceForLabel: root.reservedSpaceForLabel
+
+                        turnToFolder: delegate.isAppHoveredOver
+                        turnToFolderAnimEnabled: Folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate
 
                         // don't show label in drag and drop mode
                         labelOpacity: delegate.opacity
@@ -154,14 +164,10 @@ Item {
                         id: appFolderDelegate
                         shadow: true
                         folder: delegate.delegateModel.folder
-                        name: delegate.delegateModel.folder.name
+                        name: Folio.FolioSettings.showFavouritesAppLabels ? delegate.delegateModel.folder.name : ""
                         reservedSpaceForLabel: root.reservedSpaceForLabel
 
-                        property var dragState: Folio.HomeScreenState.dragState
-                        appHoveredOver: dragState.dropDelegate &&
-                                        dragState.dropDelegate.type === Folio.FolioDelegate.Application &&
-                                        dragStatedragState.candidateDropPosition.location === Folio.DelegateDragPosition.Favourites &&
-                                        dragState.candidateDropPosition.favouritesPosition === delegate.index
+                        appHoveredOver: delegate.isAppHoveredOver
 
                         // don't show label in drag and drop mode
                         labelOpacity: delegate.opacity

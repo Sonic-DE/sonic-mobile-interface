@@ -21,6 +21,9 @@ AbstractDelegate {
 
     property alias iconItem: icon
 
+    property bool turnToFolder: false
+    property bool turnToFolderAnimEnabled: false
+
     function launchApp() {
         if (application.icon !== "") {
             MobileShellState.ShellDBusClient.openAppLaunchAnimation(
@@ -39,21 +42,68 @@ AbstractDelegate {
         launchApp();
     }
 
-    contentItem: DelegateAppIcon {
-        id: icon
-        application: root.application
+    contentItem: Item {
+        height: Folio.FolioSettings.homeScreenIconSize
+        width: Folio.FolioSettings.homeScreenIconSize
 
+        // background for folder creation animation
         Rectangle {
-            anchors {
-                horizontalCenter: parent.horizontalCenter
-                bottom: parent.bottom
-                bottomMargin: Kirigami.Units.smallSpacing
+            id: rect
+            radius: Kirigami.Units.largeSpacing
+            color: Qt.rgba(255, 255, 255, 0.3)
+            anchors.fill: parent
+
+            opacity: root.turnToFolder ? 1 : 0
+            property real scaleAmount: root.turnToFolder ? 1.2 : 1.0
+
+            Behavior on scaleAmount {
+                enabled: root.turnToFolderAnimEnabled
+                NumberAnimation { duration: Kirigami.Units.longDuration; easing.type: Easing.InOutQuad }
             }
-            visible: root.application.running
-            radius: width
-            width: Kirigami.Units.smallSpacing
-            height: width
-            color: Kirigami.Theme.highlightColor
+            Behavior on opacity {
+                enabled: root.turnToFolderAnimEnabled
+                NumberAnimation { duration: Kirigami.Units.longDuration; easing.type: Easing.InOutQuad }
+            }
+
+            transform: Scale {
+                origin.x: rect.width / 2
+                origin.y: rect.height / 2
+                xScale: rect.scaleAmount
+                yScale: rect.scaleAmount
+            }
+        }
+
+        // app icon
+        DelegateAppIcon {
+            id: icon
+            anchors.fill: parent
+            application: root.application
+
+            property real scaleAmount: root.turnToFolder ? 0.3 : 1.0
+            Behavior on scaleAmount {
+                enabled: root.turnToFolderAnimEnabled
+                NumberAnimation { duration: root.turnToFolderAnimEnabled ? Kirigami.Units.longDuration : 0; easing.type: Easing.InOutQuad }
+            }
+
+            transform: Scale {
+                origin.x: icon.width / 2
+                origin.y: icon.height / 2
+                xScale: icon.scaleAmount
+                yScale: icon.scaleAmount
+            }
+
+            Rectangle {
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                    bottom: parent.bottom
+                    bottomMargin: Kirigami.Units.smallSpacing
+                }
+                visible: root.application.running
+                radius: width
+                width: Kirigami.Units.smallSpacing
+                height: width
+                color: Kirigami.Theme.highlightColor
+            }
         }
     }
 }

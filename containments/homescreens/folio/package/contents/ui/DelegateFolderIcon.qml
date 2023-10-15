@@ -21,20 +21,21 @@ Item {
     width: Folio.FolioSettings.homeScreenIconSize
 
     Rectangle {
+        id: rect
         radius: Kirigami.Units.largeSpacing
         color: Qt.rgba(255, 255, 255, 0.3)
-
-        property real margin: root.expandBackground ? -Kirigami.Units.smallSpacing: 0
-
-        Behavior on margin {
-            NumberAnimation { duration: Kirigami.Units.longDuration; easing.type: Easing.InOutQuad }
-        }
-
         anchors.fill: parent
-        anchors.leftMargin: margin
-        anchors.rightMargin: margin
-        anchors.topMargin: margin
-        anchors.bottomMargin: margin
+
+        property real scaleAmount: root.expandBackground ? 1.2 : 1.0
+
+        Behavior on scaleAmount { NumberAnimation { duration: Kirigami.Units.longDuration; easing.type: Easing.InOutQuad } }
+
+        transform: Scale {
+            origin.x: root.width / 2
+            origin.y: root.height / 2
+            xScale: rect.scaleAmount
+            yScale: rect.scaleAmount
+        }
     }
 
     Grid {

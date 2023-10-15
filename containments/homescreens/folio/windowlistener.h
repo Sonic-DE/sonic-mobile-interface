@@ -29,6 +29,6 @@ Q_SIGNALS:
     void windowChanged(QString storageId);
 
 private:
-    KWayland::Client::PlasmaWindowManagement *m_windowManagement = nullptr;
+    KWayland::Client::PlasmaWindowManagement *m_windowManagement{nullptr};
     QHash<QString, QList<KWayland::Client::PlasmaWindow *>> m_windows; // <storageId, window>
 };

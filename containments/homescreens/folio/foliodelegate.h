@@ -39,6 +39,6 @@ public:
 
 protected:
     FolioDelegate::Type m_type;
-    FolioApplication *m_application;
-    FolioApplicationFolder *m_folder;
+    FolioApplication *m_application{nullptr};
+    FolioApplicationFolder *m_folder{nullptr};
 };

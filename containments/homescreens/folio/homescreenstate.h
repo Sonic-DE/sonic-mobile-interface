@@ -29,6 +29,10 @@ class HomeScreenState : public QObject
     Q_PROPERTY(qreal viewWidth READ viewWidth WRITE setViewWidth NOTIFY viewWidthChanged)
     Q_PROPERTY(qreal viewHeight READ viewHeight WRITE setViewHeight NOTIFY viewHeightChanged)
 
+    Q_PROPERTY(bool columnRowSwap READ columnRowSwap NOTIFY columnRowSwapChanged)
+    Q_PROPERTY(int pageRows READ pageRows NOTIFY pageRowsChanged)
+    Q_PROPERTY(int pageColumns READ pageColumns NOTIFY pageColumnsChanged)
+
     Q_PROPERTY(qreal pageViewX READ pageViewX WRITE setPageViewX NOTIFY pageViewXChanged)
     Q_PROPERTY(qreal pageWidth READ pageWidth WRITE setPageWidth NOTIFY pageWidthChanged)
     Q_PROPERTY(qreal pageHeight READ pageHeight WRITE setPageHeight NOTIFY pageHeightChanged)
@@ -87,6 +91,7 @@ public:
     // the current view
     ViewState viewState() const;
 
+    // drag state object
     DragState *dragState() const;
 
     qreal viewWidth() const;
@@ -94,6 +99,19 @@ public:
 
     qreal viewHeight() const;
     void setViewHeight(qreal viewHeight);
+
+    // whether to swap rows and columns in the layout
+    // this happens if the width of the screen is larger than the height
+    bool columnRowSwap() const;
+    void setColumnRowSwap(bool columnRowSwap);
+
+    // the number of rows on a page
+    int pageRows() const;
+    void setPageRows(int pageRows);
+
+    // the number of columns on a page
+    int pageColumns() const;
+    void setPageColumns(int pageColumns);
 
     // the current horizontal position of the pageview
     // starts at 0, each page is m_pageWidth wide
@@ -168,14 +186,14 @@ public:
     int currentPage();
     int currentFolderPage();
 
-    Plasma::Applet *applet();
-    Q_INVOKABLE void setApplet(Plasma::Applet *applet);
-
 Q_SIGNALS:
     void swipeStateChanged();
     void viewStateChanged();
     void viewWidthChanged();
     void viewHeightChanged();
+    void columnRowSwapChanged();
+    void pageRowsChanged();
+    void pageColumnsChanged();
     void pageViewXChanged();
     void pageWidthChanged();
     void pageHeightChanged();
@@ -203,7 +221,6 @@ Q_SIGNALS:
     void delegateDragFromFolderStarted(FolioApplicationFolder *folder, int position);
     void pageNumChanged();
     void folderPageNumChanged();
-    void appletChanged();
 
     void leftCurrentFolder();
 
@@ -246,10 +263,14 @@ private:
     SwipeState m_swipeState{SwipeState::None};
     ViewState m_viewState{ViewState::PageView};
 
-    DragState *m_dragState;
+    DragState *m_dragState{nullptr};
 
     qreal m_viewWidth{0};
     qreal m_viewHeight{0};
+
+    bool m_columnRowSwap{false};
+    int m_pageRows{0};
+    int m_pageColumns{0};
 
     qreal m_pageViewX{0};
     qreal m_pageWidth{0};
@@ -288,6 +309,4 @@ private:
     QPropertyAnimation *m_openFolderAnim{nullptr};
     QPropertyAnimation *m_closeFolderAnim{nullptr};
     QPropertyAnimation *m_folderPageAnim{nullptr};
-
-    Plasma::Applet *m_applet{nullptr};
 };

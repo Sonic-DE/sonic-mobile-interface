@@ -108,7 +108,7 @@ Folio.DelegateTouchArea {
 
                 // darken effect when hovered/pressed
                 layer {
-                    enabled: delegate.pressed || delegate.hovered
+                    enabled: delegate.hovered
                     effect: ColorOverlay {
                         color: Qt.rgba(0, 0, 0, 0.3)
                     }

@@ -25,23 +25,15 @@ Item {
     // rectangle that shows when hovering over a spot to drop a delegate on
     Rectangle {
         id: dragDropFeedback
-        color: Qt.rgba(255, 255, 255, 0.2)
-        radius: Kirigami.Units.largeSpacing
         width: root.cellWidth
         height: root.cellHeight
+        color: Qt.rgba(255, 255, 255, 0.3)
+        radius: Kirigami.Units.largeSpacing
 
         property var dropPosition: Folio.HomeScreenState.dragState.candidateDropPosition
-        property var startPosition: Folio.HomeScreenState.dragState.startPosition
-
-        property bool dropIsStartPosition: startPosition.location === Folio.DelegateDragPosition.Pages &&
-                                            startPosition.location === dropPosition.location &&
-                                            startPosition.pageRow === dropPosition.pageRow &&
-                                            startPosition.pageColumn === dropPosition.pageColumn
-
         visible: Folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate &&
                     dropPosition.location === Folio.DelegateDragPosition.Pages &&
-                    dropPosition.page === root.pageNum // &&
-                    // TODO !dropIsStartPosition
+                    dropPosition.page === root.pageNum
 
         x: dropPosition.pageColumn * root.cellWidth
         y: dropPosition.pageRow * root.cellHeight
@@ -54,8 +46,17 @@ Item {
             id: delegate
 
             property Folio.FolioPageDelegate pageDelegate: model.delegate
-            property real row: pageDelegate.row
-            property real column: pageDelegate.column
+            property int row: pageDelegate.row
+            property int column: pageDelegate.column
+
+            property var dragState: Folio.HomeScreenState.dragState
+            property bool isAppHoveredOver: Folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate &&
+                                            dragState.dropDelegate &&
+                                            dragState.dropDelegate.type === Folio.FolioDelegate.Application &&
+                                            dragState.candidateDropPosition.location === Folio.DelegateDragPosition.Pages &&
+                                            dragState.candidateDropPosition.page === root.pageNum &&
+                                            dragState.candidateDropPosition.pageRow === delegate.pageDelegate.row &&
+                                            dragState.candidateDropPosition.pageColumn === delegate.pageDelegate.column
 
             implicitWidth: root.cellWidth
             implicitHeight: root.cellHeight
@@ -92,6 +93,8 @@ Item {
                     id: appDelegate
                     application: delegate.pageDelegate.application
                     reservedSpaceForLabel: root.reservedSpaceForLabel
+                    turnToFolder: delegate.isAppHoveredOver
+                    turnToFolderAnimEnabled: Folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate
 
                     // don't show label in drag and drop mode
                     labelOpacity: delegate.opacity
@@ -156,13 +159,7 @@ Item {
                     // don't show label in drag and drop mode
                     labelOpacity: delegate.opacity
 
-                    property var dragState: Folio.HomeScreenState.dragState
-                    appHoveredOver: dragState.dropDelegate &&
-                                    dragState.dropDelegate.type === Folio.FolioDelegate.Application &&
-                                    dragState.candidateDropPosition.location === Folio.DelegateDragPosition.Pages &&
-                                    dragState.candidateDropPosition.page === root.pageNum &&
-                                    dragState.candidateDropPosition.pageRow === delegate.pageDelegate.row &&
-                                    dragState.candidateDropPosition.pageColumn === delegate.pageDelegate.column
+                    appHoveredOver: delegate.isAppHoveredOver
 
                     onPressAndHold: {
                         let mappedCoords = root.homeScreen.prepareStartDelegateDrag(delegate.pageDelegate, appFolderDelegate.delegateItem);
