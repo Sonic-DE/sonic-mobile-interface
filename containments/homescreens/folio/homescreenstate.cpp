@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include "homescreenstate.h"
+#include "foliosettings.h"
 #include "pagelistmodel.h"
 
 #include <algorithm>
@@ -90,6 +91,17 @@ HomeScreenState::HomeScreenState(QObject *parent)
     m_folderPageAnim = new QPropertyAnimation{this, "folderViewX", this};
     m_folderPageAnim->setDuration(200 * 2); // TODO use kirigami longDuration * 2
     m_folderPageAnim->setEasingCurve(QEasingCurve::OutCubic);
+
+    connect(this, &HomeScreenState::viewWidthChanged, this, [this]() {
+        setColumnRowSwap(m_viewWidth > m_viewHeight);
+    });
+    connect(this, &HomeScreenState::viewHeightChanged, this, [this]() {
+        setColumnRowSwap(m_viewWidth > m_viewHeight);
+    });
+    connect(this, &HomeScreenState::columnRowSwapChanged, this, [this]() {
+        setPageRows(m_columnRowSwap ? FolioSettings::self()->homeScreenColumns() : FolioSettings::self()->homeScreenRows());
+        setPageColumns(m_columnRowSwap ? FolioSettings::self()->homeScreenRows() : FolioSettings::self()->homeScreenColumns());
+    });
 }
 
 HomeScreenState::ViewState HomeScreenState::viewState() const
@@ -146,6 +158,45 @@ void HomeScreenState::setViewHeight(qreal viewHeight)
     if (m_viewHeight != viewHeight) {
         m_viewHeight = viewHeight;
         Q_EMIT viewHeightChanged();
+    }
+}
+
+bool HomeScreenState::columnRowSwap() const
+{
+    return m_viewWidth > m_viewHeight;
+}
+
+void HomeScreenState::setColumnRowSwap(bool columnRowSwap)
+{
+    if (m_columnRowSwap != columnRowSwap) {
+        m_columnRowSwap = columnRowSwap;
+        Q_EMIT columnRowSwapChanged();
+    }
+}
+
+int HomeScreenState::pageRows() const
+{
+    return columnRowSwap() ? FolioSettings::self()->homeScreenColumns() : FolioSettings::self()->homeScreenRows();
+}
+
+void HomeScreenState::setPageRows(int pageRows)
+{
+    if (m_pageRows != pageRows) {
+        m_pageRows = pageRows;
+        Q_EMIT pageRowsChanged();
+    }
+}
+
+int HomeScreenState::pageColumns() const
+{
+    return columnRowSwap() ? FolioSettings::self()->homeScreenRows() : FolioSettings::self()->homeScreenColumns();
+}
+
+void HomeScreenState::setPageColumns(int pageColumns)
+{
+    if (m_pageColumns != pageColumns) {
+        m_pageColumns = pageColumns;
+        Q_EMIT pageColumnsChanged();
     }
 }
 
@@ -400,17 +451,6 @@ int HomeScreenState::currentPage()
 int HomeScreenState::currentFolderPage()
 {
     return m_folderPageNum;
-}
-
-Plasma::Applet *HomeScreenState::applet()
-{
-    return m_applet;
-}
-
-void HomeScreenState::setApplet(Plasma::Applet *applet)
-{
-    m_applet = applet;
-    Q_EMIT appletChanged();
 }
 
 void HomeScreenState::openAppDrawer()
@@ -675,8 +715,6 @@ void HomeScreenState::determineSwipeTypeAfterThreshold(qreal totalDeltaX, qreal 
     // we check if the x or y movement has passed a certain threshold before determining the swipe type
 
     if (qAbs(totalDeltaX) >= DETERMINE_SWIPE_THRESHOLD && m_viewState == ViewState::PageView) {
-        qDebug() << "passed horizontal swipe threshold";
-
         // select horizontal swipe mode (only if in page view)
         setSwipeState(SwipeState::SwipingPages);
 
@@ -692,8 +730,6 @@ void HomeScreenState::determineSwipeTypeAfterThreshold(qreal totalDeltaX, qreal 
 
     } else if (qAbs(totalDeltaY) >= DETERMINE_SWIPE_THRESHOLD) {
         // select vertical swipe mode
-
-        qDebug() << "passed vertical swipe threshold";
 
         if (m_movingUp) {
             // moving up

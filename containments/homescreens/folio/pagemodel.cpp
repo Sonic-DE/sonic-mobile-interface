@@ -2,45 +2,71 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include "pagemodel.h"
-#include "foliosettings.h"
+#include "homescreenstate.h"
 
 FolioPageDelegate::FolioPageDelegate(int row, int column, QObject *parent)
     : FolioDelegate{parent}
+    , m_realRow{HomeScreenState::self()->columnRowSwap() ? column : row}
+    , m_realColumn{HomeScreenState::self()->columnRowSwap() ? row : column}
     , m_row{row}
     , m_column{column}
 {
+    init();
 }
 
 FolioPageDelegate::FolioPageDelegate(int row, int column, FolioApplication *application, QObject *parent)
     : FolioDelegate{application, parent}
+    , m_realRow{HomeScreenState::self()->columnRowSwap() ? column : row}
+    , m_realColumn{HomeScreenState::self()->columnRowSwap() ? row : column}
     , m_row{row}
     , m_column{column}
 {
+    init();
 }
 
 FolioPageDelegate::FolioPageDelegate(int row, int column, FolioApplicationFolder *folder, QObject *parent)
     : FolioDelegate{folder, parent}
+    , m_realRow{HomeScreenState::self()->columnRowSwap() ? column : row}
+    , m_realColumn{HomeScreenState::self()->columnRowSwap() ? row : column}
     , m_row{row}
     , m_column{column}
 {
+    init();
 }
 
 FolioPageDelegate::FolioPageDelegate(int row, int column, FolioDelegate *delegate, QObject *parent)
     : FolioDelegate{parent}
+    , m_realRow{HomeScreenState::self()->columnRowSwap() ? column : row}
+    , m_realColumn{HomeScreenState::self()->columnRowSwap() ? row : column}
     , m_row{row}
     , m_column{column}
 {
     m_type = delegate->type();
     m_application = delegate->application();
     m_folder = delegate->folder();
+
+    init();
+}
+
+void FolioPageDelegate::init()
+{
+    connect(HomeScreenState::self(), &HomeScreenState::columnRowSwapChanged, this, [this]() {
+        if (HomeScreenState::self()->columnRowSwap()) {
+            setRow(m_realColumn);
+            setColumn(m_realRow);
+        } else {
+            setRow(m_realRow);
+            setColumn(m_realColumn);
+        }
+    });
 }
 
 FolioPageDelegate *FolioPageDelegate::fromJson(QJsonObject &obj, QObject *parent)
 {
     FolioDelegate *fd = FolioDelegate::fromJson(obj, parent);
 
-    int row = obj[QStringLiteral("row")].toInt();
-    int column = obj[QStringLiteral("column")].toInt();
+    int row = HomeScreenState::self()->columnRowSwap() ? obj[QStringLiteral("column")].toInt() : obj[QStringLiteral("row")].toInt();
+    int column = HomeScreenState::self()->columnRowSwap() ? obj[QStringLiteral("row")].toInt() : obj[QStringLiteral("column")].toInt();
 
     FolioPageDelegate *delegate = new FolioPageDelegate{row, column, fd, parent};
     fd->deleteLater();
@@ -51,8 +77,8 @@ FolioPageDelegate *FolioPageDelegate::fromJson(QJsonObject &obj, QObject *parent
 QJsonObject FolioPageDelegate::toJson() const
 {
     QJsonObject o = FolioDelegate::toJson();
-    o[QStringLiteral("row")] = m_row;
-    o[QStringLiteral("column")] = m_column;
+    o[QStringLiteral("row")] = m_realRow;
+    o[QStringLiteral("column")] = m_realColumn;
     return o;
 }
 
@@ -177,8 +203,8 @@ void PageModel::removeDelegate(int row, int col)
 
 bool PageModel::addDelegate(FolioPageDelegate *delegate)
 {
-    if (delegate->row() < 0 || delegate->row() >= FolioSettings::self()->homeScreenRows() || delegate->column() < 0
-        || delegate->column() >= FolioSettings::self()->homeScreenColumns()) {
+    if (delegate->row() < 0 || delegate->row() >= HomeScreenState::self()->pageRows() || delegate->column() < 0
+        || delegate->column() >= HomeScreenState::self()->pageColumns()) {
         return false;
     }
 

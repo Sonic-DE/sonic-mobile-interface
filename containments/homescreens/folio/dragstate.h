@@ -129,27 +129,27 @@ private:
     qreal getDraggedDelegateX();
     qreal getDraggedDelegateY();
 
-    QTimer *m_changePageTimer;
-    QTimer *m_openFolderTimer;
-    QTimer *m_leaveFolderTimer;
-    QTimer *m_changeFolderPageTimer;
+    QTimer *m_changePageTimer{nullptr};
+    QTimer *m_openFolderTimer{nullptr};
+    QTimer *m_leaveFolderTimer{nullptr};
+    QTimer *m_changeFolderPageTimer{nullptr};
 
     // inserting between apps in a folder
-    QTimer *m_folderInsertBetweenTimer;
+    QTimer *m_folderInsertBetweenTimer{nullptr};
     int m_folderInsertBetweenIndex{0};
 
     // inserting between apps in the favourites strip
-    QTimer *m_favouritesInsertBetweenTimer;
+    QTimer *m_favouritesInsertBetweenTimer{nullptr};
     int m_favouritesInsertBetweenIndex{0};
 
     // the delegate that is being dropped
-    FolioDelegate *m_dropDelegate;
+    FolioDelegate *m_dropDelegate{nullptr};
 
     // where we are hovering over, potentially to drop the delegate
-    DelegateDragPosition *const m_candidateDropPosition;
+    DelegateDragPosition *const m_candidateDropPosition{nullptr};
 
     // this is the original start position of the drag
-    DelegateDragPosition *const m_startPosition;
+    DelegateDragPosition *const m_startPosition{nullptr};
 
-    HomeScreenState *m_state;
+    HomeScreenState *m_state{nullptr};
 };

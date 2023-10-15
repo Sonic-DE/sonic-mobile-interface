@@ -3,7 +3,6 @@
 
 #include "dragstate.h"
 #include "favouritesmodel.h"
-#include "foliosettings.h"
 #include "pagelistmodel.h"
 
 #include <KLocalizedString>
@@ -343,8 +342,8 @@ void DragState::onDelegateDragPositionOverPageViewChanged()
     int column = (x - pageHorizontalMargin) / m_state->pageCellWidth();
 
     // ensure it's in bounds
-    row = std::max(0, std::min(FolioSettings::self()->homeScreenRows() - 1, row));
-    column = std::max(0, std::min(FolioSettings::self()->homeScreenColumns() - 1, column));
+    row = std::max(0, std::min(m_state->pageRows() - 1, row));
+    column = std::max(0, std::min(m_state->pageColumns() - 1, column));
 
     // if the drop position changed, cancel the open page timer
     if (m_candidateDropPosition->pageRow() != row || m_candidateDropPosition->pageColumn() != column) {
@@ -527,7 +526,6 @@ void DragState::onChangePageTimerFinished()
 
 void DragState::onOpenFolderTimerFinished()
 {
-    qDebug() << "open folder timer finished";
     if (!m_state || m_state->swipeState() != HomeScreenState::DraggingDelegate || m_state->viewState() != HomeScreenState::PageView
         || m_candidateDropPosition->location() != DelegateDragPosition::Pages) {
         return;
@@ -655,8 +653,6 @@ void DragState::deleteStartPositionDelegate()
 
 void DragState::createDropPositionDelegate()
 {
-    qDebug() << "drop location:" << m_candidateDropPosition->location();
-
     if (!m_dropDelegate) {
         return;
     }
@@ -664,8 +660,6 @@ void DragState::createDropPositionDelegate()
     // creates the delegate at the drop position
     switch (m_candidateDropPosition->location()) {
     case DelegateDragPosition::Pages: {
-        qDebug() << "drop at page" << m_candidateDropPosition->page() << m_candidateDropPosition->pageRow() << m_candidateDropPosition->pageColumn();
-
         // locate the page we are dropping on
         PageModel *page = PageListModel::self()->getPage(m_candidateDropPosition->page());
         if (!page) {
@@ -719,8 +713,6 @@ void DragState::createDropPositionDelegate()
         break;
     }
     case DelegateDragPosition::Favourites: {
-        qDebug() << "creating favourite at" << m_candidateDropPosition->favouritesPosition();
-
         // delegate that exists at the drop position
         FolioDelegate *existingDelegate = FavouritesModel::self()->getEntryAt(m_candidateDropPosition->favouritesPosition());
 
@@ -779,8 +771,6 @@ void DragState::createDropPositionDelegate()
         if (m_dropDelegate->type() != FolioDelegate::Application) {
             return;
         }
-
-        qDebug() << "creating at folder" << m_candidateDropPosition->folderPosition() << m_dropDelegate->type();
 
         bool added = folder->addDelegate(m_dropDelegate, m_candidateDropPosition->folderPosition());
 

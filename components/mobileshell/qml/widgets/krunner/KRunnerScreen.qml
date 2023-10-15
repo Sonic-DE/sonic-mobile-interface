@@ -23,6 +23,10 @@ import "../../components" as Components
 Item {
     id: root
 
+    function requestFocus() {
+        queryField.forceActiveFocus();
+    }
+
     signal requestedClose()
 
     ColumnLayout {

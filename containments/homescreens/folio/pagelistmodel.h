@@ -31,9 +31,12 @@ public:
     bool isLastPageEmpty();
 
     void save();
+    Q_INVOKABLE void load();
+
+    void setApplet(Plasma::Applet *applet);
 
 private:
-    void load();
-
     QList<PageModel *> m_pages;
+
+    Plasma::Applet *m_applet{nullptr};
 };

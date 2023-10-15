@@ -32,6 +32,8 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
     QHash<int, QByteArray> roleNames() const Q_DECL_OVERRIDE;
 
+    Q_INVOKABLE void load();
+
 public Q_SLOTS:
     void sycocaDbChanged();
 
@@ -39,6 +41,5 @@ Q_SIGNALS:
     void launchError(const QString &msg);
 
 protected:
-    void load();
     QList<FolioDelegate *> m_delegates;
 };

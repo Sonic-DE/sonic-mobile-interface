@@ -19,40 +19,32 @@ ContainmentItem {
     id: root
 
     Component.onCompleted: {
-        Folio.FolioSettings.setApplet(root.plasmoid);
-        Folio.HomeScreenState.setApplet(root.plasmoid);
+        Folio.ApplicationListModel.load();
+        Folio.FavouritesModel.load();
+        Folio.PageListModel.load();
 
         // ensure the gestures work immediately on load
         forceActiveFocus();
     }
 
-    Plasmoid.onActivated: {
-        // // there's a couple of steps:
-        // // - minimize windows (only if we are in an app)
-        // // - open app drawer
-        // // - close app drawer and, if necessary, restore windows
-        //
-        // // Always close action drawer
-        // if (MobileShellState.ShellDBusClient.isActionDrawerOpen) {
-        //     MobileShellState.ShellDBusClient.closeActionDrawer();
-        // }
-        //
-        // if (!WindowPlugin.WindowUtil.isShowingDesktop && WindowPlugin.WindowMaximizedTracker.showingWindow
-        //     || MobileShellState.ShellDBusClient.isActionDrawerOpen
-        //     || searchWidget.isOpen
-        // ) {
-        //
-        //     // Always close the search widget as well
-        //     if (searchWidget.isOpen) {
-        //         searchWidget.close();
-        //     }
-        //
-        // } else if (folioHomeScreen.homeScreenState.currentView === HomeScreenState.PageView) {
-        //     folioHomeScreen.homeScreenState.openAppDrawer();
-        // } else {
-        //     folioHomeScreen.homeScreenState.closeAppDrawer();
-        // }
+    function homeAction() {
+        switch (Folio.HomeScreenState.viewState) {
+            case Folio.HomeScreenState.PageView:
+                Folio.HomeScreenState.openAppDrawer();
+                break;
+            case Folio.HomeScreenState.AppDrawerView:
+                Folio.HomeScreenState.closeAppDrawer();
+                break;
+            case Folio.HomeScreenState.SearchWidgetView:
+                Folio.HomeScreenState.closeSearchWidget();
+                break;
+            case Folio.HomeScreenState.FolderView:
+                Folio.HomeScreenState.closeFolder();
+                break;
+        }
     }
+
+    Plasmoid.onActivated: homeAction()
 
     Rectangle {
         id: appDrawerBackground
@@ -76,13 +68,11 @@ ContainmentItem {
 
         plasmoidItem: root
         onResetHomeScreenPosition: {
-            // folioHomeScreen.homeScreenState.animateGoToPageIndex(0, Kirigami.Units.longDuration);
+            Folio.HomeScreenState.goToPage(0);
             Folio.HomeScreenState.closeAppDrawer();
         }
 
-        onHomeTriggered: {
-            Folio.HomeScreenState.closeSearchWidget();
-        }
+        onHomeTriggered: root.homeAction()
 
         contentItem: Item {
 
