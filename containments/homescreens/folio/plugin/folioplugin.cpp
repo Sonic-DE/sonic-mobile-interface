@@ -13,7 +13,7 @@
 #include "pagelistmodel.h"
 #include "pagemodel.h"
 
-void HalcyonPlugin::registerTypes(const char *uri)
+void FolioPlugin::registerTypes(const char *uri)
 {
     Q_ASSERT(QLatin1String(uri) == QLatin1String("org.kde.private.mobile.homescreen.folio"));
 

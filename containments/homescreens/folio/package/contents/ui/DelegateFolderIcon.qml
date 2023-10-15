@@ -10,16 +10,32 @@ import org.kde.kirigami 2.20 as Kirigami
 
 import org.kde.private.mobile.homescreen.folio 1.0 as Folio
 
-Rectangle {
+Item {
     id: root
 
     property Folio.FolioApplicationFolder folder
 
+    property bool expandBackground: false
+
     height: Folio.FolioSettings.homeScreenIconSize
     width: Folio.FolioSettings.homeScreenIconSize
 
-    radius: Kirigami.Units.largeSpacing
-    color: Qt.rgba(255, 255, 255, 0.3)
+    Rectangle {
+        radius: Kirigami.Units.largeSpacing
+        color: Qt.rgba(255, 255, 255, 0.3)
+
+        property real margin: root.expandBackground ? -Kirigami.Units.smallSpacing: 0
+
+        Behavior on margin {
+            NumberAnimation { duration: Kirigami.Units.longDuration; easing.type: Easing.InOutQuad }
+        }
+
+        anchors.fill: parent
+        anchors.leftMargin: margin
+        anchors.rightMargin: margin
+        anchors.topMargin: margin
+        anchors.bottomMargin: margin
+    }
 
     Grid {
         id: previewGrid

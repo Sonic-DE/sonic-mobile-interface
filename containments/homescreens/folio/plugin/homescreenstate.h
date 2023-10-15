@@ -7,6 +7,8 @@
 #include <QObject>
 #include <QPropertyAnimation>
 
+#include <Plasma/Applet>
+
 #include "dragstate.h"
 
 class DragState;
@@ -166,7 +168,8 @@ public:
     int currentPage();
     int currentFolderPage();
 
-    Q_INVOKABLE FolioDelegate *getDelegate(FolioApplication *application);
+    Plasma::Applet *applet();
+    Q_INVOKABLE void setApplet(Plasma::Applet *applet);
 
 Q_SIGNALS:
     void swipeStateChanged();
@@ -200,6 +203,9 @@ Q_SIGNALS:
     void delegateDragFromFolderStarted(FolioApplicationFolder *folder, int position);
     void pageNumChanged();
     void folderPageNumChanged();
+    void appletChanged();
+
+    void leftCurrentFolder();
 
 public Q_SLOTS:
     void openAppDrawer();
@@ -282,4 +288,6 @@ private:
     QPropertyAnimation *m_openFolderAnim{nullptr};
     QPropertyAnimation *m_closeFolderAnim{nullptr};
     QPropertyAnimation *m_folderPageAnim{nullptr};
+
+    Plasma::Applet *m_applet{nullptr};
 };

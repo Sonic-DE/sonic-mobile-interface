@@ -179,6 +179,14 @@ QHash<int, QByteArray> ApplicationFolderModel::roleNames() const
     return {{DelegateRole, "delegate"}, {XPositionRole, "xPosition"}, {YPositionRole, "yPosition"}};
 }
 
+FolioDelegate *ApplicationFolderModel::getDelegate(int index)
+{
+    if (index < 0 || index >= m_folder->m_delegates.size()) {
+        return nullptr;
+    }
+    return m_folder->m_delegates[index].delegate;
+}
+
 void ApplicationFolderModel::moveEntry(int fromRow, int toRow)
 {
     if (fromRow < 0 || toRow < 0 || fromRow >= m_folder->m_delegates.size() || toRow >= m_folder->m_delegates.size() || fromRow == toRow) {
@@ -205,9 +213,9 @@ void ApplicationFolderModel::moveEntry(int fromRow, int toRow)
     Q_EMIT m_folder->saveRequested();
 }
 
-bool ApplicationFolderModel::addDelegate(FolioDelegate *delegate, int row)
+bool ApplicationFolderModel::addDelegate(FolioDelegate *delegate, int index)
 {
-    if (row < 0 || row > m_folder->m_delegates.size()) {
+    if (index < 0 || index > m_folder->m_delegates.size()) {
         return false;
     }
 
@@ -215,10 +223,21 @@ bool ApplicationFolderModel::addDelegate(FolioDelegate *delegate, int row)
         return false;
     }
 
-    beginInsertRows(QModelIndex(), row, row);
-    m_folder->m_delegates.insert(row, {delegate, 0, 0});
-    evaluateDelegatePositions(false);
-    endInsertRows();
+    if (index == m_folder->m_delegates.size()) {
+        beginInsertRows(QModelIndex(), index, index);
+        m_folder->m_delegates.append({delegate, 0, 0});
+        evaluateDelegatePositions(false);
+        endInsertRows();
+    } else if (m_folder->m_delegates[index].delegate->type() == FolioDelegate::None) {
+        replaceGhostEntry(delegate);
+    } else {
+        beginInsertRows(QModelIndex(), index, index);
+        m_folder->m_delegates.insert(index, {delegate, 0, 0});
+        evaluateDelegatePositions(false);
+        endInsertRows();
+    }
+
+    evaluateDelegatePositions();
 
     Q_EMIT m_folder->applicationsChanged();
     Q_EMIT m_folder->saveRequested();
@@ -226,22 +245,81 @@ bool ApplicationFolderModel::addDelegate(FolioDelegate *delegate, int row)
     return true;
 }
 
-void ApplicationFolderModel::removeDelegate(int row)
+void ApplicationFolderModel::removeDelegate(int index)
 {
-    if (row < 0 || row >= m_folder->m_delegates.size()) {
+    if (index < 0 || index >= m_folder->m_delegates.size()) {
         return;
     }
 
-    beginRemoveRows(QModelIndex(), row, row);
+    beginRemoveRows(QModelIndex(), index, index);
     // HACK: do not deleteLater(), because the delegate might still be used somewhere else
-    // m_folder->m_delegates[row].app->deleteLater();
-    m_folder->m_delegates.removeAt(row);
+    // m_folder->m_delegates[index].app->deleteLater();
+    m_folder->m_delegates.removeAt(index);
     endRemoveRows();
 
     evaluateDelegatePositions();
 
     Q_EMIT m_folder->applicationsChanged();
     Q_EMIT m_folder->saveRequested();
+}
+
+int ApplicationFolderModel::getGhostEntryPosition()
+{
+    for (int i = 0; i < m_folder->m_delegates.size(); i++) {
+        if (m_folder->m_delegates[i].delegate->type() == FolioDelegate::None) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void ApplicationFolderModel::setGhostEntry(int index)
+{
+    FolioDelegate *ghost = nullptr;
+
+    // check if a ghost entry already exists
+    for (int i = 0; i < m_folder->m_delegates.size(); i++) {
+        auto delegate = m_folder->m_delegates[i].delegate;
+        if (delegate->type() == FolioDelegate::None) {
+            ghost = delegate;
+
+            // remove it
+            removeDelegate(i);
+
+            // correct index if necessary due to deletion
+            if (index > i) {
+                index--;
+            }
+        }
+    }
+
+    if (!ghost) {
+        ghost = new FolioDelegate{HomeScreenState::self()};
+    }
+
+    // add empty delegate at new position
+    addDelegate(ghost, index);
+}
+
+void ApplicationFolderModel::replaceGhostEntry(FolioDelegate *delegate)
+{
+    for (int i = 0; i < m_folder->m_delegates.size(); i++) {
+        if (m_folder->m_delegates[i].delegate->type() == FolioDelegate::None) {
+            m_folder->m_delegates[i].delegate = delegate;
+
+            Q_EMIT dataChanged(createIndex(i, 0), createIndex(i, 0), {DelegateRole});
+            break;
+        }
+    }
+}
+
+void ApplicationFolderModel::deleteGhostEntry()
+{
+    for (int i = 0; i < m_folder->m_delegates.size(); i++) {
+        if (m_folder->m_delegates[i].delegate->type() == FolioDelegate::None) {
+            removeDelegate(i);
+        }
+    }
 }
 
 int ApplicationFolderModel::dropInsertPosition(qreal x, qreal y)
@@ -270,13 +348,15 @@ int ApplicationFolderModel::dropInsertPosition(qreal x, qreal y)
     }
 
     // calculate the position based on the page, row and column it is at
-    return (page * numRowsOnPage() * numColumnsOnPage()) + (row * numColumnsOnPage()) + column;
+    int pos = (page * numRowsOnPage() * numColumnsOnPage()) + (row * numColumnsOnPage()) + column;
+    // make sure it's in bounds
+    return std::min((int)m_folder->m_delegates.size(), std::max(0, pos));
 }
 
 bool ApplicationFolderModel::isDropPositionOutside(qreal x, qreal y)
 {
-    return (x < leftMarginFromScreenEdge()) || x > (HomeScreenState::self()->folderPageWidth() - leftMarginFromScreenEdge()) || (y < topMarginFromScreenEdge())
-        || (y > HomeScreenState::self()->folderPageHeight() - topMarginFromScreenEdge());
+    return (x < leftMarginFromScreenEdge()) || (x > (HomeScreenState::self()->viewWidth() - leftMarginFromScreenEdge())) || (y < topMarginFromScreenEdge())
+        || (y > HomeScreenState::self()->viewHeight() - topMarginFromScreenEdge());
 }
 
 void ApplicationFolderModel::evaluateDelegatePositions(bool emitSignal)
@@ -297,6 +377,8 @@ void ApplicationFolderModel::evaluateDelegatePositions(bool emitSignal)
 
     while (index < m_folder->m_delegates.size()) {
         int prevIndex = index;
+
+        // determine positions page-by-page
         for (int row = 0; row < rows && index < numOfDelegates; row++) {
             for (int column = 0; column < columns && index < numOfDelegates; column++) {
                 m_folder->m_delegates[index].xPosition = qRound(page * pageWidth + leftMargin + column * cellWidth);
@@ -304,6 +386,7 @@ void ApplicationFolderModel::evaluateDelegatePositions(bool emitSignal)
                 index++;
             }
         }
+
         // prevent infinite loop
         if (prevIndex == index) {
             break;
