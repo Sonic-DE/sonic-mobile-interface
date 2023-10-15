@@ -15,12 +15,15 @@ AbstractDelegate {
 
     property Folio.FolioApplicationFolder folder
 
+    property bool appHoveredOver: false
+
     onAfterClickAnimation: {
         Folio.HomeScreenState.openFolder(folder);
     }
 
     contentItem: DelegateFolderIcon {
         folder: root.folder
+        expandBackground: root.appHoveredOver
     }
 }
 

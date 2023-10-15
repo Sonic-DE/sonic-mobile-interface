@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include "pagelistmodel.h"
+#include "homescreenstate.h"
 
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -15,6 +16,11 @@ PageListModel *PageListModel::self()
 PageListModel::PageListModel(QObject *parent)
     : QAbstractListModel{parent}
 {
+    connect(HomeScreenState::self(), &HomeScreenState::appletChanged, this, [this]() {
+        if (HomeScreenState::self()->applet()) {
+            load();
+        }
+    });
 }
 
 int PageListModel::rowCount(const QModelIndex &parent) const
@@ -86,7 +92,7 @@ bool PageListModel::isLastPageEmpty()
 
 void PageListModel::save()
 {
-    if (!m_applet) {
+    if (!HomeScreenState::self()->applet()) {
         return;
     }
 
@@ -96,19 +102,21 @@ void PageListModel::save()
     }
     QByteArray data = QJsonDocument(arr).toJson(QJsonDocument::Compact);
 
-    m_applet->config().writeEntry("Pages", QString::fromStdString(data.toStdString()));
-    Q_EMIT m_applet->configNeedsSaving();
+    HomeScreenState::self()->applet()->config().writeEntry("Pages", QString::fromStdString(data.toStdString()));
+    Q_EMIT HomeScreenState::self()->applet()->configNeedsSaving();
 }
 
 void PageListModel::load()
 {
-    if (!m_applet) {
+    if (!HomeScreenState::self()->applet()) {
         return;
     }
 
-    QJsonDocument doc = QJsonDocument::fromJson(m_applet->config().readEntry("Pages", "{}").toUtf8());
+    QJsonDocument doc = QJsonDocument::fromJson(HomeScreenState::self()->applet()->config().readEntry("Pages", "{}").toUtf8());
 
     beginResetModel();
+
+    m_pages.clear();
 
     for (QJsonValueRef r : doc.array()) {
         QJsonArray obj = r.toArray();
@@ -126,11 +134,4 @@ void PageListModel::load()
     if (m_pages.size() == 0) {
         addPageAtEnd();
     }
-}
-
-// called by QML
-void PageListModel::setApplet(Plasma::Applet *applet)
-{
-    m_applet = applet;
-    load();
 }

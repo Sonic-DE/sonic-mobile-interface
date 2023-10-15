@@ -19,7 +19,9 @@ Loader {
     property Folio.FolioDelegate delegate
 
     sourceComponent: {
-        if (delegate.type === Folio.FolioDelegate.Application) {
+        if (!delegate) {
+            return noIcon;
+        } else if (delegate.type === Folio.FolioDelegate.Application) {
             return appIcon;
         } else if (delegate.type === Folio.FolioDelegate.Folder) {
             return folderIcon;

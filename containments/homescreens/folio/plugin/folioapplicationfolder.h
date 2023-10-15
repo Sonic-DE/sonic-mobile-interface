@@ -88,9 +88,18 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int, QByteArray> roleNames() const override;
 
+    FolioDelegate *getDelegate(int index);
     void moveEntry(int fromRow, int toRow);
-    bool addDelegate(FolioDelegate *delegate, int row);
-    void removeDelegate(int row);
+    bool addDelegate(FolioDelegate *delegate, int index);
+    void removeDelegate(int index);
+
+    // for use with drag and drop, as the delegate is dragged around
+    // ghost - fake delegate exists at an index, so a gap is created
+    // invisible - existing delegate looks like it doesn't exist
+    int getGhostEntryPosition();
+    void setGhostEntry(int index);
+    void replaceGhostEntry(FolioDelegate *delegate);
+    void deleteGhostEntry();
 
     // the index that dropping at the position given would place the delegate at.
     int dropInsertPosition(qreal x, qreal y);

@@ -65,14 +65,6 @@ Item {
             x: column * root.cellWidth
             y: row * root.cellHeight
 
-            // don't show when in drag and drop mode
-            property var startPosition: Folio.HomeScreenState.dragState.startPosition
-            opacity: (Folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate &&
-                        startPosition.location === Folio.DelegateDragPosition.Pages &&
-                        startPosition.page === root.pageNum &&
-                        startPosition.pageRow === delegate.pageDelegate.row &&
-                        startPosition.pageColumn === delegate.pageDelegate.column) ? 0 : 1
-
             Loader {
                 anchors.fill: parent
 
@@ -163,6 +155,14 @@ Item {
 
                     // don't show label in drag and drop mode
                     labelOpacity: delegate.opacity
+
+                    property var dragState: Folio.HomeScreenState.dragState
+                    appHoveredOver: dragState.dropDelegate &&
+                                    dragState.dropDelegate.type === Folio.FolioDelegate.Application &&
+                                    dragState.candidateDropPosition.location === Folio.DelegateDragPosition.Pages &&
+                                    dragState.candidateDropPosition.page === root.pageNum &&
+                                    dragState.candidateDropPosition.pageRow === delegate.pageDelegate.row &&
+                                    dragState.candidateDropPosition.pageColumn === delegate.pageDelegate.column
 
                     onPressAndHold: {
                         let mappedCoords = root.homeScreen.prepareStartDelegateDrag(delegate.pageDelegate, appFolderDelegate.delegateItem);

@@ -80,29 +80,49 @@ class DragState : public QObject
     Q_OBJECT
     Q_PROPERTY(DelegateDragPosition *candidateDropPosition READ candidateDropPosition CONSTANT)
     Q_PROPERTY(DelegateDragPosition *startPosition READ startPosition CONSTANT)
+    Q_PROPERTY(FolioDelegate *dropDelegate READ dropDelegate NOTIFY dropDelegateChanged)
 
 public:
     DragState(HomeScreenState *state = nullptr, QObject *parent = nullptr);
 
     DelegateDragPosition *candidateDropPosition() const;
     DelegateDragPosition *startPosition() const;
+    FolioDelegate *dropDelegate() const;
+    void setDropDelegate(FolioDelegate *dropDelegate);
+
+Q_SIGNALS:
+    void dropDelegateChanged();
 
 private Q_SLOTS:
     void onDelegateDragPositionChanged();
+    void onDelegateDragPositionOverFolderViewChanged();
+    void onDelegateDragPositionOverFavouritesChanged();
+    void onDelegateDragPositionOverPageViewChanged();
+
+    void onDelegateDraggingStarted();
     void onDelegateDragFromPageStarted(int page, int row, int column);
     void onDelegateDragFromFavouritesStarted(int position);
     void onDelegateDragFromAppDrawerStarted(QString storageId);
     void onDelegateDragFromFolderStarted(FolioApplicationFolder *folder, int position);
     void onDelegateDropped();
+
+    void onLeaveCurrentFolder();
+
     void onChangePageTimerFinished();
+    void onOpenFolderTimerFinished();
     void onLeaveFolderTimerFinished();
     void onChangeFolderPageTimerFinished();
     void onFolderInsertBetweenTimerFinished();
     void onFavouritesInsertBetweenTimerFinished();
 
 private:
+    // deletes the delegate at m_startPosition
     void deleteStartPositionDelegate();
+
+    // deletes the delegate at m_candidateDropPosition
     void createDropPositionDelegate();
+
+    // whether m_startPosition = m_candidateDropPosition
     bool isStartPositionEqualDropPosition();
 
     // we need to adjust so that the coord is in the center of the delegate
@@ -110,21 +130,26 @@ private:
     qreal getDraggedDelegateY();
 
     QTimer *m_changePageTimer;
-
+    QTimer *m_openFolderTimer;
     QTimer *m_leaveFolderTimer;
     QTimer *m_changeFolderPageTimer;
+
+    // inserting between apps in a folder
     QTimer *m_folderInsertBetweenTimer;
     int m_folderInsertBetweenIndex{0};
 
-    QTimer *m_favouritesInsertBetweenTimer; // inserting between apps
+    // inserting between apps in the favourites strip
+    QTimer *m_favouritesInsertBetweenTimer;
     int m_favouritesInsertBetweenIndex{0};
 
-    HomeScreenState *m_state;
-
+    // the delegate that is being dropped
     FolioDelegate *m_dropDelegate;
 
     // where we are hovering over, potentially to drop the delegate
     DelegateDragPosition *const m_candidateDropPosition;
+
     // this is the original start position of the drag
     DelegateDragPosition *const m_startPosition;
+
+    HomeScreenState *m_state;
 };

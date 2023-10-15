@@ -51,18 +51,12 @@ public:
     void replaceGhostEntry(FolioDelegate *delegate);
     void deleteGhostEntry();
 
-    void setInvisiblePosition(int row);
-    void clearInvisiblePosition();
-
     // whether the position given is in between 2 delegates, or at the edge.
     // this would return false if dropping should place the delegate into a folder/create a folder.
     bool dropPositionIsEdge(qreal x);
 
     // the index that dropping at the position given would place the delegate at.
     int dropInsertPosition(qreal x);
-
-    // called by QML
-    Q_INVOKABLE void setApplet(Plasma::Applet *applet);
 
 private:
     void save();
@@ -72,9 +66,5 @@ private:
     // get the x position where delegates start being placed
     qreal getDelegateRowStartX();
 
-    FolioDelegate *m_invisibleDelegate{nullptr};
-
     QList<FavouritesDelegate> m_delegates;
-
-    Plasma::Applet *m_applet;
 };
