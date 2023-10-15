@@ -19,20 +19,12 @@ Item {
     readonly property real pageContentWidth: width - horizontalMargin * 2
     readonly property real pageContentHeight: height - verticalMargin * 2
 
-    readonly property int reservedSpaceForLabel: metrics.height
     readonly property real cellWidth: Math.round(pageContentWidth / Folio.HomeScreenState.pageColumns)
-    readonly property real cellHeight: cellWidth + reservedSpaceForLabel
+    readonly property real cellHeight: cellWidth + Folio.HomeScreenState.pageDelegateLabelHeight
 
+    // TODO move cell width calculations
     onCellWidthChanged: Folio.HomeScreenState.pageCellWidth = cellWidth
     onCellHeightChanged: Folio.HomeScreenState.pageCellHeight = cellHeight
-
-    PC3.Label {
-        id: metrics
-        text: "M\nM"
-        visible: false
-        font.pointSize: Kirigami.Theme.defaultFont.pointSize * 0.8
-        font.weight: Font.Bold
-    }
 
     Repeater {
         model: Folio.PageListModel
@@ -42,10 +34,6 @@ Item {
             pageNum: model.index
             pageModel: model.delegate
             homeScreen: root.homeScreen
-
-            reservedSpaceForLabel: root.reservedSpaceForLabel
-            cellWidth: root.cellWidth
-            cellHeight: root.cellHeight
 
             anchors.fill: root
             anchors.leftMargin: root.horizontalMargin

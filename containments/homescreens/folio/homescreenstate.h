@@ -33,14 +33,20 @@ class HomeScreenState : public QObject
     Q_PROPERTY(int pageRows READ pageRows NOTIFY pageRowsChanged)
     Q_PROPERTY(int pageColumns READ pageColumns NOTIFY pageColumnsChanged)
 
+    // page measurements
     Q_PROPERTY(qreal pageViewX READ pageViewX WRITE setPageViewX NOTIFY pageViewXChanged)
     Q_PROPERTY(qreal pageWidth READ pageWidth WRITE setPageWidth NOTIFY pageWidthChanged)
     Q_PROPERTY(qreal pageHeight READ pageHeight WRITE setPageHeight NOTIFY pageHeightChanged)
     Q_PROPERTY(qreal pageContentWidth READ pageContentWidth WRITE setPageContentWidth NOTIFY pageContentWidthChanged)
     Q_PROPERTY(qreal pageContentHeight READ pageContentHeight WRITE setPageContentHeight NOTIFY pageContentHeightChanged)
+
+    // cell measurements
     Q_PROPERTY(qreal pageCellWidth READ pageCellWidth WRITE setPageCellWidth NOTIFY pageCellWidthChanged)
     Q_PROPERTY(qreal pageCellHeight READ pageCellHeight WRITE setPageCellHeight NOTIFY pageCellHeightChanged)
+    Q_PROPERTY(qreal pageDelegateLabelHeight READ pageDelegateLabelHeight WRITE setPageDelegateLabelHeight NOTIFY pageDelegateLabelHeightChanged)
+    Q_PROPERTY(qreal pageDelegateLabelSpacing READ pageDelegateLabelSpacing WRITE setPageDelegateLabelSpacing NOTIFY pageDelegateLabelSpacingChanged)
 
+    // folder measurements and state
     Q_PROPERTY(qreal folderViewX READ folderViewX WRITE setFolderViewX NOTIFY folderViewXChanged)
     Q_PROPERTY(qreal folderPageWidth READ folderPageWidth WRITE setFolderPageWidth NOTIFY folderPageWidthChanged)
     Q_PROPERTY(qreal folderPageHeight READ folderPageHeight WRITE setFolderPageHeight NOTIFY folderPageHeightChanged)
@@ -140,6 +146,12 @@ public:
     qreal pageCellHeight() const;
     void setPageCellHeight(qreal pageCellHeight);
 
+    qreal pageDelegateLabelHeight() const;
+    void setPageDelegateLabelHeight(qreal pageDelegateLabelHeight);
+
+    qreal pageDelegateLabelSpacing() const;
+    void setPageDelegateLabelSpacing(qreal pageDelegateLabelSpacing);
+
     qreal folderViewX() const;
     void setFolderViewX(qreal folderViewX);
 
@@ -205,6 +217,8 @@ Q_SIGNALS:
     void pageContentHeightChanged();
     void pageCellWidthChanged();
     void pageCellHeightChanged();
+    void pageDelegateLabelHeightChanged();
+    void pageDelegateLabelSpacingChanged();
     void folderViewXChanged();
     void folderPageWidthChanged();
     void folderPageHeightChanged();
@@ -281,8 +295,11 @@ private:
     qreal m_pageHeight{0};
     qreal m_pageContentWidth{0};
     qreal m_pageContentHeight{0};
+
     qreal m_pageCellWidth{0};
     qreal m_pageCellHeight{0};
+    qreal m_pageDelegateLabelHeight{0};
+    qreal m_pageDelegateLabelSpacing{0};
 
     qreal m_folderViewX{0};
     qreal m_folderPageWidth{0};

@@ -17,32 +17,12 @@ Item {
 
     property var homeScreen
 
-    readonly property int reservedSpaceForLabel: metrics.height
-    readonly property real effectiveContentWidth: width - leftMargin - rightMargin
-    readonly property real horizontalMargin: Math.round(width * 0.05)
-
-    readonly property real bottomMargin: 0
-    readonly property real leftMargin: horizontalMargin
-    readonly property real rightMargin: horizontalMargin
-
-    readonly property real cellWidth: effectiveContentWidth / Math.min(Math.floor(effectiveContentWidth / (Kirigami.Units.iconSizes.large + Kirigami.Units.gridUnit * 2)), 8)
-    readonly property real cellHeight: cellWidth + reservedSpaceForLabel
-
     signal delegateDragRequested(var item)
-
-    PC3.Label {
-        id: metrics
-        text: "M\nM"
-        visible: false
-        font.pointSize: Kirigami.Theme.defaultFont.pointSize * 0.8
-        font.weight: Font.Bold
-    }
 
     Item {
         id: container
-        height: cellHeight
+        height: Folio.HomeScreenState.pageCellHeight
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: root.bottomMargin
         anchors.left: parent.left
         anchors.right: parent.right
 
@@ -69,10 +49,10 @@ Item {
                     NumberAnimation { duration: 250; easing.type: Easing.InOutQuad }
                 }
 
-                implicitWidth: root.cellWidth
-                implicitHeight: root.cellHeight
-                width: root.cellWidth
-                height: root.cellHeight
+                implicitWidth: Folio.HomeScreenState.pageCellWidth
+                implicitHeight: Folio.HomeScreenState.pageCellHeight
+                width: Folio.HomeScreenState.pageCellWidth
+                height: Folio.HomeScreenState.pageCellHeight
 
                 Loader {
                     anchors.fill: parent
@@ -102,7 +82,6 @@ Item {
                         application: delegate.delegateModel.application
                         name: Folio.FolioSettings.showFavouritesAppLabels ? delegate.delegateModel.application.name : ""
                         shadow: true
-                        reservedSpaceForLabel: root.reservedSpaceForLabel
 
                         turnToFolder: delegate.isAppHoveredOver
                         turnToFolderAnimEnabled: Folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate
@@ -165,7 +144,6 @@ Item {
                         shadow: true
                         folder: delegate.delegateModel.folder
                         name: Folio.FolioSettings.showFavouritesAppLabels ? delegate.delegateModel.folder.name : ""
-                        reservedSpaceForLabel: root.reservedSpaceForLabel
 
                         appHoveredOver: delegate.isAppHoveredOver
 
