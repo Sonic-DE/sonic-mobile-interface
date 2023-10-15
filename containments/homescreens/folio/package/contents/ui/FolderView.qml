@@ -121,87 +121,113 @@ Folio.DelegateTouchArea {
             id: captureTouches
             anchors.fill: parent
 
-            Repeater {
-                model: root.folder ? root.folder.applications : []
+            // clip the pages
+            layer.enabled: true
 
-                delegate: Item {
-                    id: delegate
+            Item {
+                id: contentContainer
+                x: Folio.HomeScreenState.folderViewX
 
-                    property var delegateModel: model.delegate
-                    property var application: model.delegate.application
-                    property int index: model.index
+                Repeater {
+                    model: root.folder ? root.folder.applications : []
 
-                    x: model.xPosition
-                    y: model.yPosition
+                    delegate: Item {
+                        id: delegate
 
-                    // Behavior on x {
-                    //     NumberAnimation { duration: 250; easing.type: Easing.InOutQuad }
-                    // }
+                        property var delegateModel: model.delegate
+                        property int index: model.index
 
-                    implicitWidth: Folio.HomeScreenState.pageCellWidth
-                    implicitHeight: Folio.HomeScreenState.pageCellHeight
-                    width: Folio.HomeScreenState.pageCellWidth
-                    height: Folio.HomeScreenState.pageCellHeight
+                        x: model.xPosition
+                        y: model.yPosition
 
-                    // don't show when in drag and drop mode
-                    property var startPosition: Folio.HomeScreenState.dragState.startPosition
-                    opacity: (Folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate &&
-                                startPosition.location === Folio.DelegateDragPosition.Folder &&
-                                startPosition.folderPosition === delegate.index) ? 0 : 1
-
-                    AppDelegate {
-                        id: appDelegate
-                        anchors.fill: parent
-                        application: delegate.application
-                        reservedSpaceForLabel: root.reservedSpaceForLabel
-
-                        // don't show label in drag and drop mode
-                        labelOpacity: delegate.opacity
-
-                        onPressAndHold: {
-                            let mappedCoords = root.homeScreen.prepareStartDelegateDrag(delegate.delegateModel, appDelegate.delegateItem);
-                            Folio.HomeScreenState.startDelegateFolderDrag(
-                                mappedCoords.x,
-                                mappedCoords.y,
-                                root.folder,
-                                delegate.index
-                            );
-
-                            contextMenu.open();
+                        Behavior on x {
+                            NumberAnimation { duration: 250; easing.type: Easing.InOutQuad }
+                        }
+                        Behavior on y {
+                            NumberAnimation { duration: 250; easing.type: Easing.InOutQuad }
                         }
 
-                        onPressAndHoldReleased: {
-                            // cancel the event if the delegate is not dragged
-                            if (Folio.HomeScreenState.swipeState === Folio.HomeScreenState.AwaitingDraggingDelegate) {
-                                homeScreen.cancelDelegateDrag();
+                        implicitWidth: Folio.HomeScreenState.pageCellWidth
+                        implicitHeight: Folio.HomeScreenState.pageCellHeight
+                        width: Folio.HomeScreenState.pageCellWidth
+                        height: Folio.HomeScreenState.pageCellHeight
+
+                        Loader {
+                            id: delegateLoader
+                            anchors.fill: parent
+
+                            sourceComponent: {
+                                if (delegate.delegateModel.type === Folio.FolioDelegate.Application) {
+                                    return appComponent;
+                                } else {
+                                    return noneComponent;
+                                }
                             }
                         }
 
-                        onRightMousePress: {
-                            contextMenu.open();
+                        Component {
+                            id: noneComponent
+
+                            Item {}
                         }
 
-                        ContextMenuLoader {
-                            id: contextMenu
+                        Component {
+                            id: appComponent
 
-                            // close menu when drag starts
-                            Connections {
-                                target: Folio.HomeScreenState
+                            AppDelegate {
+                                id: appDelegate
+                                application: delegate.delegateModel.application
+                                reservedSpaceForLabel: root.reservedSpaceForLabel
 
-                                function onSwipeStateChanged() {
-                                    if (Folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate) {
-                                        contextMenu.close();
+                                // don't show label in drag and drop mode
+                                labelOpacity: delegate.opacity
+
+                                onPressAndHold: {
+                                    let mappedCoords = root.homeScreen.prepareStartDelegateDrag(delegate.delegateModel, appDelegate.delegateItem);
+                                    Folio.HomeScreenState.startDelegateFolderDrag(
+                                        mappedCoords.x,
+                                        mappedCoords.y,
+                                        root.folder,
+                                        delegate.index
+                                    );
+
+                                    contextMenu.open();
+                                }
+
+                                onPressAndHoldReleased: {
+                                    // cancel the event if the delegate is not dragged
+                                    if (Folio.HomeScreenState.swipeState === Folio.HomeScreenState.AwaitingDraggingDelegate) {
+                                        homeScreen.cancelDelegateDrag();
                                     }
                                 }
-                            }
 
-                            actions: [
-                                Kirigami.Action {
-                                    icon.name: "emblem-favorite"
-                                    text: i18n("Remove")
-                                    onTriggered: root.folder.removeApp(delegate.index)
+                                onRightMousePress: {
+                                    contextMenu.open();
                                 }
-                            ]
+
+                                ContextMenuLoader {
+                                    id: contextMenu
+
+                                    // close menu when drag starts
+                                    Connections {
+                                        target: Folio.HomeScreenState
+
+                                        function onSwipeStateChanged() {
+                                            if (Folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate) {
+                                                contextMenu.close();
+                                            }
+                                        }
+                                    }
+
+                                    actions: [
+                                        Kirigami.Action {
+                                            icon.name: "emblem-favorite"
+                                            text: i18n("Remove")
+                                            onTriggered: root.folder.removeApp(delegate.index)
+                                        }
+                                    ]
+                                }
+                            }
                         }
                     }
                 }

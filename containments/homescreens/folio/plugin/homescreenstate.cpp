@@ -82,6 +82,9 @@ HomeScreenState::HomeScreenState(QObject *parent)
     connect(m_closeFolderAnim, &QPropertyAnimation::finished, this, [this]() {
         setViewState(ViewState::PageView);
         setCurrentFolder(nullptr);
+        setFolderViewX(0); // reset to first page
+
+        Q_EMIT leftCurrentFolder();
     });
 
     m_folderPageAnim = new QPropertyAnimation{this, "folderViewX", this};
@@ -399,9 +402,15 @@ int HomeScreenState::currentFolderPage()
     return m_folderPageNum;
 }
 
-FolioDelegate *HomeScreenState::getDelegate(FolioApplication *application)
+Plasma::Applet *HomeScreenState::applet()
 {
-    return new FolioDelegate(application, HomeScreenState::self());
+    return m_applet;
+}
+
+void HomeScreenState::setApplet(Plasma::Applet *applet)
+{
+    m_applet = applet;
+    Q_EMIT appletChanged();
 }
 
 void HomeScreenState::openAppDrawer()

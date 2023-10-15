@@ -124,13 +124,14 @@ void DelegateDragPosition::setFolder(FolioApplicationFolder *folder)
 DragState::DragState(HomeScreenState *state, QObject *parent)
     : QObject{parent}
     , m_changePageTimer{new QTimer{this}}
+    , m_openFolderTimer{new QTimer{this}}
     , m_leaveFolderTimer{new QTimer{this}}
     , m_changeFolderPageTimer{new QTimer{this}}
     , m_folderInsertBetweenTimer{new QTimer{this}}
     , m_favouritesInsertBetweenTimer{new QTimer{this}}
-    , m_state{state}
     , m_candidateDropPosition{new DelegateDragPosition{this}}
     , m_startPosition{new DelegateDragPosition{this}}
+    , m_state{state}
 {
     if (!state) {
         return;
@@ -139,6 +140,9 @@ DragState::DragState(HomeScreenState *state, QObject *parent)
     // 500 ms hold before page timer changes
     m_changePageTimer->setInterval(500);
     m_changePageTimer->setSingleShot(true);
+
+    m_openFolderTimer->setInterval(1000);
+    m_openFolderTimer->setSingleShot(true);
 
     m_leaveFolderTimer->setInterval(500);
     m_leaveFolderTimer->setSingleShot(true);
@@ -153,6 +157,7 @@ DragState::DragState(HomeScreenState *state, QObject *parent)
     m_favouritesInsertBetweenTimer->setSingleShot(true);
 
     connect(m_changePageTimer, &QTimer::timeout, this, &DragState::onChangePageTimerFinished);
+    connect(m_openFolderTimer, &QTimer::timeout, this, &DragState::onOpenFolderTimerFinished);
     connect(m_leaveFolderTimer, &QTimer::timeout, this, &DragState::onLeaveFolderTimerFinished);
     connect(m_changeFolderPageTimer, &QTimer::timeout, this, &DragState::onChangeFolderPageTimerFinished);
     connect(m_folderInsertBetweenTimer, &QTimer::timeout, this, &DragState::onFolderInsertBetweenTimerFinished);
@@ -162,7 +167,11 @@ DragState::DragState(HomeScreenState *state, QObject *parent)
     connect(m_state, &HomeScreenState::delegateDragFromAppDrawerStarted, this, &DragState::onDelegateDragFromAppDrawerStarted);
     connect(m_state, &HomeScreenState::delegateDragFromFavouritesStarted, this, &DragState::onDelegateDragFromFavouritesStarted);
     connect(m_state, &HomeScreenState::delegateDragFromFolderStarted, this, &DragState::onDelegateDragFromFolderStarted);
-
+    connect(m_state, &HomeScreenState::swipeStateChanged, this, [this]() {
+        if (HomeScreenState::self()->swipeState() == HomeScreenState::DraggingDelegate) {
+            onDelegateDraggingStarted();
+        }
+    });
     connect(m_state, &HomeScreenState::delegateDragEnded, this, &DragState::onDelegateDropped);
 
     connect(m_state, &HomeScreenState::pageNumChanged, this, [this]() {
@@ -171,6 +180,8 @@ DragState::DragState(HomeScreenState *state, QObject *parent)
 
     connect(m_state, &HomeScreenState::delegateDragXChanged, this, &DragState::onDelegateDragPositionChanged);
     connect(m_state, &HomeScreenState::delegateDragYChanged, this, &DragState::onDelegateDragPositionChanged);
+
+    connect(m_state, &HomeScreenState::leftCurrentFolder, this, &DragState::onLeaveCurrentFolder);
 }
 
 DelegateDragPosition *DragState::candidateDropPosition() const
@@ -183,20 +194,15 @@ DelegateDragPosition *DragState::startPosition() const
     return m_startPosition;
 }
 
-void DragState::onFavouritesInsertBetweenTimerFinished()
+FolioDelegate *DragState::dropDelegate() const
 {
-    qDebug() << "favourites inserttimer finished" << m_favouritesInsertBetweenIndex;
+    return m_dropDelegate;
+}
 
-    // update the candidate drop position
-    m_candidateDropPosition->setFavouritesPosition(m_favouritesInsertBetweenIndex);
-    m_candidateDropPosition->setLocation(DelegateDragPosition::Favourites);
-
-    if (isStartPositionEqualDropPosition()) {
-        return;
-    }
-
-    // insert it at this position, shifting existing apps to the side
-    FavouritesModel::self()->setGhostEntry(m_favouritesInsertBetweenIndex);
+void DragState::setDropDelegate(FolioDelegate *dropDelegate)
+{
+    m_dropDelegate = dropDelegate;
+    Q_EMIT dropDelegateChanged();
 }
 
 void DragState::onDelegateDragPositionChanged()
@@ -218,92 +224,177 @@ void DragState::onDelegateDragPositionChanged()
         m_favouritesInsertBetweenTimer->stop();
     }
 
+    if (inFavouritesArea || inFolder) {
+        m_openFolderTimer->stop();
+    }
+
     if (m_state->viewState() == HomeScreenState::FolderView) {
         // if we are in a folder
-
-        auto *folder = m_state->currentFolder();
-
-        int dropIndex = folder->dropInsertPosition(x, y);
-        if (dropIndex != m_folderInsertBetweenIndex) {
-            m_folderInsertBetweenTimer->stop();
-        }
-
-        // TODO some logic to move the delegates
-        m_candidateDropPosition->setFolder(folder);
-        m_candidateDropPosition->setFolderPosition(dropIndex);
-        m_candidateDropPosition->setLocation(DelegateDragPosition::Folder);
+        onDelegateDragPositionOverFolderViewChanged();
 
     } else if (inFavouritesArea) {
         // we are in the favourites bar area
-
-        int dropIndex = FavouritesModel::self()->dropInsertPosition(x);
-        qDebug() << "in favourites";
-
-        // if the delegate has moved to another position, cancel the insert timer
-        if (dropIndex != m_favouritesInsertBetweenIndex) {
-            qDebug() << "cancel timer" << dropIndex << m_favouritesInsertBetweenIndex;
-            m_favouritesInsertBetweenTimer->stop();
-        }
-
-        // if we need to make space for the delegate
-        if (FavouritesModel::self()->dropPositionIsEdge(x)) {
-            qDebug() << "at edge" << dropIndex;
-            // start the insertion timer (so that the user has time to move the delegate away)
-            if (!m_favouritesInsertBetweenTimer->isActive()) {
-                m_favouritesInsertBetweenTimer->start();
-                m_favouritesInsertBetweenIndex = dropIndex;
-            }
-        } else {
-            qDebug() << "hovering over";
-            // if we are hovering over the center of a folder or app
-
-            // update the current drop position
-            m_candidateDropPosition->setFavouritesPosition(dropIndex);
-            m_candidateDropPosition->setLocation(DelegateDragPosition::Favourites);
-
-            // delete ghost entry when hovering over a folder
-            if (FavouritesModel::self()->getGhostEntryPosition() != dropIndex) {
-                FavouritesModel::self()->deleteGhostEntry();
-            }
-        }
+        onDelegateDragPositionOverFavouritesChanged();
     } else {
         // we are in the homescreen pages area
-        int page = m_state->currentPage();
+        onDelegateDragPositionOverPageViewChanged();
+    }
+}
 
-        // calculate the row and column the delegate is at
-        qreal pageHorizontalMargin = (m_state->pageWidth() - m_state->pageContentWidth()) / 2;
-        qreal pageVerticalMargin = (m_state->pageHeight() - m_state->pageContentHeight()) / 2;
-        qreal cellWidth = m_state->pageCellWidth();
-        qreal cellHeight = m_state->pageCellHeight();
+void DragState::onDelegateDragPositionOverFolderViewChanged()
+{
+    // if the drag position changes while in the folder view
+    qreal x = getDraggedDelegateX();
+    qreal y = getDraggedDelegateY();
 
-        int row = (y - pageVerticalMargin) / cellHeight;
-        int column = (x - pageHorizontalMargin) / cellWidth;
+    auto *folder = m_state->currentFolder();
+    if (!folder) {
+        return;
+    }
 
-        // ensure it's in bounds
-        row = std::max(0, std::min(FolioSettings::self()->homeScreenRows() - 1, row));
-        column = std::max(0, std::min(FolioSettings::self()->homeScreenColumns() - 1, column));
+    // if the drop position is not in the folder, but outside (going to page view)
+    if (folder->isDropPositionOutside(x, y)) {
+        if (!m_leaveFolderTimer->isActive()) {
+            m_leaveFolderTimer->start();
+        }
+        return;
+    } else if (m_leaveFolderTimer->isActive()) {
+        // cancel timer if we are back in the folder
+        m_leaveFolderTimer->stop();
+    }
+
+    // the potential folder index that can be dropped at
+    int dropIndex = folder->dropInsertPosition(x, y);
+
+    // if the delegate has moved to another position, cancel the insert timer
+    if (dropIndex != m_folderInsertBetweenIndex) {
+        m_folderInsertBetweenTimer->stop();
+    }
+
+    // start the insertion timer (so that the user has time to move the delegate away)
+    if (!m_folderInsertBetweenTimer->isActive()) {
+        m_folderInsertBetweenTimer->start();
+        m_folderInsertBetweenIndex = dropIndex;
+    }
+
+    const qreal leftPagePosition = folder->applications()->leftMarginFromScreenEdge();
+    const qreal rightPagePosition = m_state->viewWidth() - leftPagePosition;
+
+    // determine if the delegate is near the edge of a page (to switch pages).
+    // -> start the change page timer if we at the page edge.
+    if (x <= leftPagePosition + PAGE_CHANGE_THRESHOLD || x >= rightPagePosition - PAGE_CHANGE_THRESHOLD) {
+        if (!m_changePageTimer->isActive()) {
+            m_changePageTimer->start();
+        }
+    } else {
+        if (m_changePageTimer->isActive()) {
+            m_changePageTimer->stop();
+        }
+    }
+}
+
+void DragState::onDelegateDragPositionOverFavouritesChanged()
+{
+    // the drag position changed while over the favourites strip
+
+    qreal x = getDraggedDelegateX();
+    int dropIndex = FavouritesModel::self()->dropInsertPosition(x);
+
+    // if the delegate has moved to another position, cancel the insert timer
+    if (dropIndex != m_favouritesInsertBetweenIndex) {
+        m_favouritesInsertBetweenTimer->stop();
+    }
+
+    if (FavouritesModel::self()->dropPositionIsEdge(x)) {
+        // if we need to make space for the delegate
+
+        // start the insertion timer (so that the user has time to move the delegate away)
+        if (!m_favouritesInsertBetweenTimer->isActive()) {
+            m_favouritesInsertBetweenTimer->start();
+            m_favouritesInsertBetweenIndex = dropIndex;
+        }
+    } else {
+        // if we are hovering over the center of a folder or app
 
         // update the current drop position
-        m_candidateDropPosition->setPage(page);
-        m_candidateDropPosition->setPageRow(row);
-        m_candidateDropPosition->setPageColumn(column);
-        m_candidateDropPosition->setLocation(DelegateDragPosition::Pages);
+        m_candidateDropPosition->setFavouritesPosition(dropIndex);
+        m_candidateDropPosition->setLocation(DelegateDragPosition::Favourites);
 
-        const int leftPagePosition = 0;
-        const int rightPagePosition = m_state->pageWidth();
+        // delete ghost entry when hovering over a folder
+        if (FavouritesModel::self()->getGhostEntryPosition() != dropIndex) {
+            FavouritesModel::self()->deleteGhostEntry();
+        }
+    }
+}
 
-        // determine if the delegate is near the edge of a page (to switch pages).
-        // -> start the change page timer if we at the page edge.
-        if (qAbs(leftPagePosition - x) <= PAGE_CHANGE_THRESHOLD || qAbs(rightPagePosition - x) <= PAGE_CHANGE_THRESHOLD) {
-            if (!m_changePageTimer->isActive()) {
-                m_changePageTimer->start();
-            }
-        } else {
-            if (m_changePageTimer->isActive()) {
-                m_changePageTimer->stop();
+void DragState::onDelegateDragPositionOverPageViewChanged()
+{
+    // the drag position changed while over the homescreen pages strip
+
+    qreal x = getDraggedDelegateX();
+    qreal y = getDraggedDelegateY();
+    int page = m_state->currentPage();
+
+    // calculate the row and column the delegate is over
+    qreal pageHorizontalMargin = (m_state->pageWidth() - m_state->pageContentWidth()) / 2;
+    qreal pageVerticalMargin = (m_state->pageHeight() - m_state->pageContentHeight()) / 2;
+
+    int row = (y - pageVerticalMargin) / m_state->pageCellHeight();
+    int column = (x - pageHorizontalMargin) / m_state->pageCellWidth();
+
+    // ensure it's in bounds
+    row = std::max(0, std::min(FolioSettings::self()->homeScreenRows() - 1, row));
+    column = std::max(0, std::min(FolioSettings::self()->homeScreenColumns() - 1, column));
+
+    // if the drop position changed, cancel the open page timer
+    if (m_candidateDropPosition->pageRow() != row || m_candidateDropPosition->pageColumn() != column) {
+        if (m_openFolderTimer->isActive()) {
+            m_openFolderTimer->stop();
+        }
+    }
+
+    // update the current drop position
+    m_candidateDropPosition->setPage(page);
+    m_candidateDropPosition->setPageRow(row);
+    m_candidateDropPosition->setPageColumn(column);
+    m_candidateDropPosition->setLocation(DelegateDragPosition::Pages);
+
+    // start folder open timer if hovering over a folder
+    PageModel *pageModel = PageListModel::self()->getPage(page);
+    if (pageModel) {
+        // get delegate being hovered over
+        FolioDelegate *delegate = pageModel->getDelegate(row, column);
+
+        // check delegate is a folder and the drop delegate is an app
+        if (delegate && delegate->type() == FolioDelegate::Folder && m_dropDelegate && m_dropDelegate->type() == FolioDelegate::Application) {
+            if (!m_openFolderTimer->isActive()) {
+                m_openFolderTimer->start();
             }
         }
     }
+
+    const int leftPagePosition = 0;
+    const int rightPagePosition = m_state->pageWidth();
+
+    // determine if the delegate is near the edge of a page (to switch pages).
+    // -> start the change page timer if we at the page edge.
+    if (qAbs(leftPagePosition - x) <= PAGE_CHANGE_THRESHOLD || qAbs(rightPagePosition - x) <= PAGE_CHANGE_THRESHOLD) {
+        if (!m_changePageTimer->isActive()) {
+            m_changePageTimer->start();
+        }
+    } else {
+        if (m_changePageTimer->isActive()) {
+            m_changePageTimer->stop();
+        }
+    }
+}
+
+void DragState::onDelegateDraggingStarted()
+{
+    // remove the delegate from the model
+    // NOTE: we only delete here (and not from the event trigger, ex. onDelegateDragFromPageStarted)
+    //       because the actual dragging only started when this is called
+    deleteStartPositionDelegate();
 }
 
 void DragState::onDelegateDragFromPageStarted(int page, int row, int column)
@@ -311,11 +402,12 @@ void DragState::onDelegateDragFromPageStarted(int page, int row, int column)
     // fetch delegate at start position
     PageModel *pageModel = PageListModel::self()->getPage(page);
     if (pageModel) {
-        m_dropDelegate = pageModel->getDelegate(row, column);
+        setDropDelegate(pageModel->getDelegate(row, column));
     } else {
-        m_dropDelegate = nullptr;
+        setDropDelegate(nullptr);
     }
 
+    // set start location
     m_startPosition->setPage(page);
     m_startPosition->setPageRow(row);
     m_startPosition->setPageColumn(column);
@@ -325,31 +417,33 @@ void DragState::onDelegateDragFromPageStarted(int page, int row, int column)
 void DragState::onDelegateDragFromFavouritesStarted(int position)
 {
     // fetch delegate at start position
-    m_dropDelegate = FavouritesModel::self()->getEntryAt(position);
+    setDropDelegate(FavouritesModel::self()->getEntryAt(position));
+
+    // set start location
     m_startPosition->setFavouritesPosition(position);
     m_startPosition->setLocation(DelegateDragPosition::Favourites);
-
-    // set the position to be invisible
-    FavouritesModel::self()->setInvisiblePosition(position);
 }
 
 void DragState::onDelegateDragFromAppDrawerStarted(QString storageId)
 {
-    // create delegate to be dropped
+    // fetch delegate at start position
     if (KService::Ptr service = KService::serviceByStorageId(storageId)) {
         FolioApplication *app = new FolioApplication{this, service};
-        m_dropDelegate = new FolioDelegate{app, this};
+        setDropDelegate(new FolioDelegate{app, this});
     } else {
-        m_dropDelegate = nullptr;
+        setDropDelegate(nullptr);
     }
 
+    // set start location
     m_startPosition->setLocation(DelegateDragPosition::AppDrawer);
 }
 
 void DragState::onDelegateDragFromFolderStarted(FolioApplicationFolder *folder, int position)
 {
-    m_dropDelegate = new FolioDelegate{folder, this};
+    // fetch delegate at start position
+    setDropDelegate(folder->applications()->getDelegate(position));
 
+    // set start location
     m_startPosition->setFolder(folder);
     m_startPosition->setFolderPosition(position);
     m_startPosition->setLocation(DelegateDragPosition::Folder);
@@ -357,18 +451,12 @@ void DragState::onDelegateDragFromFolderStarted(FolioApplicationFolder *folder, 
 
 void DragState::onDelegateDropped()
 {
-    qDebug() << "dropped" << m_dropDelegate;
     if (!m_dropDelegate) {
         return;
     }
 
     // add dropped delegate
     createDropPositionDelegate();
-
-    // remove old delegate
-    if (!isStartPositionEqualDropPosition()) {
-        deleteStartPositionDelegate();
-    }
 
     // delete empty pages at the end if they exist
     // (it can be created if user drags app to new page, but doesn't place it there)
@@ -377,12 +465,31 @@ void DragState::onDelegateDropped()
     }
 
     // clear ghost position if there is one
-    FavouritesModel::self()->clearInvisiblePosition();
     FavouritesModel::self()->deleteGhostEntry();
 
     // reset timers
+    m_folderInsertBetweenTimer->stop();
+    m_changeFolderPageTimer->stop();
+    m_leaveFolderTimer->stop();
     m_changePageTimer->stop();
     m_favouritesInsertBetweenTimer->stop();
+}
+
+void DragState::onLeaveCurrentFolder()
+{
+    if (!m_state) {
+        return;
+    }
+
+    // reset timers
+    m_folderInsertBetweenTimer->stop();
+    m_changeFolderPageTimer->stop();
+    m_leaveFolderTimer->stop();
+
+    if (m_candidateDropPosition->location() == DelegateDragPosition::Folder && m_candidateDropPosition->folder()) {
+        // clear ghost entry
+        m_candidateDropPosition->folder()->applications()->deleteGhostEntry();
+    }
 }
 
 void DragState::onChangePageTimerFinished()
@@ -418,6 +525,30 @@ void DragState::onChangePageTimerFinished()
     }
 }
 
+void DragState::onOpenFolderTimerFinished()
+{
+    qDebug() << "open folder timer finished";
+    if (!m_state || m_state->swipeState() != HomeScreenState::DraggingDelegate || m_state->viewState() != HomeScreenState::PageView
+        || m_candidateDropPosition->location() != DelegateDragPosition::Pages) {
+        return;
+    }
+
+    // get current page
+    PageModel *page = PageListModel::self()->getPage(m_candidateDropPosition->page());
+    if (!page) {
+        return;
+    }
+
+    // get delegate being hovered over
+    FolioDelegate *delegate = page->getDelegate(m_candidateDropPosition->pageRow(), m_candidateDropPosition->pageColumn());
+    if (!delegate || delegate->type() != FolioDelegate::Folder) {
+        return;
+    }
+
+    // open the folder
+    m_state->openFolder(delegate->folder());
+}
+
 void DragState::onLeaveFolderTimerFinished()
 {
     if (!m_state || (m_state->swipeState() != HomeScreenState::DraggingDelegate) || !m_state->currentFolder()) {
@@ -443,8 +574,8 @@ void DragState::onChangeFolderPageTimerFinished()
         return;
     }
 
-    const int leftPagePosition = folder->applications()->leftMarginFromScreenEdge();
-    const int rightPagePosition = m_state->viewWidth() - leftPagePosition;
+    const qreal leftPagePosition = folder->applications()->leftMarginFromScreenEdge();
+    const qreal rightPagePosition = m_state->viewWidth() - leftPagePosition;
 
     qreal x = getDraggedDelegateX();
     if (x <= leftPagePosition + PAGE_CHANGE_THRESHOLD) {
@@ -484,12 +615,19 @@ void DragState::onFolderInsertBetweenTimerFinished()
     m_candidateDropPosition->setFolderPosition(m_folderInsertBetweenIndex);
     m_candidateDropPosition->setLocation(DelegateDragPosition::Folder);
 
-    if (isStartPositionEqualDropPosition()) {
-        return;
-    }
+    // insert it at this position, shifting existing apps to the side
+    // TODO the ghost entry may shift the m_folderInsertBetweenIndex, we should update??
+    folder->applications()->setGhostEntry(m_folderInsertBetweenIndex);
+}
+
+void DragState::onFavouritesInsertBetweenTimerFinished()
+{
+    // update the candidate drop position
+    m_candidateDropPosition->setFavouritesPosition(m_favouritesInsertBetweenIndex);
+    m_candidateDropPosition->setLocation(DelegateDragPosition::Favourites);
 
     // insert it at this position, shifting existing apps to the side
-    // TODO INSERTION INTO THE MODEL
+    FavouritesModel::self()->setGhostEntry(m_favouritesInsertBetweenIndex);
 }
 
 void DragState::deleteStartPositionDelegate()
@@ -515,10 +653,13 @@ void DragState::deleteStartPositionDelegate()
     }
 }
 
-// TODO remove modifyFolders, unnecessary
 void DragState::createDropPositionDelegate()
 {
     qDebug() << "drop location:" << m_candidateDropPosition->location();
+
+    if (!m_dropDelegate) {
+        return;
+    }
 
     // creates the delegate at the drop position
     switch (m_candidateDropPosition->location()) {
@@ -548,7 +689,6 @@ void DragState::createDropPositionDelegate()
 
                     auto existingFolder = existingDelegate->folder();
                     existingFolder->addDelegate(delegate, existingFolder->applications()->rowCount());
-                    delegate->deleteLater();
 
                     break;
                 } else if (existingDelegate->type() == FolioDelegate::Application && !isStartPositionEqualDropPosition()) {
@@ -592,7 +732,6 @@ void DragState::createDropPositionDelegate()
 
                     auto existingFolder = existingDelegate->folder();
                     existingFolder->addDelegate(m_dropDelegate, existingFolder->applications()->rowCount());
-                    m_dropDelegate->deleteLater();
 
                     break;
                 } else if (existingDelegate->type() == FolioDelegate::Application && !isStartPositionEqualDropPosition()) {
@@ -641,12 +780,20 @@ void DragState::createDropPositionDelegate()
             return;
         }
 
+        qDebug() << "creating at folder" << m_candidateDropPosition->folderPosition() << m_dropDelegate->type();
+
         bool added = folder->addDelegate(m_dropDelegate, m_candidateDropPosition->folderPosition());
 
         // if we couldn't add the delegate, try again but at the start position
         if (!added && !isStartPositionEqualDropPosition()) {
             m_candidateDropPosition->copyFrom(m_startPosition);
             createDropPositionDelegate();
+        }
+
+        if (added) {
+            folder->applications()->deleteGhostEntry();
+
+            // TODO correct m_startPosition?
         }
         break;
     }
@@ -660,7 +807,8 @@ bool DragState::isStartPositionEqualDropPosition()
 {
     return m_startPosition->location() == m_candidateDropPosition->location() && m_startPosition->page() == m_candidateDropPosition->page()
         && m_startPosition->pageRow() == m_candidateDropPosition->pageRow() && m_startPosition->pageColumn() == m_candidateDropPosition->pageColumn()
-        && m_startPosition->favouritesPosition() == m_candidateDropPosition->favouritesPosition();
+        && m_startPosition->favouritesPosition() == m_candidateDropPosition->favouritesPosition()
+        && m_startPosition->folder() == m_candidateDropPosition->folder() && m_startPosition->folderPosition() == m_candidateDropPosition->folderPosition();
 }
 
 qreal DragState::getDraggedDelegateX()

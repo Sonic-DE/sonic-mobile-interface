@@ -32,16 +32,8 @@ public:
 
     void save();
 
-    // called by QML
-    Q_INVOKABLE void setApplet(Plasma::Applet *applet);
-
-Q_SIGNALS:
-    void appletChanged();
-
 private:
     void load();
 
     QList<PageModel *> m_pages;
-
-    Plasma::Applet *m_applet;
 };

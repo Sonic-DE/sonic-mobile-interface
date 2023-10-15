@@ -35,6 +35,12 @@ FavouritesModel::FavouritesModel(QObject *parent)
     connect(HomeScreenState::self(), &HomeScreenState::pageCellWidthChanged, this, [this]() {
         evaluateDelegatePositions(true);
     });
+
+    connect(HomeScreenState::self(), &HomeScreenState::appletChanged, this, [this]() {
+        if (HomeScreenState::self()->applet()) {
+            load();
+        }
+    });
 }
 
 int FavouritesModel::rowCount(const QModelIndex &parent) const
@@ -54,8 +60,6 @@ QVariant FavouritesModel::data(const QModelIndex &index, int role) const
         return QVariant::fromValue(m_delegates.at(index.row()).delegate);
     case XPositionRole:
         return QVariant::fromValue(m_delegates.at(index.row()).xPosition);
-    case HiddenRole:
-        return m_delegates.at(index.row()).delegate == m_invisibleDelegate;
     }
 
     return QVariant();
@@ -63,7 +67,7 @@ QVariant FavouritesModel::data(const QModelIndex &index, int role) const
 
 QHash<int, QByteArray> FavouritesModel::roleNames() const
 {
-    return {{DelegateRole, "delegate"}, {XPositionRole, "xPosition"}, {HiddenRole, "hidden"}};
+    return {{DelegateRole, "delegate"}, {XPositionRole, "xPosition"}};
 }
 
 void FavouritesModel::removeEntry(int row)
@@ -202,25 +206,9 @@ void FavouritesModel::deleteGhostEntry()
     }
 }
 
-void FavouritesModel::setInvisiblePosition(int row)
-{
-    if (row < 0 || row >= m_delegates.size()) {
-        return;
-    }
-
-    m_invisibleDelegate = m_delegates[row].delegate;
-    evaluateDelegatePositions();
-}
-
-void FavouritesModel::clearInvisiblePosition()
-{
-    m_invisibleDelegate = nullptr;
-    evaluateDelegatePositions();
-}
-
 void FavouritesModel::save()
 {
-    if (!m_applet) {
+    if (!HomeScreenState::self()->applet()) {
         return;
     }
 
@@ -237,19 +225,21 @@ void FavouritesModel::save()
     }
     QByteArray data = QJsonDocument(arr).toJson(QJsonDocument::Compact);
 
-    m_applet->config().writeEntry("Favourites", QString::fromStdString(data.toStdString()));
-    Q_EMIT m_applet->configNeedsSaving();
+    HomeScreenState::self()->applet()->config().writeEntry("Favourites", QString::fromStdString(data.toStdString()));
+    Q_EMIT HomeScreenState::self()->applet()->configNeedsSaving();
 }
 
 void FavouritesModel::load()
 {
-    if (!m_applet) {
+    if (!HomeScreenState::self()->applet()) {
         return;
     }
 
-    QJsonDocument doc = QJsonDocument::fromJson(m_applet->config().readEntry("Favourites", "{}").toUtf8());
+    QJsonDocument doc = QJsonDocument::fromJson(HomeScreenState::self()->applet()->config().readEntry("Favourites", "{}").toUtf8());
 
     beginResetModel();
+
+    m_delegates.clear();
 
     for (QJsonValueRef r : doc.array()) {
         QJsonObject obj = r.toObject();
@@ -265,8 +255,7 @@ void FavouritesModel::load()
         }
     }
 
-    evaluateDelegatePositions();
-
+    evaluateDelegatePositions(false);
     endResetModel();
 }
 
@@ -282,13 +271,6 @@ bool FavouritesModel::dropPositionIsEdge(qreal x)
     qreal currentX = startPosition;
 
     for (int i = 0; i < m_delegates.size(); i++) {
-        // ignore invisible delegate
-        if (m_delegates[i].delegate == m_invisibleDelegate) {
-            continue;
-        }
-
-        qDebug() << "drop position compare" << x << currentX << cellWidth;
-
         // if it is within the centre 70% of a delegate, it is not at an edge
         if (x >= currentX + cellWidth * 0.15 && x <= currentX + cellWidth * 0.85) {
             return false;
@@ -296,8 +278,6 @@ bool FavouritesModel::dropPositionIsEdge(qreal x)
 
         currentX += cellWidth;
     }
-
-    qDebug() << "false";
 
     return true;
 }
@@ -313,11 +293,6 @@ int FavouritesModel::dropInsertPosition(qreal x)
 
     qreal currentX = startPosition;
     for (int i = 0; i < m_delegates.size(); i++) {
-        // ignore invisible delegate
-        if (m_delegates[i].delegate == m_invisibleDelegate) {
-            continue;
-        }
-
         if (x < currentX + cellWidth * 0.85) {
             return i;
         } else if (x < currentX + cellWidth) {
@@ -329,25 +304,15 @@ int FavouritesModel::dropInsertPosition(qreal x)
     return m_delegates.size();
 }
 
-void FavouritesModel::setApplet(Plasma::Applet *applet)
-{
-    m_applet = applet;
-    load();
-}
-
 void FavouritesModel::evaluateDelegatePositions(bool emitSignal)
 {
     qreal cellWidth = HomeScreenState::self()->pageCellWidth();
     qreal startPosition = getDelegateRowStartX();
-
     qreal currentX = startPosition;
 
     for (int i = 0; i < m_delegates.size(); ++i) {
         m_delegates[i].xPosition = qRound(currentX);
-
-        if (m_delegates[i].delegate != m_invisibleDelegate) {
-            currentX += cellWidth;
-        }
+        currentX += cellWidth;
     }
 
     if (emitSignal) {
@@ -361,10 +326,6 @@ qreal FavouritesModel::getDelegateRowStartX()
     int length = m_delegates.size();
     qreal cellWidth = HomeScreenState::self()->pageCellWidth();
     qreal pageWidth = HomeScreenState::self()->pageWidth();
-
-    if (m_invisibleDelegate != nullptr) {
-        length--;
-    }
 
     return (pageWidth / 2) - (((qreal)length) / 2) * cellWidth;
 }

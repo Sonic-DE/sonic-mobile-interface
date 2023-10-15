@@ -67,13 +67,6 @@ Item {
                 width: root.cellWidth
                 height: root.cellHeight
 
-                // don't show when in drag and drop mode
-                property var startPosition: Folio.HomeScreenState.dragState.startPosition
-                opacity: ((Folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate &&
-                            startPosition.location === Folio.DelegateDragPosition.Favourites &&
-                            startPosition.favouritesPosition === delegate.index) ||
-                            model.hidden) ? 0 : 1
-
                 Loader {
                     anchors.fill: parent
 
@@ -163,6 +156,12 @@ Item {
                         folder: delegate.delegateModel.folder
                         name: delegate.delegateModel.folder.name
                         reservedSpaceForLabel: root.reservedSpaceForLabel
+
+                        property var dragState: Folio.HomeScreenState.dragState
+                        appHoveredOver: dragState.dropDelegate &&
+                                        dragState.dropDelegate.type === Folio.FolioDelegate.Application &&
+                                        dragStatedragState.candidateDropPosition.location === Folio.DelegateDragPosition.Favourites &&
+                                        dragState.candidateDropPosition.favouritesPosition === delegate.index
 
                         // don't show label in drag and drop mode
                         labelOpacity: delegate.opacity
