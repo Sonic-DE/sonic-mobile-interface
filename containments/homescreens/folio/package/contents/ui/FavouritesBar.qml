@@ -16,6 +16,10 @@ Item {
 
     property var homeScreen
 
+    // use to account for x-y positioning, because delegate x and y will include the screen margins
+    property real leftMargin
+    property real topMargin
+
     signal delegateDragRequested(var item)
 
     Repeater {
@@ -28,16 +32,17 @@ Item {
             property int index: model.index
 
             property var dragState: Folio.HomeScreenState.dragState
+            property bool isDropPositionThis: dragState.candidateDropPosition.location === Folio.DelegateDragPosition.Favourites &&
+                                              dragState.candidateDropPosition.favouritesPosition === delegate.index
             property bool isAppHoveredOver: Folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate &&
                                             dragState.dropDelegate &&
                                             dragState.dropDelegate.type === Folio.FolioDelegate.Application &&
-                                            dragState.candidateDropPosition.location === Folio.DelegateDragPosition.Favourites &&
-                                            dragState.candidateDropPosition.favouritesPosition === delegate.index
+                                            isDropPositionThis
 
             // only one of them will be used, because of the anchors below
             // this is used due to the ability for the favourites bar to be in multiple locations
-            x: model.xPosition
-            y: model.xPosition
+            x: model.xPosition - leftMargin
+            y: model.xPosition - topMargin
 
             anchors.verticalCenter: Folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Bottom ? parent.verticalCenter : undefined
             anchors.horizontalCenter: Folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Bottom ? undefined : parent.horizontalCenter
@@ -63,13 +68,14 @@ Item {
                     } else if (delegate.delegateModel.type === Folio.FolioDelegate.Folder) {
                         return folderComponent;
                     } else {
-                        return noneComponent;
+                        // ghost entry
+                        return placeholderComponent;
                     }
                 }
             }
 
             Component {
-                id: noneComponent
+                id: placeholderComponent
 
                 Item {}
             }
@@ -85,6 +91,9 @@ Item {
 
                     turnToFolder: delegate.isAppHoveredOver
                     turnToFolderAnimEnabled: Folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate
+
+                    // do not show if the drop animation is running to this delegate
+                    visible: !(root.homeScreen.dropAnimationRunning && delegate.isDropPositionThis)
 
                     // don't show label in drag and drop mode
                     labelOpacity: delegate.opacity
@@ -144,6 +153,11 @@ Item {
                     shadow: true
                     folder: delegate.delegateModel.folder
                     name: Folio.FolioSettings.showFavouritesAppLabels ? delegate.delegateModel.folder.name : ""
+
+                    // do not show if the drop animation is running to this delegate, and the drop delegate is a folder
+                    visible: !(root.homeScreen.dropAnimationRunning &&
+                               delegate.isDropPositionThis &&
+                               delegate.dragState.dropDelegate.type === Folio.FolioDelegate.Folder)
 
                     appHoveredOver: delegate.isAppHoveredOver
 

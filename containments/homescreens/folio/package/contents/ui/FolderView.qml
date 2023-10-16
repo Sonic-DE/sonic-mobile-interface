@@ -127,6 +127,10 @@ Folio.DelegateTouchArea {
                         property var delegateModel: model.delegate
                         property int index: model.index
 
+                        property var dragState: Folio.HomeScreenState.dragState
+                        property bool isDropPositionThis: dragState.candidateDropPosition.location === Folio.DelegateDragPosition.Folder &&
+                                                          dragState.candidateDropPosition.folderPosition === index
+
                         x: model.xPosition
                         y: model.yPosition
 
@@ -167,6 +171,9 @@ Folio.DelegateTouchArea {
                             AppDelegate {
                                 id: appDelegate
                                 application: delegate.delegateModel.application
+
+                                // do not show if the drop animation is running to this delegate
+                                visible: !(root.homeScreen.dropAnimationRunning && delegate.isDropPositionThis)
 
                                 // don't show label in drag and drop mode
                                 labelOpacity: delegate.opacity

@@ -317,6 +317,44 @@ int FavouritesModel::dropInsertPosition(qreal x, qreal y) const
     return m_delegates.size();
 }
 
+QPointF FavouritesModel::getDelegateScreenPosition(int position) const
+{
+    qreal screenHeight = HomeScreenState::self()->viewHeight();
+    qreal screenWidth = HomeScreenState::self()->viewWidth();
+    qreal pageHeight = HomeScreenState::self()->pageHeight();
+    qreal pageWidth = HomeScreenState::self()->pageWidth();
+    qreal screenTopPadding = HomeScreenState::self()->viewTopPadding();
+    qreal screenBottomPadding = HomeScreenState::self()->viewBottomPadding();
+    qreal screenLeftPadding = HomeScreenState::self()->viewLeftPadding();
+    qreal screenRightPadding = HomeScreenState::self()->viewRightPadding();
+    qreal cellHeight = HomeScreenState::self()->pageCellHeight();
+    qreal cellWidth = HomeScreenState::self()->pageCellWidth();
+
+    qreal startPosition = getDelegateRowStartPos();
+
+    switch (HomeScreenState::self()->favouritesBarLocation()) {
+    case HomeScreenState::Bottom: {
+        qreal favouritesHeight = screenHeight - pageHeight - screenBottomPadding - screenTopPadding;
+        qreal x = screenLeftPadding + startPosition + cellWidth * position;
+        qreal y = screenTopPadding + pageHeight + (favouritesHeight / 2) - (cellHeight / 2);
+        return {x, y};
+    }
+    case HomeScreenState::Left: {
+        qreal favouritesWidth = screenWidth - screenLeftPadding - pageWidth - screenRightPadding;
+        qreal x = screenLeftPadding + (favouritesWidth / 2) - (cellWidth / 2);
+        qreal y = startPosition + cellHeight * position;
+        return {x, y};
+    }
+    case HomeScreenState::Right: {
+        qreal favouritesWidth = screenWidth - screenLeftPadding - pageWidth - screenRightPadding;
+        qreal x = screenLeftPadding + pageWidth + (favouritesWidth / 2) - (cellWidth / 2);
+        qreal y = startPosition + cellHeight * position;
+        return {x, y};
+    }
+    }
+    return {0, 0};
+}
+
 void FavouritesModel::evaluateDelegatePositions(bool emitSignal)
 {
     bool isLocationBottom = HomeScreenState::self()->favouritesBarLocation() == HomeScreenState::Bottom;
