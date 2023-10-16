@@ -28,6 +28,10 @@ class HomeScreenState : public QObject
 
     Q_PROPERTY(qreal viewWidth READ viewWidth WRITE setViewWidth NOTIFY viewWidthChanged)
     Q_PROPERTY(qreal viewHeight READ viewHeight WRITE setViewHeight NOTIFY viewHeightChanged)
+    Q_PROPERTY(qreal viewTopPadding READ viewTopPadding WRITE setViewTopPadding NOTIFY viewTopPaddingChanged)
+    Q_PROPERTY(qreal viewBottomPadding READ viewBottomPadding WRITE setViewBottomPadding NOTIFY viewBottomPaddingChanged)
+    Q_PROPERTY(qreal viewLeftPadding READ viewLeftPadding WRITE setViewLeftPadding NOTIFY viewLeftPaddingChanged)
+    Q_PROPERTY(qreal viewRightPadding READ viewRightPadding WRITE setViewRightPadding NOTIFY viewRightPaddingChanged)
 
     Q_PROPERTY(bool columnRowSwap READ columnRowSwap NOTIFY columnRowSwapChanged)
     Q_PROPERTY(HomeScreenState::FavouritesBarLocation favouritesBarLocation READ favouritesBarLocation NOTIFY favouritesBarLocationChanged)
@@ -111,6 +115,18 @@ public:
 
     qreal viewHeight() const;
     void setViewHeight(qreal viewHeight);
+
+    qreal viewTopPadding() const;
+    void setViewTopPadding(qreal viewTopPadding);
+
+    qreal viewBottomPadding() const;
+    void setViewBottomPadding(qreal viewBottomPadding);
+
+    qreal viewLeftPadding() const;
+    void setViewLeftPadding(qreal viewLeftPadding);
+
+    qreal viewRightPadding() const;
+    void setViewRightPadding(qreal viewRightPadding);
 
     // whether to swap rows and columns in the layout
     // this happens if the width of the screen is larger than the height
@@ -208,11 +224,23 @@ public:
 
     int currentFolderPage();
 
+    // QML helpers
+    Q_INVOKABLE FolioDelegate *getPageDelegateAt(int page, int row, int column);
+    Q_INVOKABLE FolioDelegate *getFavouritesDelegateAt(int position);
+    Q_INVOKABLE FolioDelegate *getFolderDelegateAt(int position);
+    Q_INVOKABLE QPointF getPageDelegateScreenPosition(int page, int row, int column);
+    Q_INVOKABLE QPointF getFavouritesDelegateScreenPosition(int position);
+    Q_INVOKABLE QPointF getFolderDelegateScreenPosition(int position);
+
 Q_SIGNALS:
     void swipeStateChanged();
     void viewStateChanged();
     void viewWidthChanged();
     void viewHeightChanged();
+    void viewTopPaddingChanged();
+    void viewBottomPaddingChanged();
+    void viewLeftPaddingChanged();
+    void viewRightPaddingChanged();
     void columnRowSwapChanged();
     void favouritesBarLocationChanged();
     void pageRowsChanged();
@@ -292,6 +320,10 @@ private:
 
     qreal m_viewWidth{0};
     qreal m_viewHeight{0};
+    qreal m_viewTopPadding{0};
+    qreal m_viewBottomPadding{0};
+    qreal m_viewLeftPadding{0};
+    qreal m_viewRightPadding{0};
 
     bool m_columnRowSwap{false};
     int m_pageRows{0};

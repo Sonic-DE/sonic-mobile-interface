@@ -92,6 +92,7 @@ public:
     void moveEntry(int fromRow, int toRow);
     bool addDelegate(FolioDelegate *delegate, int index);
     void removeDelegate(int index);
+    QPointF getDelegatePosition(int index);
 
     // for use with drag and drop, as the delegate is dragged around
     // ghost - fake delegate exists at an index, so a gap is created

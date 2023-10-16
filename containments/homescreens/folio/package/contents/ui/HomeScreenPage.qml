@@ -18,18 +18,19 @@ Item {
     property var pageModel
     property var homeScreen
 
-    // rectangle that shows when hovering over a spot to drop a delegate on
-    Rectangle {
+    // square that shows when hovering over a spot to drop a delegate on
+    PlaceholderDelegate {
         id: dragDropFeedback
         width: Folio.HomeScreenState.pageCellWidth
         height: Folio.HomeScreenState.pageCellHeight
-        color: Qt.rgba(255, 255, 255, 0.3)
-        radius: Kirigami.Units.largeSpacing
 
         property var dropPosition: Folio.HomeScreenState.dragState.candidateDropPosition
+
+        // only show if it is an empty spot on this page
         visible: Folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate &&
                     dropPosition.location === Folio.DelegateDragPosition.Pages &&
-                    dropPosition.page === root.pageNum
+                    dropPosition.page === root.pageNum &&
+                    Folio.HomeScreenState.getPageDelegateAt(root.pageNum, dropPosition.pageRow, dropPosition.pageColumn) === null
 
         x: dropPosition.pageColumn * Folio.HomeScreenState.pageCellWidth
         y: dropPosition.pageRow * Folio.HomeScreenState.pageCellHeight
@@ -46,13 +47,16 @@ Item {
             property int column: pageDelegate.column
 
             property var dragState: Folio.HomeScreenState.dragState
+
+            property bool isDropPositionThis: dragState.candidateDropPosition.location === Folio.DelegateDragPosition.Pages &&
+                                              dragState.candidateDropPosition.page === root.pageNum &&
+                                              dragState.candidateDropPosition.pageRow === delegate.pageDelegate.row &&
+                                              dragState.candidateDropPosition.pageColumn === delegate.pageDelegate.column
+
             property bool isAppHoveredOver: Folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate &&
                                             dragState.dropDelegate &&
                                             dragState.dropDelegate.type === Folio.FolioDelegate.Application &&
-                                            dragState.candidateDropPosition.location === Folio.DelegateDragPosition.Pages &&
-                                            dragState.candidateDropPosition.page === root.pageNum &&
-                                            dragState.candidateDropPosition.pageRow === delegate.pageDelegate.row &&
-                                            dragState.candidateDropPosition.pageColumn === delegate.pageDelegate.column
+                                            isDropPositionThis
 
             implicitWidth: Folio.HomeScreenState.pageCellWidth
             implicitHeight: Folio.HomeScreenState.pageCellHeight
@@ -90,6 +94,9 @@ Item {
                     application: delegate.pageDelegate.application
                     turnToFolder: delegate.isAppHoveredOver
                     turnToFolderAnimEnabled: Folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate
+
+                    // do not show if the drop animation is running to this delegate
+                    visible: !(root.homeScreen.dropAnimationRunning && delegate.isDropPositionThis)
 
                     // don't show label in drag and drop mode
                     labelOpacity: delegate.opacity
@@ -149,6 +156,11 @@ Item {
                 AppFolderDelegate {
                     id: appFolderDelegate
                     folder: delegate.pageDelegate.folder
+
+                    // do not show if the drop animation is running to this delegate, and the drop delegate is a folder
+                    visible: !(root.homeScreen.dropAnimationRunning &&
+                               delegate.isDropPositionThis &&
+                               delegate.dragState.dropDelegate.type === Folio.FolioDelegate.Folder)
 
                     // don't show label in drag and drop mode
                     labelOpacity: delegate.opacity
