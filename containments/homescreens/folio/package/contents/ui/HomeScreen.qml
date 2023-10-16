@@ -16,26 +16,29 @@ import org.kde.private.mobile.homescreen.folio 1.0 as Folio
 Item {
     id: root
 
-    required property real topMargin
-    required property real bottomMargin
-    required property real leftMargin
-    required property real rightMargin
+    property real topMargin: 0
+    property real bottomMargin: 0
+    property real leftMargin: 0
+    property real rightMargin: 0
 
     property bool interactive: true
 
     property Folio.HomeScreenState homeScreenState: Folio.HomeScreenState
+
+    readonly property bool dropAnimationRunning: delegateDragItem.dropAnimationRunning
+
+    onTopMarginChanged: Folio.HomeScreenState.viewTopPadding = topMargin
+    onBottomMarginChanged: Folio.HomeScreenState.viewBottomPadding = bottomMargin
+    onLeftMarginChanged: Folio.HomeScreenState.viewLeftPadding = leftMargin
+    onRightMarginChanged: Folio.HomeScreenState.viewRightPadding = rightMargin
 
     // called by any delegates when starting drag
     // returns the mapped coordinates to be used in the home screen state
     function prepareStartDelegateDrag(delegate, item) {
         swipeArea.setSkipSwipeThreshold(true);
 
-        let mapped = root.mapFromItem(item, 0, 0);
         delegateDragItem.delegate = delegate;
-
-        mapped.x -= root.leftMargin;
-        mapped.y -= root.topMargin;
-        return mapped;
+        return root.mapFromItem(item, 0, 0);
     }
 
     function cancelDelegateDrag() {
@@ -43,12 +46,10 @@ Item {
     }
 
     // determine how tall an app label is, for delegate measurements
-    PC3.Label {
+    DelegateLabel {
         id: appLabelMetrics
         text: "M\nM"
         visible: false
-        font.pointSize: Kirigami.Theme.defaultFont.pointSize * 0.8
-        font.weight: Font.Bold
 
         onHeightChanged: Folio.HomeScreenState.pageDelegateLabelHeight = appLabelMetrics.height
 
@@ -153,6 +154,8 @@ Item {
             FavouritesBar {
                 id: favouritesBar
                 homeScreen: root
+                leftMargin: root.leftMargin
+                topMargin: root.topMargin
 
                 anchors.topMargin: root.topMargin
                 anchors.bottomMargin: root.bottomMargin
@@ -238,10 +241,6 @@ Item {
         // drag and drop component
         DelegateDragItem {
             id: delegateDragItem
-            visible: homeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate
-
-            x: Math.round(homeScreenState.delegateDragX)
-            y: Math.round(homeScreenState.delegateDragY)
         }
 
         // bottom app drawer

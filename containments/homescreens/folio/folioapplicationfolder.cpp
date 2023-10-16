@@ -263,6 +263,12 @@ void ApplicationFolderModel::removeDelegate(int index)
     Q_EMIT m_folder->saveRequested();
 }
 
+QPointF ApplicationFolderModel::getDelegatePosition(int index)
+{
+    auto delegate = m_folder->m_delegates[index];
+    return {delegate.xPosition, delegate.yPosition};
+}
+
 int ApplicationFolderModel::getGhostEntryPosition()
 {
     for (int i = 0; i < m_folder->m_delegates.size(); i++) {

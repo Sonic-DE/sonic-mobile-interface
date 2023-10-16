@@ -57,6 +57,8 @@ public:
     // the index that dropping at the position given would place the delegate at.
     int dropInsertPosition(qreal x, qreal y) const;
 
+    QPointF getDelegateScreenPosition(int position) const;
+
     Q_INVOKABLE void load();
 
     void setApplet(Plasma::Applet *applet);

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include "homescreenstate.h"
+#include "favouritesmodel.h"
 #include "foliosettings.h"
 #include "pagelistmodel.h"
 
@@ -175,6 +176,58 @@ void HomeScreenState::setViewHeight(qreal viewHeight)
     if (m_viewHeight != viewHeight) {
         m_viewHeight = viewHeight;
         Q_EMIT viewHeightChanged();
+    }
+}
+
+qreal HomeScreenState::viewTopPadding() const
+{
+    return m_viewTopPadding;
+}
+
+void HomeScreenState::setViewTopPadding(qreal viewTopPadding)
+{
+    if (m_viewTopPadding != viewTopPadding) {
+        m_viewTopPadding = viewTopPadding;
+        Q_EMIT viewTopPaddingChanged();
+    }
+}
+
+qreal HomeScreenState::viewBottomPadding() const
+{
+    return m_viewBottomPadding;
+}
+
+void HomeScreenState::setViewBottomPadding(qreal viewBottomPadding)
+{
+    if (m_viewBottomPadding != viewBottomPadding) {
+        m_viewBottomPadding = viewBottomPadding;
+        Q_EMIT viewBottomPaddingChanged();
+    }
+}
+
+qreal HomeScreenState::viewLeftPadding() const
+{
+    return m_viewLeftPadding;
+}
+
+void HomeScreenState::setViewLeftPadding(qreal viewLeftPadding)
+{
+    if (m_viewLeftPadding != viewLeftPadding) {
+        m_viewLeftPadding = viewLeftPadding;
+        Q_EMIT viewLeftPaddingChanged();
+    }
+}
+
+qreal HomeScreenState::viewRightPadding() const
+{
+    return m_viewRightPadding;
+}
+
+void HomeScreenState::setViewRightPadding(qreal viewRightPadding)
+{
+    if (m_viewRightPadding != viewRightPadding) {
+        m_viewRightPadding = viewRightPadding;
+        Q_EMIT viewRightPaddingChanged();
     }
 }
 
@@ -516,6 +569,59 @@ void HomeScreenState::setCurrentPage(int currentPage)
 int HomeScreenState::currentFolderPage()
 {
     return m_folderPageNum;
+}
+
+FolioDelegate *HomeScreenState::getPageDelegateAt(int page, int row, int column)
+{
+    PageModel *pageModel = PageListModel::self()->getPage(page);
+    if (!pageModel) {
+        return nullptr;
+    }
+
+    FolioDelegate *delegate = pageModel->getDelegate(row, column);
+    if (!delegate) {
+        return nullptr;
+    }
+
+    return delegate;
+}
+
+FolioDelegate *HomeScreenState::getFavouritesDelegateAt(int position)
+{
+    return FavouritesModel::self()->getEntryAt(position);
+}
+
+FolioDelegate *HomeScreenState::getFolderDelegateAt(int position)
+{
+    if (!m_currentFolder) {
+        return nullptr;
+    }
+
+    return m_currentFolder->applications()->getDelegate(position);
+}
+
+QPointF HomeScreenState::getPageDelegateScreenPosition(int page, int row, int column)
+{
+    Q_UNUSED(page)
+    qreal x = m_viewLeftPadding + ((m_pageWidth - m_pageContentWidth) / 2) + (m_pageCellWidth * column);
+    qreal y = m_viewTopPadding + ((m_pageHeight - m_pageContentHeight) / 2) + (m_pageCellHeight * row);
+    return QPointF{x, y};
+}
+
+QPointF HomeScreenState::getFavouritesDelegateScreenPosition(int position)
+{
+    return FavouritesModel::self()->getDelegateScreenPosition(position);
+}
+
+QPointF HomeScreenState::getFolderDelegateScreenPosition(int position)
+{
+    if (!m_currentFolder) {
+        return {0, 0};
+    }
+    auto pos = m_currentFolder->applications()->getDelegatePosition(position);
+    qreal x = pos.x() + (m_viewWidth - m_folderPageWidth) / 2;
+    qreal y = pos.y() + (m_viewHeight - m_folderPageHeight) / 2;
+    return {x, y};
 }
 
 void HomeScreenState::openAppDrawer()

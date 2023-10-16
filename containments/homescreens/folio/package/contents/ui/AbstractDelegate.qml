@@ -76,16 +76,19 @@ Folio.DelegateTouchArea {
         id: delegateWrapper
         anchors.fill: parent
 
-        transform: Scale {
-            origin.x: delegate.width / 2;
-            origin.y: delegate.height / 2;
-            xScale: delegate.zoomScale
-            yScale: delegate.zoomScale
-        }
-
         ColumnLayout {
             anchors.fill: parent
             spacing: 0
+
+            // transform is not on delegateWrapper because when it's zoomed in, it apparently
+            // affects the delegate's x and y position, which messes up the starting drag and drop
+            // position (for mapFromItem in HomeScreen.qml)
+            transform: Scale {
+                origin.x: delegate.width / 2;
+                origin.y: delegate.height / 2;
+                xScale: delegate.zoomScale
+                yScale: delegate.zoomScale
+            }
 
             MobileShell.BaseItem {
                 id: visualItem
@@ -104,7 +107,7 @@ Folio.DelegateTouchArea {
                 }
             }
 
-            PlasmaComponents.Label {
+            DelegateLabel {
                 id: label
                 opacity: text.length > 0
 
@@ -114,16 +117,7 @@ Folio.DelegateTouchArea {
                 Layout.leftMargin: -parent.anchors.leftMargin + Kirigami.Units.smallSpacing
                 Layout.rightMargin: -parent.anchors.rightMargin + Kirigami.Units.smallSpacing
 
-                wrapMode: Text.WordWrap
-                maximumLineCount: 2
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignTop
-                elide: Text.ElideRight
-
                 text: delegate.name
-
-                font.pointSize: Kirigami.Theme.defaultFont.pointSize * 0.8
-                font.weight: Font.Bold
                 color: "white"
             }
         }
