@@ -46,7 +46,7 @@ MobileShell.BaseItem {
                 if (text.includes('\n')) {
                     // exit text edit mode when new line is entered
                     root.inFolderTitleEditMode = false;
-                } else {
+                } else if (root.folder) {
                     root.folder.name = text;
                 }
             }

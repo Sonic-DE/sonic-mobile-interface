@@ -26,8 +26,6 @@ Folio.DelegateTouchArea {
     property alias delegateItem: delegateWrapper
     property alias labelOpacity: label.opacity
 
-    readonly property real margins: Math.floor(width * 0.2)
-
     signal afterClickAnimation()
 
     // grow/shrink animation
@@ -86,19 +84,13 @@ Folio.DelegateTouchArea {
         }
 
         ColumnLayout {
-            anchors {
-                fill: parent
-                leftMargin: margins
-                topMargin: margins
-                rightMargin: margins
-                bottomMargin: margins
-            }
+            anchors.fill: parent
             spacing: 0
 
             MobileShell.BaseItem {
                 id: visualItem
 
-                Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
                 Layout.minimumWidth: Folio.FolioSettings.homeScreenIconSize
                 Layout.minimumHeight: Folio.FolioSettings.homeScreenIconSize
                 Layout.preferredHeight: Layout.minimumHeight
@@ -114,7 +106,7 @@ Folio.DelegateTouchArea {
 
             PlasmaComponents.Label {
                 id: label
-                visible: text.length > 0
+                opacity: text.length > 0
 
                 Layout.fillWidth: true
                 Layout.preferredHeight: Folio.HomeScreenState.pageDelegateLabelHeight

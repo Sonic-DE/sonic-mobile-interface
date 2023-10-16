@@ -30,6 +30,7 @@ class HomeScreenState : public QObject
     Q_PROPERTY(qreal viewHeight READ viewHeight WRITE setViewHeight NOTIFY viewHeightChanged)
 
     Q_PROPERTY(bool columnRowSwap READ columnRowSwap NOTIFY columnRowSwapChanged)
+    Q_PROPERTY(HomeScreenState::FavouritesBarLocation favouritesBarLocation READ favouritesBarLocation NOTIFY favouritesBarLocationChanged)
     Q_PROPERTY(int pageRows READ pageRows NOTIFY pageRowsChanged)
     Q_PROPERTY(int pageColumns READ pageColumns NOTIFY pageColumnsChanged)
 
@@ -37,12 +38,12 @@ class HomeScreenState : public QObject
     Q_PROPERTY(qreal pageViewX READ pageViewX WRITE setPageViewX NOTIFY pageViewXChanged)
     Q_PROPERTY(qreal pageWidth READ pageWidth WRITE setPageWidth NOTIFY pageWidthChanged)
     Q_PROPERTY(qreal pageHeight READ pageHeight WRITE setPageHeight NOTIFY pageHeightChanged)
-    Q_PROPERTY(qreal pageContentWidth READ pageContentWidth WRITE setPageContentWidth NOTIFY pageContentWidthChanged)
-    Q_PROPERTY(qreal pageContentHeight READ pageContentHeight WRITE setPageContentHeight NOTIFY pageContentHeightChanged)
+    Q_PROPERTY(qreal pageContentWidth READ pageContentWidth NOTIFY pageContentWidthChanged)
+    Q_PROPERTY(qreal pageContentHeight READ pageContentHeight NOTIFY pageContentHeightChanged)
 
     // cell measurements
-    Q_PROPERTY(qreal pageCellWidth READ pageCellWidth WRITE setPageCellWidth NOTIFY pageCellWidthChanged)
-    Q_PROPERTY(qreal pageCellHeight READ pageCellHeight WRITE setPageCellHeight NOTIFY pageCellHeightChanged)
+    Q_PROPERTY(qreal pageCellWidth READ pageCellWidth NOTIFY pageCellWidthChanged)
+    Q_PROPERTY(qreal pageCellHeight READ pageCellHeight NOTIFY pageCellHeightChanged)
     Q_PROPERTY(qreal pageDelegateLabelHeight READ pageDelegateLabelHeight WRITE setPageDelegateLabelHeight NOTIFY pageDelegateLabelHeightChanged)
     Q_PROPERTY(qreal pageDelegateLabelSpacing READ pageDelegateLabelSpacing WRITE setPageDelegateLabelSpacing NOTIFY pageDelegateLabelSpacingChanged)
 
@@ -89,6 +90,9 @@ public:
     };
     Q_ENUM(ViewState)
 
+    enum FavouritesBarLocation { Bottom, Left, Right };
+    Q_ENUM(FavouritesBarLocation)
+
     static HomeScreenState *self();
 
     HomeScreenState(QObject *parent = nullptr);
@@ -113,6 +117,8 @@ public:
     bool columnRowSwap() const;
     void setColumnRowSwap(bool columnRowSwap);
 
+    FavouritesBarLocation favouritesBarLocation() const;
+
     // the number of rows on a page
     int pageRows() const;
     void setPageRows(int pageRows);
@@ -135,16 +141,16 @@ public:
     void setPageHeight(qreal pageHeight);
 
     qreal pageContentWidth() const;
-    void setPageContentWidth(qreal pageContentWidth);
+    void calculatePageContentWidth();
 
     qreal pageContentHeight() const;
-    void setPageContentHeight(qreal pageContentHeight);
+    void calculatePageContentHeight();
 
     qreal pageCellWidth() const;
-    void setPageCellWidth(qreal pageCellWidth);
+    void calculatePageCellWidth();
 
     qreal pageCellHeight() const;
-    void setPageCellHeight(qreal pageCellHeight);
+    void calculatePageCellHeight();
 
     qreal pageDelegateLabelHeight() const;
     void setPageDelegateLabelHeight(qreal pageDelegateLabelHeight);
@@ -208,6 +214,7 @@ Q_SIGNALS:
     void viewWidthChanged();
     void viewHeightChanged();
     void columnRowSwapChanged();
+    void favouritesBarLocationChanged();
     void pageRowsChanged();
     void pageColumnsChanged();
     void pageViewXChanged();

@@ -14,6 +14,8 @@ const qreal SEARCH_WIDGET_OPEN_DIST = 300;
 // pixels to move before we determine the swipe type
 const qreal DETERMINE_SWIPE_THRESHOLD = 10;
 
+const qreal VERTICAL_FAVOURITES_BAR_THRESHOLD = 400;
+
 HomeScreenState *HomeScreenState::self()
 {
     static HomeScreenState *inst = new HomeScreenState{nullptr};
@@ -102,6 +104,21 @@ HomeScreenState::HomeScreenState(QObject *parent)
         setPageRows(m_columnRowSwap ? FolioSettings::self()->homeScreenColumns() : FolioSettings::self()->homeScreenRows());
         setPageColumns(m_columnRowSwap ? FolioSettings::self()->homeScreenRows() : FolioSettings::self()->homeScreenColumns());
     });
+
+    connect(this, &HomeScreenState::pageWidthChanged, this, &HomeScreenState::calculatePageContentWidth);
+    connect(this, &HomeScreenState::pageHeightChanged, this, &HomeScreenState::calculatePageContentHeight);
+
+    connect(this, &HomeScreenState::pageContentWidthChanged, this, &HomeScreenState::calculatePageCellWidth);
+    connect(this, &HomeScreenState::pageColumnsChanged, this, &HomeScreenState::calculatePageCellWidth);
+    connect(this, &HomeScreenState::pageContentHeightChanged, this, &HomeScreenState::calculatePageCellHeight);
+    connect(this, &HomeScreenState::pageRowsChanged, this, &HomeScreenState::calculatePageCellHeight);
+
+    connect(this, &HomeScreenState::viewWidthChanged, this, [this]() {
+        Q_EMIT favouritesBarLocationChanged();
+    });
+    connect(this, &HomeScreenState::viewHeightChanged, this, [this]() {
+        Q_EMIT favouritesBarLocationChanged();
+    });
 }
 
 HomeScreenState::ViewState HomeScreenState::viewState() const
@@ -172,6 +189,12 @@ void HomeScreenState::setColumnRowSwap(bool columnRowSwap)
         m_columnRowSwap = columnRowSwap;
         Q_EMIT columnRowSwapChanged();
     }
+}
+
+HomeScreenState::FavouritesBarLocation HomeScreenState::favouritesBarLocation() const
+{
+    // TODO need to determine screen rotation and bottom of screen to have Left and Right accordingly
+    return m_viewHeight < VERTICAL_FAVOURITES_BAR_THRESHOLD && m_viewWidth > m_viewHeight ? Right : Bottom;
 }
 
 int HomeScreenState::pageRows() const
@@ -247,8 +270,10 @@ qreal HomeScreenState::pageContentWidth() const
     return m_pageContentWidth;
 }
 
-void HomeScreenState::setPageContentWidth(qreal pageContentWidth)
+void HomeScreenState::calculatePageContentWidth()
 {
+    qreal pageContentWidth = std::round(m_pageWidth * 0.95); // 0.05 on both sides
+
     if (m_pageContentWidth != pageContentWidth) {
         m_pageContentWidth = pageContentWidth;
         Q_EMIT pageContentWidthChanged();
@@ -260,8 +285,10 @@ qreal HomeScreenState::pageContentHeight() const
     return m_pageContentHeight;
 }
 
-void HomeScreenState::setPageContentHeight(qreal pageContentHeight)
+void HomeScreenState::calculatePageContentHeight()
 {
+    qreal pageContentHeight = std::round(m_pageHeight * 0.95); // 0.05 on both sides
+
     if (m_pageContentHeight != pageContentHeight) {
         m_pageContentHeight = pageContentHeight;
         Q_EMIT pageContentHeightChanged();
@@ -273,8 +300,10 @@ qreal HomeScreenState::pageCellWidth() const
     return m_pageCellWidth;
 }
 
-void HomeScreenState::setPageCellWidth(qreal pageCellWidth)
+void HomeScreenState::calculatePageCellWidth()
 {
+    qreal pageCellWidth = std::round(m_pageContentWidth / m_pageColumns);
+
     if (m_pageCellWidth != pageCellWidth) {
         m_pageCellWidth = pageCellWidth;
         Q_EMIT pageCellWidthChanged();
@@ -286,8 +315,10 @@ qreal HomeScreenState::pageCellHeight() const
     return m_pageCellHeight;
 }
 
-void HomeScreenState::setPageCellHeight(qreal pageCellHeight)
+void HomeScreenState::calculatePageCellHeight()
 {
+    qreal pageCellHeight = std::round(m_pageContentHeight / m_pageRows);
+
     if (m_pageCellHeight != pageCellHeight) {
         m_pageCellHeight = pageCellHeight;
         Q_EMIT pageCellHeightChanged();
