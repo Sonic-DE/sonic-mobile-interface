@@ -18,7 +18,7 @@ int FolioSettings::homeScreenRows()
 {
     // TODO
     // ensure that this is fetched fast and cached (it is called extremely often)
-    return 6;
+    return 5;
 }
 
 int FolioSettings::homeScreenColumns()
