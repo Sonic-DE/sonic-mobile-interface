@@ -69,7 +69,7 @@ Item {
         id: swipeArea
         anchors.fill: parent
 
-        interactive: root.interactive && !(appDrawer.flickable.moving && appDrawer.flickable.contentY > 0)
+        interactive: root.interactive && !appDrawer.flickable.moving && appDrawer.flickable.contentY === 0
 
         onSwipeStarted: {
             homeScreenState.swipeStarted();
