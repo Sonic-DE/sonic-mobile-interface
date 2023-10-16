@@ -14,17 +14,8 @@ Item {
 
     property var homeScreen
 
-    readonly property real verticalMargin: Kirigami.Units.gridUnit
-    readonly property real horizontalMargin: Math.round(width * 0.05)
-    readonly property real pageContentWidth: width - horizontalMargin * 2
-    readonly property real pageContentHeight: height - verticalMargin * 2
-
-    readonly property real cellWidth: Math.round(pageContentWidth / Folio.HomeScreenState.pageColumns)
-    readonly property real cellHeight: cellWidth + Folio.HomeScreenState.pageDelegateLabelHeight
-
-    // TODO move cell width calculations
-    onCellWidthChanged: Folio.HomeScreenState.pageCellWidth = cellWidth
-    onCellHeightChanged: Folio.HomeScreenState.pageCellHeight = cellHeight
+    readonly property real verticalMargin: Math.round((Folio.HomeScreenState.pageHeight - Folio.HomeScreenState.pageContentHeight) / 2)
+    readonly property real horizontalMargin: Math.round((Folio.HomeScreenState.pageWidth - Folio.HomeScreenState.pageContentWidth) / 2)
 
     Repeater {
         model: Folio.PageListModel

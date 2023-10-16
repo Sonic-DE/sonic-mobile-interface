@@ -28,7 +28,6 @@ public:
     enum Roles {
         DelegateRole = Qt::UserRole + 1,
         XPositionRole,
-        HiddenRole,
     };
 
     FavouritesModel(QObject *parent = nullptr);
@@ -53,10 +52,10 @@ public:
 
     // whether the position given is in between 2 delegates, or at the edge.
     // this would return false if dropping should place the delegate into a folder/create a folder.
-    bool dropPositionIsEdge(qreal x);
+    bool dropPositionIsEdge(qreal x, qreal y) const;
 
     // the index that dropping at the position given would place the delegate at.
-    int dropInsertPosition(qreal x);
+    int dropInsertPosition(qreal x, qreal y) const;
 
     Q_INVOKABLE void load();
 
@@ -66,8 +65,8 @@ private:
     void save();
     void evaluateDelegatePositions(bool emitSignal = true);
 
-    // get the x position where delegates start being placed
-    qreal getDelegateRowStartX();
+    // get the x (or y) position where delegates start being placed
+    qreal getDelegateRowStartPos() const;
 
     QList<FavouritesDelegate> m_delegates;
 

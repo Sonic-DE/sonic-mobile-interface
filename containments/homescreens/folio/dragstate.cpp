@@ -218,7 +218,20 @@ void DragState::onDelegateDragPositionChanged()
     qreal y = getDraggedDelegateY();
 
     bool inFolder = m_state->viewState() == HomeScreenState::FolderView;
-    bool inFavouritesArea = !inFolder && y > m_state->pageHeight();
+    bool inFavouritesArea = !inFolder;
+
+    // the favourites bar can be in different locations, so account for each
+    switch (m_state->favouritesBarLocation()) {
+    case HomeScreenState::Bottom:
+        inFavouritesArea = inFavouritesArea && y > m_state->pageHeight();
+        break;
+    case HomeScreenState::Left:
+        inFavouritesArea = inFavouritesArea && x < m_state->viewWidth() - m_state->pageHeight();
+        break;
+    case HomeScreenState::Right:
+        inFavouritesArea = inFavouritesArea && x > m_state->pageWidth();
+        break;
+    }
 
     // stop the favourites insertion timer if the delegate has moved out
     if (!inFavouritesArea) {
@@ -299,7 +312,8 @@ void DragState::onDelegateDragPositionOverFavouritesChanged()
     // the drag position changed while over the favourites strip
 
     qreal x = getDraggedDelegateX();
-    int dropIndex = FavouritesModel::self()->dropInsertPosition(x);
+    qreal y = getDraggedDelegateY();
+    int dropIndex = FavouritesModel::self()->dropInsertPosition(x, y);
 
     // if the drop position changed, cancel the open folder timer
     if (m_candidateDropPosition->location() != DelegateDragPosition::Favourites || m_candidateDropPosition->favouritesPosition() != dropIndex) {
@@ -313,7 +327,7 @@ void DragState::onDelegateDragPositionOverFavouritesChanged()
         m_favouritesInsertBetweenTimer->stop();
     }
 
-    if (FavouritesModel::self()->dropPositionIsEdge(x)) {
+    if (FavouritesModel::self()->dropPositionIsEdge(x, y)) {
         // if we need to make space for the delegate
 
         // start the insertion timer (so that the user has time to move the delegate away)
@@ -577,11 +591,9 @@ void DragState::onOpenFolderTimerFinished()
         break;
     }
     case DelegateDragPosition::Favourites: {
-        qDebug() << "try";
         // get delegate being hovered over in favourites bar
         FolioDelegate *delegate = FavouritesModel::self()->getEntryAt(m_candidateDropPosition->favouritesPosition());
         if (!delegate || delegate->type() != FolioDelegate::Folder) {
-            qDebug() << "f";
             return;
         }
 

@@ -32,7 +32,16 @@ FavouritesModel::FavouritesModel(QObject *parent)
     connect(HomeScreenState::self(), &HomeScreenState::pageWidthChanged, this, [this]() {
         evaluateDelegatePositions(true);
     });
+    connect(HomeScreenState::self(), &HomeScreenState::pageHeightChanged, this, [this]() {
+        evaluateDelegatePositions(true);
+    });
     connect(HomeScreenState::self(), &HomeScreenState::pageCellWidthChanged, this, [this]() {
+        evaluateDelegatePositions(true);
+    });
+    connect(HomeScreenState::self(), &HomeScreenState::pageCellHeightChanged, this, [this]() {
+        evaluateDelegatePositions(true);
+    });
+    connect(HomeScreenState::self(), &HomeScreenState::favouritesBarLocationChanged, this, [this]() {
         evaluateDelegatePositions(true);
     });
 }
@@ -257,73 +266,80 @@ void FavouritesModel::setApplet(Plasma::Applet *applet)
     m_applet = applet;
 }
 
-bool FavouritesModel::dropPositionIsEdge(qreal x)
+bool FavouritesModel::dropPositionIsEdge(qreal x, qreal y) const
 {
-    qreal cellWidth = HomeScreenState::self()->pageCellWidth();
-    qreal startPosition = getDelegateRowStartX();
+    qreal startPosition = getDelegateRowStartPos();
+    bool isLocationBottom = HomeScreenState::self()->favouritesBarLocation() == HomeScreenState::Bottom;
+    qreal cellLength = isLocationBottom ? HomeScreenState::self()->pageCellWidth() : HomeScreenState::self()->pageCellHeight();
 
-    if (x < startPosition) {
+    qreal pos = isLocationBottom ? x : y;
+
+    if (pos < startPosition) {
         return true;
     }
 
-    qreal currentX = startPosition;
+    qreal currentPos = startPosition;
 
     for (int i = 0; i < m_delegates.size(); i++) {
         // if it is within the centre 70% of a delegate, it is not at an edge
-        if (x >= currentX + cellWidth * 0.15 && x <= currentX + cellWidth * 0.85) {
+        if (pos >= currentPos + cellLength * 0.15 && x <= currentPos + cellLength * 0.85) {
             return false;
         }
 
-        currentX += cellWidth;
+        currentPos += cellLength;
     }
 
     return true;
 }
 
-int FavouritesModel::dropInsertPosition(qreal x)
+int FavouritesModel::dropInsertPosition(qreal x, qreal y) const
 {
-    qreal startPosition = getDelegateRowStartX();
-    qreal cellWidth = HomeScreenState::self()->pageCellWidth();
+    qreal startPosition = getDelegateRowStartPos();
+    bool isLocationBottom = HomeScreenState::self()->favouritesBarLocation() == HomeScreenState::Bottom;
+    qreal cellLength = isLocationBottom ? HomeScreenState::self()->pageCellWidth() : HomeScreenState::self()->pageCellHeight();
 
-    if (x < startPosition) {
+    qreal pos = isLocationBottom ? x : y;
+
+    if (pos < startPosition) {
         return 0;
     }
 
-    qreal currentX = startPosition;
+    qreal currentPos = startPosition;
     for (int i = 0; i < m_delegates.size(); i++) {
-        if (x < currentX + cellWidth * 0.85) {
+        if (pos < currentPos + cellLength * 0.85) {
             return i;
-        } else if (x < currentX + cellWidth) {
+        } else if (pos < currentPos + cellLength) {
             return i + 1;
         }
 
-        currentX += cellWidth;
+        currentPos += cellLength;
     }
     return m_delegates.size();
 }
 
 void FavouritesModel::evaluateDelegatePositions(bool emitSignal)
 {
-    qreal cellWidth = HomeScreenState::self()->pageCellWidth();
-    qreal startPosition = getDelegateRowStartX();
-    qreal currentX = startPosition;
+    bool isLocationBottom = HomeScreenState::self()->favouritesBarLocation() == HomeScreenState::Bottom;
+    qreal cellLength = isLocationBottom ? HomeScreenState::self()->pageCellWidth() : HomeScreenState::self()->pageCellHeight();
+    qreal startPosition = getDelegateRowStartPos();
+    qreal currentPos = startPosition;
 
     for (int i = 0; i < m_delegates.size(); ++i) {
-        m_delegates[i].xPosition = qRound(currentX);
-        currentX += cellWidth;
+        m_delegates[i].xPosition = qRound(currentPos);
+        currentPos += cellLength;
     }
 
     if (emitSignal) {
-        Q_EMIT dataChanged(createIndex(0, 0), createIndex(m_delegates.size() - 1, 0), {HiddenRole});
         Q_EMIT dataChanged(createIndex(0, 0), createIndex(m_delegates.size() - 1, 0), {XPositionRole});
     }
 }
 
-qreal FavouritesModel::getDelegateRowStartX()
+qreal FavouritesModel::getDelegateRowStartPos() const
 {
     int length = m_delegates.size();
-    qreal cellWidth = HomeScreenState::self()->pageCellWidth();
-    qreal pageWidth = HomeScreenState::self()->pageWidth();
+    bool isLocationBottom = HomeScreenState::self()->favouritesBarLocation() == HomeScreenState::Bottom;
+    qreal cellLength = isLocationBottom ? HomeScreenState::self()->pageCellWidth() : HomeScreenState::self()->pageCellHeight();
+    qreal pageLength = isLocationBottom ? HomeScreenState::self()->pageWidth() : HomeScreenState::self()->pageHeight();
 
-    return (pageWidth / 2) - (((qreal)length) / 2) * cellWidth;
+    return (pageLength / 2) - (((qreal)length) / 2) * cellLength;
 }

@@ -102,43 +102,119 @@ Item {
                 id: homeScreenPages
                 homeScreen: root
 
-                anchors.bottom: favouritesBar.top
-                anchors.top: parent.top
                 anchors.topMargin: root.topMargin
-                anchors.left: parent.left
                 anchors.leftMargin: root.leftMargin
-                anchors.right: parent.right
                 anchors.rightMargin: root.rightMargin
+                anchors.bottomMargin: root.bottomMargin
 
                 // update the model with page dimensions
                 onWidthChanged: {
                     homeScreenState.pageWidth = homeScreenPages.width;
-                    homeScreenState.pageContentWidth = homeScreenPages.pageContentWidth;
                 }
                 onHeightChanged: {
                     homeScreenState.pageHeight = homeScreenPages.height;
-                    homeScreenState.pageContentHeight = homeScreenPages.pageContentHeight;
                 }
+
+                states: [
+                    State {
+                        name: "bottom"
+                        when: Folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Bottom
+                        AnchorChanges {
+                            target: homeScreenPages
+                            anchors.top: parent.top
+                            anchors.bottom: favouritesBar.top
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                        }
+                    }, State {
+                        name: "left"
+                        when: Folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Left
+                        AnchorChanges {
+                            target: homeScreenPages
+                            anchors.top: parent.top
+                            anchors.bottom: parent.bottom
+                            anchors.left: favouritesBar.right
+                            anchors.right: parent.right
+                        }
+                    }, State {
+                        name: "right"
+                        when: Folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Right
+                        AnchorChanges {
+                            target: homeScreenPages
+                            anchors.top: parent.top
+                            anchors.bottom: parent.bottom
+                            anchors.left: parent.left
+                            anchors.right: favouritesBar.left
+                        }
+                    }
+                ]
             }
 
             FavouritesBar {
                 id: favouritesBar
                 homeScreen: root
 
-                anchors.bottom: parent.bottom
+                anchors.topMargin: root.topMargin
                 anchors.bottomMargin: root.bottomMargin
-                anchors.left: parent.left
                 anchors.leftMargin: root.leftMargin
-                anchors.right: parent.right
                 anchors.rightMargin: root.rightMargin
+
+                states: [
+                    State {
+                        name: "bottom"
+                        when: Folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Bottom
+                        AnchorChanges {
+                            target: favouritesBar
+                            anchors.top: undefined
+                            anchors.bottom: parent.bottom
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                        }
+                        PropertyChanges {
+                            target: favouritesBar
+                            height: Kirigami.Units.gridUnit * 6
+                        }
+                    }, State {
+                        name: "left"
+                        when: Folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Left
+                        AnchorChanges {
+                            target: favouritesBar
+                            anchors.top: parent.top
+                            anchors.bottom: parent.bottom
+                            anchors.left: parent.left
+                            anchors.right: undefined
+                        }
+                        PropertyChanges {
+                            target: favouritesBar
+                            width: Kirigami.Units.gridUnit * 6
+                        }
+                    }, State {
+                        name: "right"
+                        when: Folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Right
+                        AnchorChanges {
+                            target: favouritesBar
+                            anchors.top: parent.top
+                            anchors.bottom: parent.bottom
+                            anchors.left: undefined
+                            anchors.right: parent.right
+                        }
+                        PropertyChanges {
+                            target: favouritesBar
+                            width: Kirigami.Units.gridUnit * 6
+                        }
+                    }
+                ]
             }
 
             QQC2.PageIndicator {
                 Kirigami.Theme.inherit: false
                 Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
 
+                property bool favouritesBarAtBottom: Folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Bottom
+
                 anchors.horizontalCenter: parent.horizontalCenter
-                anchors.bottom: favouritesBar.top
+                anchors.bottom: favouritesBarAtBottom ? favouritesBar.top : parent.bottom
+                anchors.bottomMargin: favouritesBarAtBottom ? 0 : (root.bottomMargin + Kirigami.Units.largeSpacing)
 
                 currentIndex: Folio.HomeScreenState.currentPage
                 count: Folio.PageListModel.length
