@@ -11,6 +11,8 @@ import org.kde.kirigami 2.20 as Kirigami
 import org.kde.plasma.private.mobileshell 1.0 as MobileShell
 import org.kde.private.mobile.homescreen.folio 1.0 as Folio
 
+import "./delegate"
+
 Folio.DelegateTouchArea {
     id: root
 

@@ -28,19 +28,32 @@ ContainmentItem {
     }
 
     function homeAction() {
-        switch (Folio.HomeScreenState.viewState) {
-            case Folio.HomeScreenState.PageView:
-                Folio.HomeScreenState.openAppDrawer();
-                break;
-            case Folio.HomeScreenState.AppDrawerView:
-                Folio.HomeScreenState.closeAppDrawer();
-                break;
-            case Folio.HomeScreenState.SearchWidgetView:
-                Folio.HomeScreenState.closeSearchWidget();
-                break;
-            case Folio.HomeScreenState.FolderView:
-                Folio.HomeScreenState.closeFolder();
-                break;
+        const isInWindow = !WindowPlugin.WindowUtil.isShowingDesktop && WindowPlugin.WindowMaximizedTracker.showingWindow;
+
+        if (isInWindow) {
+            Folio.HomeScreenState.closeFolder();
+            Folio.HomeScreenState.closeSearchWidget();
+            Folio.HomeScreenState.closeAppDrawer();
+            Folio.HomeScreenState.goToPage(0);
+        } else {
+            switch (Folio.HomeScreenState.viewState) {
+                case Folio.HomeScreenState.PageView:
+                    if (Folio.HomeScreenState.currentPage === 0) {
+                        Folio.HomeScreenState.openAppDrawer();
+                    } else {
+                        Folio.HomeScreenState.goToPage(0);
+                    }
+                    break;
+                case Folio.HomeScreenState.AppDrawerView:
+                    Folio.HomeScreenState.closeAppDrawer();
+                    break;
+                case Folio.HomeScreenState.SearchWidgetView:
+                    Folio.HomeScreenState.closeSearchWidget();
+                    break;
+                case Folio.HomeScreenState.FolderView:
+                    Folio.HomeScreenState.closeFolder();
+                    break;
+            }
         }
     }
 
@@ -68,8 +81,7 @@ ContainmentItem {
 
         plasmoidItem: root
         onResetHomeScreenPosition: {
-            Folio.HomeScreenState.goToPage(0);
-            Folio.HomeScreenState.closeAppDrawer();
+            // NOTE: empty, because this is handled by homeAction()
         }
 
         onHomeTriggered: root.homeAction()
