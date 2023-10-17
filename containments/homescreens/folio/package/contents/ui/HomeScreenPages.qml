@@ -9,13 +9,15 @@ import org.kde.plasma.components 3.0 as PC3
 import org.kde.kirigami 2.10 as Kirigami
 import org.kde.private.mobile.homescreen.folio 1.0 as Folio
 
-Item {
+MouseArea {
     id: root
 
     property var homeScreen
 
     readonly property real verticalMargin: Math.round((Folio.HomeScreenState.pageHeight - Folio.HomeScreenState.pageContentHeight) / 2)
     readonly property real horizontalMargin: Math.round((Folio.HomeScreenState.pageWidth - Folio.HomeScreenState.pageContentWidth) / 2)
+
+    onPressAndHold: homeScreen.openConfigure()
 
     Repeater {
         model: Folio.PageListModel

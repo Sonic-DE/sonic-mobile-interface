@@ -7,6 +7,8 @@ import QtQuick.Layouts
 import org.kde.kirigami 2.20 as Kirigami
 import org.kde.private.mobile.homescreen.folio 1.0 as Folio
 
+import "./delegate"
+
 Item {
     id: root
     width: Folio.HomeScreenState.pageCellWidth

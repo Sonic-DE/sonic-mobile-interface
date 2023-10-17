@@ -19,4 +19,10 @@ As such, all of the positioning and placement of delegates on the screen are top
 - Fix drawer scrolling
 - Drop animation (delegate moves to spot)
 - BUG: if you drag and drop from the middle of the app drawer list, swipe is broken because the swipe area is disabled
-- home button should not open app drawer if coming from an app or on another page
+- the position of where things think the dragged icon is during drag-and-drop is slightly off because of the label
+- BUG: landscape favourites bar duplication when dragging icon from it
+- BUG: dropping a folder on another folder anim makes no sense
+
+move drop animation code to c++
+
+- can make the touch area only the icon?
