@@ -512,6 +512,9 @@ void DragState::onDelegateDropped()
     m_leaveFolderTimer->stop();
     m_changePageTimer->stop();
     m_favouritesInsertBetweenTimer->stop();
+
+    // emit signal
+    Q_EMIT delegateDroppedAndPlaced();
 }
 
 void DragState::onLeaveCurrentFolder()

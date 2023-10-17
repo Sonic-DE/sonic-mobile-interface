@@ -77,7 +77,11 @@ Item {
         id: swipeArea
         anchors.fill: parent
 
-        interactive: root.interactive && !appDrawer.flickable.moving && appDrawer.flickable.contentY === 0
+        interactive: root.interactive &&
+            !appDrawer.flickable.moving &&
+            (appDrawer.flickable.contentY === 0 || // disable the swipe area when we are swiping in the app drawer, and not in drag-and-drop
+                Folio.HomeScreenState.swipeState === Folio.HomeScreenState.AwaitingDraggingDelegate ||
+                Folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate)
 
         onSwipeStarted: {
             homeScreenState.swipeStarted();
@@ -158,6 +162,16 @@ Item {
                 ]
             }
 
+            Rectangle {
+                id: favouritesBarScrim
+                color: Qt.rgba(255, 255, 255, 0.1)
+
+                anchors.top: Folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Bottom ? favouritesBar.top : parent.top
+                anchors.bottom: parent.bottom
+                anchors.left: Folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Right ? favouritesBar.left : parent.left
+                anchors.right: Folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Left ? favouritesBar.right : parent.right
+            }
+
             FavouritesBar {
                 id: favouritesBar
                 homeScreen: root
@@ -216,18 +230,31 @@ Item {
                 ]
             }
 
-            QQC2.PageIndicator {
-                Kirigami.Theme.inherit: false
-                Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
-
+            Item {
+                id: pageIndicatorWrapper
                 property bool favouritesBarAtBottom: Folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Bottom
 
-                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
                 anchors.bottom: favouritesBarAtBottom ? favouritesBar.top : parent.bottom
+
+                anchors.topMargin: root.topMargin
+                anchors.leftMargin: root.leftMargin
+                anchors.rightMargin: root.rightMargin
                 anchors.bottomMargin: favouritesBarAtBottom ? 0 : (root.bottomMargin + Kirigami.Units.largeSpacing)
 
-                currentIndex: Folio.HomeScreenState.currentPage
-                count: Folio.PageListModel.length
+                QQC2.PageIndicator {
+                    visible: count > 1
+                    Kirigami.Theme.inherit: false
+                    Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
+
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.bottom: parent.bottom
+
+                    currentIndex: Folio.HomeScreenState.currentPage
+                    count: Folio.PageListModel.length
+                }
             }
         }
 
@@ -265,7 +292,7 @@ Item {
             property real animationY: (1 - homeScreenState.appDrawerOpenProgress) * (Kirigami.Units.gridUnit * 2)
 
             // move the app drawer out of the way if it is not visible
-            // HACK: we do this instead of setting visible to false, because
+            // NOTE: we do this instead of setting visible to false, because
             //       it doesn't mess with app drag and drop from the app drawer
             y: (opacity > 0) ? animationY : parent.height
 
@@ -277,6 +304,15 @@ Item {
             bottomPadding: root.bottomMargin
             leftPadding: root.leftMargin
             rightPadding: root.rightMargin
+
+            Connections {
+                target: Folio.HomeScreenState
+
+                function onAppDrawerClosed() {
+                    // reset app drawer position when closed
+                    appDrawer.flickable.contentY = 0;
+                }
+            }
         }
 
         // search component

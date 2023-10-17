@@ -63,7 +63,10 @@ Item {
     }
 
     Connections {
+        id: stateWatcher
         target: Folio.HomeScreenState
+
+        property var delegateDroppedOn: null
 
         // reset and show drag item
         function onSwipeStateChanged() {
@@ -73,22 +76,41 @@ Item {
             }
         }
 
-        // animate from when the delegate is dropped to its drop position
+        // save the existing delegate at the spot (this is called before the delegate is dropped)
         function onDelegateDragEnded() {
             let dragState = Folio.HomeScreenState.dragState;
             let dropPosition = dragState.candidateDropPosition;
 
-            let delegateDroppedOn = null;
+            switch (dropPosition.location) {
+                case Folio.DelegateDragPosition.Pages:
+                    stateWatcher.delegateDroppedOn = Folio.HomeScreenState.getPageDelegateAt(dropPosition.page, dropPosition.pageRow, dropPosition.pageColumn);
+                    break;
+                case Folio.DelegateDragPosition.Favourites:
+                    stateWatcher.delegateDroppedOn = Folio.HomeScreenState.getFavouritesDelegateAt(dropPosition.favouritesPosition);
+                    break;
+                case Folio.DelegateDragPosition.Folder:
+                    stateWatcher.delegateDroppedOn = null
+                    break;
+            }
+        }
+    }
+
+    Connections {
+        target: Folio.HomeScreenState.dragState
+
+        // animate from when the delegate is dropped to its drop position
+        function onDelegateDroppedAndPlaced() {
+            let dragState = Folio.HomeScreenState.dragState;
+            let dropPosition = dragState.candidateDropPosition;
+
             let pos = null;
 
             switch (dropPosition.location) {
                 case Folio.DelegateDragPosition.Pages:
                     pos = Folio.HomeScreenState.getPageDelegateScreenPosition(dropPosition.page, dropPosition.pageRow, dropPosition.pageColumn);
-                    delegateDroppedOn = Folio.HomeScreenState.getPageDelegateAt(dropPosition.page, dropPosition.pageRow, dropPosition.pageColumn);
                     break;
                 case Folio.DelegateDragPosition.Favourites:
                     pos = Folio.HomeScreenState.getFavouritesDelegateScreenPosition(dropPosition.favouritesPosition);
-                    delegateDroppedOn = Folio.HomeScreenState.getFavouritesDelegateAt(dropPosition.favouritesPosition);
                     break;
                 case Folio.DelegateDragPosition.Folder:
                     pos = Folio.HomeScreenState.getFolderDelegateScreenPosition(dropPosition.folderPosition);
@@ -100,7 +122,10 @@ Item {
             dragXAnim.restart();
             dragYAnim.restart();
 
-            if (delegateDroppedOn && dragState.dropDelegate.type === Folio.FolioDelegate.Application) {
+            if (stateWatcher.delegateDroppedOn &&
+                stateWatcher.delegateDroppedOn.type != Folio.FolioDelegate.None &&
+                dragState.dropDelegate.type === Folio.FolioDelegate.Application) {
+
                 // scale animation if we are creating, or inserting into a folder
                 scaleAnim.restart();
             }

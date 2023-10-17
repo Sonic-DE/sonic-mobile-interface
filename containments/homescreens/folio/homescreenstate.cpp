@@ -36,6 +36,7 @@ HomeScreenState::HomeScreenState(QObject *parent)
 
     connect(m_openAppDrawerAnim, &QPropertyAnimation::finished, this, [this]() {
         setViewState(ViewState::AppDrawerView);
+        Q_EMIT appDrawerOpened();
     });
 
     m_closeAppDrawerAnim = new QPropertyAnimation{this, "appDrawerY", this};
@@ -45,6 +46,7 @@ HomeScreenState::HomeScreenState(QObject *parent)
 
     connect(m_closeAppDrawerAnim, &QPropertyAnimation::finished, this, [this]() {
         setViewState(ViewState::PageView);
+        Q_EMIT appDrawerClosed();
     });
 
     m_openSearchWidgetAnim = new QPropertyAnimation{this, "searchWidgetY", this};

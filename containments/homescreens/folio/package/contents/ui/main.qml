@@ -28,7 +28,7 @@ ContainmentItem {
     }
 
     function homeAction() {
-        const isInWindow = !WindowPlugin.WindowUtil.isShowingDesktop && WindowPlugin.WindowMaximizedTracker.showingWindow;
+        const isInWindow = (!WindowPlugin.WindowUtil.isShowingDesktop && WindowPlugin.WindowMaximizedTracker.showingWindow);
 
         if (isInWindow) {
             Folio.HomeScreenState.closeFolder();
