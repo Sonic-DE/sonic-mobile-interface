@@ -263,6 +263,8 @@ Q_SIGNALS:
     void currentFolderChanged();
     void appDrawerOpenProgressChanged();
     void appDrawerYChanged();
+    void appDrawerClosed();
+    void appDrawerOpened();
     void searchWidgetOpenProgressChanged();
     void searchWidgetYChanged();
     void delegateDragXChanged();

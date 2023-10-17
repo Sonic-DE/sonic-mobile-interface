@@ -92,6 +92,7 @@ public:
 
 Q_SIGNALS:
     void dropDelegateChanged();
+    void delegateDroppedAndPlaced();
 
 private Q_SLOTS:
     void onDelegateDragPositionChanged();
