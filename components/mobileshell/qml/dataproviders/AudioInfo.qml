@@ -4,9 +4,12 @@
 import QtQuick
 
 import org.kde.plasma.private.volume
+import org.kde.config // KAuthorized
 
 QtObject {
     id: root
+
+    property var config: GlobalConfig {}
 
     property SinkModel paSinkModel: SinkModel {}
 
@@ -21,8 +24,10 @@ QtObject {
     // the name of the audio device when it isn't valid
     readonly property string dummyOutputName: "auto_null"
 
+
+    readonly property int maxVolumePercent: config.raiseMaximumVolume ? 150 : 100
     // the maximum volume amount
-    readonly property int maxVolumeValue: Math.round(100 * PulseAudio.NormalVolume / 100.0)
+    readonly property int maxVolumeValue: maxVolumePercent * PulseAudio.NormalVolume / 100
 
     // step that increments when adjusting the volume
     readonly property int volumeStep: Math.round(5 * PulseAudio.NormalVolume / 100.0)
@@ -42,7 +47,7 @@ QtObject {
         if (!max) {
             max = PulseAudio.NormalVolume;
         }
-        return Math.round(volume / max * 100.0);
+        return Math.round(volume / max * maxVolumePercent);
     }
 
     function increaseVolume() {
