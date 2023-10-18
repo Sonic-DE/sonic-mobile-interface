@@ -93,6 +93,7 @@ Item {
 
                 AppDelegate {
                     id: appDelegate
+                    name: Folio.FolioSettings.showPagesAppLabels ? delegate.pageDelegate.application.name : ""
                     application: delegate.pageDelegate.application
                     turnToFolder: delegate.isAppHoveredOver
                     turnToFolderAnimEnabled: Folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate
@@ -157,6 +158,7 @@ Item {
 
                 AppFolderDelegate {
                     id: appFolderDelegate
+                    name: Folio.FolioSettings.showPagesAppLabels ? delegate.pageDelegate.folder.name : ""
                     folder: delegate.pageDelegate.folder
 
                     // do not show if the drop animation is running to this delegate, and the drop delegate is a folder

@@ -510,7 +510,7 @@ qreal HomeScreenState::appDrawerY()
 void HomeScreenState::setAppDrawerY(qreal appDrawerY)
 {
     m_appDrawerY = appDrawerY;
-    m_appDrawerOpenProgress = 1 - std::min(std::max(m_appDrawerY, 0.0), APP_DRAWER_OPEN_DIST) / APP_DRAWER_OPEN_DIST;
+    m_appDrawerOpenProgress = 1 - qBound(0.0, m_appDrawerY, APP_DRAWER_OPEN_DIST) / APP_DRAWER_OPEN_DIST;
     Q_EMIT appDrawerYChanged();
     Q_EMIT appDrawerOpenProgressChanged();
 }
@@ -528,7 +528,7 @@ qreal HomeScreenState::searchWidgetY()
 void HomeScreenState::setSearchWidgetY(qreal searchWidgetY)
 {
     m_searchWidgetY = searchWidgetY;
-    m_searchWidgetOpenProgress = 1 - std::min(std::max(m_searchWidgetY, 0.0), SEARCH_WIDGET_OPEN_DIST) / SEARCH_WIDGET_OPEN_DIST;
+    m_searchWidgetOpenProgress = 1 - qBound(0.0, m_searchWidgetY, SEARCH_WIDGET_OPEN_DIST) / SEARCH_WIDGET_OPEN_DIST;
     Q_EMIT searchWidgetYChanged();
     Q_EMIT searchWidgetOpenProgressChanged();
 }
@@ -658,7 +658,7 @@ void HomeScreenState::snapPage()
 {
     int numOfPages = PageListModel::self()->rowCount();
 
-    int leftPage = std::max((qreal)0, std::min((qreal)numOfPages - 1, m_pageViewX / m_pageWidth));
+    int leftPage = qBound(0.0, (m_pageViewX / m_pageWidth), numOfPages - 1.0);
     qreal leftPagePos = -leftPage * m_pageWidth;
 
     if (leftPage == numOfPages + 1) {

@@ -14,32 +14,112 @@ FolioSettings *FolioSettings::self()
     return settings;
 }
 
-int FolioSettings::homeScreenRows()
+int FolioSettings::homeScreenRows() const
 {
-    // TODO
     // ensure that this is fetched fast and cached (it is called extremely often)
-    return 5;
+    return m_homeScreenRows;
 }
 
-int FolioSettings::homeScreenColumns()
+void FolioSettings::setHomeScreenRows(int homeScreenRows)
 {
-    // TODO
-    return 4;
+    if (m_homeScreenRows != homeScreenRows) {
+        m_homeScreenRows = homeScreenRows;
+        Q_EMIT homeScreenRowsChanged();
+        save();
+    }
 }
 
-bool FolioSettings::showFavouritesAppLabels()
+int FolioSettings::homeScreenColumns() const
 {
-    // TODO
-    return false;
+    return m_homeScreenColumns;
 }
 
-qreal FolioSettings::homeScreenIconSize()
+void FolioSettings::setHomeScreenColumns(int homeScreenColumns)
 {
-    // TODO
-    return 48;
+    if (m_homeScreenColumns != homeScreenColumns) {
+        m_homeScreenColumns = homeScreenColumns;
+        Q_EMIT homeScreenColumnsChanged();
+        save();
+    }
+}
+
+bool FolioSettings::showPagesAppLabels() const
+{
+    return m_showPagesAppLabels;
+}
+
+void FolioSettings::setShowPagesAppLabels(bool showPagesAppLabels)
+{
+    if (m_showPagesAppLabels != showPagesAppLabels) {
+        m_showPagesAppLabels = showPagesAppLabels;
+        Q_EMIT showPagesAppLabelsChanged();
+        save();
+    }
+}
+
+bool FolioSettings::showFavouritesAppLabels() const
+{
+    return m_showFavouritesAppLabels;
+}
+
+void FolioSettings::setShowFavouritesAppLabels(bool showFavouritesAppLabels)
+{
+    if (m_showFavouritesAppLabels != showFavouritesAppLabels) {
+        m_showFavouritesAppLabels = showFavouritesAppLabels;
+        Q_EMIT showFavouritesAppLabelsChanged();
+        save();
+    }
+}
+
+qreal FolioSettings::delegateIconSize() const
+{
+    return m_delegateIconSize;
+}
+
+void FolioSettings::setDelegateIconSize(qreal delegateIconSize)
+{
+    if (m_delegateIconSize != delegateIconSize) {
+        m_delegateIconSize = delegateIconSize;
+        Q_EMIT delegateIconSizeChanged();
+        save();
+    }
 }
 
 void FolioSettings::setApplet(Plasma::Applet *applet)
 {
     m_applet = applet;
+}
+
+void FolioSettings::save()
+{
+    if (!m_applet) {
+        return;
+    }
+
+    m_applet->config().writeEntry("homeScreenRows", m_homeScreenRows);
+    m_applet->config().writeEntry("homeScreenColumns", m_homeScreenColumns);
+    m_applet->config().writeEntry("showPagesAppLabels", m_showPagesAppLabels);
+    m_applet->config().writeEntry("showFavouritesAppLabels", m_showFavouritesAppLabels);
+    m_applet->config().writeEntry("delegateIconSize", m_delegateIconSize);
+
+    Q_EMIT m_applet->configNeedsSaving();
+}
+
+void FolioSettings::load()
+{
+    if (!m_applet) {
+        return;
+    }
+
+    m_homeScreenRows = m_applet->config().readEntry("homeScreenRows", 5);
+    m_homeScreenColumns = m_applet->config().readEntry("homeScreenColumns", 4);
+    m_showPagesAppLabels = m_applet->config().readEntry("showPagesAppLabels", true);
+    m_showFavouritesAppLabels = m_applet->config().readEntry("showFavouritesAppLabels", false);
+    m_delegateIconSize = m_applet->config().readEntry("delegateIconSize", 48);
+
+    Q_EMIT homeScreenRowsChanged();
+    Q_EMIT homeScreenColumnsChanged();
+    Q_EMIT showPagesAppLabels();
+    Q_EMIT showFavouritesAppLabelsChanged();
+    Q_EMIT delegateIconSizeChanged();
 }

@@ -19,6 +19,7 @@ ContainmentItem {
     id: root
 
     Component.onCompleted: {
+        Folio.FolioSettings.load();
         Folio.ApplicationListModel.load();
         Folio.FavouritesModel.load();
         Folio.PageListModel.load();

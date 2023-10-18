@@ -21,8 +21,10 @@ As such, all of the positioning and placement of delegates on the screen are top
 - BUG: if you drag and drop from the middle of the app drawer list, swipe is broken because the swipe area is disabled
 - the position of where things think the dragged icon is during drag-and-drop is slightly off because of the label
 - BUG: landscape favourites bar duplication when dragging icon from it
-- BUG: dropping a folder on another folder anim makes no sense
+- BUG: dropping an app on the favourites bar animation is glitched ONLY if the nav bar is on the bottom
 
 move drop animation code to c++
 
 - can make the touch area only the icon?
+
+- BUG: from default config, the first icon disappears when dragging from the app drawer

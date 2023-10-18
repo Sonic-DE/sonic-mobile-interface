@@ -17,8 +17,8 @@ Item {
 
     property bool expandBackground: false
 
-    height: Folio.FolioSettings.homeScreenIconSize
-    width: Folio.FolioSettings.homeScreenIconSize
+    height: Folio.FolioSettings.delegateIconSize
+    width: Folio.FolioSettings.delegateIconSize
 
     Rectangle {
         id: rect

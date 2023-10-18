@@ -36,7 +36,7 @@ MobileShell.GridView {
     leftMargin: horizontalMargin
     rightMargin: horizontalMargin
 
-    cellWidth: effectiveContentWidth / Math.min(Math.floor(effectiveContentWidth / (Folio.FolioSettings.homeScreenIconSize + Kirigami.Units.largeSpacing * 3)), 8)
+    cellWidth: effectiveContentWidth / Math.min(Math.floor(effectiveContentWidth / (Folio.FolioSettings.delegateIconSize + Kirigami.Units.largeSpacing * 3)), 8)
     cellHeight: cellWidth + reservedSpaceForLabel
 
     boundsBehavior: Flickable.OvershootBounds
