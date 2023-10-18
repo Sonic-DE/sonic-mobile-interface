@@ -4,9 +4,9 @@
 import QtQuick
 import QtQuick.Window
 import QtQuick.Layouts
+import QtQuick.Effects
 import QtQuick.Controls as QQC2
 
-import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.kirigami 2.20 as Kirigami
 
 import org.kde.plasma.plasmoid 2.0
@@ -15,6 +15,7 @@ import org.kde.plasma.private.mobileshell 1.0 as MobileShell
 import org.kde.private.mobile.homescreen.folio 1.0 as Folio
 
 import "./delegate"
+import "./settings"
 
 Item {
     id: root
@@ -30,10 +31,13 @@ Item {
 
     readonly property bool dropAnimationRunning: delegateDragItem.dropAnimationRunning
 
-    onTopMarginChanged: Folio.HomeScreenState.viewTopPadding = topMargin
-    onBottomMarginChanged: Folio.HomeScreenState.viewBottomPadding = bottomMargin
-    onLeftMarginChanged: Folio.HomeScreenState.viewLeftPadding = leftMargin
-    onRightMarginChanged: Folio.HomeScreenState.viewRightPadding = rightMargin
+    property bool settingsMode: false
+    readonly property real settingsModeHomeScreenScale: 0.8
+
+    onTopMarginChanged: Folio.HomeScreenState.viewTopPadding = root.topMargin
+    onBottomMarginChanged: Folio.HomeScreenState.viewBottomPadding = root.bottomMargin
+    onLeftMarginChanged: Folio.HomeScreenState.viewLeftPadding = root.leftMargin
+    onRightMarginChanged: Folio.HomeScreenState.viewRightPadding = root.rightMargin
 
     // called by any delegates when starting drag
     // returns the mapped coordinates to be used in the home screen state
@@ -52,6 +56,14 @@ Item {
         Plasmoid.internalAction("configure").trigger();
     }
 
+    function enterSettingsMode() {
+        settingsMode = true;
+    }
+
+    function leaveSettingsMode() {
+        settingsMode = false;
+    }
+
     // determine how tall an app label is, for delegate measurements
     DelegateLabel {
         id: appLabelMetrics
@@ -65,6 +77,7 @@ Item {
         }
     }
 
+    // determine screen dimensions
     Item {
         id: screenDimensions
         anchors.fill: parent
@@ -73,11 +86,13 @@ Item {
         onHeightChanged: Folio.HomeScreenState.viewHeight = height;
     }
 
+    // area that can be swiped
     MobileShell.SwipeArea {
         id: swipeArea
         anchors.fill: parent
 
         interactive: root.interactive &&
+            !root.settingsMode &&
             !appDrawer.flickable.moving &&
             (appDrawer.flickable.contentY === 0 || // disable the swipe area when we are swiping in the app drawer, and not in drag-and-drop
                 Folio.HomeScreenState.swipeState === Folio.HomeScreenState.AwaitingDraggingDelegate ||
@@ -93,6 +108,23 @@ Item {
             homeScreenState.swipeMoved(totalDeltaX, totalDeltaY, deltaX, deltaY);
         }
 
+        SettingsComponent {
+            id: settings
+            anchors.fill: parent
+            opacity: root.settingsMode ? 1 : 0
+            visible: opacity > 0
+            z: 1
+
+            Behavior on opacity {
+                NumberAnimation { duration: Kirigami.Units.shortDuration; easing.type: Easing.InOutQuad; }
+            }
+
+            settingsModeHomeScreenScale: root.settingsModeHomeScreenScale
+            homeScreen: root
+
+            onRequestLeaveSettingsMode: root.leaveSettingsMode();
+        }
+
         Item {
             id: mainHomeScreen
             anchors.fill: parent
@@ -101,12 +133,24 @@ Item {
             opacity: 1 - Math.max(homeScreenState.appDrawerOpenProgress, homeScreenState.searchWidgetOpenProgress, homeScreenState.folderOpenProgress) * 2
             visible: opacity > 0 // prevent handlers from picking up events
 
+            // animation when settings opens
+            property real scaleFactor: root.settingsMode ? settingsModeHomeScreenScale : 1.0
+            Behavior on scaleFactor {
+                NumberAnimation { duration: Kirigami.Units.longDuration * 2; easing.type: Easing.OutCubic; }
+            }
+
             transform: [
                 Scale {
                     origin.x: mainHomeScreen.width / 2
                     origin.y: mainHomeScreen.height / 2
                     yScale: 1 - (homeScreenState.appDrawerOpenProgress * 2) * 0.1
                     xScale: 1 - (homeScreenState.appDrawerOpenProgress * 2) * 0.1
+                },
+                Scale {
+                    origin.x: root.leftMargin + (root.width - root.rightMargin - root.leftMargin) / 2
+                    origin.y: root.height * settingsModeHomeScreenScale / 2
+                    xScale: mainHomeScreen.scaleFactor
+                    yScale: mainHomeScreen.scaleFactor
                 }
             ]
 
@@ -162,21 +206,25 @@ Item {
                 ]
             }
 
-            Rectangle {
-                id: favouritesBarScrim
-                color: Qt.rgba(255, 255, 255, 0.1)
-
-                anchors.top: Folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Bottom ? favouritesBar.top : parent.top
-                anchors.bottom: parent.bottom
-                anchors.left: Folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Right ? favouritesBar.left : parent.left
-                anchors.right: Folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Left ? favouritesBar.right : parent.right
-            }
+            // Rectangle {
+            //     id: favouritesBarScrim
+            //     color: Qt.rgba(255, 255, 255, 0.2)
+            //
+            //     anchors.top: Folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Bottom ? favouritesBar.top : parent.top
+            //     anchors.bottom: parent.bottom
+            //     anchors.left: Folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Right ? favouritesBar.left : parent.left
+            //     anchors.right: Folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Left ? favouritesBar.right : parent.right
+            // }
 
             FavouritesBar {
                 id: favouritesBar
                 homeScreen: root
                 leftMargin: root.leftMargin
                 topMargin: root.topMargin
+
+                // one is ignored as anchors are set
+                height: Kirigami.Units.gridUnit * 6
+                width: Kirigami.Units.gridUnit * 6
 
                 anchors.topMargin: root.topMargin
                 anchors.bottomMargin: root.bottomMargin

@@ -15,8 +15,8 @@ Kirigami.Icon {
 
     property Folio.FolioApplication application
 
-    height: Folio.FolioSettings.homeScreenIconSize
-    width: Folio.FolioSettings.homeScreenIconSize
+    height: Folio.FolioSettings.delegateIconSize
+    width: Folio.FolioSettings.delegateIconSize
 
     source: application.icon
 }

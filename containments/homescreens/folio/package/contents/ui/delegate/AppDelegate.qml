@@ -43,8 +43,8 @@ AbstractDelegate {
     }
 
     contentItem: Item {
-        height: Folio.FolioSettings.homeScreenIconSize
-        width: Folio.FolioSettings.homeScreenIconSize
+        height: Folio.FolioSettings.delegateIconSize
+        width: Folio.FolioSettings.delegateIconSize
 
         // background for folder creation animation
         Rectangle {

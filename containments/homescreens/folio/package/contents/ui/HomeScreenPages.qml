@@ -17,7 +17,7 @@ MouseArea {
     readonly property real verticalMargin: Math.round((Folio.HomeScreenState.pageHeight - Folio.HomeScreenState.pageContentHeight) / 2)
     readonly property real horizontalMargin: Math.round((Folio.HomeScreenState.pageWidth - Folio.HomeScreenState.pageContentWidth) / 2)
 
-    onPressAndHold: homeScreen.openConfigure()
+    onPressAndHold: homeScreen.enterSettingsMode()
 
     Repeater {
         model: Folio.PageListModel

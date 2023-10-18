@@ -141,8 +141,8 @@ Item {
         DelegateIconLoader {
             id: loader
             Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
-            Layout.minimumWidth: Folio.FolioSettings.homeScreenIconSize
-            Layout.minimumHeight: Folio.FolioSettings.homeScreenIconSize
+            Layout.minimumWidth: Folio.FolioSettings.delegateIconSize
+            Layout.minimumHeight: Folio.FolioSettings.delegateIconSize
             Layout.preferredHeight: Layout.minimumHeight
 
             delegate: root.delegate
