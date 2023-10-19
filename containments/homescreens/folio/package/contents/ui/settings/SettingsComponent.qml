@@ -12,6 +12,8 @@ import org.kde.plasma.components 3.0 as PC3
 import org.kde.plasma.private.mobileshell 1.0 as MobileShell
 import org.kde.private.mobile.homescreen.folio 1.0 as Folio
 
+import '../delegate'
+
 Item {
     id: root
 
@@ -29,7 +31,7 @@ Item {
         anchors.bottom: settingsBar.top
 
         onClicked: {
-            root.requestLeaveSettingsMode();
+            Folio.HomeScreenState.closeSettingsView();
         }
     }
 
@@ -52,10 +54,13 @@ Item {
             QQC2.ToolButton {
                 icon.source: 'edit-image'
                 text: i18n('Wallpapers')
+                enabled: false
                 display: QQC2.ToolButton.TextUnderIcon
 
                 implicitHeight: Kirigami.Units.gridUnit * 4
                 implicitWidth: Kirigami.Units.gridUnit * 5
+
+                onClicked: homeScreen.openConfigure()
             }
 
             QQC2.ToolButton {
@@ -72,6 +77,7 @@ Item {
             QQC2.ToolButton {
                 icon.source: 'widget-alternatives'
                 text: 'Widgets'
+                enabled: false
                 display: QQC2.ToolButton.TextUnderIcon
 
                 implicitHeight: Kirigami.Units.gridUnit * 4

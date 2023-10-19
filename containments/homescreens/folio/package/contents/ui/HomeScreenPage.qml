@@ -20,6 +20,15 @@ Item {
     property var pageModel
     property var homeScreen
 
+    // background when in settings view (for rearranging pages)
+    Rectangle {
+        id: settingsViewBackground
+        anchors.fill: parent
+        color: Qt.rgba(255, 255, 255, 0.2)
+        opacity: Folio.HomeScreenState.settingsOpenProgress
+        radius: Kirigami.Units.largeSpacing
+    }
+
     // square that shows when hovering over a spot to drop a delegate on
     PlaceholderDelegate {
         id: dragDropFeedback

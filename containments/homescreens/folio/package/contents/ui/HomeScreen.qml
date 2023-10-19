@@ -31,7 +31,6 @@ Item {
 
     readonly property bool dropAnimationRunning: delegateDragItem.dropAnimationRunning
 
-    property bool settingsMode: false
     readonly property real settingsModeHomeScreenScale: 0.8
 
     onTopMarginChanged: Folio.HomeScreenState.viewTopPadding = root.topMargin
@@ -54,14 +53,6 @@ Item {
 
     function openConfigure() {
         Plasmoid.internalAction("configure").trigger();
-    }
-
-    function enterSettingsMode() {
-        settingsMode = true;
-    }
-
-    function leaveSettingsMode() {
-        settingsMode = false;
     }
 
     // determine how tall an app label is, for delegate measurements
@@ -92,7 +83,7 @@ Item {
         anchors.fill: parent
 
         interactive: root.interactive &&
-            !root.settingsMode &&
+            Folio.HomeScreenState.swipeState != Folio.HomeScreenState.SettingsView &&
             !appDrawer.flickable.moving &&
             (appDrawer.flickable.contentY === 0 || // disable the swipe area when we are swiping in the app drawer, and not in drag-and-drop
                 Folio.HomeScreenState.swipeState === Folio.HomeScreenState.AwaitingDraggingDelegate ||
@@ -111,13 +102,9 @@ Item {
         SettingsComponent {
             id: settings
             anchors.fill: parent
-            opacity: root.settingsMode ? 1 : 0
+            opacity: Folio.HomeScreenState.settingsOpenProgress
             visible: opacity > 0
             z: 1
-
-            Behavior on opacity {
-                NumberAnimation { duration: Kirigami.Units.shortDuration; easing.type: Easing.InOutQuad; }
-            }
 
             settingsModeHomeScreenScale: root.settingsModeHomeScreenScale
             homeScreen: root
@@ -133,24 +120,12 @@ Item {
             opacity: 1 - Math.max(homeScreenState.appDrawerOpenProgress, homeScreenState.searchWidgetOpenProgress, homeScreenState.folderOpenProgress) * 2
             visible: opacity > 0 // prevent handlers from picking up events
 
-            // animation when settings opens
-            property real scaleFactor: root.settingsMode ? settingsModeHomeScreenScale : 1.0
-            Behavior on scaleFactor {
-                NumberAnimation { duration: Kirigami.Units.longDuration * 2; easing.type: Easing.OutCubic; }
-            }
-
             transform: [
                 Scale {
                     origin.x: mainHomeScreen.width / 2
                     origin.y: mainHomeScreen.height / 2
                     yScale: 1 - (homeScreenState.appDrawerOpenProgress * 2) * 0.1
                     xScale: 1 - (homeScreenState.appDrawerOpenProgress * 2) * 0.1
-                },
-                Scale {
-                    origin.x: root.leftMargin + (root.width - root.rightMargin - root.leftMargin) / 2
-                    origin.y: root.height * settingsModeHomeScreenScale / 2
-                    xScale: mainHomeScreen.scaleFactor
-                    yScale: mainHomeScreen.scaleFactor
                 }
             ]
 
@@ -170,6 +145,17 @@ Item {
                 onHeightChanged: {
                     homeScreenState.pageHeight = homeScreenPages.height;
                 }
+
+                transform: [
+                    Scale {
+                        // animation when settings opens
+                        property real scaleFactor: 1 - Folio.HomeScreenState.settingsOpenProgress * (1 - settingsModeHomeScreenScale)
+                        origin.x: root.leftMargin + (root.width - root.rightMargin - root.leftMargin) / 2
+                        origin.y: root.height * settingsModeHomeScreenScale / 2
+                        xScale: scaleFactor
+                        yScale: scaleFactor
+                    }
+                ]
 
                 states: [
                     State {
@@ -221,6 +207,10 @@ Item {
                 homeScreen: root
                 leftMargin: root.leftMargin
                 topMargin: root.topMargin
+
+                // don't show in settings mode
+                opacity: 1 - Folio.HomeScreenState.settingsOpenProgress
+                visible: opacity > 0
 
                 // one is ignored as anchors are set
                 height: Kirigami.Units.gridUnit * 6
@@ -281,6 +271,9 @@ Item {
             Item {
                 id: pageIndicatorWrapper
                 property bool favouritesBarAtBottom: Folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Bottom
+
+                // don't show in settings mode
+                opacity: 1 - Folio.HomeScreenState.settingsOpenProgress
 
                 anchors.top: parent.top
                 anchors.left: parent.left

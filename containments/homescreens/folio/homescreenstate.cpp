@@ -97,6 +97,24 @@ HomeScreenState::HomeScreenState(QObject *parent)
     m_folderPageAnim->setDuration(200 * 2); // TODO use kirigami longDuration * 2
     m_folderPageAnim->setEasingCurve(QEasingCurve::OutCubic);
 
+    m_openSettingsAnim = new QPropertyAnimation{this, "settingsOpenProgress", this};
+    m_openSettingsAnim->setDuration(200 * 2); // TODO use kirigami longDuration * 2
+    m_openSettingsAnim->setEndValue(1.0);
+    m_openSettingsAnim->setEasingCurve(QEasingCurve::OutCubic);
+
+    connect(m_openSettingsAnim, &QPropertyAnimation::finished, this, [this]() {
+        setViewState(ViewState::SettingsView);
+    });
+
+    m_closeSettingsAnim = new QPropertyAnimation{this, "settingsOpenProgress", this};
+    m_closeSettingsAnim->setDuration(200 * 2); // TODO use kirigami longDuration * 2
+    m_closeSettingsAnim->setEndValue(0.0);
+    m_closeSettingsAnim->setEasingCurve(QEasingCurve::OutCubic);
+
+    connect(m_closeSettingsAnim, &QPropertyAnimation::finished, this, [this]() {
+        setViewState(ViewState::PageView);
+    });
+
     connect(this, &HomeScreenState::viewWidthChanged, this, [this]() {
         setColumnRowSwap(m_viewWidth > m_viewHeight);
     });
@@ -497,6 +515,19 @@ void HomeScreenState::setCurrentFolder(FolioApplicationFolder *folder)
     }
 }
 
+qreal HomeScreenState::settingsOpenProgress()
+{
+    return m_settingsOpenProgress;
+}
+
+void HomeScreenState::setSettingsOpenProgress(qreal settingsOpenProgress)
+{
+    if (m_settingsOpenProgress != settingsOpenProgress) {
+        m_settingsOpenProgress = settingsOpenProgress;
+        Q_EMIT settingsOpenProgressChanged();
+    }
+}
+
 qreal HomeScreenState::appDrawerOpenProgress()
 {
     return m_appDrawerOpenProgress;
@@ -735,6 +766,22 @@ void HomeScreenState::closeFolder()
     m_closeFolderAnim->start();
 }
 
+void HomeScreenState::openSettingsView()
+{
+    m_closeSettingsAnim->stop();
+    m_openSettingsAnim->stop();
+    m_openSettingsAnim->setStartValue(m_settingsOpenProgress);
+    m_openSettingsAnim->start();
+}
+
+void HomeScreenState::closeSettingsView()
+{
+    m_openSettingsAnim->stop();
+    m_closeSettingsAnim->stop();
+    m_closeSettingsAnim->setStartValue(m_settingsOpenProgress);
+    m_closeSettingsAnim->start();
+}
+
 void HomeScreenState::startDelegateDrag(qreal startX, qreal startY)
 {
     // start drag and drop positions
@@ -884,7 +931,7 @@ void HomeScreenState::determineSwipeTypeAfterThreshold(qreal totalDeltaX, qreal 
 {
     // we check if the x or y movement has passed a certain threshold before determining the swipe type
 
-    if (qAbs(totalDeltaX) >= DETERMINE_SWIPE_THRESHOLD && m_viewState == ViewState::PageView) {
+    if (qAbs(totalDeltaX) >= DETERMINE_SWIPE_THRESHOLD && (m_viewState == ViewState::PageView || m_viewState == ViewState::SettingsView)) {
         // select horizontal swipe mode (only if in page view)
         setSwipeState(SwipeState::SwipingPages);
 
@@ -922,7 +969,8 @@ void HomeScreenState::determineSwipeTypeAfterThreshold(qreal totalDeltaX, qreal 
                 setSwipeState(SwipeState::SwipingCloseSearchWidget);
                 cancelSearchWidgetAnimations();
             case ViewState::FolderView:
-                // no vertical behaviour in folder view
+            case ViewState::SettingsView:
+                // no vertical behaviour in folder or settings view
             default:
                 break;
             }
@@ -946,7 +994,8 @@ void HomeScreenState::determineSwipeTypeAfterThreshold(qreal totalDeltaX, qreal 
                 setSwipeState(SwipeState::SwipingCloseAppDrawer);
                 cancelAppDrawerAnimations();
             case ViewState::FolderView:
-                // no vertical behaviour in folder view
+            case ViewState::SettingsView:
+                // no vertical behaviour in folder or settings view
             default:
                 break;
             }

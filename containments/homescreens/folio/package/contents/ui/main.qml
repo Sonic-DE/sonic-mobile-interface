@@ -76,6 +76,14 @@ ContainmentItem {
         opacity: Folio.HomeScreenState.searchWidgetOpenProgress
     }
 
+    Rectangle {
+        id: settingsViewBackground
+        anchors.fill: parent
+        color: Qt.rgba(0, 0, 0, 0.3)
+
+        opacity: Folio.HomeScreenState.settingsOpenProgress
+    }
+
     MobileShell.HomeScreen {
         id: homeScreen
         anchors.fill: parent
