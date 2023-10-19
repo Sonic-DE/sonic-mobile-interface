@@ -64,9 +64,7 @@ NanoShell.FullScreenOverlay {
         }
     }
 
-    DataProviders.AudioInfo {
-        id: audioInfo
-    }
+
     
     Flickable {
         id: flickable
@@ -108,8 +106,8 @@ NanoShell.FullScreenOverlay {
                         anchors.rightMargin: Kirigami.Units.smallSpacing
 
                         PlasmaComponents.ToolButton {
-                            icon.name: !audioInfo.paSinkModel.preferredSink || audioInfo.paSinkModel.preferredSink.muted ? "audio-volume-muted" : "audio-volume-high"
-                            text: !audioInfo.paSinkModel.preferredSink || audioInfo.paSinkModel.preferredSink.muted ? i18n("Unmute") : i18n("Mute")
+                            icon.name: !MobileShell.AudioInfo.paSinkModel.preferredSink || MobileShell.AudioInfo.paSinkModel.preferredSink.muted ? "audio-volume-muted" : "audio-volume-high"
+                            text: !MobileShell.AudioInfo.paSinkModel.preferredSink || MobileShell.AudioInfo.paSinkModel.preferredSink.muted ? i18n("Unmute") : i18n("Mute")
                             display: Controls.AbstractButton.IconOnly
                             Layout.alignment: Qt.AlignVCenter
                             Layout.preferredWidth: Kirigami.Units.iconSizes.medium
@@ -207,8 +205,6 @@ NanoShell.FullScreenOverlay {
                     Layout.topMargin: Kirigami.Units.gridUnit
                     Layout.alignment: Qt.AlignHCenter
                     Layout.preferredWidth: cards.width
-
-                    audioInfo: audioInfo
 
                     opacity: window.showFullApplet ? 1 : 0
                     visible: opacity !== 0
