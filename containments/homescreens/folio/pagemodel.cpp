@@ -65,6 +65,10 @@ FolioPageDelegate *FolioPageDelegate::fromJson(QJsonObject &obj, QObject *parent
 {
     FolioDelegate *fd = FolioDelegate::fromJson(obj, parent);
 
+    if (!fd) {
+        return nullptr;
+    }
+
     int row = HomeScreenState::self()->columnRowSwap() ? obj[QStringLiteral("column")].toInt() : obj[QStringLiteral("row")].toInt();
     int column = HomeScreenState::self()->columnRowSwap() ? obj[QStringLiteral("row")].toInt() : obj[QStringLiteral("column")].toInt();
 
