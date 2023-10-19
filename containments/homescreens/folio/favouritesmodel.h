@@ -70,6 +70,10 @@ private:
     // get the x (or y) position where delegates start being placed
     qreal getDelegateRowStartPos() const;
 
+    // adjusts the index in relation to the page orientation
+    // this is so that we only have to calculate positions assuming one orientation
+    int adjustIndex(int index) const;
+
     QList<FavouritesDelegate> m_delegates;
 
     Plasma::Applet *m_applet{nullptr};

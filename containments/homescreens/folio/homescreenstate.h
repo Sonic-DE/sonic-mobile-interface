@@ -33,7 +33,7 @@ class HomeScreenState : public QObject
     Q_PROPERTY(qreal viewLeftPadding READ viewLeftPadding WRITE setViewLeftPadding NOTIFY viewLeftPaddingChanged)
     Q_PROPERTY(qreal viewRightPadding READ viewRightPadding WRITE setViewRightPadding NOTIFY viewRightPaddingChanged)
 
-    Q_PROPERTY(bool columnRowSwap READ columnRowSwap NOTIFY columnRowSwapChanged)
+    Q_PROPERTY(HomeScreenState::PageOrientation pageOrientation READ pageOrientation NOTIFY pageOrientationChanged)
     Q_PROPERTY(HomeScreenState::FavouritesBarLocation favouritesBarLocation READ favouritesBarLocation NOTIFY favouritesBarLocationChanged)
     Q_PROPERTY(int pageRows READ pageRows NOTIFY pageRowsChanged)
     Q_PROPERTY(int pageColumns READ pageColumns NOTIFY pageColumnsChanged)
@@ -100,6 +100,14 @@ public:
     enum FavouritesBarLocation { Bottom, Left, Right };
     Q_ENUM(FavouritesBarLocation)
 
+    enum PageOrientation {
+        RegularPosition, // rows and columns are read as normal
+        RotateClockwise, // swap the rows and columns
+        RotateCounterClockwise, // swap the rows and columns, and then flip the rows
+        RotateUpsideDown, // flip the rows and flip the columns
+    };
+    Q_ENUM(PageOrientation)
+
     static HomeScreenState *self();
 
     HomeScreenState(QObject *parent = nullptr);
@@ -133,18 +141,16 @@ public:
 
     // whether to swap rows and columns in the layout
     // this happens if the width of the screen is larger than the height
-    bool columnRowSwap() const;
-    void setColumnRowSwap(bool columnRowSwap);
+    PageOrientation pageOrientation() const;
+    void setPageOrientation(PageOrientation pageOrientation);
 
     FavouritesBarLocation favouritesBarLocation() const;
 
     // the number of rows on a page
     int pageRows() const;
-    void setPageRows(int pageRows);
 
     // the number of columns on a page
     int pageColumns() const;
-    void setPageColumns(int pageColumns);
 
     // the current horizontal position of the pageview
     // starts at 0, each page is m_pageWidth wide
@@ -248,7 +254,7 @@ Q_SIGNALS:
     void viewBottomPaddingChanged();
     void viewLeftPaddingChanged();
     void viewRightPaddingChanged();
-    void columnRowSwapChanged();
+    void pageOrientationChanged();
     void favouritesBarLocationChanged();
     void pageRowsChanged();
     void pageColumnsChanged();
@@ -338,9 +344,7 @@ private:
     qreal m_viewLeftPadding{0};
     qreal m_viewRightPadding{0};
 
-    bool m_columnRowSwap{false};
-    int m_pageRows{0};
-    int m_pageColumns{0};
+    PageOrientation m_pageOrientation{PageOrientation::RegularPosition};
 
     qreal m_pageViewX{0};
     qreal m_pageWidth{0};

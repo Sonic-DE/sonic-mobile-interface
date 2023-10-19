@@ -26,6 +26,8 @@ public:
     FolioPageDelegate(int row, int column, FolioDelegate *delegate, QObject *parent);
 
     static FolioPageDelegate *fromJson(QJsonObject &obj, QObject *parent);
+    static int getTranslatedRow(int realRow, int realColumn);
+    static int getTranslatedColumn(int realRow, int realColumn);
 
     virtual QJsonObject toJson() const override;
 
@@ -52,7 +54,12 @@ class PageModel : public QAbstractListModel
 {
     Q_OBJECT
 public:
-    enum Roles { DelegateRole = Qt::UserRole + 1 };
+    enum Roles {
+        DelegateRole = Qt::UserRole + 1,
+        XPositionRole,
+        YPositionRole,
+        ShownRole,
+    };
 
     PageModel(QList<FolioPageDelegate *> delegates = QList<FolioPageDelegate *>{}, QObject *parent = nullptr);
     ~PageModel();

@@ -44,6 +44,9 @@ FavouritesModel::FavouritesModel(QObject *parent)
     connect(HomeScreenState::self(), &HomeScreenState::favouritesBarLocationChanged, this, [this]() {
         evaluateDelegatePositions(true);
     });
+    connect(HomeScreenState::self(), &HomeScreenState::pageOrientationChanged, this, [this]() {
+        evaluateDelegatePositions(true);
+    });
 }
 
 int FavouritesModel::rowCount(const QModelIndex &parent) const
@@ -301,24 +304,26 @@ int FavouritesModel::dropInsertPosition(qreal x, qreal y) const
     qreal pos = isLocationBottom ? x : y;
 
     if (pos < startPosition) {
-        return 0;
+        return adjustIndex(0);
     }
 
     qreal currentPos = startPosition;
     for (int i = 0; i < m_delegates.size(); i++) {
         if (pos < currentPos + cellLength * 0.85) {
-            return i;
+            return adjustIndex(i);
         } else if (pos < currentPos + cellLength) {
-            return i + 1;
+            return adjustIndex(i + 1);
         }
 
         currentPos += cellLength;
     }
-    return m_delegates.size();
+    return adjustIndex(m_delegates.size());
 }
 
 QPointF FavouritesModel::getDelegateScreenPosition(int position) const
 {
+    position = adjustIndex(position);
+
     qreal screenHeight = HomeScreenState::self()->viewHeight();
     qreal screenWidth = HomeScreenState::self()->viewWidth();
     qreal pageHeight = HomeScreenState::self()->pageHeight();
@@ -363,7 +368,7 @@ void FavouritesModel::evaluateDelegatePositions(bool emitSignal)
     qreal currentPos = startPosition;
 
     for (int i = 0; i < m_delegates.size(); ++i) {
-        m_delegates[i].xPosition = qRound(currentPos);
+        m_delegates[adjustIndex(i)].xPosition = qRound(currentPos);
         currentPos += cellLength;
     }
 
@@ -380,4 +385,15 @@ qreal FavouritesModel::getDelegateRowStartPos() const
     qreal pageLength = isLocationBottom ? HomeScreenState::self()->pageWidth() : HomeScreenState::self()->pageHeight();
 
     return (pageLength / 2) - (((qreal)length) / 2) * cellLength;
+}
+
+int FavouritesModel::adjustIndex(int index) const
+{
+    if (HomeScreenState::self()->favouritesBarLocation() == HomeScreenState::Bottom
+        || HomeScreenState::self()->favouritesBarLocation() == HomeScreenState::Left) {
+        return index;
+    } else {
+        // if it's on the right side of the screen, we flip the order of the delegates
+        return qMax(0, m_delegates.size() - index - 1);
+    }
 }

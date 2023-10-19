@@ -77,6 +77,9 @@ Item {
             x: column * Folio.HomeScreenState.pageCellWidth
             y: row * Folio.HomeScreenState.pageCellHeight
 
+            visible: row >= 0 && row < Folio.HomeScreenState.pageRows &&
+                     column >= 0 && column < Folio.HomeScreenState.pageColumns
+
             Loader {
                 anchors.fill: parent
 
