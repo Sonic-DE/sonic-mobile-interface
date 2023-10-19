@@ -116,14 +116,15 @@ HomeScreenState::HomeScreenState(QObject *parent)
     });
 
     connect(this, &HomeScreenState::viewWidthChanged, this, [this]() {
-        setColumnRowSwap(m_viewWidth > m_viewHeight);
+        // TODO: we only support 2 orientations at the moment since we don't know what the device rotated to
+        setPageOrientation(m_viewWidth > m_viewHeight ? RotateCounterClockwise : RegularPosition);
     });
     connect(this, &HomeScreenState::viewHeightChanged, this, [this]() {
-        setColumnRowSwap(m_viewWidth > m_viewHeight);
+        setPageOrientation(m_viewWidth > m_viewHeight ? RotateCounterClockwise : RegularPosition);
     });
-    connect(this, &HomeScreenState::columnRowSwapChanged, this, [this]() {
-        setPageRows(m_columnRowSwap ? FolioSettings::self()->homeScreenColumns() : FolioSettings::self()->homeScreenRows());
-        setPageColumns(m_columnRowSwap ? FolioSettings::self()->homeScreenRows() : FolioSettings::self()->homeScreenColumns());
+    connect(this, &HomeScreenState::pageOrientationChanged, this, [this]() {
+        Q_EMIT pageRowsChanged();
+        Q_EMIT pageColumnsChanged();
     });
 
     connect(this, &HomeScreenState::pageWidthChanged, this, &HomeScreenState::calculatePageContentWidth);
@@ -139,6 +140,15 @@ HomeScreenState::HomeScreenState(QObject *parent)
     });
     connect(this, &HomeScreenState::viewHeightChanged, this, [this]() {
         Q_EMIT favouritesBarLocationChanged();
+    });
+
+    connect(FolioSettings::self(), &FolioSettings::homeScreenRowsChanged, this, [this]() {
+        Q_EMIT pageRowsChanged();
+        Q_EMIT pageColumnsChanged();
+    });
+    connect(FolioSettings::self(), &FolioSettings::homeScreenColumnsChanged, this, [this]() {
+        Q_EMIT pageRowsChanged();
+        Q_EMIT pageColumnsChanged();
     });
 }
 
@@ -251,16 +261,16 @@ void HomeScreenState::setViewRightPadding(qreal viewRightPadding)
     }
 }
 
-bool HomeScreenState::columnRowSwap() const
+HomeScreenState::PageOrientation HomeScreenState::pageOrientation() const
 {
-    return m_viewWidth > m_viewHeight;
+    return m_pageOrientation;
 }
 
-void HomeScreenState::setColumnRowSwap(bool columnRowSwap)
+void HomeScreenState::setPageOrientation(PageOrientation pageOrientation)
 {
-    if (m_columnRowSwap != columnRowSwap) {
-        m_columnRowSwap = columnRowSwap;
-        Q_EMIT columnRowSwapChanged();
+    if (m_pageOrientation != pageOrientation) {
+        m_pageOrientation = pageOrientation;
+        Q_EMIT pageOrientationChanged();
     }
 }
 
@@ -272,27 +282,19 @@ HomeScreenState::FavouritesBarLocation HomeScreenState::favouritesBarLocation() 
 
 int HomeScreenState::pageRows() const
 {
-    return columnRowSwap() ? FolioSettings::self()->homeScreenColumns() : FolioSettings::self()->homeScreenRows();
-}
-
-void HomeScreenState::setPageRows(int pageRows)
-{
-    if (m_pageRows != pageRows) {
-        m_pageRows = pageRows;
-        Q_EMIT pageRowsChanged();
+    if (m_pageOrientation == RegularPosition || m_pageOrientation == RotateUpsideDown) {
+        return FolioSettings::self()->homeScreenRows();
+    } else {
+        return FolioSettings::self()->homeScreenColumns();
     }
 }
 
 int HomeScreenState::pageColumns() const
 {
-    return columnRowSwap() ? FolioSettings::self()->homeScreenRows() : FolioSettings::self()->homeScreenColumns();
-}
-
-void HomeScreenState::setPageColumns(int pageColumns)
-{
-    if (m_pageColumns != pageColumns) {
-        m_pageColumns = pageColumns;
-        Q_EMIT pageColumnsChanged();
+    if (m_pageOrientation == RegularPosition || m_pageOrientation == RotateUpsideDown) {
+        return FolioSettings::self()->homeScreenColumns();
+    } else {
+        return FolioSettings::self()->homeScreenRows();
     }
 }
 
@@ -375,7 +377,7 @@ qreal HomeScreenState::pageCellWidth() const
 
 void HomeScreenState::calculatePageCellWidth()
 {
-    qreal pageCellWidth = std::round(m_pageContentWidth / m_pageColumns);
+    qreal pageCellWidth = (pageColumns() == 0) ? 0 : qMax(0.0, std::round(m_pageContentWidth / pageColumns()));
 
     if (m_pageCellWidth != pageCellWidth) {
         m_pageCellWidth = pageCellWidth;
@@ -390,7 +392,7 @@ qreal HomeScreenState::pageCellHeight() const
 
 void HomeScreenState::calculatePageCellHeight()
 {
-    qreal pageCellHeight = std::round(m_pageContentHeight / m_pageRows);
+    qreal pageCellHeight = (pageRows() == 0) ? 0 : std::round(m_pageContentHeight / pageRows());
 
     if (m_pageCellHeight != pageCellHeight) {
         m_pageCellHeight = pageCellHeight;
@@ -810,10 +812,11 @@ void HomeScreenState::startDelegateFavouritesDrag(qreal startX, qreal startY, in
 void HomeScreenState::startDelegateAppDrawerDrag(qreal startX, qreal startY, QString storageId)
 {
     startDelegateDrag(startX, startY);
-    // we start dragging the delegate immediately from the app drawer
-    // because we don't have a context menu to deal with
-    setSwipeState(SwipeState::DraggingDelegate);
     Q_EMIT delegateDragFromAppDrawerStarted(storageId);
+
+    // we start dragging the delegate immediately from the app drawer, because we don't have a context menu to deal with!
+    // NOTE: this has to happen after delegateDragFromAppDrawerStarted, because slots for that expect SwipeState::AwaitingDraggingDelegate
+    setSwipeState(SwipeState::DraggingDelegate);
 }
 
 void HomeScreenState::startDelegateFolderDrag(qreal startX, qreal startY, FolioApplicationFolder *folder, int position)

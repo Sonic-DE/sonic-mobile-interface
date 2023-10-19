@@ -83,9 +83,8 @@ Item {
         anchors.fill: parent
 
         interactive: root.interactive &&
-            Folio.HomeScreenState.swipeState != Folio.HomeScreenState.SettingsView &&
             !appDrawer.flickable.moving &&
-            (appDrawer.flickable.contentY === 0 || // disable the swipe area when we are swiping in the app drawer, and not in drag-and-drop
+            (appDrawer.flickable.atYBeginning || // disable the swipe area when we are swiping in the app drawer, and not in drag-and-drop
                 Folio.HomeScreenState.swipeState === Folio.HomeScreenState.AwaitingDraggingDelegate ||
                 Folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate)
 

@@ -2,12 +2,11 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include "pagemodel.h"
+#include "foliosettings.h"
 #include "homescreenstate.h"
 
 FolioPageDelegate::FolioPageDelegate(int row, int column, QObject *parent)
     : FolioDelegate{parent}
-    , m_realRow{HomeScreenState::self()->columnRowSwap() ? column : row}
-    , m_realColumn{HomeScreenState::self()->columnRowSwap() ? row : column}
     , m_row{row}
     , m_column{column}
 {
@@ -16,8 +15,6 @@ FolioPageDelegate::FolioPageDelegate(int row, int column, QObject *parent)
 
 FolioPageDelegate::FolioPageDelegate(int row, int column, FolioApplication *application, QObject *parent)
     : FolioDelegate{application, parent}
-    , m_realRow{HomeScreenState::self()->columnRowSwap() ? column : row}
-    , m_realColumn{HomeScreenState::self()->columnRowSwap() ? row : column}
     , m_row{row}
     , m_column{column}
 {
@@ -26,8 +23,6 @@ FolioPageDelegate::FolioPageDelegate(int row, int column, FolioApplication *appl
 
 FolioPageDelegate::FolioPageDelegate(int row, int column, FolioApplicationFolder *folder, QObject *parent)
     : FolioDelegate{folder, parent}
-    , m_realRow{HomeScreenState::self()->columnRowSwap() ? column : row}
-    , m_realColumn{HomeScreenState::self()->columnRowSwap() ? row : column}
     , m_row{row}
     , m_column{column}
 {
@@ -36,8 +31,6 @@ FolioPageDelegate::FolioPageDelegate(int row, int column, FolioApplicationFolder
 
 FolioPageDelegate::FolioPageDelegate(int row, int column, FolioDelegate *delegate, QObject *parent)
     : FolioDelegate{parent}
-    , m_realRow{HomeScreenState::self()->columnRowSwap() ? column : row}
-    , m_realColumn{HomeScreenState::self()->columnRowSwap() ? row : column}
     , m_row{row}
     , m_column{column}
 {
@@ -50,14 +43,29 @@ FolioPageDelegate::FolioPageDelegate(int row, int column, FolioDelegate *delegat
 
 void FolioPageDelegate::init()
 {
-    connect(HomeScreenState::self(), &HomeScreenState::columnRowSwapChanged, this, [this]() {
-        if (HomeScreenState::self()->columnRowSwap()) {
-            setRow(m_realColumn);
-            setColumn(m_realRow);
-        } else {
-            setRow(m_realRow);
-            setColumn(m_realColumn);
-        }
+    // we have to use the "real" rows and columns, so fetch them from FolioSettings instead of HomeScreenState
+    switch (HomeScreenState::self()->pageOrientation()) {
+    case HomeScreenState::RegularPosition:
+        m_realRow = m_row;
+        m_realColumn = m_column;
+        break;
+    case HomeScreenState::RotateClockwise:
+        m_realRow = HomeScreenState::self()->pageColumns() - m_column - 1;
+        m_realColumn = m_row;
+        break;
+    case HomeScreenState::RotateCounterClockwise: // (0, 4) -> (4, 3)
+        m_realRow = m_column;
+        m_realColumn = HomeScreenState::self()->pageRows() - m_row - 1;
+        break;
+    case HomeScreenState::RotateUpsideDown:
+        m_realRow = HomeScreenState::self()->pageRows() - m_row - 1;
+        m_realColumn = HomeScreenState::self()->pageColumns() - m_column - 1;
+        break;
+    }
+
+    connect(HomeScreenState::self(), &HomeScreenState::pageOrientationChanged, this, [this]() {
+        setRow(getTranslatedRow(m_realRow, m_realColumn));
+        setColumn(getTranslatedColumn(m_realRow, m_realColumn));
     });
 }
 
@@ -69,13 +77,48 @@ FolioPageDelegate *FolioPageDelegate::fromJson(QJsonObject &obj, QObject *parent
         return nullptr;
     }
 
-    int row = HomeScreenState::self()->columnRowSwap() ? obj[QStringLiteral("column")].toInt() : obj[QStringLiteral("row")].toInt();
-    int column = HomeScreenState::self()->columnRowSwap() ? obj[QStringLiteral("row")].toInt() : obj[QStringLiteral("column")].toInt();
+    int realRow = obj[QStringLiteral("row")].toInt();
+    int realColumn = obj[QStringLiteral("column")].toInt();
+
+    int row = getTranslatedRow(realRow, realColumn);
+    int column = getTranslatedColumn(realRow, realColumn);
 
     FolioPageDelegate *delegate = new FolioPageDelegate{row, column, fd, parent};
     fd->deleteLater();
 
     return delegate;
+}
+
+int FolioPageDelegate::getTranslatedRow(int realRow, int realColumn)
+{
+    // we have to use the "real" rows and columns, so fetch them from FolioSettings instead of HomeScreenState
+    switch (HomeScreenState::self()->pageOrientation()) {
+    case HomeScreenState::RegularPosition:
+        return realRow;
+    case HomeScreenState::RotateClockwise:
+        return realColumn;
+    case HomeScreenState::RotateCounterClockwise:
+        return FolioSettings::self()->homeScreenColumns() - realColumn - 1;
+    case HomeScreenState::RotateUpsideDown:
+        return FolioSettings::self()->homeScreenRows() - realRow - 1;
+    }
+    return realRow;
+}
+
+int FolioPageDelegate::getTranslatedColumn(int realRow, int realColumn)
+{
+    // we have to use the "real" rows and columns, so fetch them from FolioSettings instead of HomeScreenState
+    switch (HomeScreenState::self()->pageOrientation()) {
+    case HomeScreenState::RegularPosition:
+        return realColumn;
+    case HomeScreenState::RotateClockwise:
+        return FolioSettings::self()->homeScreenRows() - realRow - 1;
+    case HomeScreenState::RotateCounterClockwise:
+        return realRow;
+    case HomeScreenState::RotateUpsideDown:
+        return FolioSettings::self()->homeScreenColumns() - realColumn - 1;
+    }
+    return realRow;
 }
 
 QJsonObject FolioPageDelegate::toJson() const
@@ -126,7 +169,6 @@ PageModel *PageModel::fromJson(QJsonArray &arr, QObject *parent)
 
         FolioPageDelegate *delegate = FolioPageDelegate::fromJson(obj, parent);
         if (delegate) {
-            // TODO check if row and column value makes sense
             delegates.append(delegate);
 
             if (delegate->type() == FolioDelegate::Folder) {
