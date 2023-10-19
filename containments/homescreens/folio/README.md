@@ -17,8 +17,6 @@ As such, all of the positioning and placement of delegates on the screen are top
 - If an app gets uninstalled, the homescreen UI needs to ensure that delegates are updated
 - Folder pages
 - Fix drawer scrolling
-- Drop animation (delegate moves to spot)
-- BUG: if you drag and drop from the middle of the app drawer list, swipe is broken because the swipe area is disabled
 - the position of where things think the dragged icon is during drag-and-drop is slightly off because of the label
 - BUG: landscape favourites bar duplication when dragging icon from it
 - BUG: dropping an app on the favourites bar animation is glitched ONLY if the nav bar is on the bottom

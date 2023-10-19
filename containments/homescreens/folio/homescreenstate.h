@@ -60,6 +60,8 @@ class HomeScreenState : public QObject
     Q_PROPERTY(qreal folderOpenProgress READ folderOpenProgress WRITE setFolderOpenProgress NOTIFY folderOpenProgressChanged)
     Q_PROPERTY(FolioApplicationFolder *currentFolder READ currentFolder NOTIFY currentFolderChanged)
 
+    Q_PROPERTY(qreal settingsOpenProgress READ settingsOpenProgress WRITE setSettingsOpenProgress NOTIFY settingsOpenProgressChanged)
+
     Q_PROPERTY(qreal appDrawerOpenProgress READ appDrawerOpenProgress NOTIFY appDrawerOpenProgressChanged)
     Q_PROPERTY(qreal appDrawerY READ appDrawerY WRITE setAppDrawerY NOTIFY appDrawerYChanged)
 
@@ -75,7 +77,7 @@ public:
     enum SwipeState {
         None,
         DeterminingSwipeType,
-        SwipingPages,
+        SwipingPages, // main homescreen view
         SwipingOpenAppDrawer,
         SwipingCloseAppDrawer,
         SwipingOpenSearchWidget,
@@ -91,6 +93,7 @@ public:
         PageView,
         AppDrawerView,
         FolderView,
+        SettingsView,
     };
     Q_ENUM(ViewState)
 
@@ -195,6 +198,10 @@ public:
     FolioApplicationFolder *currentFolder() const;
     void setCurrentFolder(FolioApplicationFolder *folder);
 
+    // the progress for the opening of the settings view
+    qreal settingsOpenProgress();
+    void setSettingsOpenProgress(qreal settingsOpenProgress);
+
     // between 0-1, the progress for the opening of the app drawer
     qreal appDrawerOpenProgress();
 
@@ -261,6 +268,7 @@ Q_SIGNALS:
     void folderPageContentHeightChanged();
     void folderOpenProgressChanged();
     void currentFolderChanged();
+    void settingsOpenProgressChanged();
     void appDrawerOpenProgressChanged();
     void appDrawerYChanged();
     void appDrawerClosed();
@@ -291,6 +299,9 @@ public Q_SLOTS:
     void goToFolderPage(int page);
     void openFolder(FolioApplicationFolder *folder);
     void closeFolder();
+
+    void openSettingsView();
+    void closeSettingsView();
 
     void startDelegatePageDrag(qreal startX, qreal startY, int page, int row, int column);
     void startDelegateFavouritesDrag(qreal startX, qreal startY, int position);
@@ -350,6 +361,8 @@ private:
     qreal m_folderOpenProgress{0};
     FolioApplicationFolder *m_currentFolder{nullptr};
 
+    qreal m_settingsOpenProgress{0};
+
     qreal m_appDrawerOpenProgress{0};
     qreal m_appDrawerY{0};
     qreal m_searchWidgetOpenProgress{0};
@@ -371,4 +384,6 @@ private:
     QPropertyAnimation *m_openFolderAnim{nullptr};
     QPropertyAnimation *m_closeFolderAnim{nullptr};
     QPropertyAnimation *m_folderPageAnim{nullptr};
+    QPropertyAnimation *m_openSettingsAnim{nullptr};
+    QPropertyAnimation *m_closeSettingsAnim{nullptr};
 };
