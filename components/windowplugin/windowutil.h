@@ -38,8 +38,8 @@ class WindowUtil : public QObject
     Q_PROPERTY(bool activeWindowIsShell READ activeWindowIsShell NOTIFY activeWindowIsShellChanged)
 
 public:
-    WindowUtil(QObject *parent = nullptr);
-    static WindowUtil *instance();
+    static WindowUtil *create(QQmlEngine *qmlEngine, QJSEngine *jsEngine);
+    WindowUtil build();
 
     /**
      * Whether the shell is in "desktop showing" mode, where all windows
