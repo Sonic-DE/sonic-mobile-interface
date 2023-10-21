@@ -8,10 +8,14 @@
 #include <QDBusServiceWatcher>
 #include <QObject>
 #include <QString>
+#include <qqmlregistration.h>
 
 class ShellDBusClient : public QObject
 {
     Q_OBJECT
+    QML_ELEMENT
+    QML_SINGLETON
+
     Q_PROPERTY(bool doNotDisturb READ doNotDisturb WRITE setDoNotDisturb NOTIFY doNotDisturbChanged)
     Q_PROPERTY(bool isActionDrawerOpen READ isActionDrawerOpen WRITE setIsActionDrawerOpen NOTIFY isActionDrawerOpenChanged)
     Q_PROPERTY(bool isTaskSwitcherVisible READ isTaskSwitcherVisible NOTIFY isTaskSwitcherVisibleChanged)

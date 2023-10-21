@@ -7,10 +7,13 @@
 #include <QDBusServiceWatcher>
 #include <QObject>
 #include <QString>
+#include <qqmlregistration.h>
 
 class LockscreenDBusClient : public QObject
 {
     Q_OBJECT
+    QML_ELEMENT
+    QML_SINGLETON
     Q_PROPERTY(bool lockscreenActive READ lockscreenActive NOTIFY lockscreenActiveChanged);
 
 public:
