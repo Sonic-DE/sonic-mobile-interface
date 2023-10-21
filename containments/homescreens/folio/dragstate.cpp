@@ -278,7 +278,7 @@ void DragState::onDelegateDragPositionOverFolderViewChanged()
     }
 
     // the potential folder index that can be dropped at
-    int dropIndex = folder->dropInsertPosition(x, y);
+    int dropIndex = folder->dropInsertPosition(m_state->currentFolderPage(), x, y);
 
     // if the delegate has moved to another position, cancel the insert timer
     if (dropIndex != m_folderInsertBetweenIndex) {
@@ -297,12 +297,12 @@ void DragState::onDelegateDragPositionOverFolderViewChanged()
     // determine if the delegate is near the edge of a page (to switch pages).
     // -> start the change page timer if we at the page edge.
     if (x <= leftPagePosition + PAGE_CHANGE_THRESHOLD || x >= rightPagePosition - PAGE_CHANGE_THRESHOLD) {
-        if (!m_changePageTimer->isActive()) {
-            m_changePageTimer->start();
+        if (!m_changeFolderPageTimer->isActive()) {
+            m_changeFolderPageTimer->start();
         }
     } else {
-        if (m_changePageTimer->isActive()) {
-            m_changePageTimer->stop();
+        if (m_changeFolderPageTimer->isActive()) {
+            m_changeFolderPageTimer->stop();
         }
     }
 }
@@ -536,7 +536,7 @@ void DragState::onLeaveCurrentFolder()
 
 void DragState::onChangePageTimerFinished()
 {
-    if (!m_state) {
+    if (!m_state || (m_state->swipeState() != HomeScreenState::DraggingDelegate)) {
         return;
     }
 

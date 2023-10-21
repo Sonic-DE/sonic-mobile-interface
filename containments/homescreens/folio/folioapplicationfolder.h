@@ -50,7 +50,7 @@ public:
     bool addDelegate(FolioDelegate *delegate, int row);
     Q_INVOKABLE void removeDelegate(int row);
 
-    int dropInsertPosition(qreal x, qreal y);
+    int dropInsertPosition(int page, qreal x, qreal y);
     bool isDropPositionOutside(qreal x, qreal y);
 
 Q_SIGNALS:
@@ -105,7 +105,7 @@ public:
     void deleteGhostEntry();
 
     // the index that dropping at the position given would place the delegate at.
-    int dropInsertPosition(qreal x, qreal y);
+    int dropInsertPosition(int page, qreal x, qreal y);
 
     // whether this position is outside of the folder area
     bool isDropPositionOutside(qreal x, qreal y);

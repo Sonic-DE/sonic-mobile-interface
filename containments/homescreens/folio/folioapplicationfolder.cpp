@@ -111,9 +111,9 @@ void FolioApplicationFolder::removeDelegate(int row)
     m_applicationFolderModel->removeDelegate(row);
 }
 
-int FolioApplicationFolder::dropInsertPosition(qreal x, qreal y)
+int FolioApplicationFolder::dropInsertPosition(int page, qreal x, qreal y)
 {
-    return m_applicationFolderModel->dropInsertPosition(x, y);
+    return m_applicationFolderModel->dropInsertPosition(page, x, y);
 }
 
 bool FolioApplicationFolder::isDropPositionOutside(qreal x, qreal y)
@@ -328,14 +328,10 @@ void ApplicationFolderModel::deleteGhostEntry()
     }
 }
 
-int ApplicationFolderModel::dropInsertPosition(qreal x, qreal y)
+int ApplicationFolderModel::dropInsertPosition(int page, qreal x, qreal y)
 {
-    qreal pageWidth = HomeScreenState::self()->folderPageWidth();
     qreal cellWidth = HomeScreenState::self()->pageCellWidth();
     qreal cellHeight = HomeScreenState::self()->pageCellHeight();
-
-    int page = x / pageWidth;
-    page = std::max(0, std::min(numTotalPages(), page));
 
     int row = (y - topMarginFromScreenEdge()) / cellHeight;
     row = std::max(0, std::min(numRowsOnPage(), row));

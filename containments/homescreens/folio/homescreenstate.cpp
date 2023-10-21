@@ -89,6 +89,8 @@ HomeScreenState::HomeScreenState(QObject *parent)
         setViewState(ViewState::PageView);
         setCurrentFolder(nullptr);
         setFolderViewX(0); // reset to first page
+        m_folderPageNum = 0;
+        Q_EMIT folderPageNumChanged();
 
         Q_EMIT leftCurrentFolder();
     });
@@ -656,6 +658,7 @@ QPointF HomeScreenState::getFolderDelegateScreenPosition(int position)
     auto pos = m_currentFolder->applications()->getDelegatePosition(position);
     qreal x = pos.x() + (m_viewWidth - m_folderPageWidth) / 2;
     qreal y = pos.y() + (m_viewHeight - m_folderPageHeight) / 2;
+    x -= currentFolderPage() * m_folderPageWidth;
     return {x, y};
 }
 
