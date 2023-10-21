@@ -9,6 +9,7 @@
 
 #include <QObject>
 #include <QQuickItem>
+#include <qqmlregistration.h>
 
 #include <KConfigWatcher>
 #include <KIO/ApplicationLauncherJob>
@@ -22,6 +23,8 @@
 class ShellUtil : public QObject
 {
     Q_OBJECT
+    QML_ELEMENT
+    QML_SINGLETON
     Q_PROPERTY(bool isSystem24HourFormat READ isSystem24HourFormat NOTIFY isSystem24HourFormatChanged)
 
 public:

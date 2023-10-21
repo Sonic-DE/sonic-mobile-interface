@@ -14,7 +14,6 @@ import org.kde.plasma.components 3.0 as PC3
 import org.kde.kirigami 2.10 as Kirigami
 
 import org.kde.plasma.private.mobileshell as MobileShell
-import org.kde.plasma.private.mobileshell.state as MobileShellState
 import org.kde.private.mobile.homescreen.folio 1.0 as Folio
 
 import "../private"
@@ -22,36 +21,23 @@ import "../private"
 AbstractAppDrawer {
     id: root
     
-    contentItem: MobileShell.GridView {
-        id: gridView
+    contentItem: MobileShell.ListView {
+        id: listView
         clip: true
+        reuseItems: true
+        cacheBuffer: model.count * delegateHeight // delegate height
         
-        /*
-         * HACK: When the number of apps is less than the one that would fit in the first shown part of the drawer, make
-         * this flickable interactive, in order to steal inputs that would normally be delivered to home.
-         */
-        interactive: contentHeight <= height ? true : root.homeScreenState.appDrawerInteractive
+        interactive: root.homeScreenState.appDrawerInteractive
         
-        readonly property real effectiveContentWidth: root.contentWidth - 2 * horizontalMargin
-        readonly property real horizontalMargin: root.width * 0.1 / 2
-        leftMargin: horizontalMargin
-        rightMargin: horizontalMargin
-        
-        cellWidth: effectiveContentWidth / Math.min(Math.floor(effectiveContentWidth / (Kirigami.Units.iconSizes.huge + Kirigami.Units.gridUnit * 2)), 8)
-        cellHeight: cellWidth + root.reservedSpaceForLabel
-
-        readonly property int columns: Math.floor(effectiveContentWidth / cellWidth)
-        readonly property int rows: Math.ceil(gridView.count / columns)
-        
-        cacheBuffer: Math.max(0, rows * cellHeight)
+        property int delegateHeight: Kirigami.Units.gridUnit * 3
 
         model: Folio.ApplicationListModel
 
-        delegate: DrawerGridDelegate {
+        delegate: DrawerListDelegate {
             id: delegate
             
-            width: gridView.cellWidth
-            height: gridView.cellHeight
+            width: listView.width
+            height: listView.delegateHeight
             reservedSpaceForLabel: root.reservedSpaceForLabel
 
             onDragStarted: (imageSource, x, y, mimeData) => {
@@ -80,7 +66,7 @@ AbstractAppDrawer {
                 root.launched();
             }
         }
-
+        
         PC3.ScrollBar.vertical: PC3.ScrollBar {
             id: scrollBar
             interactive: true
@@ -99,4 +85,3 @@ AbstractAppDrawer {
         }
     }
 }
-
