@@ -20,8 +20,6 @@ Folio.DelegateTouchArea {
 
     property Folio.FolioApplicationFolder folder: Folio.HomeScreenState.currentFolder
 
-    property bool inFolderTitleEditMode: false
-
     onClicked: close();
 
     function close() {
@@ -38,7 +36,6 @@ Folio.DelegateTouchArea {
         anchors.right: parent.right
 
         folder: root.folder
-        inFolderTitleEditMode: root.inFolderTitleEditMode
     }
 
     function updateContentWidth() {
@@ -231,5 +228,18 @@ Folio.DelegateTouchArea {
                 }
             }
         }
+    }
+
+    QQC2.PageIndicator {
+        visible: count > 1
+        Kirigami.Theme.inherit: false
+        Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
+
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: folderBackground.bottom
+        anchors.topMargin: Kirigami.Units.largeSpacing
+
+        currentIndex: Folio.HomeScreenState.currentFolderPage
+        count: Folio.HomeScreenState.currentFolder ? Folio.HomeScreenState.currentFolder.applications.numberOfPages : 0
     }
 }

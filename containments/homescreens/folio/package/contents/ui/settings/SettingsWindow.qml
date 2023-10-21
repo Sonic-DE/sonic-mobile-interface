@@ -13,9 +13,29 @@ import org.kde.kirigamiaddons.formcard 1.0 as FormCard
 
 Kirigami.ApplicationWindow {
     id: root
+    flags: Qt.FramelessWindowHint
+
+    pageStack.globalToolBar.style: Kirigami.ApplicationHeaderStyle.ToolBar
+    pageStack.globalToolBar.showNavigationButtons: Kirigami.ApplicationHeaderStyle.NoNavigationButtons;
+
+    signal requestConfigureMenu()
 
     pageStack.initialPage: Kirigami.ScrollablePage {
         id: page
+        opacity: root.opacity
+
+        titleDelegate: RowLayout {
+            QQC2.ToolButton {
+                Layout.leftMargin: -Kirigami.Units.gridUnit + Kirigami.Units.smallSpacing
+                icon.name: "arrow-left"
+                onClicked: root.close()
+            }
+
+            Kirigami.Heading {
+                level: 1
+                text: page.title
+            }
+        }
 
         title: i18n("Homescreen Settings")
 
@@ -35,6 +55,15 @@ Kirigami.ApplicationWindow {
                     text: i18n('Icons')
                     icon.name: 'view-list-icons'
                     // onClicked: kcm.push("VibrationForm.qml")
+                }
+
+                FormCard.FormDelegateSeparator { above: iconsButton; below: containmentSettings }
+
+                FormCard.FormButtonDelegate {
+                    id: containmentSettings
+                    text: i18n('Switch Homescreen')
+                    icon.name: 'settings-configure'
+                    onClicked: root.requestConfigureMenu()
                 }
             }
 

@@ -41,7 +41,7 @@ ContainmentItem {
     // - system is in landscape orientation & nav panel is enabled (panel on right)
     // - system is in landscape orientation & gesture mode is enabled (panel on bottom)
     // - system is in portrait orientation (panel on bottom)
-    readonly property bool inLandscape: Screen.width > Screen.height;
+    readonly property bool inLandscape: Screen.width > Screen.height && Screen.height < 500;
     readonly property bool isInLandscapeNavPanelMode: inLandscape && ShellSettings.Settings.navigationPanelEnabled
 
     readonly property real navigationPanelHeight: Kirigami.Units.gridUnit * 2

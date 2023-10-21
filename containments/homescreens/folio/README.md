@@ -25,3 +25,4 @@ As such, all of the positioning and placement of delegates on the screen are top
 - can make the touch area only the icon?
 - FEATURE: add import/export
 - FEATURE: open/close folder animation
+- Add folio/halcyon switcher in initial-start
