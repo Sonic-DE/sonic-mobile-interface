@@ -5,10 +5,13 @@
 
 #include <QObject>
 #include <QString>
+#include <qqmlregistration.h>
 
 class ShellDBusObject : public QObject
 {
     Q_OBJECT
+    QML_ELEMENT
+    QML_SINGLETON
     Q_CLASSINFO("D-Bus Interface", "org.kde.plasmashell")
 
 public:
