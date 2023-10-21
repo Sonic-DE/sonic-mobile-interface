@@ -51,6 +51,13 @@ Item {
         homeScreenState.cancelDelegateDrag();
     }
 
+    // sets the coordinates for the folder opening/closing animation
+    function prepareFolderOpen(item) {
+        let pos = root.mapFromItem(item, 0, 0);
+        folderView.folderPositionX = pos.x - root.leftMargin;
+        folderView.folderPositionY = pos.y - root.topMargin;
+    }
+
     function openConfigure() {
         Plasmoid.internalAction("configure").trigger();
     }

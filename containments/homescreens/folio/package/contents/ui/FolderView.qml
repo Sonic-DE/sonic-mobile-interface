@@ -18,6 +18,10 @@ Folio.DelegateTouchArea {
 
     property var homeScreen
 
+    // the position on the screen for animations to start from
+    property real folderPositionX
+    property real folderPositionY
+
     property Folio.FolioApplicationFolder folder: Folio.HomeScreenState.currentFolder
 
     onClicked: close();
@@ -30,12 +34,17 @@ Folio.DelegateTouchArea {
         id: titleText
         width: root.width
 
-        anchors.bottom: folderBackground.top
-        anchors.bottomMargin: Kirigami.Units.gridUnit
+        // have to use y instead of anchors to avoid animations
+        y: Math.round((root.height / 2) - (folderBackground.height / 2) - Kirigami.Units.gridUnit - height)
         anchors.left: parent.left
         anchors.right: parent.right
 
         folder: root.folder
+
+        opacity: (root.opacity === 1) ? 1 : 0
+        Behavior on opacity {
+            NumberAnimation { duration: Kirigami.Units.shortDuration }
+        }
     }
 
     function updateContentWidth() {
@@ -68,8 +77,6 @@ Folio.DelegateTouchArea {
         id: folderBackground
         color: Qt.rgba(255, 255, 255, 0.3)
         radius: Kirigami.Units.gridUnit
-
-        anchors.centerIn: parent
 
         readonly property real margin: Kirigami.Units.largeSpacing
         readonly property real maxLength: Math.min(root.width * 0.9, root.height * 0.9)
@@ -105,6 +112,37 @@ Folio.DelegateTouchArea {
             root.updateContentWidth();
             root.updateContentHeight();
         }
+
+        x: {
+            const folderPos = root.folderPositionX;
+            const centerX = (root.width / 2) - (width / 2);
+            return Math.round(folderPos + (centerX - folderPos) * Folio.HomeScreenState.folderOpenProgress);
+        }
+        y: {
+            const folderPos = root.folderPositionY;
+            const centerY = (root.height / 2) - (height / 2);
+            return Math.round(folderPos + (centerY - folderPos) * Folio.HomeScreenState.folderOpenProgress);
+        }
+
+        transform: [
+            Scale {
+                origin.x: 0
+                origin.y: 0
+
+                xScale: {
+                    const iconSize = Folio.FolioSettings.delegateIconSize;
+                    const fullWidth = folderBackground.width;
+                    const candidate = iconSize + (fullWidth - iconSize) * Folio.HomeScreenState.folderOpenProgress;
+                    return Math.max(0, Math.min(1, candidate / fullWidth));
+                }
+                yScale: {
+                    const iconSize = Folio.FolioSettings.delegateIconSize;
+                    const fullHeight = folderBackground.height;
+                    const candidate = iconSize + (fullHeight - iconSize) * Folio.HomeScreenState.folderOpenProgress;
+                    return Math.max(0, Math.min(1, candidate / fullHeight));
+                }
+            }
+        ]
 
         MouseArea {
             id: captureTouches
@@ -235,11 +273,16 @@ Folio.DelegateTouchArea {
         Kirigami.Theme.inherit: false
         Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
 
+        // have to use y instead of anchors to avoid animations
+        y: Math.round((root.height / 2) + (folderBackground.height / 2) + Kirigami.Units.largeSpacing)
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: folderBackground.bottom
-        anchors.topMargin: Kirigami.Units.largeSpacing
 
         currentIndex: Folio.HomeScreenState.currentFolderPage
         count: Folio.HomeScreenState.currentFolder ? Folio.HomeScreenState.currentFolder.applications.numberOfPages : 0
+
+        opacity: (root.opacity === 1) ? 1 : 0
+        Behavior on opacity {
+            NumberAnimation { duration: Kirigami.Units.shortDuration }
+        }
     }
 }

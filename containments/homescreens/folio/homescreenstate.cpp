@@ -23,67 +23,67 @@ HomeScreenState *HomeScreenState::self()
     return inst;
 }
 
+QPropertyAnimation *HomeScreenState::setupAnimation(QByteArray property, int duration, QEasingCurve::Type curve, qreal endValue)
+{
+    auto anim = new QPropertyAnimation{this, property, this};
+    anim->setDuration(duration);
+    anim->setEndValue(endValue);
+    anim->setEasingCurve(curve);
+    return anim;
+}
+
 HomeScreenState::HomeScreenState(QObject *parent)
     : QObject{parent}
     , m_dragState{new DragState{this, this}}
     , m_appDrawerY{APP_DRAWER_OPEN_DIST}
     , m_searchWidgetY{SEARCH_WIDGET_OPEN_DIST}
 {
-    m_openAppDrawerAnim = new QPropertyAnimation{this, "appDrawerY", this};
-    m_openAppDrawerAnim->setDuration(200 * 2); // TODO use kirigami longDuration * 2
-    m_openAppDrawerAnim->setEndValue(0);
-    m_openAppDrawerAnim->setEasingCurve(QEasingCurve::OutCubic);
+    const int expoDuration = 800;
+    const int cubicDuration = 400;
 
-    connect(m_openAppDrawerAnim, &QPropertyAnimation::finished, this, [this]() {
-        setViewState(ViewState::AppDrawerView);
-        Q_EMIT appDrawerOpened();
+    m_openAppDrawerAnim = setupAnimation("appDrawerY", expoDuration, QEasingCurve::OutExpo, 0);
+
+    connect(m_openAppDrawerAnim, &QPropertyAnimation::valueChanged, this, [this]() {
+        // the animation runs too long to connect to QPropertyAnimation::finished
+        // instead just have the end behaviour execute once we are 90% through
+        if (m_appDrawerOpenProgress > 0.9) {
+            setViewState(ViewState::AppDrawerView);
+            Q_EMIT appDrawerOpened();
+        }
     });
 
-    m_closeAppDrawerAnim = new QPropertyAnimation{this, "appDrawerY", this};
-    m_closeAppDrawerAnim->setDuration(200 * 2); // TODO use kirigami longDuration * 2
-    m_closeAppDrawerAnim->setEndValue(APP_DRAWER_OPEN_DIST);
-    m_closeAppDrawerAnim->setEasingCurve(QEasingCurve::OutCubic);
+    m_closeAppDrawerAnim = setupAnimation("appDrawerY", expoDuration, QEasingCurve::OutExpo, APP_DRAWER_OPEN_DIST);
 
-    connect(m_closeAppDrawerAnim, &QPropertyAnimation::finished, this, [this]() {
-        setViewState(ViewState::PageView);
-        Q_EMIT appDrawerClosed();
+    connect(m_closeAppDrawerAnim, &QPropertyAnimation::valueChanged, this, [this]() {
+        // the animation runs too long to connect to QPropertyAnimation::finished
+        // instead just have the end behaviour execute once we are 90% through
+        if (m_appDrawerOpenProgress < 0.1) {
+            setViewState(ViewState::PageView);
+            Q_EMIT appDrawerClosed();
+        }
     });
 
-    m_openSearchWidgetAnim = new QPropertyAnimation{this, "searchWidgetY", this};
-    m_openSearchWidgetAnim->setDuration(200 * 2); // TODO use kirigami longDuration * 2
-    m_openSearchWidgetAnim->setEndValue(0);
-    m_openSearchWidgetAnim->setEasingCurve(QEasingCurve::OutCubic);
+    m_openSearchWidgetAnim = setupAnimation("searchWidgetY", cubicDuration, QEasingCurve::OutCubic, 0);
 
     connect(m_openSearchWidgetAnim, &QPropertyAnimation::finished, this, [this]() {
         setViewState(ViewState::SearchWidgetView);
     });
 
-    m_closeSearchWidgetAnim = new QPropertyAnimation{this, "searchWidgetY", this};
-    m_closeSearchWidgetAnim->setDuration(200 * 2); // TODO use kirigami longDuration * 2
-    m_closeSearchWidgetAnim->setEndValue(SEARCH_WIDGET_OPEN_DIST);
-    m_closeSearchWidgetAnim->setEasingCurve(QEasingCurve::OutCubic);
+    m_closeSearchWidgetAnim = setupAnimation("searchWidgetY", cubicDuration, QEasingCurve::OutCubic, SEARCH_WIDGET_OPEN_DIST);
 
     connect(m_closeSearchWidgetAnim, &QPropertyAnimation::finished, this, [this]() {
         setViewState(ViewState::PageView);
     });
 
-    m_pageAnim = new QPropertyAnimation{this, "pageViewX", this};
-    m_pageAnim->setDuration(200 * 2); // TODO use kirigami longDuration * 2
-    m_pageAnim->setEasingCurve(QEasingCurve::OutCubic);
+    m_pageAnim = setupAnimation("pageViewX", cubicDuration, QEasingCurve::OutCubic, 0);
 
-    m_openFolderAnim = new QPropertyAnimation{this, "folderOpenProgress", this};
-    m_openFolderAnim->setDuration(200 * 2); // TODO use kirigami longDuration * 2
-    m_openFolderAnim->setEndValue(1.0);
-    m_openFolderAnim->setEasingCurve(QEasingCurve::OutCubic);
+    m_openFolderAnim = setupAnimation("folderOpenProgress", cubicDuration, QEasingCurve::OutCubic, 1.0);
 
     connect(m_openFolderAnim, &QPropertyAnimation::finished, this, [this]() {
         setViewState(ViewState::FolderView);
     });
 
-    m_closeFolderAnim = new QPropertyAnimation{this, "folderOpenProgress", this};
-    m_closeFolderAnim->setDuration(200 * 2); // TODO use kirigami longDuration * 2
-    m_closeFolderAnim->setEndValue(0.0);
-    m_closeFolderAnim->setEasingCurve(QEasingCurve::OutCubic);
+    m_closeFolderAnim = setupAnimation("folderOpenProgress", cubicDuration, QEasingCurve::OutCubic, 0.0);
 
     connect(m_closeFolderAnim, &QPropertyAnimation::finished, this, [this]() {
         setViewState(ViewState::PageView);
@@ -95,23 +95,15 @@ HomeScreenState::HomeScreenState(QObject *parent)
         Q_EMIT leftCurrentFolder();
     });
 
-    m_folderPageAnim = new QPropertyAnimation{this, "folderViewX", this};
-    m_folderPageAnim->setDuration(200 * 2); // TODO use kirigami longDuration * 2
-    m_folderPageAnim->setEasingCurve(QEasingCurve::OutCubic);
+    m_folderPageAnim = setupAnimation("folderViewX", cubicDuration, QEasingCurve::OutCubic, 0);
 
-    m_openSettingsAnim = new QPropertyAnimation{this, "settingsOpenProgress", this};
-    m_openSettingsAnim->setDuration(200 * 2); // TODO use kirigami longDuration * 2
-    m_openSettingsAnim->setEndValue(1.0);
-    m_openSettingsAnim->setEasingCurve(QEasingCurve::OutCubic);
+    m_openSettingsAnim = setupAnimation("settingsOpenProgress", cubicDuration, QEasingCurve::OutExpo, 1.0);
 
     connect(m_openSettingsAnim, &QPropertyAnimation::finished, this, [this]() {
         setViewState(ViewState::SettingsView);
     });
 
-    m_closeSettingsAnim = new QPropertyAnimation{this, "settingsOpenProgress", this};
-    m_closeSettingsAnim->setDuration(200 * 2); // TODO use kirigami longDuration * 2
-    m_closeSettingsAnim->setEndValue(0.0);
-    m_closeSettingsAnim->setEasingCurve(QEasingCurve::OutCubic);
+    m_closeSettingsAnim = setupAnimation("settingsOpenProgress", cubicDuration, QEasingCurve::InOutExpo, 0.0);
 
     connect(m_closeSettingsAnim, &QPropertyAnimation::finished, this, [this]() {
         setViewState(ViewState::PageView);
@@ -656,9 +648,14 @@ QPointF HomeScreenState::getFolderDelegateScreenPosition(int position)
         return {0, 0};
     }
     auto pos = m_currentFolder->applications()->getDelegatePosition(position);
-    qreal x = pos.x() + (m_viewWidth - m_folderPageWidth) / 2;
-    qreal y = pos.y() + (m_viewHeight - m_folderPageHeight) / 2;
+    qreal x = pos.x() + (m_viewWidth - m_viewLeftPadding - m_viewRightPadding - m_folderPageWidth) / 2;
+    qreal y = pos.y() + (m_viewHeight - m_viewTopPadding - m_viewBottomPadding - m_folderPageHeight) / 2;
+    x += m_viewLeftPadding;
+    y += m_viewTopPadding;
+
+    // adjust for the current page
     x -= currentFolderPage() * m_folderPageWidth;
+
     return {x, y};
 }
 

@@ -333,6 +333,8 @@ private:
     // check if we passed the swipe threshold, and determine the swipe type after
     void determineSwipeTypeAfterThreshold(qreal totalDeltaX, qreal totalDeltaY);
 
+    QPropertyAnimation *setupAnimation(QByteArray property, int duration, QEasingCurve::Type curve, qreal endValue);
+
     SwipeState m_swipeState{SwipeState::None};
     ViewState m_viewState{ViewState::PageView};
 
