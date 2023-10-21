@@ -30,7 +30,7 @@ FolioDelegate::FolioDelegate(FolioApplicationFolder *folder, QObject *parent)
 
 FolioDelegate *FolioDelegate::fromJson(QJsonObject &obj, QObject *parent)
 {
-    QString type = obj[QStringLiteral("type")].toString();
+    const QString type = obj[QStringLiteral("type")].toString();
     if (type == "application") {
         // read application
         FolioApplication *app = FolioApplication::fromJson(obj, parent);

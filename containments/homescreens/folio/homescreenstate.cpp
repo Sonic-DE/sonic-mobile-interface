@@ -9,13 +9,13 @@
 #include <algorithm>
 
 // TODO don't hardcode, use something more device dependent?
-const qreal APP_DRAWER_OPEN_DIST = 300;
-const qreal SEARCH_WIDGET_OPEN_DIST = 300;
+constexpr qreal APP_DRAWER_OPEN_DIST = 300;
+constexpr qreal SEARCH_WIDGET_OPEN_DIST = 300;
 
 // pixels to move before we determine the swipe type
-const qreal DETERMINE_SWIPE_THRESHOLD = 10;
+constexpr qreal DETERMINE_SWIPE_THRESHOLD = 10;
 
-const qreal VERTICAL_FAVOURITES_BAR_THRESHOLD = 400;
+constexpr qreal VERTICAL_FAVOURITES_BAR_THRESHOLD = 400;
 
 HomeScreenState *HomeScreenState::self()
 {
@@ -347,7 +347,7 @@ qreal HomeScreenState::pageContentWidth() const
 
 void HomeScreenState::calculatePageContentWidth()
 {
-    qreal pageContentWidth = std::round(m_pageWidth * 0.95); // 0.05 on both sides
+    const qreal pageContentWidth = std::round(m_pageWidth * 0.95); // 0.05 on both sides
 
     if (m_pageContentWidth != pageContentWidth) {
         m_pageContentWidth = pageContentWidth;
@@ -362,7 +362,7 @@ qreal HomeScreenState::pageContentHeight() const
 
 void HomeScreenState::calculatePageContentHeight()
 {
-    qreal pageContentHeight = std::round(m_pageHeight * 0.95); // 0.05 on both sides
+    const qreal pageContentHeight = std::round(m_pageHeight * 0.95); // 0.05 on both sides
 
     if (m_pageContentHeight != pageContentHeight) {
         m_pageContentHeight = pageContentHeight;
@@ -689,16 +689,16 @@ void HomeScreenState::closeSearchWidget()
 
 void HomeScreenState::snapPage()
 {
-    int numOfPages = PageListModel::self()->rowCount();
+    const int numOfPages = PageListModel::self()->rowCount();
 
-    int leftPage = qBound(0.0, (m_pageViewX / m_pageWidth), numOfPages - 1.0);
-    qreal leftPagePos = -leftPage * m_pageWidth;
+    const int leftPage = qBound(0.0, (m_pageViewX / m_pageWidth), numOfPages - 1.0);
+    const qreal leftPagePos = -leftPage * m_pageWidth;
 
     if (leftPage == numOfPages + 1) {
         // if we are past the last page
         goToPage(leftPage);
     } else {
-        qreal rightPagePos = leftPagePos - m_pageWidth;
+        const qreal rightPagePos = leftPagePos - m_pageWidth;
 
         // go to the closer page (right or left)
         if (qAbs(rightPagePos - m_pageViewX) < qAbs(leftPagePos - m_pageViewX)) {
@@ -715,7 +715,7 @@ void HomeScreenState::goToPage(int page)
         page = 0;
     }
 
-    int numOfPages = PageListModel::self()->rowCount();
+    const int numOfPages = PageListModel::self()->rowCount();
     if (page >= numOfPages) {
         page = std::max(0, numOfPages - 1);
     }

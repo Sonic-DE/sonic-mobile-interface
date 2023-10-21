@@ -140,11 +140,13 @@ Item {
                     RowLayout {
                         id: rowLayout
                         height: Kirigami.Units.gridUnit * 3
-                        anchors.top: parent.top
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.leftMargin: Kirigami.Units.gridUnit
-                        anchors.rightMargin: Kirigami.Units.gridUnit
+                        anchors {
+                            top: parent.top
+                            left: parent.left
+                            right: parent.right
+                            leftMargin: Kirigami.Units.gridUnit
+                            rightMargin: Kirigami.Units.gridUnit
+                        }
 
                         Kirigami.Icon {
                             Layout.alignment: Qt.AlignVCenter
