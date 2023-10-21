@@ -3,7 +3,7 @@
 
 import QtQuick 2.15
 
-import org.kde.plasma.mm 1.0 as PlasmaMM
+import org.kde.plasma.mm as PlasmaMM
 import org.kde.plasma.private.mobileshell as MobileShell
 import org.kde.plasma.private.mobileshell.quicksettingsplugin as QS
 
