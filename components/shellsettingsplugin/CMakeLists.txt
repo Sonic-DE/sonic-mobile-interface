@@ -17,4 +17,4 @@ target_link_libraries(shellsettingsplugin PRIVATE
     KF6::JobWidgets
 )
 
-ecm_finalize_qml_module(shellsettingsplugin DESTINATION ${KDE_INSTALL_QMLDIR})
+ecm_finalize_qml_module(shellsettingsplugin)
