@@ -12,6 +12,7 @@
 #include <QQuickItem>
 #include <QQuickWindow>
 #include <QTimer>
+#include <qqmlregistration.h>
 
 #include <KConfigWatcher>
 #include <KSharedConfig>
@@ -29,6 +30,9 @@
 class WindowUtil : public QObject
 {
     Q_OBJECT
+    QML_ELEMENT
+    QML_SINGLETON
+
     Q_PROPERTY(bool isShowingDesktop READ isShowingDesktop WRITE requestShowingDesktop NOTIFY showingDesktopChanged)
     Q_PROPERTY(bool hasCloseableActiveWindow READ hasCloseableActiveWindow NOTIFY hasCloseableActiveWindowChanged)
     Q_PROPERTY(bool activeWindowIsShell READ activeWindowIsShell NOTIFY activeWindowIsShellChanged)
