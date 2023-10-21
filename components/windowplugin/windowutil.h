@@ -39,7 +39,6 @@ class WindowUtil : public QObject
 
 public:
     WindowUtil(QObject *parent = nullptr);
-    static WindowUtil *instance();
 
     /**
      * Whether the shell is in "desktop showing" mode, where all windows
