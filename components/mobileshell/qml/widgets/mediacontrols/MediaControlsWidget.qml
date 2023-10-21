@@ -8,7 +8,7 @@ import QtQuick.Controls as QQC2
 
 import org.kde.kirigami as Kirigami
 
-import org.kde.plasma.private.mobileshell.state 1.0 as MobileShellState
+import org.kde.plasma.private.mobileshell.state as MobileShellState
 import org.kde.plasma.components 3.0 as PlasmaComponents3
 
 import org.kde.plasma.private.mpris as Mpris
