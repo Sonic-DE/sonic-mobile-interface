@@ -30,6 +30,15 @@ Folio.DelegateTouchArea {
         Folio.HomeScreenState.closeFolder();
     }
 
+    Connections {
+        target: Folio.HomeScreenState
+
+        function onFolderAboutToOpen(x, y) {
+            root.folderPositionX = x - Folio.HomeScreenState.viewLeftPadding;
+            root.folderPositionY = y - Folio.HomeScreenState.viewRightPadding;
+        }
+    }
+
     FolderViewTitle {
         id: titleText
         width: root.width

@@ -293,6 +293,7 @@ Q_SIGNALS:
     void folderPageNumChanged();
 
     void leftCurrentFolder();
+    void folderAboutToOpen(qreal x, qreal y); // the position on the screen where the delegate is at, for animations
 
 public Q_SLOTS:
     void openAppDrawer();
@@ -304,7 +305,7 @@ public Q_SLOTS:
     void goToPage(int page);
 
     void goToFolderPage(int page);
-    void openFolder(FolioApplicationFolder *folder);
+    void openFolder(qreal delegateX, qreal delegateY, FolioApplicationFolder *folder);
     void closeFolder();
 
     void openSettingsView();

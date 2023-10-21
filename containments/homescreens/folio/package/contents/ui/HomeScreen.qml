@@ -53,9 +53,7 @@ Item {
 
     // sets the coordinates for the folder opening/closing animation
     function prepareFolderOpen(item) {
-        let pos = root.mapFromItem(item, 0, 0);
-        folderView.folderPositionX = pos.x - root.leftMargin;
-        folderView.folderPositionY = pos.y - root.topMargin;
+        return root.mapFromItem(item, 0, 0);
     }
 
     function openConfigure() {
@@ -140,9 +138,9 @@ Item {
                 homeScreen: root
 
                 anchors.topMargin: root.topMargin
-                anchors.leftMargin: root.leftMargin
-                anchors.rightMargin: root.rightMargin
-                anchors.bottomMargin: root.bottomMargin
+                anchors.leftMargin: Folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Left ? 0 : root.leftMargin
+                anchors.rightMargin: Folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Right ? 0 : root.rightMargin
+                anchors.bottomMargin: Folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Bottom ? 0 : root.bottomMargin
 
                 // update the model with page dimensions
                 onWidthChanged: {

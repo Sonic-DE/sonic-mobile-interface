@@ -750,7 +750,7 @@ void HomeScreenState::goToFolderPage(int page)
     m_folderPageAnim->start();
 }
 
-void HomeScreenState::openFolder(FolioApplicationFolder *folder)
+void HomeScreenState::openFolder(qreal delegateX, qreal delegateY, FolioApplicationFolder *folder)
 {
     setCurrentFolder(folder);
 
@@ -758,6 +758,8 @@ void HomeScreenState::openFolder(FolioApplicationFolder *folder)
     m_closeFolderAnim->stop();
     m_openFolderAnim->setStartValue(m_folderOpenProgress);
     m_openFolderAnim->start();
+
+    Q_EMIT folderAboutToOpen(delegateX, delegateY);
 }
 
 void HomeScreenState::closeFolder()

@@ -166,7 +166,11 @@ Item {
                     // don't show label in drag and drop mode
                     labelOpacity: delegate.opacity
 
-                    onAfterClickAnimation: homeScreen.prepareFolderOpen(appFolderDelegate.contentItem);
+                    onAfterClickAnimation: {
+                        const pos = homeScreen.prepareFolderOpen(appFolderDelegate.contentItem);
+                        homeScreen.prepareFolderOpen(pos.x, pos.y, appFolderDelegate.contentItem);
+                    }
+
                     onPressAndHold: {
                         let mappedCoords = root.homeScreen.prepareStartDelegateDrag(delegate.delegateModel, appFolderDelegate.delegateItem);
                         Folio.HomeScreenState.startDelegateFavouritesDrag(

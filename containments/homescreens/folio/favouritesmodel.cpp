@@ -285,7 +285,7 @@ bool FavouritesModel::dropPositionIsEdge(qreal x, qreal y) const
 
     for (int i = 0; i < m_delegates.size(); i++) {
         // if it is within the centre 70% of a delegate, it is not at an edge
-        if (pos >= currentPos + cellLength * 0.15 && x <= currentPos + cellLength * 0.85) {
+        if (pos >= (currentPos + cellLength * 0.15) && pos <= (currentPos + cellLength * 0.85)) {
             return false;
         }
 
@@ -384,7 +384,11 @@ qreal FavouritesModel::getDelegateRowStartPos() const
     const qreal cellLength = isLocationBottom ? HomeScreenState::self()->pageCellWidth() : HomeScreenState::self()->pageCellHeight();
     const qreal pageLength = isLocationBottom ? HomeScreenState::self()->pageWidth() : HomeScreenState::self()->pageHeight();
 
-    return (pageLength / 2) - (((qreal)length) / 2) * cellLength;
+    const qreal topMargin = HomeScreenState::self()->viewTopPadding();
+    const qreal leftMargin = HomeScreenState::self()->viewLeftPadding();
+    const qreal panelOffset = isLocationBottom ? leftMargin : topMargin;
+
+    return (pageLength / 2) - (((qreal)length) / 2) * cellLength + panelOffset;
 }
 
 int FavouritesModel::adjustIndex(int index) const

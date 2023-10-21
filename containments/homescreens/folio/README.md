@@ -17,10 +17,8 @@ As such, all of the positioning and placement of delegates on the screen are top
 - Fix drawer scrolling
 - Add folio/halcyon switcher in initial-start
 - If an app gets uninstalled, the homescreen UI needs to ensure that delegates are updated
-- the position of where things think the dragged icon is during drag-and-drop is slightly off because of the label
-- BUG: landscape favourites bar duplication when dragging icon from it
-- BUG: landscape favourites bar can't drop into folder for it, due to flipping code
-- BUG: dropping an app on the favourites bar animation is glitched ONLY if the nav bar is on the bottom
-- move drop animation code to c++
+- BUG: the position of where things think the dragged icon is during drag-and-drop is slightly off because of the label
+- BUG: landscape favourites bar duplication when dragging icon from it sometimes
+- BUG: can't insert in delegates between very well landscape favourites bar
 - can make the touch area only the icon?
 - FEATURE: add import/export

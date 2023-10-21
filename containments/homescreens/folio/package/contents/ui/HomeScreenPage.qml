@@ -183,7 +183,11 @@ Item {
 
                     appHoveredOver: delegate.isAppHoveredOver
 
-                    onAfterClickAnimation: homeScreen.prepareFolderOpen(appFolderDelegate.contentItem);
+                    onAfterClickAnimation: {
+                        const pos = homeScreen.prepareFolderOpen(appFolderDelegate.contentItem);
+                        Folio.HomeScreenState.openFolder(pos.x, pos.y, folder);
+                    }
+
                     onPressAndHold: {
                         let mappedCoords = root.homeScreen.prepareStartDelegateDrag(delegate.pageDelegate, appFolderDelegate.delegateItem);
                         Folio.HomeScreenState.startDelegatePageDrag(

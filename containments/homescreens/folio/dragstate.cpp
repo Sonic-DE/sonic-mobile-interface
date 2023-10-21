@@ -575,6 +575,7 @@ void DragState::onOpenFolderTimerFinished()
     }
 
     FolioApplicationFolder *folder = nullptr;
+    QPointF screenPosition;
 
     switch (m_candidateDropPosition->location()) {
     case DelegateDragPosition::Pages: {
@@ -591,6 +592,9 @@ void DragState::onOpenFolderTimerFinished()
         }
 
         folder = delegate->folder();
+        screenPosition = HomeScreenState::self()->getPageDelegateScreenPosition(m_candidateDropPosition->page(),
+                                                                                m_candidateDropPosition->pageRow(),
+                                                                                m_candidateDropPosition->pageColumn());
         break;
     }
     case DelegateDragPosition::Favourites: {
@@ -601,6 +605,7 @@ void DragState::onOpenFolderTimerFinished()
         }
 
         folder = delegate->folder();
+        screenPosition = HomeScreenState::self()->getFavouritesDelegateScreenPosition(m_candidateDropPosition->favouritesPosition());
         break;
     }
     default:
@@ -608,7 +613,7 @@ void DragState::onOpenFolderTimerFinished()
     }
 
     // open the folder
-    m_state->openFolder(folder);
+    m_state->openFolder(screenPosition.x(), screenPosition.y(), folder);
 }
 
 void DragState::onLeaveFolderTimerFinished()
