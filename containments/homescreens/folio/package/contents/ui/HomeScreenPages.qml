@@ -19,7 +19,7 @@ import "private" as Private
 
 import org.kde.plasma.private.containmentlayoutmanager 1.0 as ContainmentLayoutManager 
 
-import org.kde.plasma.private.mobileshell 1.0 as MobileShell
+import org.kde.plasma.private.mobileshell as MobileShell
 
 MobileShell.Flickable {
     id: mainFlickable
