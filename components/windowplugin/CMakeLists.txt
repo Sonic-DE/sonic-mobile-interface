@@ -17,4 +17,4 @@ target_link_libraries(windowplugin PRIVATE
     KF6::ConfigWidgets
 )
 
-ecm_finalize_qml_module(windowplugin DESTINATION ${KDE_INSTALL_QMLDIR})
+ecm_finalize_qml_module(windowplugin)
