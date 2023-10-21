@@ -72,6 +72,7 @@ class HomeScreenState : public QObject
     Q_PROPERTY(qreal delegateDragY READ delegateDragY NOTIFY delegateDragYChanged)
 
     Q_PROPERTY(int currentPage READ currentPage NOTIFY pageNumChanged)
+    Q_PROPERTY(int currentFolderPage READ currentFolderPage NOTIFY folderPageNumChanged)
 
 public:
     enum SwipeState {

@@ -17,13 +17,14 @@
 #include <KWayland/Client/registry.h>
 #include <KWayland/Client/surface.h>
 
+struct ApplicationDelegate;
+class ApplicationFolderModel;
+class FolioDelegate;
+
 /**
  * @short Object that represents an application folder.
  */
 
-class ApplicationFolderModel;
-struct ApplicationDelegate;
-class FolioDelegate;
 class FolioApplicationFolder : public QObject
 {
     Q_OBJECT
@@ -75,6 +76,7 @@ struct ApplicationDelegate {
 class ApplicationFolderModel : public QAbstractListModel
 {
     Q_OBJECT
+    Q_PROPERTY(int numberOfPages READ numTotalPages NOTIFY numberOfPagesChanged)
 
 public:
     enum Roles {
@@ -113,6 +115,9 @@ public:
     qreal topMarginFromScreenEdge();
 
     int numTotalPages();
+
+Q_SIGNALS:
+    void numberOfPagesChanged();
 
 private:
     void evaluateDelegatePositions(bool emitSignal = true);

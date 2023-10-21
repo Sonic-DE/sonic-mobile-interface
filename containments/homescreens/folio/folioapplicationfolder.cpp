@@ -404,6 +404,8 @@ void ApplicationFolderModel::evaluateDelegatePositions(bool emitSignal)
         Q_EMIT dataChanged(createIndex(0, 0), createIndex(m_folder->m_delegates.size() - 1, 0), {XPositionRole});
         Q_EMIT dataChanged(createIndex(0, 0), createIndex(m_folder->m_delegates.size() - 1, 0), {YPositionRole});
     }
+
+    Q_EMIT numberOfPagesChanged();
 }
 
 QPointF ApplicationFolderModel::getDelegateStartPosition(int page)

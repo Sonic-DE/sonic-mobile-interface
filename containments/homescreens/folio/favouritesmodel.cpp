@@ -379,10 +379,10 @@ void FavouritesModel::evaluateDelegatePositions(bool emitSignal)
 
 qreal FavouritesModel::getDelegateRowStartPos() const
 {
-    int length = m_delegates.size();
-    bool isLocationBottom = HomeScreenState::self()->favouritesBarLocation() == HomeScreenState::Bottom;
-    qreal cellLength = isLocationBottom ? HomeScreenState::self()->pageCellWidth() : HomeScreenState::self()->pageCellHeight();
-    qreal pageLength = isLocationBottom ? HomeScreenState::self()->pageWidth() : HomeScreenState::self()->pageHeight();
+    const int length = m_delegates.size();
+    const bool isLocationBottom = HomeScreenState::self()->favouritesBarLocation() == HomeScreenState::Bottom;
+    const qreal cellLength = isLocationBottom ? HomeScreenState::self()->pageCellWidth() : HomeScreenState::self()->pageCellHeight();
+    const qreal pageLength = isLocationBottom ? HomeScreenState::self()->pageWidth() : HomeScreenState::self()->pageHeight();
 
     return (pageLength / 2) - (((qreal)length) / 2) * cellLength;
 }

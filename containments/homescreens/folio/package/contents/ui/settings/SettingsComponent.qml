@@ -59,8 +59,6 @@ Item {
 
                 implicitHeight: Kirigami.Units.gridUnit * 4
                 implicitWidth: Kirigami.Units.gridUnit * 5
-
-                onClicked: homeScreen.openConfigure()
             }
 
             QQC2.ToolButton {
@@ -89,5 +87,9 @@ Item {
     SettingsWindow {
         id: settingsWindow
         visible: false
+
+        onRequestConfigureMenu: {
+            homeScreen.openConfigure()
+        }
     }
 }

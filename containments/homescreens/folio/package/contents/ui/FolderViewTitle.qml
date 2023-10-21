@@ -15,12 +15,22 @@ MobileShell.BaseItem {
     id: root
 
     property Folio.FolioApplicationFolder folder
-    property bool inFolderTitleEditMode
+    property bool inFolderTitleEditMode: false
+
+    Connections {
+        target: Folio.HomeScreenState
+
+        function onLeftCurrentFolder() {
+            root.inFolderTitleEditMode = false;
+        }
+    }
 
     background: Rectangle {
         color: 'transparent'
         TapHandler {
-            onTapped: root.close()
+            onTapped: {
+                root.close()
+            }
         }
     }
 
@@ -34,7 +44,10 @@ MobileShell.BaseItem {
             wrapMode: TextEdit.Wrap
             horizontalAlignment: TextEdit.AlignHCenter
 
-            Component.onCompleted: forceActiveFocus()
+            Component.onCompleted: {
+                forceActiveFocus();
+                cursorPosition = text.length;
+            }
 
             font.weight: Font.Bold
             font.pointSize: 18
