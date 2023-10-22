@@ -99,12 +99,13 @@ Folio.DelegateTouchArea {
                 Layout.preferredHeight: Layout.minimumHeight
 
                 // darken effect when hovered
-                layer {
-                    enabled: delegate.hovered
-                    effect: ColorOverlay {
-                        color: Qt.rgba(0, 0, 0, 0.3)
-                    }
-                }
+                // TODO: removed for now, since hovered property seems to overlap with the touch pressed event
+                // layer {
+                //     enabled: delegate.hovered
+                //     effect: ColorOverlay {
+                //         color: Qt.rgba(0, 0, 0, 0.3)
+                //     }
+                // }
             }
 
             DelegateLabel {

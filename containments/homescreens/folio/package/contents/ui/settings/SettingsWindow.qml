@@ -11,6 +11,8 @@ import org.kde.kirigami 2.20 as Kirigami
 import org.kde.private.mobile.homescreen.folio 1.0 as Folio
 import org.kde.kirigamiaddons.formcard 1.0 as FormCard
 
+import '../delegate'
+
 Kirigami.ApplicationWindow {
     id: root
     flags: Qt.FramelessWindowHint
@@ -46,25 +48,82 @@ Kirigami.ApplicationWindow {
 
         ColumnLayout {
             FormCard.FormHeader {
-                title: i18n("General")
+                title: i18n("Icons")
             }
 
             FormCard.FormCard {
-                FormCard.FormButtonDelegate {
-                    id: iconsButton
-                    text: i18n('Icons')
-                    icon.name: 'view-list-icons'
-                    // onClicked: kcm.push("VibrationForm.qml")
+                Kirigami.Theme.inherit: false
+                Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
+
+                Item {
+                    Layout.preferredHeight: Folio.HomeScreenState.pageCellHeight
+                    Layout.fillWidth: true
+
+                    AbstractDelegate {
+                        anchors.centerIn: parent
+                        implicitHeight: Folio.HomeScreenState.pageCellHeight
+                        implicitWidth: Folio.HomeScreenState.pageCellWidth
+                        name: i18n('Application')
+
+                        contentItem: DelegateAppIcon {
+                            height: Folio.FolioSettings.delegateIconSize
+                            width: Folio.FolioSettings.delegateIconSize
+                            source: 'applications-system'
+                        }
+                    }
+                }
+            }
+
+            FormCard.FormCard {
+                id: iconsCard
+                readonly property bool isVerticalOrientation: Folio.HomeScreenState.pageOrientation === Folio.HomeScreenState.RegularPosition ||
+                                                              Folio.HomeScreenState.pageOrientation === Folio.HomeScreenState.RotateUpsideDown
+
+                readonly property string numOfRowsText: i18n("Number of rows")
+                readonly property string numOfColumnsText: i18n("Number of columns")
+
+                FormCard.FormSpinBoxDelegate {
+                    id: iconSizeSpinBox
+                    label: i18n("Size of icons on homescreen")
+                    from: 16
+                    to: 128
+                    value: Folio.FolioSettings.delegateIconSize
+                    onValueChanged: {
+                        if (value !== Folio.FolioSettings.delegateIconSize) {
+                            Folio.FolioSettings.delegateIconSize = value;
+                        }
+                    }
                 }
 
-                FormCard.FormDelegateSeparator { above: iconsButton; below: containmentSettings }
-
-                FormCard.FormButtonDelegate {
-                    id: containmentSettings
-                    text: i18n('Switch Homescreen')
-                    icon.name: 'settings-configure'
-                    onClicked: root.requestConfigureMenu()
+                FormCard.FormSpinBoxDelegate {
+                    id: rowsSpinBox
+                    label: iconsCard.isVerticalOrientation ? iconsCard.numOfRowsText : iconsCard.numOfColumnsText
+                    from: 3
+                    to: 10
+                    value: Folio.FolioSettings.homeScreenRows
+                    onValueChanged: {
+                        if (value !== Folio.FolioSettings.homeScreenRows) {
+                            Folio.FolioSettings.homeScreenRows = value;
+                        }
+                    }
                 }
+
+                FormCard.FormSpinBoxDelegate {
+                    id: columnsSpinBox
+                    label: iconsCard.isVerticalOrientation ? iconsCard.numOfColumnsText : iconsCard.numOfRowsText
+                    from: 3
+                    to: 10
+                    value: Folio.FolioSettings.homeScreenColumns
+                    onValueChanged: {
+                        if (value !== Folio.FolioSettings.homeScreenColumns) {
+                            Folio.FolioSettings.homeScreenColumns = value;
+                        }
+                    }
+                }
+            }
+
+            FormCard.FormSectionText {
+                text: i18n("The rows and columns will swap depending on the screen rotation.")
             }
 
             FormCard.FormHeader {
@@ -72,7 +131,7 @@ Kirigami.ApplicationWindow {
             }
 
             FormCard.FormCard {
-                FormCard.FormCheckDelegate {
+                FormCard.FormSwitchDelegate {
                     id: showLabelsOnHomeScreen
                     text: i18n("Show labels on homescreen")
                     checked: Folio.FolioSettings.showPagesAppLabels
@@ -85,7 +144,7 @@ Kirigami.ApplicationWindow {
 
                 FormCard.FormDelegateSeparator { above: showLabelsOnHomeScreen; below: showLabelsInFavourites }
 
-                FormCard.FormCheckDelegate {
+                FormCard.FormSwitchDelegate {
                     id: showLabelsInFavourites
                     text: i18n("Show labels in favorites bar")
                     checked: Folio.FolioSettings.showFavouritesAppLabels
@@ -94,6 +153,54 @@ Kirigami.ApplicationWindow {
                             Folio.FolioSettings.showFavouritesAppLabels = checked;
                         }
                     }
+                }
+            }
+
+            FormCard.FormHeader {
+                title: i18n("Favorites Bar")
+            }
+
+            FormCard.FormCard {
+                FormCard.FormSwitchDelegate {
+                    text: i18n('Show background')
+                    icon.name: 'draw-rectangle'
+                    checked: Folio.FolioSettings.showFavouritesBarBackground
+                    onCheckedChanged: {
+                        if (checked !== Folio.FolioSettings.showFavouritesBarBackground) {
+                            Folio.FolioSettings.showFavouritesBarBackground = checked;
+                        }
+                    }
+                }
+            }
+
+            FormCard.FormHeader {
+                title: i18n("General")
+            }
+
+            FormCard.FormCard {
+                FormCard.FormButtonDelegate {
+                    id: containmentSettings
+                    text: i18n('Switch Homescreen')
+                    icon.name: 'settings-configure'
+                    onClicked: root.requestConfigureMenu()
+                }
+
+                FormCard.FormDelegateSeparator { above: containmentSettings; below: exportSettings }
+
+                FormCard.FormButtonDelegate {
+                    id: exportSettings
+                    enabled: false
+                    text: 'Export layout (in development)'
+                    icon.name: 'document-export'
+                }
+
+                FormCard.FormDelegateSeparator { above: exportSettings; below: importSettings }
+
+                FormCard.FormButtonDelegate {
+                    id: importSettings
+                    enabled: false
+                    text: 'Import layout (in development)'
+                    icon.name: 'document-import'
                 }
             }
         }

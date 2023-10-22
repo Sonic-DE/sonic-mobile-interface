@@ -197,15 +197,25 @@ Item {
                 ]
             }
 
-            // Rectangle {
-            //     id: favouritesBarScrim
-            //     color: Qt.rgba(255, 255, 255, 0.2)
-            //
-            //     anchors.top: Folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Bottom ? favouritesBar.top : parent.top
-            //     anchors.bottom: parent.bottom
-            //     anchors.left: Folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Right ? favouritesBar.left : parent.left
-            //     anchors.right: Folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Left ? favouritesBar.right : parent.right
-            // }
+            Rectangle {
+                id: favouritesBarScrim
+                color: Qt.rgba(255, 255, 255, 0.2)
+
+                // don't show in settings mode
+                opacity: 1 - Folio.HomeScreenState.settingsOpenProgress
+                visible: Folio.FolioSettings.showFavouritesBarBackground
+
+                anchors.top: Folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Bottom ? favouritesBar.top : parent.top
+                anchors.bottom: parent.bottom
+                anchors.left: Folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Right ? favouritesBar.left : parent.left
+                anchors.right: Folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Left ? favouritesBar.right : parent.right
+
+                // because of the scale animation, we need to extend the panel out a bit
+                anchors.topMargin: Folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Bottom ? 0 : -Kirigami.Units.gridUnit * 5
+                anchors.bottomMargin: -Kirigami.Units.gridUnit * 5
+                anchors.leftMargin: Folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Right ? 0 : -Kirigami.Units.gridUnit * 5
+                anchors.rightMargin: Folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Left ? 0 : -Kirigami.Units.gridUnit * 5
+            }
 
             FavouritesBar {
                 id: favouritesBar

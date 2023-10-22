@@ -39,7 +39,7 @@ Loader {
         id: appIcon
 
         DelegateAppIcon {
-            application: delegate.application
+            source: delegate.application.icon
         }
     }
 

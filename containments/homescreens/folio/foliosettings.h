@@ -10,11 +10,12 @@
 class FolioSettings : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(int homeScreenRows READ homeScreenRows NOTIFY homeScreenRowsChanged)
-    Q_PROPERTY(int homeScreenColumns READ homeScreenColumns NOTIFY homeScreenColumnsChanged)
+    Q_PROPERTY(int homeScreenRows READ homeScreenRows WRITE setHomeScreenRows NOTIFY homeScreenRowsChanged)
+    Q_PROPERTY(int homeScreenColumns READ homeScreenColumns WRITE setHomeScreenColumns NOTIFY homeScreenColumnsChanged)
     Q_PROPERTY(bool showPagesAppLabels READ showPagesAppLabels WRITE setShowPagesAppLabels NOTIFY showPagesAppLabelsChanged)
     Q_PROPERTY(bool showFavouritesAppLabels READ showFavouritesAppLabels WRITE setShowFavouritesAppLabels NOTIFY showFavouritesAppLabelsChanged)
-    Q_PROPERTY(qreal delegateIconSize READ delegateIconSize WRITE setDelegateIconSize NOTIFY delegateIconSizeChanged)
+    Q_PROPERTY(int delegateIconSize READ delegateIconSize WRITE setDelegateIconSize NOTIFY delegateIconSizeChanged)
+    Q_PROPERTY(bool showFavouritesBarBackground READ showFavouritesBarBackground WRITE setShowFavouritesBarBackground NOTIFY showFavouritesBarBackgroundChanged)
 
 public:
     FolioSettings(QObject *parent = nullptr);
@@ -36,8 +37,11 @@ public:
     bool showFavouritesAppLabels() const;
     void setShowFavouritesAppLabels(bool showFavouritesAppLabels);
 
-    qreal delegateIconSize() const;
-    void setDelegateIconSize(qreal delegateIconSize);
+    int delegateIconSize() const;
+    void setDelegateIconSize(int delegateIconSize);
+
+    bool showFavouritesBarBackground() const;
+    void setShowFavouritesBarBackground(bool showFavouritesBarBackground);
 
     Q_INVOKABLE void load();
 
@@ -49,6 +53,7 @@ Q_SIGNALS:
     void showPagesAppLabelsChanged();
     void showFavouritesAppLabelsChanged();
     void delegateIconSizeChanged();
+    void showFavouritesBarBackgroundChanged();
 
 private:
     void save();
@@ -58,6 +63,7 @@ private:
     bool m_showPagesAppLabels{false};
     bool m_showFavouritesAppLabels{false};
     qreal m_delegateIconSize{48};
+    bool m_showFavouritesBarBackground{false};
 
     Plasma::Applet *m_applet{nullptr};
 };

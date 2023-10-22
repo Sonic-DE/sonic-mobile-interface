@@ -168,7 +168,7 @@ Item {
 
                     onAfterClickAnimation: {
                         const pos = homeScreen.prepareFolderOpen(appFolderDelegate.contentItem);
-                        homeScreen.prepareFolderOpen(pos.x, pos.y, appFolderDelegate.contentItem);
+                        Folio.HomeScreenState.openFolder(pos.x, pos.y, delegate.delegateModel.folder);
                     }
 
                     onPressAndHold: {

@@ -71,16 +71,30 @@ void FolioSettings::setShowFavouritesAppLabels(bool showFavouritesAppLabels)
     }
 }
 
-qreal FolioSettings::delegateIconSize() const
+int FolioSettings::delegateIconSize() const
 {
     return m_delegateIconSize;
 }
 
-void FolioSettings::setDelegateIconSize(qreal delegateIconSize)
+void FolioSettings::setDelegateIconSize(int delegateIconSize)
 {
     if (m_delegateIconSize != delegateIconSize) {
         m_delegateIconSize = delegateIconSize;
         Q_EMIT delegateIconSizeChanged();
+        save();
+    }
+}
+
+bool FolioSettings::showFavouritesBarBackground() const
+{
+    return m_showFavouritesBarBackground;
+}
+
+void FolioSettings::setShowFavouritesBarBackground(bool showFavouritesBarBackground)
+{
+    if (m_showFavouritesBarBackground != showFavouritesBarBackground) {
+        m_showFavouritesBarBackground = showFavouritesBarBackground;
+        Q_EMIT showFavouritesBarBackgroundChanged();
         save();
     }
 }
@@ -101,6 +115,7 @@ void FolioSettings::save()
     m_applet->config().writeEntry("showPagesAppLabels", m_showPagesAppLabels);
     m_applet->config().writeEntry("showFavouritesAppLabels", m_showFavouritesAppLabels);
     m_applet->config().writeEntry("delegateIconSize", m_delegateIconSize);
+    m_applet->config().writeEntry("showFavouritesBarBackground", m_showFavouritesBarBackground);
 
     Q_EMIT m_applet->configNeedsSaving();
 }
@@ -114,8 +129,9 @@ void FolioSettings::load()
     m_homeScreenRows = m_applet->config().readEntry("homeScreenRows", 5);
     m_homeScreenColumns = m_applet->config().readEntry("homeScreenColumns", 4);
     m_showPagesAppLabels = m_applet->config().readEntry("showPagesAppLabels", true);
-    m_showFavouritesAppLabels = m_applet->config().readEntry("showFavouritesAppLabels", false);
+    m_showFavouritesAppLabels = m_applet->config().readEntry("showFavoritesAppLabels", false);
     m_delegateIconSize = m_applet->config().readEntry("delegateIconSize", 48);
+    m_showFavouritesBarBackground = m_applet->config().readEntry("showFavoritesBarBackground", true);
 
     Q_EMIT homeScreenRowsChanged();
     Q_EMIT homeScreenColumnsChanged();

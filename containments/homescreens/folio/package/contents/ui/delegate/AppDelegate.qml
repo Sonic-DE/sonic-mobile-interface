@@ -77,7 +77,7 @@ AbstractDelegate {
         DelegateAppIcon {
             id: icon
             anchors.fill: parent
-            application: root.application
+            source: root.application.icon
 
             property real scaleAmount: root.turnToFolder ? 0.3 : 1.0
             Behavior on scaleAmount {
