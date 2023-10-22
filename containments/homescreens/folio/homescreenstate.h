@@ -81,6 +81,7 @@ public:
         SwipingPages, // main homescreen view
         SwipingOpenAppDrawer,
         SwipingCloseAppDrawer,
+        SwipingAppDrawerGrid,
         SwipingOpenSearchWidget,
         SwipingCloseSearchWidget,
         SwipingFolderPages,
@@ -294,6 +295,8 @@ Q_SIGNALS:
 
     void leftCurrentFolder();
     void folderAboutToOpen(qreal x, qreal y); // the position on the screen where the delegate is at, for animations
+    void appDrawerGridYChanged(qreal y);
+    void appDrawerGridFlickRequested();
 
 public Q_SLOTS:
     void openAppDrawer();

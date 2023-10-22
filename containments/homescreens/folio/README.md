@@ -14,8 +14,9 @@ Most of the homescreen is in C++ in order to keep logic together, with QML only 
 As such, all of the positioning and placement of delegates on the screen are top down from the model, as well as drag and drop behaviour.
 
 #### TODO
-- Fix drawer scrolling
 - Add folio/halcyon switcher in initial-start
+- Settings change icon size
+- Settings change rows/columns
 - If an app gets uninstalled, the homescreen UI needs to ensure that delegates are updated
 - BUG: the position of where things think the dragged icon is during drag-and-drop is slightly off because of the label
 - BUG: landscape favourites bar duplication when dragging icon from it sometimes

@@ -23,11 +23,6 @@ MobileShell.GridView {
 
     property var homeScreen
 
-    // /*
-    // * HACK: When the number of apps is less than the one that would fit in the first shown part of the drawer, make
-    // * this flickable interactive, in order to steal inputs that would normally be delivered to home.
-    // */
-    // interactive: contentHeight <= height ? true : root.homeScreenState.appDrawerInteractive
 
     readonly property int reservedSpaceForLabel: Folio.HomeScreenState.pageDelegateLabelHeight
     readonly property real effectiveContentWidth: width - leftMargin - rightMargin
@@ -43,6 +38,34 @@ MobileShell.GridView {
 
     readonly property int columns: Math.floor(effectiveContentWidth / cellWidth)
     readonly property int rows: Math.ceil(root.count / columns)
+
+    // HACK: the first swipe from the top of the app drawer is done from HomeScreenState, not the flickable
+    //       due to issues with Flickable getting its swipe stolen by SwipeArea
+    interactive: !atYBeginning && Folio.HomeScreenState.swipeState !== Folio.HomeScreenState.SwipingAppDrawerGrid
+    Connections {
+        target: Folio.HomeScreenState
+
+        function onSwipeStateChanged() {
+            if (Folio.HomeScreenState.swipeState === Folio.HomeScreenState.SwipingAppDrawerGrid) {
+                velocityCalculator.startMeasure();
+                velocityCalculator.changePosition(root.contentY);
+            }
+        }
+
+        function onAppDrawerGridYChanged(y) {
+            root.contentY = Math.max(0, root.contentY - y);
+            velocityCalculator.changePosition(root.contentY);
+        }
+
+        function onAppDrawerGridFlickRequested() {
+            root.returnToBounds();
+            root.flick(0, -velocityCalculator.velocity);
+        }
+    }
+
+    MobileShell.VelocityCalculator {
+        id: velocityCalculator
+    }
 
     model: Folio.ApplicationListModel
 

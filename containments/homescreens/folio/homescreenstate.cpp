@@ -852,6 +852,9 @@ void HomeScreenState::swipeEnded()
             openAppDrawer();
         }
         break;
+    case SwipeState::SwipingAppDrawerGrid:
+        Q_EMIT appDrawerGridFlickRequested();
+        break;
     case SwipeState::SwipingOpenSearchWidget:
     case SwipeState::SwipingCloseSearchWidget:
         if (m_movingUp) {
@@ -911,6 +914,9 @@ void HomeScreenState::swipeMoved(qreal totalDeltaX, qreal totalDeltaY, qreal del
     case SwipeState::SwipingOpenAppDrawer:
     case SwipeState::SwipingCloseAppDrawer:
         setAppDrawerY(m_appDrawerY + deltaY);
+        break;
+    case SwipeState::SwipingAppDrawerGrid:
+        Q_EMIT appDrawerGridYChanged(deltaY);
         break;
     case SwipeState::SwipingPages:
         m_movingRight = deltaX > 0;
@@ -996,7 +1002,7 @@ void HomeScreenState::determineSwipeTypeAfterThreshold(qreal totalDeltaX, qreal 
                 cancelSearchWidgetAnimations();
                 break;
             case ViewState::AppDrawerView:
-                setSwipeState(SwipeState::SwipingCloseAppDrawer);
+                setSwipeState(SwipeState::SwipingAppDrawerGrid);
                 cancelAppDrawerAnimations();
             case ViewState::FolderView:
             case ViewState::SettingsView:
