@@ -29,7 +29,6 @@ class ShellUtil : public QObject
 
 public:
     ShellUtil(QObject *parent = nullptr);
-    static ShellUtil *instance();
 
     /**
      * Change the stacking order to have the first item behind the second item.

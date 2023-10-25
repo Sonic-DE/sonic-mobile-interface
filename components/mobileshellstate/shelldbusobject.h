@@ -16,7 +16,6 @@ class ShellDBusObject : public QObject
 
 public:
     ShellDBusObject(QObject *parent = nullptr);
-    static ShellDBusObject *self();
 
     // called by QML
     Q_INVOKABLE void registerObject();
