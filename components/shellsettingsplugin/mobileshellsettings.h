@@ -41,8 +41,6 @@ class MobileShellSettings : public QObject
     Q_PROPERTY(bool convergenceModeEnabled READ convergenceModeEnabled WRITE setConvergenceModeEnabled NOTIFY convergenceModeEnabledChanged)
 
 public:
-    static MobileShellSettings *self();
-
     MobileShellSettings(QObject *parent = nullptr);
 
     enum ActionDrawerMode {
