@@ -22,7 +22,6 @@ class ShellDBusClient : public QObject
 
 public:
     explicit ShellDBusClient(QObject *parent = nullptr);
-    static ShellDBusClient *self();
 
     bool doNotDisturb() const;
     void setDoNotDisturb(bool value);

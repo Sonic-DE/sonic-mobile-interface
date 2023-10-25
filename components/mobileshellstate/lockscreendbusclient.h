@@ -18,7 +18,6 @@ class LockscreenDBusClient : public QObject
 
 public:
     explicit LockscreenDBusClient(QObject *parent = nullptr);
-    static LockscreenDBusClient *self();
 
     bool lockscreenActive() const;
 
