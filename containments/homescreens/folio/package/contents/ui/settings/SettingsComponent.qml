@@ -80,14 +80,32 @@ Item {
 
             PC3.ToolButton {
                 text: 'Widgets'
-                enabled: false
                 display: PC3.ToolButton.TextUnderIcon
 
                 icon.name: 'widget-alternatives'
 
                 implicitHeight: Kirigami.Units.gridUnit * 4
                 implicitWidth: Kirigami.Units.gridUnit * 5
+
+                onClicked: {
+                    appletListViewer.open = true;
+                }
             }
+        }
+    }
+
+    AppletListViewer {
+        id: appletListViewer
+        anchors.fill: parent
+
+        property bool open: false
+        onRequestClose: open = false
+
+        opacity: open ? 1 : 0
+        visible: opacity > 0
+
+        Behavior on opacity {
+            NumberAnimation { duration: Kirigami.Units.shortDuration }
         }
     }
 
