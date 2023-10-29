@@ -27,6 +27,8 @@ public:
     FolioPageDelegate(int row, int column, FolioDelegate *delegate, QObject *parent);
 
     static FolioPageDelegate *fromJson(QJsonObject &obj, QObject *parent);
+    static int getTranslatedTopLeftRow(int realRow, int realColumn, FolioDelegate *fd);
+    static int getTranslatedTopRightRow(int realRow, int realColumn, FolioDelegate *fd);
     static int getTranslatedRow(int realRow, int realColumn);
     static int getTranslatedColumn(int realRow, int realColumn);
 

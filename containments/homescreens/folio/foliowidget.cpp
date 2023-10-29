@@ -164,6 +164,21 @@ void FolioWidget::setRealGridHeight(int gridHeight)
     }
 }
 
+GridPosition FolioWidget::topLeftCorner(int row, int column)
+{
+    switch (HomeScreenState::self()->pageOrientation()) {
+    case HomeScreenState::RegularPosition:
+        return {row, column};
+    case HomeScreenState::RotateClockwise:
+        return {row, column - gridWidth() + 1};
+    case HomeScreenState::RotateCounterClockwise:
+        return {row - gridHeight() + 1, column};
+    case HomeScreenState::RotateUpsideDown:
+        return {row - gridHeight() + 1, column - gridWidth() + 1};
+    }
+    return {row, column};
+}
+
 Plasma::Applet *FolioWidget::applet() const
 {
     return m_applet;

@@ -74,8 +74,8 @@ void FolioPageDelegate::init()
     }
 
     connect(HomeScreenState::self(), &HomeScreenState::pageOrientationChanged, this, [this]() {
-        setRow(getTranslatedRow(m_realRow, m_realColumn));
-        setColumn(getTranslatedColumn(m_realRow, m_realColumn));
+        setRow(getTranslatedTopLeftRow(m_realRow, m_realColumn, this));
+        setColumn(getTranslatedTopRightRow(m_realRow, m_realColumn, this));
     });
 }
 
@@ -90,13 +90,39 @@ FolioPageDelegate *FolioPageDelegate::fromJson(QJsonObject &obj, QObject *parent
     int realRow = obj[QStringLiteral("row")].toInt();
     int realColumn = obj[QStringLiteral("column")].toInt();
 
-    int row = getTranslatedRow(realRow, realColumn);
-    int column = getTranslatedColumn(realRow, realColumn);
+    int row = getTranslatedTopLeftRow(realRow, realColumn, fd);
+    int column = getTranslatedTopRightRow(realRow, realColumn, fd);
 
     FolioPageDelegate *delegate = new FolioPageDelegate{row, column, fd, parent};
     fd->deleteLater();
 
     return delegate;
+}
+
+int FolioPageDelegate::getTranslatedTopLeftRow(int realRow, int realColumn, FolioDelegate *fd)
+{
+    int row = getTranslatedRow(realRow, realColumn);
+    int column = getTranslatedColumn(realRow, realColumn);
+
+    // special logic to return "top left" for widgets, since they take more than one tile
+    if (fd->type() == FolioDelegate::Widget) {
+        return fd->widget()->topLeftCorner(row, column).row;
+    } else {
+        return row;
+    }
+}
+
+int FolioPageDelegate::getTranslatedTopRightRow(int realRow, int realColumn, FolioDelegate *fd)
+{
+    int row = getTranslatedRow(realRow, realColumn);
+    int column = getTranslatedColumn(realRow, realColumn);
+
+    // special logic to return "top left" for widgets, since they take more than one tile
+    if (fd->type() == FolioDelegate::Widget) {
+        return fd->widget()->topLeftCorner(row, column).column;
+    } else {
+        return column;
+    }
 }
 
 int FolioPageDelegate::getTranslatedRow(int realRow, int realColumn)
@@ -304,10 +330,10 @@ FolioPageDelegate *PageModel::getDelegate(int row, int col)
         }
 
         // check if this is in a widget's space
-        // TODO: this doesn't yet account for page orientation, where we need to flip the locations :C
-        if (d->type() == FolioDelegate::Widget && row >= d->row() && row < d->row() + d->widget()->gridWidth() && col >= d->column()
-            && col < d->column() + d->widget()->gridHeight()) {
-            return d;
+        if (d->type() == FolioDelegate::Widget) {
+            if (row >= d->row() && row < d->row() + d->widget()->gridHeight() && col >= d->column() && col < d->column() + d->widget()->gridWidth()) {
+                return d;
+            }
         }
     }
     return nullptr;

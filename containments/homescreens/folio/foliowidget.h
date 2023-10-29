@@ -8,6 +8,13 @@
 #include <Plasma/Applet>
 #include <PlasmaQuick/AppletQuickItem>
 
+struct GridPosition {
+    Q_GADGET
+public:
+    int row;
+    int column;
+};
+
 /**
  * @short Object that represents a widget on the homescreen.
  */
@@ -17,7 +24,7 @@ class FolioWidget : public QObject
     Q_PROPERTY(int id READ id CONSTANT)
     Q_PROPERTY(int gridWidth READ gridWidth NOTIFY gridWidthChanged)
     Q_PROPERTY(int gridHeight READ gridHeight NOTIFY gridHeightChanged)
-    Q_PROPERTY(Plasma::Applet applet READ applet NOTIFY appletChanged)
+    Q_PROPERTY(Plasma::Applet *applet READ applet NOTIFY appletChanged)
     Q_PROPERTY(PlasmaQuick::AppletQuickItem *visualApplet READ visualApplet NOTIFY visualAppletChanged)
 
 public:
@@ -40,6 +47,10 @@ public:
 
     int realGridHeight() const;
     void setRealGridHeight(int gridHeight);
+
+    // takes in the stored position of the widget (top left when in portrait orientation)
+    // returns the position of the widget corners on a page grid, factoring in the current page orientation
+    GridPosition topLeftCorner(int row, int column);
 
     Plasma::Applet *applet() const;
     void setApplet(Plasma::Applet *applet);
