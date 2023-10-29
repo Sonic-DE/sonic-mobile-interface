@@ -23,6 +23,7 @@ public:
     FolioPageDelegate(int row = 0, int column = 0, QObject *parent = nullptr);
     FolioPageDelegate(int row, int column, FolioApplication *application, QObject *parent);
     FolioPageDelegate(int row, int column, FolioApplicationFolder *folder, QObject *parent);
+    FolioPageDelegate(int row, int column, FolioWidget *widget, QObject *parent);
     FolioPageDelegate(int row, int column, FolioDelegate *delegate, QObject *parent);
 
     static FolioPageDelegate *fromJson(QJsonObject &obj, QObject *parent);
@@ -73,6 +74,7 @@ public:
     QHash<int, QByteArray> roleNames() const override;
 
     Q_INVOKABLE void removeDelegate(int row, int col);
+    void removeDelegate(int index);
     bool addDelegate(FolioPageDelegate *delegate);
     FolioPageDelegate *getDelegate(int row, int col);
 

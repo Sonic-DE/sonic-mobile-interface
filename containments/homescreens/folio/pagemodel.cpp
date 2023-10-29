@@ -4,6 +4,7 @@
 #include "pagemodel.h"
 #include "foliosettings.h"
 #include "homescreenstate.h"
+#include "widgetsmanager.h"
 
 FolioPageDelegate::FolioPageDelegate(int row, int column, QObject *parent)
     : FolioDelegate{parent}
@@ -29,6 +30,14 @@ FolioPageDelegate::FolioPageDelegate(int row, int column, FolioApplicationFolder
     init();
 }
 
+FolioPageDelegate::FolioPageDelegate(int row, int column, FolioWidget *widget, QObject *parent)
+    : FolioDelegate{widget, parent}
+    , m_row{row}
+    , m_column{column}
+{
+    init();
+}
+
 FolioPageDelegate::FolioPageDelegate(int row, int column, FolioDelegate *delegate, QObject *parent)
     : FolioDelegate{parent}
     , m_row{row}
@@ -37,6 +46,7 @@ FolioPageDelegate::FolioPageDelegate(int row, int column, FolioDelegate *delegat
     m_type = delegate->type();
     m_application = delegate->application();
     m_folder = delegate->folder();
+    m_widget = delegate->widget();
 
     init();
 }
@@ -53,7 +63,7 @@ void FolioPageDelegate::init()
         m_realRow = HomeScreenState::self()->pageColumns() - m_column - 1;
         m_realColumn = m_row;
         break;
-    case HomeScreenState::RotateCounterClockwise: // (0, 4) -> (4, 3)
+    case HomeScreenState::RotateCounterClockwise:
         m_realRow = m_column;
         m_realColumn = HomeScreenState::self()->pageRows() - m_row - 1;
         break;
@@ -155,6 +165,18 @@ PageModel::PageModel(QList<FolioPageDelegate *> delegates, QObject *parent)
     : QAbstractListModel{parent}
     , m_delegates{delegates}
 {
+    connect(WidgetsManager::self(), &WidgetsManager::widgetRemoved, this, [this](Plasma::Applet *applet) {
+        if (applet) {
+            // delete any instance of this widget
+            for (int i = 0; i < m_delegates.size(); i++) {
+                auto *delegate = m_delegates[i];
+                if (delegate->type() == FolioDelegate::Widget && delegate->widget()->applet() == applet) {
+                    removeDelegate(i);
+                    break;
+                }
+            }
+        }
+    });
 }
 
 PageModel::~PageModel() = default;
@@ -229,22 +251,26 @@ QHash<int, QByteArray> PageModel::roleNames() const
 
 void PageModel::removeDelegate(int row, int col)
 {
-    bool removed = false;
-
     for (int i = 0; i < m_delegates.size(); ++i) {
         if (m_delegates[i]->row() == row && m_delegates[i]->column() == col) {
-            beginRemoveRows(QModelIndex(), i, i);
-            // HACK: do not deleteLater(), because the delegate might still be used somewhere else
-            m_delegates.removeAt(i);
-            endRemoveRows();
-
-            removed = true;
+            removeDelegate(i);
+            break;
         }
     }
+}
 
-    if (removed) {
-        save();
+void PageModel::removeDelegate(int index)
+{
+    if (index < 0 || index >= m_delegates.size()) {
+        return;
     }
+
+    beginRemoveRows(QModelIndex(), index, index);
+    // HACK: do not deleteLater(), because the delegate might still be used somewhere else
+    m_delegates.removeAt(index);
+    endRemoveRows();
+
+    save();
 }
 
 bool PageModel::addDelegate(FolioPageDelegate *delegate)
@@ -274,6 +300,13 @@ FolioPageDelegate *PageModel::getDelegate(int row, int col)
 {
     for (FolioPageDelegate *d : m_delegates) {
         if (d->row() == row && d->column() == col) {
+            return d;
+        }
+
+        // check if this is in a widget's space
+        // TODO: this doesn't yet account for page orientation, where we need to flip the locations :C
+        if (d->type() == FolioDelegate::Widget && row >= d->row() && row < d->row() + d->widget()->gridWidth() && col >= d->column()
+            && col < d->column() + d->widget()->gridHeight()) {
             return d;
         }
     }

@@ -20,6 +20,8 @@ Item {
     property var homeScreen
     property real settingsModeHomeScreenScale
 
+    readonly property bool homeScreenInteractive: !appletListViewer.open
+
     signal requestLeaveSettingsMode()
 
     MouseArea {
@@ -97,6 +99,8 @@ Item {
     AppletListViewer {
         id: appletListViewer
         anchors.fill: parent
+
+        homeScreen: root.homeScreen
 
         property bool open: false
         onRequestClose: open = false

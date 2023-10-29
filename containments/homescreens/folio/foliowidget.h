@@ -1,0 +1,65 @@
+// SPDX-FileCopyrightText: 2023 Devin Lin <devin@kde.org>
+// SPDX-License-Identifier: GPL-2.0-or-later
+
+#pragma once
+
+#include <QObject>
+
+#include <Plasma/Applet>
+#include <PlasmaQuick/AppletQuickItem>
+
+/**
+ * @short Object that represents a widget on the homescreen.
+ */
+class FolioWidget : public QObject
+{
+    Q_OBJECT
+    Q_PROPERTY(int id READ id CONSTANT)
+    Q_PROPERTY(int gridWidth READ gridWidth NOTIFY gridWidthChanged)
+    Q_PROPERTY(int gridHeight READ gridHeight NOTIFY gridHeightChanged)
+    Q_PROPERTY(Plasma::Applet applet READ applet NOTIFY appletChanged)
+    Q_PROPERTY(PlasmaQuick::AppletQuickItem *visualApplet READ visualApplet NOTIFY visualAppletChanged)
+
+public:
+    FolioWidget(QObject *parent = nullptr, int id = -1, int gridWidth = 0, int gridHeight = 0);
+    FolioWidget(QObject *parent, Plasma::Applet *applet, int gridWidth, int gridHeight);
+
+    static FolioWidget *fromJson(QJsonObject &obj, QObject *parent);
+    QJsonObject toJson() const;
+
+    int id() const;
+
+    int gridWidth() const;
+    void setGridWidth(int gridWidth);
+
+    int gridHeight() const;
+    void setGridHeight(int gridHeight);
+
+    int realGridWidth() const;
+    void setRealGridWidth(int gridWidth);
+
+    int realGridHeight() const;
+    void setRealGridHeight(int gridHeight);
+
+    Plasma::Applet *applet() const;
+    void setApplet(Plasma::Applet *applet);
+
+    PlasmaQuick::AppletQuickItem *visualApplet() const;
+
+Q_SIGNALS:
+    void appletChanged();
+    void visualAppletChanged();
+    void gridWidthChanged();
+    void gridHeightChanged();
+
+private:
+    void init();
+    void setVisualApplet(PlasmaQuick::AppletQuickItem *quickApplet);
+
+    int m_id = -1;
+    int m_realGridWidth = 1;
+    int m_realGridHeight = 1;
+
+    Plasma::Applet *m_applet = nullptr;
+    PlasmaQuick::AppletQuickItem *m_quickApplet = nullptr;
+};

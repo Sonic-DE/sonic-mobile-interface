@@ -7,7 +7,7 @@ import QtQuick.Layouts
 import QtQuick.Dialogs
 import QtQuick.Controls as QQC2
 
-import org.kde.kirigami 2.20 as Kirigami
+import org.kde.kirigami as Kirigami
 import org.kde.plasma.plasmoid
 import org.kde.plasma.private.shell 2.0
 import org.kde.private.mobile.homescreen.folio 1.0 as Folio
@@ -15,9 +15,12 @@ import org.kde.kirigamiaddons.formcard 1.0 as FormCard
 import org.kde.plasma.components 3.0 as PC3
 
 import '../delegate'
+import '../private'
 
 MouseArea {
     id: root
+
+    property var homeScreen
 
     signal requestClose()
     onClicked: root.requestClose()
@@ -30,37 +33,66 @@ MouseArea {
         color: Qt.rgba(0, 0, 0, 0.7)
     }
 
-    Kirigami.Heading {
+    PC3.Label {
         id: heading
-        level: 1
+        color: 'white'
         text: i18n("Widgets")
+        font.weight: Font.Bold
+        font.pointSize: Kirigami.Theme.defaultFont.pointSize * 1.5
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
-        anchors.topMargin: Kirigami.Units.gridUnit * 3
+        anchors.topMargin: Kirigami.Units.gridUnit * 3 + root.homeScreen.topMargin
     }
 
     GridView {
         id: gridView
         clip: true
+        reuseItems: true
+
+        opacity: 0 // we display with the opacity gradient below
 
         anchors.top: heading.bottom
+        anchors.topMargin: Kirigami.Units.gridUnit
         anchors.left: parent.left
+        anchors.leftMargin: root.homeScreen.leftMargin
         anchors.right: parent.right
+        anchors.rightMargin: root.homeScreen.rightMargin
         anchors.bottom: parent.bottom
+        anchors.bottomMargin: root.homeScreen.bottomMargin
 
         model: widgetExplorer.widgetsModel
-        cellWidth: width / 3 // TODO
+        cellWidth: (width - leftMargin - rightMargin) / 3 // TODO
         cellHeight: cellWidth + Kirigami.Units.gridUnit * 3
 
-        delegate: Item {
+        leftMargin: Kirigami.Units.gridUnit
+        rightMargin: Kirigami.Units.gridUnit
+
+        delegate: MouseArea {
             id: delegate
             width: gridView.cellWidth
             height: gridView.cellHeight
 
+            cursorShape: Qt.PointingHandCursor
+            hoverEnabled: true
+
             readonly property string pluginName: model.pluginName
+
+            onClicked: {
+                // TODO drag and drop
+                Folio.PageListModel.createWidgetDelegate(pluginName);
+            }
+
+            Rectangle {
+                id: background
+                color: Qt.rgba(255, 255, 255, 0.3)
+                visible: delegate.containsMouse
+                radius: Kirigami.Units.smallSpacing
+                anchors.fill: parent
+            }
 
             ColumnLayout {
                 anchors.fill: parent
+                anchors.margins: Kirigami.Units.largeSpacing
 
                 Item {
                     id: iconWidget
@@ -68,6 +100,7 @@ MouseArea {
                     Layout.maximumWidth: delegate.width
                     Layout.preferredHeight: Kirigami.Units.iconSizes.large
                     Layout.preferredWidth: Kirigami.Units.iconSizes.large
+                    Layout.alignment: Qt.AlignBottom
 
                     Kirigami.Icon {
                         anchors.centerIn: parent
@@ -85,21 +118,23 @@ MouseArea {
                     }
                 }
 
-                Kirigami.Heading {
+                PC3.Label {
                     id: heading
                     Layout.fillWidth: true
                     Layout.maximumWidth: delegate.width
-                    level: 4
+                    Layout.alignment: Qt.AlignCenter
                     text: model.name
                     elide: Text.ElideRight
                     wrapMode: Text.Wrap
                     maximumLineCount: 2
                     horizontalAlignment: Text.AlignHCenter
+                    font.weight: Font.Bold
                 }
 
                 PC3.Label {
                     Layout.fillWidth: true
                     Layout.maximumWidth: delegate.width
+                    Layout.alignment: Qt.AlignTop
                     // otherwise causes binding loop due to the way the Plasma sets the height
                     height: implicitHeight
                     text: model.description
@@ -111,6 +146,12 @@ MouseArea {
                 }
             }
         }
+    }
+
+    // opacity gradient at grid edges
+    FlickableOpacityGradient {
+        anchors.fill: gridView
+        flickable: gridView
     }
 
     WidgetExplorer {

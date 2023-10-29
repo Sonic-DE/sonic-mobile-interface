@@ -69,10 +69,10 @@ Item {
                                             dragState.dropDelegate.type === Folio.FolioDelegate.Application &&
                                             isDropPositionThis
 
-            implicitWidth: Folio.HomeScreenState.pageCellWidth
-            implicitHeight: Folio.HomeScreenState.pageCellHeight
-            width: Folio.HomeScreenState.pageCellWidth
-            height: Folio.HomeScreenState.pageCellHeight
+            implicitWidth: loader.item ? loader.item.implicitWidth : 0
+            implicitHeight: loader.item ? loader.item.implicitHeight : 0
+            width: loader.item ? loader.item.width : 0
+            height: loader.item ? loader.item.height : 0
 
             x: column * Folio.HomeScreenState.pageCellWidth
             y: row * Folio.HomeScreenState.pageCellHeight
@@ -81,13 +81,17 @@ Item {
                      column >= 0 && column < Folio.HomeScreenState.pageColumns
 
             Loader {
-                anchors.fill: parent
+                id: loader
+                anchors.top: parent.top
+                anchors.left: parent.left
 
                 sourceComponent: {
                     if (delegate.pageDelegate.type === Folio.FolioDelegate.Application) {
                         return appComponent;
                     } else if (delegate.pageDelegate.type === Folio.FolioDelegate.Folder) {
                         return folderComponent;
+                    } else if (delegate.pageDelegate.type === Folio.FolioDelegate.Widget) {
+                        return widgetComponent;
                     } else {
                         return noneComponent;
                     }
@@ -109,6 +113,11 @@ Item {
                     application: delegate.pageDelegate.application
                     turnToFolder: delegate.isAppHoveredOver
                     turnToFolderAnimEnabled: Folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate
+
+                    implicitWidth: Folio.HomeScreenState.pageCellWidth
+                    implicitHeight: Folio.HomeScreenState.pageCellHeight
+                    width: Folio.HomeScreenState.pageCellWidth
+                    height: Folio.HomeScreenState.pageCellHeight
 
                     // do not show if the drop animation is running to this delegate
                     visible: !(root.homeScreen.dropAnimationRunning && delegate.isDropPositionThis)
@@ -173,6 +182,11 @@ Item {
                     name: Folio.FolioSettings.showPagesAppLabels ? delegate.pageDelegate.folder.name : ""
                     folder: delegate.pageDelegate.folder
 
+                    implicitWidth: Folio.HomeScreenState.pageCellWidth
+                    implicitHeight: Folio.HomeScreenState.pageCellHeight
+                    width: Folio.HomeScreenState.pageCellWidth
+                    height: Folio.HomeScreenState.pageCellHeight
+
                     // do not show if the drop animation is running to this delegate, and the drop delegate is a folder
                     visible: !(root.homeScreen.dropAnimationRunning &&
                                delegate.isDropPositionThis &&
@@ -235,6 +249,14 @@ Item {
                             }
                         ]
                     }
+                }
+            }
+
+            Component {
+                id: widgetComponent
+
+                WidgetDelegate {
+                    widget: delegate.pageDelegate.widget
                 }
             }
         }

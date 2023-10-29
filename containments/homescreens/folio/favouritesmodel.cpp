@@ -230,24 +230,24 @@ QJsonArray FavouritesModel::exportToJson()
 
 void FavouritesModel::save()
 {
-    if (!m_applet) {
+    if (!m_containment) {
         return;
     }
 
     QJsonArray arr = exportToJson();
     QByteArray data = QJsonDocument(arr).toJson(QJsonDocument::Compact);
 
-    m_applet->config().writeEntry("Favourites", QString::fromStdString(data.toStdString()));
-    Q_EMIT m_applet->configNeedsSaving();
+    m_containment->config().writeEntry("Favourites", QString::fromStdString(data.toStdString()));
+    Q_EMIT m_containment->configNeedsSaving();
 }
 
 void FavouritesModel::load()
 {
-    if (!m_applet) {
+    if (!m_containment) {
         return;
     }
 
-    QJsonDocument doc = QJsonDocument::fromJson(m_applet->config().readEntry("Favourites", "{}").toUtf8());
+    QJsonDocument doc = QJsonDocument::fromJson(m_containment->config().readEntry("Favourites", "{}").toUtf8());
     loadFromJson(doc.array());
 }
 
@@ -274,9 +274,9 @@ void FavouritesModel::loadFromJson(QJsonArray arr)
     endResetModel();
 }
 
-void FavouritesModel::setApplet(Plasma::Applet *applet)
+void FavouritesModel::setContainment(Plasma::Containment *containment)
 {
-    m_applet = applet;
+    m_containment = containment;
 }
 
 bool FavouritesModel::dropPositionIsEdge(qreal x, qreal y) const

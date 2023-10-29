@@ -11,7 +11,7 @@
 #include <QQuickItem>
 #include <QSet>
 
-#include <Plasma/Applet>
+#include <Plasma/Containment>
 
 #include "foliodelegate.h"
 
@@ -64,7 +64,7 @@ public:
     Q_INVOKABLE void load();
     void loadFromJson(QJsonArray arr);
 
-    void setApplet(Plasma::Applet *applet);
+    void setContainment(Plasma::Containment *containment);
 
 private:
     void evaluateDelegatePositions(bool emitSignal = true);
@@ -78,5 +78,5 @@ private:
 
     QList<FavouritesDelegate> m_delegates;
 
-    Plasma::Applet *m_applet{nullptr};
+    Plasma::Containment *m_containment{nullptr};
 };

@@ -11,10 +11,12 @@ set(homescreen_SRCS
     folioapplicationfolder.cpp
     foliodelegate.cpp
     foliosettings.cpp
+    foliowidget.cpp
     pagemodel.cpp
     pagelistmodel.cpp
     delegatetoucharea.cpp
     dragstate.cpp
+    widgetsmanager.cpp
 )
 
 add_library(org.kde.plasma.mobile.homescreen.folio MODULE ${homescreen_SRCS})

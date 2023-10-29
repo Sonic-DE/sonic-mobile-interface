@@ -29,7 +29,7 @@ FolioApplicationFolder *FolioApplicationFolder::fromJson(QJsonObject &obj, QObje
     return folder;
 }
 
-QJsonObject FolioApplicationFolder::toJson()
+QJsonObject FolioApplicationFolder::toJson() const
 {
     QJsonObject obj;
     obj[QStringLiteral("type")] = "folder";

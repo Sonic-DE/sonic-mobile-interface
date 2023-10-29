@@ -36,7 +36,7 @@ public:
     FolioApplicationFolder(QObject *parent = nullptr, QString name = QString{});
 
     static FolioApplicationFolder *fromJson(QJsonObject &obj, QObject *parent);
-    QJsonObject toJson();
+    QJsonObject toJson() const;
 
     QString name() const;
     void setName(QString &name);
