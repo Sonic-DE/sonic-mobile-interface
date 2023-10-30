@@ -20,7 +20,6 @@ WidgetContainer::WidgetContainer(QQuickItem *parent)
     setFlags(QQuickItem::ItemIsFocusScope);
     setActiveFocusOnTab(true);
     setAcceptedMouseButtons(Qt::LeftButton);
-    setKeepMouseGrab(true);
 
     connect(this, &WidgetContainer::activeFocusChanged, this, &WidgetContainer::onActiveFocusChanged);
 }
@@ -87,14 +86,10 @@ void WidgetContainer::mousePressEvent(QMouseEvent *event)
 {
     forceActiveFocus(Qt::MouseFocusReason);
 
-    // m_mouseSynthetizedFromTouch = event->source() == Qt::MouseEventSynthesizedBySystem || event->source() == Qt::MouseEventSynthesizedByQt;
-    // if (m_configOverlay) {
-    //     m_configOverlay->setTouchInteraction(m_mouseSynthetizedFromTouch);
+    // if (m_editMode) {
+    //     event->setExclusiveGrabber(event->point(0), this);
+    //     setCursor(Qt::ClosedHandCursor);
     // }
-    if (m_editMode) {
-        event->setExclusiveGrabber(event->point(0), this);
-        setCursor(Qt::ClosedHandCursor);
-    }
 
     m_pressed = true;
     m_pressAndHoldTimer->start();
@@ -108,18 +103,12 @@ void WidgetContainer::mouseMoveEvent(QMouseEvent *event)
         m_pressAndHoldTimer->stop();
     }
 
-    if (!m_editMode) {
-        return;
-    }
-
-    event->accept();
+    QQuickItem::mouseMoveEvent(event);
 }
 
 void WidgetContainer::mouseReleaseEvent(QMouseEvent *event)
 {
-    if (!m_editMode) {
-        return;
-    }
+    Q_EMIT pressReleased();
 
     m_pressAndHoldTimer->stop();
     m_pressed = false;

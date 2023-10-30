@@ -10,7 +10,7 @@
 class WidgetContainer : public QQuickItem
 {
     Q_OBJECT
-    Q_PROPERTY(bool editMode READ editMode NOTIFY editModeChanged)
+    Q_PROPERTY(bool editMode READ editMode WRITE setEditMode NOTIFY editModeChanged)
 
     QML_NAMED_ELEMENT(WidgetContainer)
 
@@ -22,6 +22,7 @@ public:
 
 Q_SIGNALS:
     void editModeChanged();
+    void pressReleased();
 
 protected:
     bool childMouseEventFilter(QQuickItem *item, QEvent *event) override;

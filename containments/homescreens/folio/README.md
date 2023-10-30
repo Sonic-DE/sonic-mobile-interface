@@ -23,4 +23,7 @@ As such, all of the positioning and placement of delegates on the screen are top
 - FEATURE: add import/export
 - FEATURE: keyboard navigation
 - FEATURE: touchpad navigation
-- BUG: it's possible to get stuck in an unswipeable state after swiping down from the app drawer
+
+- PERFORMANCE: ensure that the widget config overlays are in loaders
+- BUG: widget config overlay when things are at the bottom or right, the config overlay (fastblur) doesn't show in the correct position
+    - we probably need to have proper sizing of the parent to accomodate the dimensions

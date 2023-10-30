@@ -256,15 +256,55 @@ Item {
                 id: widgetComponent
 
                 WidgetDelegate {
+                    id: widgetDelegate
                     widget: delegate.pageDelegate.widget
-                    row: delegate.row
-                    column: delegate.column
 
-                    onRemoveRequested: {
-                        if (widget.applet) {
-                            widget.destroyApplet();
+                    onEditModeChanged: {
+                        if (editMode) {
+                            let mappedCoords = root.homeScreen.prepareStartDelegateDrag(delegate.pageDelegate, widgetDelegate);
+                            Folio.HomeScreenState.startDelegatePageDrag(
+                                mappedCoords.x,
+                                mappedCoords.y,
+                                root.pageNum,
+                                delegate.pageDelegate.row,
+                                delegate.pageDelegate.column
+                            );
+
+                            widgetConfig.startOpen();
                         }
-                        root.pageModel.removeDelegate(delegate.row, delegate.column);
+                    }
+
+                    onPressReleased: {
+                        // cancel the event if the delegate is not dragged
+                        if (Folio.HomeScreenState.swipeState === Folio.HomeScreenState.AwaitingDraggingDelegate) {
+                            Folio.HomeScreenState.cancelDelegateDrag();
+                            widgetConfig.fullyOpen();
+                        }
+                    }
+
+                    WidgetDelegateConfig {
+                        id: widgetConfig
+
+                        widget: delegate.pageDelegate.widget
+                        pageNum: root.pageNum
+                        row: delegate.row
+                        column: delegate.column
+
+                        widgetWidth: widgetDelegate.widgetWidth
+                        widgetHeight: widgetDelegate.widgetHeight
+                        topWidgetBackgroundPadding: widgetDelegate.topWidgetBackgroundPadding
+                        leftWidgetBackgroundPadding: widgetDelegate.leftWidgetBackgroundPadding
+
+                        anchors.fill: parent
+
+                        onRemoveRequested: {
+                            if (widget.applet) {
+                                widget.destroyApplet();
+                            }
+                            root.pageModel.removeDelegate(delegate.row, delegate.column);
+                        }
+
+                        onClosed: widgetDelegate.editMode = false
                     }
                 }
             }
