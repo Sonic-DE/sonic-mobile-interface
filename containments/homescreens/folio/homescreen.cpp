@@ -15,6 +15,7 @@
 #include "homescreenstate.h"
 #include "pagelistmodel.h"
 #include "pagemodel.h"
+#include "widgetcontainer.h"
 #include "widgetsmanager.h"
 
 #include <KWindowSystem>
@@ -69,6 +70,7 @@ HomeScreen::HomeScreen(QObject *parent, const KPluginMetaData &data, const QVari
     qmlRegisterType<FolioPageDelegate>(uri, 1, 0, "FolioPageDelegate");
     qmlRegisterType<DelegateTouchArea>(uri, 1, 0, "DelegateTouchArea");
     qmlRegisterType<DelegateDragPosition>(uri, 1, 0, "DelegateDragPosition");
+    qmlRegisterType<WidgetContainer>(uri, 1, 0, "WidgetContainer");
 
     connect(KWindowSystem::self(), &KWindowSystem::showingDesktopChanged, this, &HomeScreen::showingDesktopChanged);
 

@@ -82,6 +82,11 @@ Item {
         onHeightChanged: Folio.HomeScreenState.viewHeight = height;
     }
 
+    // a way of stopping focus
+    FocusScope {
+        id: noFocus
+    }
+
     // area that can be swiped
     MobileShell.SwipeArea {
         id: swipeArea
@@ -103,6 +108,13 @@ Item {
         }
         onSwipeMove: (totalDeltaX, totalDeltaY, deltaX, deltaY) => {
             homeScreenState.swipeMoved(totalDeltaX, totalDeltaY, deltaX, deltaY);
+        }
+
+        onPressedChanged: {
+            if (pressed) {
+                // ensures that components like the widget settings overlay close when swiping
+                noFocus.forceActiveFocus();
+            }
         }
 
         SettingsComponent {

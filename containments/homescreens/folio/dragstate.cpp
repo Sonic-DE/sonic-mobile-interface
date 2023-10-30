@@ -327,6 +327,11 @@ void DragState::onDelegateDragPositionOverFavouritesChanged()
         m_favouritesInsertBetweenTimer->stop();
     }
 
+    // ignore widget drop delegates (since they can't be placed in the favourites)
+    if (m_dropDelegate && m_dropDelegate->type() == FolioDelegate::Widget) {
+        return;
+    }
+
     if (FavouritesModel::self()->dropPositionIsEdge(x, y)) {
         // if we need to make space for the delegate
 

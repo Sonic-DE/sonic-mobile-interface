@@ -57,6 +57,8 @@ public:
 
     PlasmaQuick::AppletQuickItem *visualApplet() const;
 
+    Q_INVOKABLE void destroyApplet();
+
 Q_SIGNALS:
     void appletChanged();
     void visualAppletChanged();

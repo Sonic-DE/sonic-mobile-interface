@@ -257,6 +257,15 @@ Item {
 
                 WidgetDelegate {
                     widget: delegate.pageDelegate.widget
+                    row: delegate.row
+                    column: delegate.column
+
+                    onRemoveRequested: {
+                        if (widget.applet) {
+                            widget.destroyApplet();
+                        }
+                        root.pageModel.removeDelegate(delegate.row, delegate.column);
+                    }
                 }
             }
         }

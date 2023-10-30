@@ -206,3 +206,10 @@ void FolioWidget::setVisualApplet(PlasmaQuick::AppletQuickItem *quickItem)
     m_quickApplet = quickItem;
     Q_EMIT visualAppletChanged();
 }
+
+void FolioWidget::destroyApplet()
+{
+    if (m_applet) {
+        m_applet->destroy();
+    }
+}

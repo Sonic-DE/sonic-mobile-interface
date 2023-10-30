@@ -18,6 +18,9 @@ Item {
 
     readonly property real dropAnimationRunning: dragXAnim.running || dragYAnim.running
 
+    // ignore widget dragging, that is not handled by this component
+    readonly property bool isWidgetDrag: Folio.HomeScreenState.dragState.dropDelegate && Folio.HomeScreenState.dragState.dropDelegate.type === Folio.FolioDelegate.Widget
+
     visible: false
     x: Math.round(Folio.HomeScreenState.delegateDragX)
     y: Math.round(Folio.HomeScreenState.delegateDragY)
@@ -70,7 +73,7 @@ Item {
 
         // reset and show drag item
         function onSwipeStateChanged() {
-            if (Folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate) {
+            if (Folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate && !isWidgetDrag) {
                 root.scale = 1.0;
                 root.visible = true;
             }
@@ -78,6 +81,10 @@ Item {
 
         // save the existing delegate at the spot (this is called before the delegate is dropped)
         function onDelegateDragEnded() {
+            if (root.isWidgetDrag) {
+                return;
+            }
+
             let dragState = Folio.HomeScreenState.dragState;
             let dropPosition = dragState.candidateDropPosition;
 
@@ -100,6 +107,10 @@ Item {
 
         // animate from when the delegate is dropped to its drop position
         function onDelegateDroppedAndPlaced() {
+            if (root.isWidgetDrag) {
+                return;
+            }
+
             let dragState = Folio.HomeScreenState.dragState;
             let dropPosition = dragState.candidateDropPosition;
 

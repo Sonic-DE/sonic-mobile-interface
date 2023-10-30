@@ -16,6 +16,7 @@ set(homescreen_SRCS
     pagelistmodel.cpp
     delegatetoucharea.cpp
     dragstate.cpp
+    widgetcontainer.cpp
     widgetsmanager.cpp
 )
 
