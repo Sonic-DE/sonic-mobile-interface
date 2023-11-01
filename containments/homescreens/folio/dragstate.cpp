@@ -775,7 +775,7 @@ void DragState::createDropPositionDelegate()
             }
         }
 
-        // default behavior for folders or dropping an app at an empty spot
+        // default behavior for widgets, folders or dropping an app at an empty spot
 
         bool added = page->addDelegate(delegate);
 

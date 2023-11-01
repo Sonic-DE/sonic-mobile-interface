@@ -39,6 +39,7 @@ public:
 
     Q_INVOKABLE void removeEntry(int row);
     void moveEntry(int fromRow, int toRow);
+    bool canAddEntry(int row, FolioDelegate *delegate);
     bool addEntry(int row, FolioDelegate *delegate);
     FolioDelegate *getEntryAt(int row);
 

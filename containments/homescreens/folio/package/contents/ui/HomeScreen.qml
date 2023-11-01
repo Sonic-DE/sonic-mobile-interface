@@ -29,8 +29,13 @@ Item {
 
     property Folio.HomeScreenState homeScreenState: Folio.HomeScreenState
 
-    readonly property bool dropAnimationRunning: delegateDragItem.dropAnimationRunning
+    // non-widget drop animation
+    readonly property bool dropAnimationRunning: delegateDragItem.dropAnimationRunning || widgetDragItem.dropAnimationRunning
 
+    // widget that is currently being dragged (or dropped)
+    readonly property Folio.FolioWidget currentlyDraggedWidget: widgetDragItem.widget
+
+    // how much to scale out in the settings mode
     readonly property real settingsModeHomeScreenScale: 0.8
 
     onTopMarginChanged: Folio.HomeScreenState.viewTopPadding = root.topMargin
@@ -344,6 +349,11 @@ Item {
         // drag and drop component
         DelegateDragItem {
             id: delegateDragItem
+        }
+
+        // drag and drop for widgets
+        WidgetDragItem {
+            id: widgetDragItem
         }
 
         // bottom app drawer

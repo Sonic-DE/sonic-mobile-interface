@@ -36,17 +36,48 @@ Item {
         height: Folio.HomeScreenState.pageCellHeight
 
         property var dropPosition: Folio.HomeScreenState.dragState.candidateDropPosition
+        property var dropDelegate: Folio.HomeScreenState.dragState.dropDelegate
+        property bool dropDelegateIsWidget: dropDelegate && dropDelegate.type === Folio.FolioDelegate.Widget
 
         // only show if it is an empty spot on this page
         visible: Folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate &&
                     dropPosition.location === Folio.DelegateDragPosition.Pages &&
                     dropPosition.page === root.pageNum &&
+                    !dropDelegateIsWidget &&
                     Folio.HomeScreenState.getPageDelegateAt(root.pageNum, dropPosition.pageRow, dropPosition.pageColumn) === null
 
         x: dropPosition.pageColumn * Folio.HomeScreenState.pageCellWidth
         y: dropPosition.pageRow * Folio.HomeScreenState.pageCellHeight
     }
 
+    // square that shows when a widget hovers over a spot to drop a delegate on
+    Rectangle {
+        id: widgetDragDropFeedback
+        width: (dropDelegateIsWidget ? dropDelegate.widget.gridWidth : 0) * Folio.HomeScreenState.pageCellWidth
+        height: (dropDelegateIsWidget ? dropDelegate.widget.gridHeight : 0) * Folio.HomeScreenState.pageCellHeight
+
+        property var dropPosition: Folio.HomeScreenState.dragState.candidateDropPosition
+        property var dropDelegate: Folio.HomeScreenState.dragState.dropDelegate
+        property bool dropDelegateIsWidget: dropDelegate && dropDelegate.type === Folio.FolioDelegate.Widget
+
+        // only show if the widget can be placed here
+        visible: Folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate &&
+                    dropPosition.location === Folio.DelegateDragPosition.Pages &&
+                    dropPosition.page === root.pageNum &&
+                    dropDelegateIsWidget &&
+                    pageModel.canAddDelegate(dropPosition.pageRow, dropPosition.pageColumn, dropDelegate)
+
+        radius: Kirigami.Units.smallSpacing
+        color: Qt.rgba(255, 255, 255, 0.3)
+
+        x: dropPosition.pageColumn * Folio.HomeScreenState.pageCellWidth
+        y: dropPosition.pageRow * Folio.HomeScreenState.pageCellHeight
+
+        layer.enabled: true
+        layer.effect: DelegateShadow {}
+    }
+
+    // repeater of all delegates in the page
     Repeater {
         model: root.pageModel
 
@@ -257,7 +288,16 @@ Item {
 
                 WidgetDelegate {
                     id: widgetDelegate
-                    widget: delegate.pageDelegate.widget
+
+                    // don't reparent applet if the drop animation is running to this delegate
+                    //
+                    // background: there is only one "visual" instance of the widget, once this delegate loads
+                    //             it will reparent it to here (but we don't want it to happen while the drop animation is running)
+                    property bool suppressAppletReparent: (root.homeScreen.currentlyDraggedWidget === delegate.pageDelegate.widget)
+                                                            && delegate.isDropPositionThis
+
+                    visible: !suppressAppletReparent
+                    widget: suppressAppletReparent ? null : delegate.pageDelegate.widget
 
                     onEditModeChanged: {
                         if (editMode) {

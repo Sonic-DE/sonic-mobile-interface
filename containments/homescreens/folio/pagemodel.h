@@ -77,6 +77,7 @@ public:
 
     Q_INVOKABLE void removeDelegate(int row, int col);
     void removeDelegate(int index);
+    Q_INVOKABLE bool canAddDelegate(int row, int column, FolioDelegate *delegate);
     bool addDelegate(FolioPageDelegate *delegate);
     FolioPageDelegate *getDelegate(int row, int col);
 

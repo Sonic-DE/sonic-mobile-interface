@@ -52,6 +52,11 @@ public:
     // returns the position of the widget corners on a page grid, factoring in the current page orientation
     GridPosition topLeftCorner(int row, int column);
 
+    // query whether (row, column) is inside this widget, if it was at position (widgetRow, widgetColumn)
+    bool isInBounds(int widgetRow, int widgetColumn, int row, int column);
+
+    bool overlapsWidget(int widgetRow, int widgetColumn, FolioWidget *otherWidget, int otherWidgetRow, int otherWidgetColumn);
+
     Plasma::Applet *applet() const;
     void setApplet(Plasma::Applet *applet);
 

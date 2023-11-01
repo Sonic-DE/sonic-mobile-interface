@@ -179,6 +179,32 @@ GridPosition FolioWidget::topLeftCorner(int row, int column)
     return {row, column};
 }
 
+bool FolioWidget::isInBounds(int widgetRow, int widgetColumn, int row, int column)
+{
+    return (row >= widgetRow) && (row < widgetRow + gridWidth()) && (column >= widgetColumn) && (column < widgetColumn + gridHeight());
+}
+
+bool FolioWidget::overlapsWidget(int widgetRow, int widgetColumn, FolioWidget *otherWidget, int otherWidgetRow, int otherWidgetColumn)
+{
+    if (!otherWidget) {
+        return false;
+    }
+
+    // property: if they overlap, then at least one corner of one widget is in the other widget
+    int widgetMaxRow = widgetRow + gridHeight() - 1;
+    int widgetMaxColumn = widgetColumn + gridWidth() - 1;
+    int otherWidgetMaxRow = otherWidgetRow + otherWidget->gridHeight() - 1;
+    int otherWidgetMaxColumn = otherWidgetColumn + otherWidget->gridWidth() - 1;
+
+    return isInBounds(widgetRow, widgetColumn, otherWidgetRow, otherWidgetColumn) || isInBounds(widgetRow, widgetColumn, otherWidgetMaxRow, otherWidgetColumn)
+        || isInBounds(widgetRow, widgetColumn, otherWidgetRow, otherWidgetMaxColumn)
+        || isInBounds(widgetRow, widgetColumn, otherWidgetMaxRow, otherWidgetMaxColumn)
+        || otherWidget->isInBounds(otherWidgetRow, otherWidgetColumn, widgetRow, widgetColumn)
+        || otherWidget->isInBounds(otherWidgetRow, otherWidgetColumn, widgetMaxRow, widgetColumn)
+        || otherWidget->isInBounds(otherWidgetRow, otherWidgetColumn, widgetRow, widgetMaxColumn)
+        || otherWidget->isInBounds(otherWidgetRow, otherWidgetColumn, widgetMaxRow, widgetMaxColumn);
+}
+
 Plasma::Applet *FolioWidget::applet() const
 {
     return m_applet;

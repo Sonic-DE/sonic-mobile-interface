@@ -119,13 +119,22 @@ void FavouritesModel::moveEntry(int fromRow, int toRow)
     save();
 }
 
-bool FavouritesModel::addEntry(int row, FolioDelegate *delegate)
+bool FavouritesModel::canAddEntry(int row, FolioDelegate *delegate)
 {
     if (!delegate) {
         return false;
     }
 
     if (row < 0 || row > m_delegates.size()) {
+        return false;
+    }
+
+    return true;
+}
+
+bool FavouritesModel::addEntry(int row, FolioDelegate *delegate)
+{
+    if (!canAddEntry(row, delegate)) {
         return false;
     }
 

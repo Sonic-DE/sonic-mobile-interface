@@ -62,14 +62,33 @@ void FolioPageDelegate::init()
     case HomeScreenState::RotateClockwise:
         m_realRow = HomeScreenState::self()->pageColumns() - m_column - 1;
         m_realColumn = m_row;
+
+        if (m_widget) {
+            // since top-left in cw is bottom-left in portrait
+            m_realRow -= m_widget->realGridHeight() + 1;
+        }
+
         break;
     case HomeScreenState::RotateCounterClockwise:
         m_realRow = m_column;
         m_realColumn = HomeScreenState::self()->pageRows() - m_row - 1;
+
+        if (m_widget) {
+            // since top-left in ccw is top-right in portrait
+            m_realColumn -= m_widget->realGridWidth() + 1;
+        }
+
         break;
     case HomeScreenState::RotateUpsideDown:
         m_realRow = HomeScreenState::self()->pageRows() - m_row - 1;
         m_realColumn = HomeScreenState::self()->pageColumns() - m_column - 1;
+
+        if (m_widget) {
+            // since top-left in upside-down is bottom-right in portrait
+            m_realRow -= m_widget->realGridHeight() + 1;
+            m_realColumn -= m_widget->realGridWidth() + 1;
+        }
+
         break;
     }
 
@@ -299,18 +318,57 @@ void PageModel::removeDelegate(int index)
     save();
 }
 
-bool PageModel::addDelegate(FolioPageDelegate *delegate)
+bool PageModel::canAddDelegate(int row, int column, FolioDelegate *delegate)
 {
-    if (delegate->row() < 0 || delegate->row() >= HomeScreenState::self()->pageRows() || delegate->column() < 0
-        || delegate->column() >= HomeScreenState::self()->pageColumns()) {
+    if (row < 0 || row >= HomeScreenState::self()->pageRows() || column < 0 || column >= HomeScreenState::self()->pageColumns()) {
         return false;
     }
 
-    // check if there already exists a delegate in this space
-    for (FolioPageDelegate *d : m_delegates) {
-        if (d->row() == delegate->row() && d->column() == delegate->column()) {
+    if (delegate->type() == FolioDelegate::Widget) {
+        // inserting a widget...
+
+        // bounds of widget
+        int maxRow = row + delegate->widget()->gridHeight() - 1;
+        int maxColumn = column + delegate->widget()->gridWidth() - 1;
+
+        // check bounds
+        if ((row < 0 || row >= HomeScreenState::self()->pageRows()) || (maxRow < 0 || maxRow >= HomeScreenState::self()->pageRows())
+            || (column < 0 || column >= HomeScreenState::self()->pageColumns()) || (maxColumn < 0 || maxColumn >= HomeScreenState::self()->pageColumns())) {
             return false;
         }
+
+        // check if any delegate exists at any of the spots where the widget is being added
+        for (FolioPageDelegate *d : m_delegates) {
+            if (delegate->widget()->isInBounds(row, column, d->row(), d->column())) {
+                return false;
+            } else if (d->type() == FolioDelegate::Widget) {
+                // 2 widgets overlapping scenario
+                if (d->widget()->overlapsWidget(d->row(), d->column(), delegate->widget(), row, column)) {
+                    return false;
+                }
+            }
+        }
+
+    } else {
+        // inserting app or folder...
+
+        // check if there already exists a delegate in this space
+        for (FolioPageDelegate *d : m_delegates) {
+            if (d->row() == row && d->column() == column) {
+                return false;
+            } else if (d->type() == FolioDelegate::Widget && d->widget()->isInBounds(d->row(), d->column(), row, column)) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+bool PageModel::addDelegate(FolioPageDelegate *delegate)
+{
+    if (!canAddDelegate(delegate->row(), delegate->column(), delegate)) {
+        return false;
     }
 
     beginInsertRows(QModelIndex(), m_delegates.size(), m_delegates.size());

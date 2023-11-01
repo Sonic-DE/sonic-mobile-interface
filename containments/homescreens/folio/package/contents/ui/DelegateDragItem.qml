@@ -96,7 +96,7 @@ Item {
                     stateWatcher.delegateDroppedOn = Folio.HomeScreenState.getFavouritesDelegateAt(dropPosition.favouritesPosition);
                     break;
                 case Folio.DelegateDragPosition.Folder:
-                    stateWatcher.delegateDroppedOn = null
+                    stateWatcher.delegateDroppedOn = null;
                     break;
             }
         }

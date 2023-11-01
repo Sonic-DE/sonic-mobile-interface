@@ -92,6 +92,7 @@ public:
 
     FolioDelegate *getDelegate(int index);
     void moveEntry(int fromRow, int toRow);
+    bool canAddDelegate(FolioDelegate *delegate, int index);
     bool addDelegate(FolioDelegate *delegate, int index);
     void removeDelegate(int index);
     QPointF getDelegatePosition(int index);

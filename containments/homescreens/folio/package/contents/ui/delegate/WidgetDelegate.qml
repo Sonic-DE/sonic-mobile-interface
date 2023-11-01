@@ -26,13 +26,13 @@ Folio.WidgetContainer {
     readonly property real topWidgetBackgroundPadding: widgetBackground.margins.top
     readonly property real leftWidgetBackgroundPadding: widgetBackground.margins.left
 
-    implicitWidth: widget.gridWidth * Folio.HomeScreenState.pageCellWidth
-    implicitHeight: widget.gridHeight * Folio.HomeScreenState.pageCellHeight
+    implicitWidth: (widget ? widget.gridWidth : 0) * Folio.HomeScreenState.pageCellWidth
+    implicitHeight: (widget ? widget.gridHeight : 0) * Folio.HomeScreenState.pageCellHeight
     width: implicitWidth
     height: implicitHeight
 
     function updateVisualApplet() {
-        if (!widget.visualApplet) {
+        if (!widget || !widget.visualApplet) {
             return;
         }
 
@@ -44,9 +44,13 @@ Folio.WidgetContainer {
 
         widget.visualApplet.parent = widgetHolder;
         widget.visualApplet.anchors.fill = widgetHolder;
-        widget.visualApplet.fullRepresentationItem.parent = widgetHolder;
-        widget.visualApplet.fullRepresentationItem.anchors.fill = widgetHolder;
+        if (widget.visualApplet.fullRepresentationItem) {
+            widget.visualApplet.fullRepresentationItem.parent = widgetHolder;
+            widget.visualApplet.fullRepresentationItem.anchors.fill = widgetHolder;
+        }
     }
+
+    onWidgetChanged: updateVisualApplet()
 
     Component.onCompleted: {
         updateVisualApplet();
@@ -73,7 +77,7 @@ Folio.WidgetContainer {
             anchors.fill: parent
             enabledBorders: KSvg.FrameSvgItem.AllBorders
             imagePath: {
-                if (!root.widget.applet || root.widget.applet.effectiveBackgroundHints === PlasmaCore.Types.NoBackground) {
+                if (!root.widget || !root.widget.applet || root.widget.applet.effectiveBackgroundHints === PlasmaCore.Types.NoBackground) {
                     return '';
                 } else if (root.widget.applet.effectiveBackgroundHints & PlasmaCore.Types.StandardBackground) {
                     return 'widgets/background';
@@ -87,7 +91,7 @@ Folio.WidgetContainer {
         Rectangle {
             id: temporaryBackground
             anchors.fill: parent
-            visible: !root.widget.applet
+            visible: root.widget && !root.widget.applet
             color: Qt.rgba(255, 255, 255, 0.3)
             radius: Kirigami.Units.smallSpacing
         }
@@ -102,12 +106,12 @@ Folio.WidgetContainer {
         }
 
         // TODO implement blur behind, see plasma-workspace BasicAppletContainer for how to do this
-        layer.enabled: root.widget.applet && root.widget.applet.effectiveBackgroundHints === PlasmaCore.Types.ShadowBackground
+        layer.enabled: root.widget && root.widget.applet && root.widget.applet.effectiveBackgroundHints === PlasmaCore.Types.ShadowBackground
         layer.effect: DelegateShadow {}
 
         PC3.Label {
             id: noWidget
-            visible: !root.widget.visualApplet
+            visible: root.widget && !root.widget.visualApplet
             color: 'white'
             wrapMode: Text.Wrap
             text: i18n('This widget was not found.')
@@ -121,7 +125,7 @@ Folio.WidgetContainer {
         PC3.BusyIndicator {
             id: loadingIndicator
             anchors.centerIn: parent
-            visible: root.widget.applet && root.widget.applet.busy
+            visible: root.widget && root.widget.applet && root.widget.applet.busy
             running: visible
         }
 
@@ -130,7 +134,7 @@ Folio.WidgetContainer {
             anchors.centerIn: parent
             text: i18n('Configure…')
             icon.name: 'configure'
-            visible: root.widget.applet && root.widget.applet.configurationRequired
+            visible: root.widget && root.widget.applet && root.widget.applet.configurationRequired
             onClicked: root.widget.applet.internalAction('configure').trigger();
         }
     }
