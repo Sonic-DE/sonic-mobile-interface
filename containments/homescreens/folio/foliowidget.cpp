@@ -147,7 +147,10 @@ void FolioWidget::setRealGridWidth(int gridWidth)
 {
     if (m_realGridWidth != gridWidth) {
         m_realGridWidth = gridWidth;
+
+        // emit both because realGridWidth could be either gridWidth or gridHeight
         Q_EMIT gridWidthChanged();
+        Q_EMIT gridHeightChanged();
     }
 }
 
@@ -160,6 +163,9 @@ void FolioWidget::setRealGridHeight(int gridHeight)
 {
     if (m_realGridHeight != gridHeight) {
         m_realGridHeight = gridHeight;
+
+        // emit both because realGridHeight could be either gridWidth or gridHeight
+        Q_EMIT gridWidthChanged();
         Q_EMIT gridHeightChanged();
     }
 }

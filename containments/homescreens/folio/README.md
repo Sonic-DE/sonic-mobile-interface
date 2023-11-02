@@ -26,6 +26,12 @@ As such, all of the positioning and placement of delegates on the screen are top
 - FEATURE: option to darken wallpaper
 - FEATURE: option to turn off row/column swap
 - BUG: drag and drop animation when rejected on a different page
+- BUG: delegatetoucharea doesn't release on drag out
+
+- BUG: Widgets can overlap apps on the very bottom left in portrait
+- BUG: Widgets moved in landscape are not translated correctly
+
+- RESTORE app drawer overshoot
 
 - PERFORMANCE: ensure that the widget config overlays are in loaders
 - BUG: widget config overlay when things are at the bottom or right, the config overlay (fastblur) doesn't show in the correct position

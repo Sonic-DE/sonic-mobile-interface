@@ -12,6 +12,84 @@ MouseArea {
 
     cursorShape: Qt.PointingHandCursor
 
+    property int orientation
+
+    signal dragEvent(real leftEdgeDelta, real rightEdgeDelta, real topEdgeDelta, real bottomEdgeDelta)
+
+    drag {
+        target: root
+        axis: {
+            switch (orientation) {
+                case WidgetHandlePosition.TopLeft:
+                    return Drag.XAndYAxis;
+                case WidgetHandlePosition.TopCenter:
+                    return Drag.YAxis;
+                case WidgetHandlePosition.TopRight:
+                    return Drag.XAndYAxis;
+                case WidgetHandlePosition.LeftCenter:
+                    return Drag.XAxis;
+                case WidgetHandlePosition.RightCenter:
+                    return Drag.XAxis;
+                case WidgetHandlePosition.BottomLeft:
+                    return Drag.XAndYAxis;
+                case WidgetHandlePosition.BottomCenter:
+                    return Drag.YAxis;
+                case WidgetHandlePosition.BottomRight:
+                    return Drag.XAndYAxis;
+            }
+            return Drag.XAndYAxis;
+        }
+    }
+
+    property real pressX
+    property real pressY
+
+    onPressed: {
+        pressX = mouseX;
+        pressY = mouseY;
+    }
+
+    onPositionChanged: {
+        updateDrag();
+        updateDrag();
+    }
+
+    drag { target: root; axis: Drag.XAndYAxis }
+
+    function updateDrag() {
+        if (!drag.active) return;
+
+        const dx = mouseX;
+        const dy = mouseY;
+
+        switch (orientation) {
+            case WidgetHandlePosition.TopLeft:
+                root.dragEvent(-dx, 0, -dy, 0);
+                break;
+            case WidgetHandlePosition.TopCenter:
+                root.dragEvent(0, 0, -dy, 0);
+                break;
+            case WidgetHandlePosition.TopRight:
+                root.dragEvent(0, dx, -dy, 0);
+                break;
+            case WidgetHandlePosition.LeftCenter:
+                root.dragEvent(-dx, 0, 0, 0);
+                break;
+            case WidgetHandlePosition.RightCenter:
+                root.dragEvent(0, dx, 0, 0);
+                break;
+            case WidgetHandlePosition.BottomLeft:
+                root.dragEvent(-dx, 0, 0, dy);
+                break;
+            case WidgetHandlePosition.BottomCenter:
+                root.dragEvent(0, 0, 0, dy);
+                break;
+            case WidgetHandlePosition.BottomRight:
+                root.dragEvent(0, dx, 0, dy);
+                break;
+        }
+    }
+
     Rectangle {
         anchors.fill: parent
         color: 'white'

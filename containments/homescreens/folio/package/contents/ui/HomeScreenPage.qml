@@ -324,14 +324,20 @@ Item {
 
                     WidgetDelegateConfig {
                         id: widgetConfig
+                        homeScreen: root.homeScreen
 
+                        pageModel: root.pageModel
+                        pageDelegate: delegate.pageDelegate
                         widget: delegate.pageDelegate.widget
+
                         pageNum: root.pageNum
                         row: delegate.row
                         column: delegate.column
 
                         widgetWidth: widgetDelegate.widgetWidth
                         widgetHeight: widgetDelegate.widgetHeight
+                        widgetX: delegate.x + root.anchors.leftMargin + root.homeScreen.leftMargin
+                        widgetY: delegate.y + root.anchors.topMargin + root.homeScreen.topMargin
                         topWidgetBackgroundPadding: widgetDelegate.topWidgetBackgroundPadding
                         leftWidgetBackgroundPadding: widgetDelegate.leftWidgetBackgroundPadding
 

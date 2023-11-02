@@ -191,8 +191,10 @@ int FolioPageDelegate::row()
 
 void FolioPageDelegate::setRow(int row)
 {
-    m_row = row;
-    Q_EMIT rowChanged();
+    if (m_row != row) {
+        m_row = row;
+        Q_EMIT rowChanged();
+    }
 }
 
 int FolioPageDelegate::column()
@@ -202,8 +204,10 @@ int FolioPageDelegate::column()
 
 void FolioPageDelegate::setColumn(int column)
 {
-    m_column = column;
-    Q_EMIT columnChanged();
+    if (m_column != column) {
+        m_column = column;
+        Q_EMIT columnChanged();
+    }
 }
 
 PageModel::PageModel(QList<FolioPageDelegate *> delegates, QObject *parent)
@@ -395,6 +399,41 @@ FolioPageDelegate *PageModel::getDelegate(int row, int col)
         }
     }
     return nullptr;
+}
+
+void PageModel::moveAndResizeWidgetDelegate(FolioPageDelegate *delegate, int newRow, int newColumn, int newGridWidth, int newGridHeight)
+{
+    if (delegate->type() != FolioDelegate::Widget) {
+        return;
+    }
+
+    if (newGridWidth < 1 || newGridHeight < 1) {
+        return;
+    }
+
+    // test if we can add the delegate with new size and position
+    FolioWidget *testWidget = new FolioWidget(this, 0, newGridWidth, newGridHeight);
+    FolioDelegate *testDelegate = new FolioDelegate(testWidget, this);
+
+    // NOT THREAD SAFE!
+    // which is fine, because the GUI isn't multithreaded
+    int index = m_delegates.indexOf(delegate);
+    m_delegates.remove(index); // remove the delegate, since we don't want it to check overlapping of itself
+    bool canAdd = canAddDelegate(newRow, newColumn, testDelegate);
+    m_delegates.insert(index, delegate);
+
+    // cleanup test delegate
+    testDelegate->deleteLater();
+    testWidget->deleteLater();
+
+    if (!canAdd) {
+        return;
+    }
+
+    delegate->setRow(newRow);
+    delegate->setColumn(newColumn);
+    delegate->widget()->setGridWidth(newGridWidth);
+    delegate->widget()->setGridHeight(newGridHeight);
 }
 
 bool PageModel::isPageEmpty()
