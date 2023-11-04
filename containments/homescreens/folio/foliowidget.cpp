@@ -187,7 +187,7 @@ GridPosition FolioWidget::topLeftCorner(int row, int column)
 
 bool FolioWidget::isInBounds(int widgetRow, int widgetColumn, int row, int column)
 {
-    return (row >= widgetRow) && (row < widgetRow + gridWidth()) && (column >= widgetColumn) && (column < widgetColumn + gridHeight());
+    return (row >= widgetRow) && (row < widgetRow + gridHeight()) && (column >= widgetColumn) && (column < widgetColumn + gridWidth());
 }
 
 bool FolioWidget::overlapsWidget(int widgetRow, int widgetColumn, FolioWidget *otherWidget, int otherWidgetRow, int otherWidgetColumn)

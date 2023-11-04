@@ -28,8 +28,11 @@ Item {
     property real widgetHeight
     property real widgetX
     property real widgetY
+
     property real topWidgetBackgroundPadding
+    property real bottomWidgetBackgroundPadding
     property real leftWidgetBackgroundPadding
+    property real rightWidgetBackgroundPadding
 
     property Folio.FolioPageDelegate pageDelegate
     property Folio.FolioWidget widget
@@ -49,18 +52,19 @@ Item {
 
     // HACK: this shows the config when we are in the "press to hold" state, prior to mouse release
     // we can't just open the popup, because the potential drag-and-drop swipe would get lost
-    Item {
+    MouseArea {
         id: configOverlay
-        anchors.left: parent.left
-        anchors.top: parent.top
-        anchors.leftMargin: configPopup.x
-        anchors.topMargin: configPopup.y
+        parent: root.homeScreen
+        anchors.fill: parent
 
         width: configPopup.width
         height: configPopup.height
 
         opacity: 0
         visible: opacity > 0
+
+        // in case this gets stuck open over the homescreen, just close on tap
+        onClicked: close()
 
         NumberAnimation on opacity { id: configOverlayOpacityAnim; duration: 200 }
 
@@ -106,7 +110,10 @@ Item {
         height: root.homeScreen.height
         parent: root.homeScreen
 
-        onClosed: root.closed()
+        onClosed: {
+            configOverlay.close(); // ensure overlay is closed
+            root.closed();
+        }
 
         topPadding: 0
         bottomPadding: 0
@@ -126,6 +133,17 @@ Item {
             NumberAnimation { property: "opacity"; duration: 200; from: 1.0; to: 0.0 }
         }
 
+        Connections {
+            target: Folio.HomeScreenState
+
+            // don't show config overlay if we have navigated to another page
+            function onCurrentPageChanged() {
+                if (configPopup.visible) {
+                    configPopup.close();
+                }
+            }
+        }
+
         contentItem: MouseArea {
             id: configItem
 
@@ -140,158 +158,92 @@ Item {
                 widgetX: root.widgetX + root.leftWidgetBackgroundPadding
                 widgetY: root.widgetY + root.topWidgetBackgroundPadding
 
+                widgetTopMargin: root.topWidgetBackgroundPadding
+                widgetBottomMargin: root.bottomWidgetBackgroundPadding
+                widgetLeftMargin: root.leftWidgetBackgroundPadding
+                widgetRightMargin: root.rightWidgetBackgroundPadding
+
                 widgetRow: root.row
                 widgetColumn: root.column
                 widgetGridWidth: root.widget.gridWidth
                 widgetGridHeight: root.widget.gridHeight
 
-                onWidgetRowAfterDragChanged: {
-                    if (resizeFrame.lockDrag !== null) triggerWidgetChanges();
-                }
-                onWidgetColumnAfterDragChanged: {
-                    if (resizeFrame.lockDrag !== null) triggerWidgetChanges();
-                }
-                onWidgetGridWidthAfterDragChanged: {
-                    if (resizeFrame.lockDrag !== null) triggerWidgetChanges();
-                }
-                onWidgetGridHeightAfterDragChanged: {
-                    if (resizeFrame.lockDrag !== null) triggerWidgetChanges();
+                onWidgetChangeAfterDrag: (widgetRow, widgetColumn, widgetGridWidth, widgetGridHeight) => {
+                    if (resizeFrame.lockDrag !== null) triggerWidgetChanges(widgetRow, widgetColumn, widgetGridWidth, widgetGridHeight);
                 }
 
-                function triggerWidgetChanges() {
-                    console.log('update widget to ' + widgetRowAfterDrag + ' ' + widgetColumnAfterDrag + ' ' + widgetGridWidthAfterDrag + ' ' + widgetGridHeightAfterDrag);
+                function triggerWidgetChanges(widgetRow, widgetColumn, widgetGridWidth, widgetGridHeight) {
                     root.pageModel.moveAndResizeWidgetDelegate(
                         root.pageDelegate,
-                        widgetRowAfterDrag,
-                        widgetColumnAfterDrag,
-                        widgetGridWidthAfterDrag,
-                        widgetGridHeightAfterDrag
+                        widgetRow,
+                        widgetColumn,
+                        widgetGridWidth,
+                        widgetGridHeight
                     );
                 }
             }
 
-        //     Item {
-        //         id: configBar
-        //
-        //         property int orientation: {
-        //             if (root.height > root.width) {
-        //                 if (root.column === 0) {
-        //                     return Orientation.Right;
-        //                 } else {
-        //                     return Orientation.Left;
-        //                 }
-        //             } else {
-        //                 if (root.row === 0) {
-        //                     return Orientation.Below;
-        //                 } else {
-        //                     return Orientation.Above;
-        //                 }
-        //             }
-        //         }
-        //
-        //         states: [
-        //             State {
-        //                 name: "above"
-        //                 when: configBar.orientation === Orientation.Above
-        //                 AnchorChanges {
-        //                     target: configBar
-        //                     anchors.bottom: widgetHandles.top
-        //                     anchors.horizontalCenter: widgetHandles.horizontalCenter
-        //                 }
-        //                 PropertyChanges {
-        //                     configBar.anchors.bottomMargin: configPopup.barSpacing
-        //                     configBar.width: Math.max(configPopup.minimumBarLength, root.width)
-        //                     configBar.height: configPopup.barWidth
-        //                 }
-        //             }, State {
-        //                 name: "below"
-        //                 when: configBar.orientation === Orientation.Below
-        //                 AnchorChanges {
-        //                     target: configBar
-        //                     anchors.top: widgetHandles.bottom
-        //                     anchors.horizontalCenter: widgetHandles.horizontalCenter
-        //                 }
-        //                 PropertyChanges {
-        //                     configBar.anchors.topMargin: configPopup.barSpacing
-        //                     configBar.width: Math.max(configPopup.minimumBarLength, root.width)
-        //                     configBar.height: configPopup.barWidth
-        //                 }
-        //             }, State {
-        //                 name: "left"
-        //                 when: configBar.orientation === Orientation.Left
-        //                 AnchorChanges {
-        //                     target: configBar
-        //                     anchors.right: widgetHandles.left
-        //                     anchors.verticalCenter: widgetHandles.verticalCenter
-        //                 }
-        //                 PropertyChanges {
-        //                     configBar.anchors.rightMargin: configPopup.barSpacing
-        //                     configBar.width: configPopup.barWidth
-        //                     configBar.height: Math.max(configPopup.minimumBarLength, root.height)
-        //                 }
-        //             }, State {
-        //                 name: "right"
-        //                 when: configBar.orientation === Orientation.Right
-        //                 AnchorChanges {
-        //                     target: configBar
-        //                     anchors.left: widgetHandles.right
-        //                     anchors.verticalCenter: widgetHandles.verticalCenter
-        //                 }
-        //                 PropertyChanges {
-        //                     configBar.anchors.leftMargin: configPopup.barSpacing
-        //                     configBar.width: configPopup.barWidth
-        //                     configBar.height: Math.max(configPopup.minimumBarLength, root.height)
-        //                 }
-        //             }
-        //         ]
-        //
-        //         KSvg.FrameSvgItem {
-        //             id: configBarBackground
-        //             anchors.fill: parent
-        //             enabledBorders: KSvg.FrameSvgItem.AllBorders
-        //             imagePath: 'widgets/background'
-        //         }
-        //
-        //         Flow {
-        //             spacing: Kirigami.Units.smallSpacing
-        //
-        //             anchors.fill: parent
-        //             anchors.leftMargin: configBarBackground.margins.left
-        //             anchors.rightMargin: configBarBackground.margins.right
-        //             anchors.topMargin: configBarBackground.margins.top
-        //             anchors.bottomMargin: configBarBackground.margins.bottom
-        //
-        //             Repeater {
-        //                 model: root.widget.applet ? [...root.widget.applet.contextualActions, configureAppletAction, removeDelegateAction] : [removeDelegateAction]
-        //
-        //                 delegate: PC3.Button {
-        //                     display: PC3.ToolButton.IconOnly
-        //                     width: (configBar.orientation === Orientation.Above || configBar.orientation === Orientation.Below)
-        //                                 ? height : configPopup.barWidth - configBarBackground.margins.top - configBarBackground.margins.bottom
-        //                     height: (configBar.orientation === Orientation.Left || configBar.orientation === Orientation.Right)
-        //                                 ? width : configPopup.barWidth - configBarBackground.margins.left - configBarBackground.margins.right
-        //
-        //                     text: modelData.text
-        //                     icon.name: modelData.icon.name
-        //                     onClicked: modelData.triggered()
-        //                 }
-        //             }
-        //         }
-        //     }
+            PC3.Button {
+                id: button
+                icon.name: 'settings-configure'
+                text: i18n('Options')
+
+                readonly property var handleContainer: resizeFrame.handleContainer
+                x: Math.round(handleContainer.x + (handleContainer.width / 2) - (width / 2))
+                y: Math.round(handleContainer.y + (handleContainer.height / 2) - (height / 2))
+
+                onClicked: contextMenuDialog.open()
+            }
+
+            Kirigami.Dialog {
+                id: contextMenuDialog
+                preferredWidth: Kirigami.Units.gridUnit * 20
+                padding: 0
+                title: i18n('Widget Options')
+
+                // close parent dialog too
+                onClosed: configPopup.close()
+
+                ColumnLayout {
+                    id: column
+                    spacing: 0
+
+                    Repeater {
+                        model: root.widget.applet ? [...root.widget.applet.contextualActions, configureAppletAction, removeDelegateAction] : [removeDelegateAction]
+
+                        delegate: QQC2.ItemDelegate {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: Kirigami.Units.gridUnit * 2
+
+                            action: modelData
+                            text: modelData.text
+                            icon.name: modelData.icon.name
+
+                            icon.width: Kirigami.Units.gridUnit
+                            icon.height: Kirigami.Units.gridUnit
+
+                            leftPadding: Kirigami.Units.largeSpacing + Kirigami.Units.smallSpacing
+                            rightPadding: Kirigami.Units.largeSpacing + Kirigami.Units.smallSpacing
+
+                            onClicked: contextMenuDialog.close()
+                        }
+                    }
+                }
+            }
         }
     }
 
     Kirigami.Action {
         id: removeDelegateAction
         icon.name: 'edit-delete-remove'
-        text: i18n('Remove')
+        text: i18n('Remove widget')
         onTriggered: root.removeRequested()
     }
 
     Kirigami.Action {
         id: configureAppletAction
         icon.name: 'settings-configure'
-        text: i18n('Configure')
+        text: i18n('Configure widget')
         onTriggered: root.widget.applet.internalAction('configure').trigger();
     }
 }

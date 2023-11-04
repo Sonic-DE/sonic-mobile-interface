@@ -14,6 +14,7 @@ import org.kde.plasma.components 3.0 as PC3
 import org.kde.private.mobile.homescreen.folio 1.0 as Folio
 
 import './delegate'
+import './private'
 
 Item {
     id: root
@@ -109,6 +110,9 @@ Item {
 
         sourceComponent: WidgetDelegate {
             widget: root.widget
+
+            layer.enabled: true
+            layer.effect: DarkenEffect {}
         }
     }
 }

@@ -4,13 +4,16 @@
 import QtQuick
 import QtQuick.Window
 import QtQuick.Layouts
+import QtQuick.Effects
 
+import org.kde.plasma.components 3.0 as PC3
 import org.kde.plasma.private.mobileshell.state 1.0 as MobileShellState
 import org.kde.plasma.private.mobileshell 1.0 as MobileShell
 import org.kde.private.mobile.homescreen.folio 1.0 as Folio
-import org.kde.kirigami 2.10 as Kirigami
+import org.kde.kirigami as Kirigami
 
 import "./delegate"
+import "./private"
 
 Item {
     id: root
@@ -322,6 +325,14 @@ Item {
                         }
                     }
 
+                    layer.enabled: widgetDelegate.editMode
+                    layer.effect: DarkenEffect {}
+
+                    PC3.ToolTip {
+                        visible: widgetDelegate.editMode && pressed
+                        text: i18n('Release to configure, drag to move')
+                    }
+
                     WidgetDelegateConfig {
                         id: widgetConfig
                         homeScreen: root.homeScreen
@@ -338,8 +349,11 @@ Item {
                         widgetHeight: widgetDelegate.widgetHeight
                         widgetX: delegate.x + root.anchors.leftMargin + root.homeScreen.leftMargin
                         widgetY: delegate.y + root.anchors.topMargin + root.homeScreen.topMargin
+
                         topWidgetBackgroundPadding: widgetDelegate.topWidgetBackgroundPadding
+                        bottomWidgetBackgroundPadding: widgetDelegate.bottomWidgetBackgroundPadding
                         leftWidgetBackgroundPadding: widgetDelegate.leftWidgetBackgroundPadding
+                        rightWidgetBackgroundPadding: widgetDelegate.rightWidgetBackgroundPadding
 
                         anchors.fill: parent
 

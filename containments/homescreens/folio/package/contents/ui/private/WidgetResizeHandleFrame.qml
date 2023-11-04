@@ -6,7 +6,10 @@ import QtQuick.Layouts
 import QtQuick.Controls as QQC2
 import Qt5Compat.GraphicalEffects
 
+import org.kde.kirigami as Kirigami
 import org.kde.private.mobile.homescreen.folio 1.0 as Folio
+
+import '../delegate'
 
 Item {
     id: root
@@ -17,6 +20,11 @@ Item {
     property real widgetHeight
     property real widgetX
     property real widgetY
+
+    property real widgetTopMargin
+    property real widgetBottomMargin
+    property real widgetLeftMargin
+    property real widgetRightMargin
 
     property int widgetRow
     property int widgetColumn
@@ -32,6 +40,10 @@ Item {
     property int widgetGridHeightAfterDrag: 0
 
     property var lockDrag: null
+
+    property alias handleContainer: handleContainer
+
+    signal widgetChangeAfterDrag(int widgetRow, int widgetColumn, int widgetGridWidth, int widgetGridHeight)
 
     // solely used here:
 
@@ -72,10 +84,7 @@ Item {
         startWidgetRow = root.widgetRow;
         startWidgetColumn = root.widgetColumn;
 
-        widgetRowAfterDrag = startWidgetRow;
-        widgetColumnAfterDrag = startWidgetColumn;
-        widgetGridWidthAfterDrag = root.widgetGridWidth;
-        widgetGridHeightAfterDrag = root.widgetGridHeight;
+        root.widgetChangeAfterDrag(startWidgetRow, startWidgetColumn, root.widgetGridWidth, root.widgetGridHeight);
     }
 
     function snapEdges() {
@@ -90,17 +99,6 @@ Item {
         xAnim.restart();
         yAnim.to = widgetY;
         yAnim.restart();
-    }
-
-    // updates the resized widget dimensions and position
-    function updateAfterDrag() {
-        const columnsMovedRight = Math.round((handleContainer.x - root.startX) / Folio.HomeScreenState.pageCellWidth);
-        const rowsMovedDown = Math.round((handleContainer.y - root.startY) / Folio.HomeScreenState.pageCellHeight);
-
-        widgetRowAfterDrag = startWidgetRow + rowsMovedDown;
-        widgetColumnAfterDrag = startWidgetColumn + columnsMovedRight;
-        widgetGridWidthAfterDrag = Math.round(handleContainer.width / Folio.HomeScreenState.pageCellWidth);
-        widgetGridHeightAfterDrag = Math.round(handleContainer.height / Folio.HomeScreenState.pageCellHeight);
     }
 
     function pressedHandler(orientation) {
@@ -119,7 +117,18 @@ Item {
             handleContainer.height = root.startDragHeight + bottomEdgeDelta + topEdgeDelta;
 
             // update the widget dimensions and position
-            updateAfterDrag();
+            const columnsMovedRight = Math.round((handleContainer.x - root.startX) / Folio.HomeScreenState.pageCellWidth);
+            const rowsMovedDown = Math.round((handleContainer.y - root.startY) / Folio.HomeScreenState.pageCellHeight);
+
+            const realWidgetWidth = handleContainer.width + widgetLeftMargin + widgetRightMargin;
+            const realWidgetHeight = handleContainer.height + widgetTopMargin + widgetBottomMargin;
+
+            const widgetRowAfterDrag = startWidgetRow + rowsMovedDown;
+            const widgetColumnAfterDrag = startWidgetColumn + columnsMovedRight;
+            const widgetGridWidthAfterDrag = Math.round(realWidgetWidth / Folio.HomeScreenState.pageCellWidth);
+            const widgetGridHeightAfterDrag = Math.round(realWidgetHeight / Folio.HomeScreenState.pageCellHeight);
+
+            root.widgetChangeAfterDrag(widgetRowAfterDrag, widgetColumnAfterDrag, widgetGridWidthAfterDrag, widgetGridHeightAfterDrag);
         }
     }
 
@@ -157,38 +166,30 @@ Item {
         }
     }
 
-    WidgetResizeHandle {
-        id: topLeftHandle
-        orientation: WidgetHandlePosition.TopLeft
+    Rectangle {
+        id: resizeOutline
+        color: 'transparent'
+        border.color: 'white'
+        radius: Kirigami.Units.smallSpacing
+        border.width: 1
 
-        x: handleContainer.x - (width / 2)
-        y: handleContainer.y - (height / 2)
-
-        onPressed: pressedHandler(orientation)
-        onDragEvent: (leftEdgeDelta, rightEdgeDelta, topEdgeDelta, bottomEdgeDelta) => dragHandler(orientation, leftEdgeDelta, rightEdgeDelta, topEdgeDelta, bottomEdgeDelta)
-        onReleased: releaseHandler(orientation)
+        anchors.fill: handleContainer
+        anchors.leftMargin: -root.widgetLeftMargin
+        anchors.rightMargin: -root.widgetRightMargin
+        anchors.topMargin: -root.widgetTopMargin
+        anchors.bottomMargin: -root.widgetBottomMargin
     }
 
     WidgetResizeHandle {
         id: topHandle
         orientation: WidgetHandlePosition.TopCenter
 
-        x: handleContainer.x + (handleContainer.width / 2) - (width / 2)
-        y: handleContainer.y - (height / 2)
+        x: resizeOutline.x + Math.round(resizeOutline.width / 2) - Math.round(width / 2)
+        y: resizeOutline.y - Math.round(height / 2)
+
+        width: Math.round(Math.max(height, resizeOutline.width * 0.3))
 
         onPressed: pressedHandler(orientation)
-        onDragEvent: (leftEdgeDelta, rightEdgeDelta, topEdgeDelta, bottomEdgeDelta) => dragHandler(orientation, leftEdgeDelta, rightEdgeDelta, topEdgeDelta, bottomEdgeDelta)
-        onReleased: releaseHandler(orientation)
-    }
-
-    WidgetResizeHandle {
-        id: topRightHandle
-        orientation: WidgetHandlePosition.TopRight
-
-        x: handleContainer.x + handleContainer.width - (width / 2)
-        y: handleContainer.y - (height / 2)
-
-        onPressed: () => pressedHandler(orientation)
         onDragEvent: (leftEdgeDelta, rightEdgeDelta, topEdgeDelta, bottomEdgeDelta) => dragHandler(orientation, leftEdgeDelta, rightEdgeDelta, topEdgeDelta, bottomEdgeDelta)
         onReleased: releaseHandler(orientation)
     }
@@ -197,8 +198,10 @@ Item {
         id: leftHandle
         orientation: WidgetHandlePosition.LeftCenter
 
-        x: handleContainer.x - (width / 2)
-        y: handleContainer.y + (handleContainer.height / 2) - (height / 2)
+        x: resizeOutline.x - (width / 2)
+        y: resizeOutline.y + (resizeOutline.height / 2) - (height / 2)
+
+        height: Math.round(Math.max(width, resizeOutline.height * 0.3))
 
         onPressed: pressedHandler(orientation)
         onDragEvent: (leftEdgeDelta, rightEdgeDelta, topEdgeDelta, bottomEdgeDelta) => dragHandler(orientation, leftEdgeDelta, rightEdgeDelta, topEdgeDelta, bottomEdgeDelta)
@@ -209,20 +212,10 @@ Item {
         id: rightHandle
         orientation: WidgetHandlePosition.RightCenter
 
-        x: handleContainer.x + handleContainer.width - (width / 2)
-        y: handleContainer.y + (handleContainer.height / 2) - (height / 2)
+        x: resizeOutline.x + resizeOutline.width - (width / 2)
+        y: resizeOutline.y + (resizeOutline.height / 2) - (height / 2)
 
-        onPressed: pressedHandler(orientation)
-        onDragEvent: (leftEdgeDelta, rightEdgeDelta, topEdgeDelta, bottomEdgeDelta) => dragHandler(orientation, leftEdgeDelta, rightEdgeDelta, topEdgeDelta, bottomEdgeDelta)
-        onReleased: releaseHandler(orientation)
-    }
-
-    WidgetResizeHandle {
-        id: bottomLeftHandle
-        orientation: WidgetHandlePosition.BottomLeft
-
-        x: handleContainer.x - (width / 2)
-        y: handleContainer.y + handleContainer.height - (height / 2)
+        height: Math.round(Math.max(width, resizeOutline.height * 0.3))
 
         onPressed: pressedHandler(orientation)
         onDragEvent: (leftEdgeDelta, rightEdgeDelta, topEdgeDelta, bottomEdgeDelta) => dragHandler(orientation, leftEdgeDelta, rightEdgeDelta, topEdgeDelta, bottomEdgeDelta)
@@ -233,20 +226,10 @@ Item {
         id: bottomHandle
         orientation: WidgetHandlePosition.BottomCenter
 
-        x: handleContainer.x + (handleContainer.width / 2) - (width / 2)
-        y: handleContainer.y + handleContainer.height - (height / 2)
+        x: resizeOutline.x + (resizeOutline.width / 2) - (width / 2)
+        y: resizeOutline.y + resizeOutline.height - (height / 2)
 
-        onPressed: pressedHandler(orientation)
-        onDragEvent: (leftEdgeDelta, rightEdgeDelta, topEdgeDelta, bottomEdgeDelta) => dragHandler(orientation, leftEdgeDelta, rightEdgeDelta, topEdgeDelta, bottomEdgeDelta)
-        onReleased: releaseHandler(orientation)
-    }
-
-    WidgetResizeHandle {
-        id: bottomRightHandle
-        orientation: WidgetHandlePosition.BottomRight
-
-        x: handleContainer.x + handleContainer.width - (width / 2)
-        y: handleContainer.y + handleContainer.height - (height / 2)
+        width: Math.round(Math.max(height, resizeOutline.width * 0.3))
 
         onPressed: pressedHandler(orientation)
         onDragEvent: (leftEdgeDelta, rightEdgeDelta, topEdgeDelta, bottomEdgeDelta) => dragHandler(orientation, leftEdgeDelta, rightEdgeDelta, topEdgeDelta, bottomEdgeDelta)

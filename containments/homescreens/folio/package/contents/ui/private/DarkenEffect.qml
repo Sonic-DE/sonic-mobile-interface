@@ -2,12 +2,9 @@
 // SPDX-License-Identifier: LGPL-2.0-or-later
 
 import QtQuick
+import QtQuick.Effects
 
-QtObject {
-    enum Position {
-        TopCenter,
-        LeftCenter,
-        RightCenter,
-        BottomCenter
-    }
+MultiEffect {
+    colorization: 0.3
+    colorizationColor: 'black'
 }

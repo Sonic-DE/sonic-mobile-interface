@@ -24,23 +24,24 @@ Folio.WidgetContainer {
     readonly property real widgetHeight: widgetHolder.height
 
     readonly property real topWidgetBackgroundPadding: widgetBackground.margins.top
+    readonly property real bottomWidgetBackgroundPadding: widgetBackground.margins.bottom
     readonly property real leftWidgetBackgroundPadding: widgetBackground.margins.left
+    readonly property real rightWidgetBackgroundPadding: widgetBackground.margins.right
 
     implicitWidth: (widget ? widget.gridWidth : 0) * Folio.HomeScreenState.pageCellWidth
     implicitHeight: (widget ? widget.gridHeight : 0) * Folio.HomeScreenState.pageCellHeight
     width: implicitWidth
     height: implicitHeight
 
+    // prevent widget contents from going outside of the container
+    clip: true
+
     function updateVisualApplet() {
         if (!widget || !widget.visualApplet) {
             return;
         }
 
-        // widget.applet.userBackgroundHints = PlasmaCore.Types.NoBackground;
-
-        //FIXME: make a way to instantiate fullRepresentationItem without the open/close dance
         widget.visualApplet.expanded = true;
-        widget.visualApplet.expanded = false;
 
         widget.visualApplet.parent = widgetHolder;
         widget.visualApplet.anchors.fill = widgetHolder;
@@ -99,10 +100,10 @@ Folio.WidgetContainer {
         Item {
             id: widgetHolder
             anchors.fill: parent
-            anchors.leftMargin: widgetBackground.margins.left
-            anchors.rightMargin: widgetBackground.margins.right
-            anchors.topMargin: widgetBackground.margins.top
-            anchors.bottomMargin: widgetBackground.margins.bottom
+            anchors.leftMargin: (root.widget && root.widget.applet && root.widget.applet.constraintHints === PlasmaCore.Types.CanFillArea) ? 0 : widgetBackground.margins.left
+            anchors.rightMargin: (root.widget && root.widget.applet && root.widget.applet.constraintHints === PlasmaCore.Types.CanFillArea) ? 0 : widgetBackground.margins.right
+            anchors.topMargin: (root.widget && root.widget.applet && root.widget.applet.constraintHints === PlasmaCore.Types.CanFillArea) ? 0 : widgetBackground.margins.top
+            anchors.bottomMargin: (root.widget && root.widget.applet && root.widget.applet.constraintHints === PlasmaCore.Types.CanFillArea) ? 0 : widgetBackground.margins.bottom
         }
 
         // TODO implement blur behind, see plasma-workspace BasicAppletContainer for how to do this
