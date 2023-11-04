@@ -23,6 +23,7 @@ public:
 Q_SIGNALS:
     void editModeChanged();
     void pressReleased();
+    void startEditMode(QPointF pressPoint);
 
 protected:
     bool childMouseEventFilter(QQuickItem *item, QEvent *event) override;

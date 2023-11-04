@@ -86,11 +86,6 @@ void WidgetContainer::mousePressEvent(QMouseEvent *event)
 {
     forceActiveFocus(Qt::MouseFocusReason);
 
-    // if (m_editMode) {
-    //     event->setExclusiveGrabber(event->point(0), this);
-    //     setCursor(Qt::ClosedHandCursor);
-    // }
-
     m_pressed = true;
     m_pressAndHoldTimer->start();
     m_mouseDownPosition = event->scenePosition();
@@ -125,6 +120,7 @@ void WidgetContainer::mouseUngrabEvent()
 void WidgetContainer::startPressAndHold()
 {
     setEditMode(true);
+    Q_EMIT startEditMode(m_mouseDownPosition);
 }
 
 void WidgetContainer::onActiveFocusChanged(bool activeFocus)

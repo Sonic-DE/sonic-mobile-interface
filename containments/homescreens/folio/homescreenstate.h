@@ -228,11 +228,21 @@ public:
     qreal searchWidgetY();
     void setSearchWidgetY(qreal searchWidgetY);
 
+    // the top left x-position of the delegate being dragged
     qreal delegateDragX();
     void setDelegateDragX(qreal delegateDragX);
 
+    // the top left y-position of the delegate being dragged
     qreal delegateDragY();
     void setDelegateDragY(qreal delegateDragY);
+
+    // the offset from delegateDragX where the mouse/finger is
+    qreal delegateDragPointerOffsetX();
+    void setDelegateDragPointerOffsetX(qreal delegateDragPointerOffsetX);
+
+    // the offset from delegateDragY where the mouse/finger is
+    qreal delegateDragPointerOffsetY();
+    void setDelegateDragPointerOffsetY(qreal delegateDragPointerOffsetY);
 
     int currentPage();
     void setCurrentPage(int currentPage);
@@ -314,10 +324,10 @@ public Q_SLOTS:
     void openSettingsView();
     void closeSettingsView();
 
-    void startDelegatePageDrag(qreal startX, qreal startY, int page, int row, int column);
-    void startDelegateFavouritesDrag(qreal startX, qreal startY, int position);
-    void startDelegateAppDrawerDrag(qreal startX, qreal startY, QString storageId);
-    void startDelegateFolderDrag(qreal startX, qreal startY, FolioApplicationFolder *folder, int position);
+    void startDelegatePageDrag(qreal startX, qreal startY, qreal pointerOffsetX, qreal pointerOffsetY, int page, int row, int column);
+    void startDelegateFavouritesDrag(qreal startX, qreal startY, qreal pointerOffsetX, qreal pointerOffsetY, int position);
+    void startDelegateAppDrawerDrag(qreal startX, qreal startY, qreal pointerOffsetX, qreal pointerOffsetY, QString storageId);
+    void startDelegateFolderDrag(qreal startX, qreal startY, qreal pointerOffsetX, qreal pointerOffsetY, FolioApplicationFolder *folder, int position);
     void cancelDelegateDrag();
 
     // from SwipeArea
@@ -329,7 +339,7 @@ private:
     void setViewState(ViewState viewState);
     void setSwipeState(SwipeState swipeState);
 
-    void startDelegateDrag(qreal startX, qreal startY);
+    void startDelegateDrag(qreal startX, qreal startY, qreal pointerOffsetX, qreal pointerOffsetY);
 
     void cancelAppDrawerAnimations();
     void cancelSearchWidgetAnimations();
@@ -380,6 +390,8 @@ private:
     qreal m_searchWidgetY{0};
     qreal m_delegateDragX{0};
     qreal m_delegateDragY{0};
+    qreal m_delegateDragPointerOffsetX{0};
+    qreal m_delegateDragPointerOffsetY{0};
 
     int m_pageNum{0};
     int m_folderPageNum{0};

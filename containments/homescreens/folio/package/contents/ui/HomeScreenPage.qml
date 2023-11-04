@@ -164,6 +164,8 @@ Item {
                         Folio.HomeScreenState.startDelegatePageDrag(
                             mappedCoords.x,
                             mappedCoords.y,
+                            appDelegate.pressPosition.x,
+                            appDelegate.pressPosition.y,
                             root.pageNum,
                             delegate.pageDelegate.row,
                             delegate.pageDelegate.column
@@ -241,6 +243,8 @@ Item {
                         Folio.HomeScreenState.startDelegatePageDrag(
                             mappedCoords.x,
                             mappedCoords.y,
+                            appFolderDelegate.pressPosition.x,
+                            appFolderDelegate.pressPosition.y,
                             root.pageNum,
                             delegate.pageDelegate.row,
                             delegate.pageDelegate.column
@@ -293,7 +297,6 @@ Item {
                     id: widgetDelegate
 
                     // don't reparent applet if the drop animation is running to this delegate
-                    //
                     // background: there is only one "visual" instance of the widget, once this delegate loads
                     //             it will reparent it to here (but we don't want it to happen while the drop animation is running)
                     property bool suppressAppletReparent: (root.homeScreen.currentlyDraggedWidget === delegate.pageDelegate.widget)
@@ -302,19 +305,19 @@ Item {
                     visible: !suppressAppletReparent
                     widget: suppressAppletReparent ? null : delegate.pageDelegate.widget
 
-                    onEditModeChanged: {
-                        if (editMode) {
-                            let mappedCoords = root.homeScreen.prepareStartDelegateDrag(delegate.pageDelegate, widgetDelegate);
-                            Folio.HomeScreenState.startDelegatePageDrag(
-                                mappedCoords.x,
-                                mappedCoords.y,
-                                root.pageNum,
-                                delegate.pageDelegate.row,
-                                delegate.pageDelegate.column
-                            );
+                    onStartEditMode: (pressPoint) => {
+                        let mappedCoords = root.homeScreen.prepareStartDelegateDrag(delegate.pageDelegate, widgetDelegate);
+                        Folio.HomeScreenState.startDelegatePageDrag(
+                            mappedCoords.x,
+                            mappedCoords.y,
+                            pressPoint.x - mappedCoords.x,
+                            pressPoint.y - mappedCoords.y,
+                            root.pageNum,
+                            delegate.pageDelegate.row,
+                            delegate.pageDelegate.column
+                        );
 
-                            widgetConfig.startOpen();
-                        }
+                        widgetConfig.startOpen();
                     }
 
                     onPressReleased: {

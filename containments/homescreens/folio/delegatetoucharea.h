@@ -20,6 +20,7 @@ class DelegateTouchArea : public QQuickItem
     Q_PROPERTY(bool pressed READ pressed NOTIFY pressedChanged FINAL)
     Q_PROPERTY(bool hovered READ hovered NOTIFY hoveredChanged FINAL)
     Q_PROPERTY(Qt::CursorShape cursorShape READ cursorShape WRITE setCursorShape RESET unsetCursor NOTIFY cursorShapeChanged FINAL)
+    Q_PROPERTY(QPointF pressPosition READ pressPosition NOTIFY pressPositionChanged FINAL)
 
     QML_NAMED_ELEMENT(DelegateTouchArea)
 
@@ -31,6 +32,7 @@ public:
     Qt::CursorShape cursorShape();
     void setCursorShape(Qt::CursorShape cursorShape);
     void unsetCursor();
+    QPointF pressPosition();
 
 Q_SIGNALS:
     void clicked();
@@ -40,6 +42,7 @@ Q_SIGNALS:
     void pressedChanged(bool pressed);
     void hoveredChanged(bool hovered);
     void cursorShapeChanged();
+    void pressPositionChanged();
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
@@ -67,6 +70,7 @@ private:
     bool m_hovered{false};
     bool m_pressAndHeld{false};
     Qt::CursorShape m_cursorShape{Qt::ArrowCursor};
+    QPointF m_mouseDownPosition{};
 
     QTimer *m_pressAndHoldTimer{nullptr};
 };

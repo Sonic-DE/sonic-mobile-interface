@@ -5,6 +5,8 @@
 #include "delegatetoucharea.h"
 
 #include <QCursor>
+#include <QGuiApplication>
+#include <QStyleHints>
 
 // Some code taken from MouseArea
 
@@ -71,6 +73,11 @@ void DelegateTouchArea::setCursorShape(Qt::CursorShape cursorShape)
 void DelegateTouchArea::unsetCursor()
 {
     setCursorShape(Qt::ArrowCursor);
+}
+
+QPointF DelegateTouchArea::pressPosition()
+{
+    return m_mouseDownPosition;
 }
 
 void DelegateTouchArea::mousePressEvent(QMouseEvent *event)
@@ -173,6 +180,10 @@ void DelegateTouchArea::handlePressEvent(QPointerEvent *event, QPointF point)
 
     setPressed(true);
     forceActiveFocus(Qt::MouseFocusReason);
+
+    m_mouseDownPosition = point;
+    Q_EMIT pressPositionChanged();
+
     m_pressAndHoldTimer->start();
 }
 
@@ -196,8 +207,8 @@ void DelegateTouchArea::handleReleaseEvent(QPointerEvent *event, bool click)
 
 void DelegateTouchArea::handleMoveEvent(QPointerEvent *event, QPointF point)
 {
-    if (m_pressAndHeld) {
-        // TODO
+    if (QPointF(point - m_mouseDownPosition).manhattanLength() >= QGuiApplication::styleHints()->startDragDistance()) {
+        m_pressAndHoldTimer->stop();
     }
 }
 

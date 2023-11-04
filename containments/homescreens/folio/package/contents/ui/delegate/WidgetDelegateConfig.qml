@@ -104,6 +104,8 @@ Item {
         }
     }
 
+    // this is the actual interactive popup for widget settings, only 
+    // opened when the user releases their press (and doesn't drag)
     QQC2.Popup {
         id: configPopup
         width: root.homeScreen.width

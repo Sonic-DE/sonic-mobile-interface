@@ -16,11 +16,10 @@ As such, all of the positioning and placement of delegates on the screen are top
 #### TODO
 - Add folio/halcyon switcher in initial-start
 - If an app gets uninstalled, the homescreen UI needs to ensure that delegates are updated
-- BUG: the position of where things think the dragged icon is during drag-and-drop is slightly off because of the label
 - BUG: landscape favourites bar duplication when dragging icon from it sometimes
 - BUG: can't insert delegates in-between very well in landscape favourites bar
 - can make the touch area only the icon?
-- FEATURE: add import/export
+- FEATURE: add widget import/export
 - FEATURE: keyboard navigation
 - FEATURE: touchpad navigation
 - FEATURE: option to darken wallpaper
@@ -28,11 +27,11 @@ As such, all of the positioning and placement of delegates on the screen are top
 - BUG: drag and drop animation when rejected on a different page
 - BUG: delegatetoucharea doesn't release on drag out
 
-- BUG: Widgets can overlap apps on the very bottom left in portrait
 - BUG: Widgets moved in landscape are not translated correctly
+- BUG: moving widgets to create new page doesn't work
+
+- FEATURE: animate homescreen config opening
 
 - RESTORE app drawer overshoot
 
 - PERFORMANCE: ensure that the widget config overlays are in loaders
-- BUG: widget config overlay when things are at the bottom or right, the config overlay (fastblur) doesn't show in the correct position
-    - we probably need to have proper sizing of the parent to accomodate the dimensions

@@ -130,6 +130,10 @@ private:
     qreal getDraggedDelegateX();
     qreal getDraggedDelegateY();
 
+    // position of the dragging pointer
+    qreal getPointerX();
+    qreal getPointerY();
+
     QTimer *m_changePageTimer{nullptr};
     QTimer *m_openFolderTimer{nullptr};
     QTimer *m_leaveFolderTimer{nullptr};

@@ -84,6 +84,8 @@ MobileShell.GridView {
             Folio.HomeScreenState.startDelegateAppDrawerDrag(
                 mappedCoords.x,
                 mappedCoords.y,
+                delegate.pressPosition.x,
+                delegate.pressPosition.y,
                 model.delegate.application.storageId
             );
         }

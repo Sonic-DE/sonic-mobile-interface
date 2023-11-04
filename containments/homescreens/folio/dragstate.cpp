@@ -214,8 +214,8 @@ void DragState::onDelegateDragPositionChanged()
 
     // we want to update the candidate drop position variable in this function!
 
-    qreal x = getDraggedDelegateX();
-    qreal y = getDraggedDelegateY();
+    qreal x = getPointerX();
+    qreal y = getPointerY();
 
     bool inFolder = m_state->viewState() == HomeScreenState::FolderView;
     bool inFavouritesArea = !inFolder;
@@ -258,8 +258,8 @@ void DragState::onDelegateDragPositionChanged()
 void DragState::onDelegateDragPositionOverFolderViewChanged()
 {
     // if the drag position changes while in the folder view
-    qreal x = getDraggedDelegateX();
-    qreal y = getDraggedDelegateY();
+    qreal x = getPointerX();
+    qreal y = getPointerY();
 
     auto *folder = m_state->currentFolder();
     if (!folder) {
@@ -311,8 +311,8 @@ void DragState::onDelegateDragPositionOverFavouritesChanged()
 {
     // the drag position changed while over the favourites strip
 
-    qreal x = getDraggedDelegateX();
-    qreal y = getDraggedDelegateY();
+    qreal x = getPointerX();
+    qreal y = getPointerY();
     int dropIndex = FavouritesModel::self()->dropInsertPosition(x, y);
 
     // if the drop position changed, cancel the open folder timer
@@ -374,16 +374,28 @@ void DragState::onDelegateDragPositionOverPageViewChanged()
 {
     // the drag position changed while over the homescreen pages strip
 
-    qreal x = getDraggedDelegateX();
-    qreal y = getDraggedDelegateY();
+    qreal delegateX = getDraggedDelegateX();
+    qreal delegateY = getDraggedDelegateY();
+    qreal x = getPointerX();
+    qreal y = getPointerY();
     int page = m_state->currentPage();
 
     // calculate the row and column the delegate is over
     qreal pageHorizontalMargin = (m_state->pageWidth() - m_state->pageContentWidth()) / 2;
     qreal pageVerticalMargin = (m_state->pageHeight() - m_state->pageContentHeight()) / 2;
 
-    int row = (y - pageVerticalMargin) / m_state->pageCellHeight();
-    int column = (x - pageHorizontalMargin) / m_state->pageCellWidth();
+    int row = 0;
+    int column = 0;
+
+    if (m_dropDelegate && m_dropDelegate->type() == FolioDelegate::Widget) {
+        // for widgets, we use their top left position to determine where they are placed (since they are larger than one cell)
+        row = (delegateY - pageVerticalMargin) / m_state->pageCellHeight();
+        column = (delegateX - pageHorizontalMargin) / m_state->pageCellWidth();
+    } else {
+        // otherwise, we base it on the pointer position
+        row = (y - pageVerticalMargin) / m_state->pageCellHeight();
+        column = (x - pageHorizontalMargin) / m_state->pageCellWidth();
+    }
 
     // ensure it's in bounds
     row = std::max(0, std::min(m_state->pageRows() - 1, row));
@@ -548,7 +560,7 @@ void DragState::onChangePageTimerFinished()
     const int leftPagePosition = 0;
     const int rightPagePosition = m_state->pageWidth();
 
-    qreal x = getDraggedDelegateX();
+    qreal x = getPointerX();
     if (qAbs(leftPagePosition - x) <= PAGE_CHANGE_THRESHOLD) {
         // if we are at the left edge, go left
         int page = m_state->currentPage() - 1;
@@ -628,7 +640,7 @@ void DragState::onLeaveFolderTimerFinished()
     }
 
     // check if the drag position is outside of the folder
-    if (m_state->currentFolder()->isDropPositionOutside(getDraggedDelegateX(), getDraggedDelegateY())) {
+    if (m_state->currentFolder()->isDropPositionOutside(getPointerX(), getPointerY())) {
         m_state->closeFolder();
     }
 }
@@ -640,16 +652,17 @@ void DragState::onChangeFolderPageTimerFinished()
     }
 
     auto *folder = m_state->currentFolder();
+    qreal x = getPointerX();
+    qreal y = getPointerY();
 
     // check if the drag position is outside of the folder
-    if (folder->isDropPositionOutside(getDraggedDelegateX(), getDraggedDelegateY())) {
+    if (folder->isDropPositionOutside(x, y)) {
         return;
     }
 
     const qreal leftPagePosition = folder->applications()->leftMarginFromScreenEdge();
     const qreal rightPagePosition = m_state->viewWidth() - leftPagePosition;
 
-    qreal x = getDraggedDelegateX();
     if (x <= leftPagePosition + PAGE_CHANGE_THRESHOLD) {
         // if we are at the left edge, go left
         int page = m_state->currentFolderPage() - 1;
@@ -885,4 +898,14 @@ qreal DragState::getDraggedDelegateY()
 {
     // adjust to get the position of the center of the delegate
     return m_state->delegateDragY() + m_state->pageCellHeight() / 2;
+}
+
+qreal DragState::getPointerX()
+{
+    return m_state->delegateDragX() + m_state->delegateDragPointerOffsetX();
+}
+
+qreal DragState::getPointerY()
+{
+    return m_state->delegateDragY() + m_state->delegateDragPointerOffsetY();
 }

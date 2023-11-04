@@ -582,6 +582,26 @@ void HomeScreenState::setDelegateDragY(qreal delegateDragY)
     Q_EMIT delegateDragYChanged();
 }
 
+qreal HomeScreenState::delegateDragPointerOffsetX()
+{
+    return m_delegateDragPointerOffsetX;
+}
+
+void HomeScreenState::setDelegateDragPointerOffsetX(qreal delegateDragPointerOffsetX)
+{
+    m_delegateDragPointerOffsetX = delegateDragPointerOffsetX;
+}
+
+qreal HomeScreenState::delegateDragPointerOffsetY()
+{
+    return m_delegateDragPointerOffsetY;
+}
+
+void HomeScreenState::setDelegateDragPointerOffsetY(qreal delegateDragPointerOffsetY)
+{
+    m_delegateDragPointerOffsetY = delegateDragPointerOffsetY;
+}
+
 int HomeScreenState::currentPage()
 {
     return m_pageNum;
@@ -786,11 +806,13 @@ void HomeScreenState::closeSettingsView()
     m_closeSettingsAnim->start();
 }
 
-void HomeScreenState::startDelegateDrag(qreal startX, qreal startY)
+void HomeScreenState::startDelegateDrag(qreal startX, qreal startY, qreal pointerOffsetX, qreal pointerOffsetY)
 {
     // start drag and drop positions
     setDelegateDragX(startX);
     setDelegateDragY(startY);
+    setDelegateDragPointerOffsetX(pointerOffsetX);
+    setDelegateDragPointerOffsetY(pointerOffsetY);
 
     // end current swipe
     swipeEnded();
@@ -799,21 +821,21 @@ void HomeScreenState::startDelegateDrag(qreal startX, qreal startY)
     setSwipeState(SwipeState::AwaitingDraggingDelegate);
 }
 
-void HomeScreenState::startDelegatePageDrag(qreal startX, qreal startY, int page, int row, int column)
+void HomeScreenState::startDelegatePageDrag(qreal startX, qreal startY, qreal pointerOffsetX, qreal pointerOffsetY, int page, int row, int column)
 {
-    startDelegateDrag(startX, startY);
+    startDelegateDrag(startX, startY, pointerOffsetX, pointerOffsetY);
     Q_EMIT delegateDragFromPageStarted(page, row, column);
 }
 
-void HomeScreenState::startDelegateFavouritesDrag(qreal startX, qreal startY, int position)
+void HomeScreenState::startDelegateFavouritesDrag(qreal startX, qreal startY, qreal pointerOffsetX, qreal pointerOffsetY, int position)
 {
-    startDelegateDrag(startX, startY);
+    startDelegateDrag(startX, startY, pointerOffsetX, pointerOffsetY);
     Q_EMIT delegateDragFromFavouritesStarted(position);
 }
 
-void HomeScreenState::startDelegateAppDrawerDrag(qreal startX, qreal startY, QString storageId)
+void HomeScreenState::startDelegateAppDrawerDrag(qreal startX, qreal startY, qreal pointerOffsetX, qreal pointerOffsetY, QString storageId)
 {
-    startDelegateDrag(startX, startY);
+    startDelegateDrag(startX, startY, pointerOffsetX, pointerOffsetY);
     Q_EMIT delegateDragFromAppDrawerStarted(storageId);
 
     // we start dragging the delegate immediately from the app drawer, because we don't have a context menu to deal with!
@@ -821,9 +843,14 @@ void HomeScreenState::startDelegateAppDrawerDrag(qreal startX, qreal startY, QSt
     setSwipeState(SwipeState::DraggingDelegate);
 }
 
-void HomeScreenState::startDelegateFolderDrag(qreal startX, qreal startY, FolioApplicationFolder *folder, int position)
+void HomeScreenState::startDelegateFolderDrag(qreal startX,
+                                              qreal startY,
+                                              qreal pointerOffsetX,
+                                              qreal pointerOffsetY,
+                                              FolioApplicationFolder *folder,
+                                              int position)
 {
-    startDelegateDrag(startX, startY);
+    startDelegateDrag(startX, startY, pointerOffsetX, pointerOffsetY);
     Q_EMIT delegateDragFromFolderStarted(folder, position);
 }
 
