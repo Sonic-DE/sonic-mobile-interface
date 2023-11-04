@@ -101,6 +101,11 @@ Item {
             dragXAnim.restart();
             dragYAnim.restart();
         }
+
+        // if the drop has been abandoned, just hide
+        function onNewDelegateDropAbandoned() {
+            root.visible = false;
+        }
     }
 
     Loader {

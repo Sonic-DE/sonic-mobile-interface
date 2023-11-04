@@ -679,6 +679,16 @@ QPointF HomeScreenState::getFolderDelegateScreenPosition(int position)
     return {x, y};
 }
 
+Plasma::Containment *HomeScreenState::containment()
+{
+    return m_containment;
+}
+
+void HomeScreenState::setContainment(Plasma::Containment *containment)
+{
+    m_containment = containment;
+}
+
 void HomeScreenState::openAppDrawer()
 {
     cancelAppDrawerAnimations();
@@ -852,6 +862,16 @@ void HomeScreenState::startDelegateFolderDrag(qreal startX,
 {
     startDelegateDrag(startX, startY, pointerOffsetX, pointerOffsetY);
     Q_EMIT delegateDragFromFolderStarted(folder, position);
+}
+
+void HomeScreenState::startDelegateWidgetListDrag(qreal startX, qreal startY, qreal pointerOffsetX, qreal pointerOffsetY, QString appletPluginId)
+{
+    startDelegateDrag(startX, startY, pointerOffsetX, pointerOffsetY);
+    Q_EMIT delegateDragFromWidgetListStarted(appletPluginId);
+
+    // we start dragging the delegate immediately from the app drawer, because we don't have a context menu to deal with!
+    // NOTE: this has to happen after delegateDragFromAppDrawerStarted, because slots for that expect SwipeState::AwaitingDraggingDelegate
+    setSwipeState(SwipeState::DraggingDelegate);
 }
 
 void HomeScreenState::cancelDelegateDrag()

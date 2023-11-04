@@ -151,6 +151,8 @@ void FolioWidget::setRealGridWidth(int gridWidth)
         // emit both because realGridWidth could be either gridWidth or gridHeight
         Q_EMIT gridWidthChanged();
         Q_EMIT gridHeightChanged();
+
+        Q_EMIT saveRequested();
     }
 }
 
@@ -167,6 +169,8 @@ void FolioWidget::setRealGridHeight(int gridHeight)
         // emit both because realGridHeight could be either gridWidth or gridHeight
         Q_EMIT gridWidthChanged();
         Q_EMIT gridHeightChanged();
+
+        Q_EMIT saveRequested();
     }
 }
 
@@ -220,6 +224,15 @@ void FolioWidget::setApplet(Plasma::Applet *applet)
 {
     m_applet = applet;
     Q_EMIT appletChanged();
+
+    int id = applet ? applet->id() : -1;
+    if (m_id != id) {
+        m_id = id;
+        Q_EMIT idChanged();
+
+        // ensure the id is saved
+        Q_EMIT saveRequested();
+    }
 
     if (m_applet) {
         setVisualApplet(PlasmaQuick::AppletQuickItem::itemForApplet(m_applet));

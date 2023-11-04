@@ -48,7 +48,9 @@ Item {
     function prepareStartDelegateDrag(delegate, item) {
         swipeArea.setSkipSwipeThreshold(true);
 
-        delegateDragItem.delegate = delegate;
+        if (delegate) {
+            delegateDragItem.delegate = delegate;
+        }
         return root.mapFromItem(item, 0, 0);
     }
 
@@ -124,10 +126,15 @@ Item {
 
         SettingsComponent {
             id: settings
-            anchors.fill: parent
+            width: parent.width
+            height: parent.height
             opacity: Folio.HomeScreenState.settingsOpenProgress
-            visible: opacity > 0
             z: 1
+
+            // move the settings out of the way if it is not visible
+            // NOTE: we do this instead of setting visible to false, because
+            //       it doesn't mess with widget drag and drop
+            y: (opacity > 0) ? 0 : parent.height
 
             settingsModeHomeScreenScale: root.settingsModeHomeScreenScale
             homeScreen: root

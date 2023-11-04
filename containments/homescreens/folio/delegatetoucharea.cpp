@@ -191,9 +191,10 @@ void DelegateTouchArea::handleReleaseEvent(QPointerEvent *event, bool click)
 {
     // NOTE: event can be nullptr!
 
+    bool wasPressed = m_pressed;
     setPressed(false);
 
-    if (!m_pressAndHeld && click) {
+    if (!m_pressAndHeld && click && wasPressed) {
         Q_EMIT clicked();
     }
 
@@ -209,6 +210,7 @@ void DelegateTouchArea::handleMoveEvent(QPointerEvent *event, QPointF point)
 {
     if (QPointF(point - m_mouseDownPosition).manhattanLength() >= QGuiApplication::styleHints()->startDragDistance()) {
         m_pressAndHoldTimer->stop();
+        setPressed(false);
     }
 }
 

@@ -40,9 +40,6 @@ public:
 
     void setContainment(Plasma::Containment *containment);
 
-    // TODO remove
-    Q_INVOKABLE void createWidgetDelegate(QString name);
-
 Q_SIGNALS:
     void lengthChanged();
 

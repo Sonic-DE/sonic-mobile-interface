@@ -98,15 +98,20 @@ Item {
 
     AppletListViewer {
         id: appletListViewer
-        anchors.fill: parent
-
-        homeScreen: root.homeScreen
+        width: parent.width
+        height: parent.height
 
         property bool open: false
         onRequestClose: open = false
 
         opacity: open ? 1 : 0
-        visible: opacity > 0
+
+        // move the settings out of the way if it is not visible
+        // NOTE: we do this instead of setting visible to false, because
+        //       it doesn't mess with widget drag and drop
+        y: (opacity === 0) ? appletListViewer.height : 0
+
+        homeScreen: root.homeScreen
 
         Behavior on opacity {
             NumberAnimation { duration: Kirigami.Units.shortDuration }

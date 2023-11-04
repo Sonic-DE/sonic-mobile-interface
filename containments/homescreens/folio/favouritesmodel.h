@@ -68,6 +68,7 @@ public:
     void setContainment(Plasma::Containment *containment);
 
 private:
+    void connectSaveRequests(FolioDelegate *delegate);
     void evaluateDelegatePositions(bool emitSignal = true);
 
     // get the x (or y) position where delegates start being placed

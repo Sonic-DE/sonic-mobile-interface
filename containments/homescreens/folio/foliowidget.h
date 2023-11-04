@@ -21,7 +21,7 @@ public:
 class FolioWidget : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(int id READ id CONSTANT)
+    Q_PROPERTY(int id READ id NOTIFY idChanged)
     Q_PROPERTY(int gridWidth READ gridWidth NOTIFY gridWidthChanged)
     Q_PROPERTY(int gridHeight READ gridHeight NOTIFY gridHeightChanged)
     Q_PROPERTY(Plasma::Applet *applet READ applet NOTIFY appletChanged)
@@ -65,10 +65,12 @@ public:
     Q_INVOKABLE void destroyApplet();
 
 Q_SIGNALS:
+    void idChanged();
     void appletChanged();
     void visualAppletChanged();
     void gridWidthChanged();
     void gridHeightChanged();
+    void saveRequested();
 
 private:
     void init();

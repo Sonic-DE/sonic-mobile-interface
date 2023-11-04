@@ -34,7 +34,7 @@ HomeScreen::HomeScreen(QObject *parent, const KPluginMetaData &data, const QVari
 
     // pre-initialize
     FolioSettings::self()->setApplet(this);
-    HomeScreenState::self();
+    HomeScreenState::self()->setContainment(this);
     WidgetsManager::self();
 
     // models are loaded in main.qml

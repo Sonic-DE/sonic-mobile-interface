@@ -152,6 +152,9 @@ bool FavouritesModel::addEntry(int row, FolioDelegate *delegate)
         endInsertRows();
     }
 
+    // ensure saves are connected when requested by the delegate
+    connectSaveRequests(delegate);
+
     evaluateDelegatePositions();
 
     save();
@@ -271,16 +274,20 @@ void FavouritesModel::loadFromJson(QJsonArray arr)
         FolioDelegate *delegate = FolioDelegate::fromJson(obj, this);
 
         if (delegate) {
-            if (delegate->type() == FolioDelegate::Folder) {
-                connect(delegate->folder(), &FolioApplicationFolder::saveRequested, this, &FavouritesModel::save);
-            }
-
+            connectSaveRequests(delegate);
             m_delegates.append({delegate, 0});
         }
     }
 
     evaluateDelegatePositions(false);
     endResetModel();
+}
+
+void FavouritesModel::connectSaveRequests(FolioDelegate *delegate)
+{
+    if (delegate->type() == FolioDelegate::Folder && delegate->folder()) {
+        connect(delegate->folder(), &FolioApplicationFolder::saveRequested, this, &FavouritesModel::save);
+    }
 }
 
 void FavouritesModel::setContainment(Plasma::Containment *containment)

@@ -257,6 +257,9 @@ public:
     Q_INVOKABLE QPointF getFavouritesDelegateScreenPosition(int position);
     Q_INVOKABLE QPointF getFolderDelegateScreenPosition(int position);
 
+    Plasma::Containment *containment();
+    void setContainment(Plasma::Containment *containment);
+
 Q_SIGNALS:
     void swipeStateChanged();
     void viewStateChanged();
@@ -300,6 +303,7 @@ Q_SIGNALS:
     void delegateDragFromFavouritesStarted(int position);
     void delegateDragFromAppDrawerStarted(QString storageId);
     void delegateDragFromFolderStarted(FolioApplicationFolder *folder, int position);
+    void delegateDragFromWidgetListStarted(QString appletPluginId);
     void pageNumChanged();
     void folderPageNumChanged();
 
@@ -328,6 +332,7 @@ public Q_SLOTS:
     void startDelegateFavouritesDrag(qreal startX, qreal startY, qreal pointerOffsetX, qreal pointerOffsetY, int position);
     void startDelegateAppDrawerDrag(qreal startX, qreal startY, qreal pointerOffsetX, qreal pointerOffsetY, QString storageId);
     void startDelegateFolderDrag(qreal startX, qreal startY, qreal pointerOffsetX, qreal pointerOffsetY, FolioApplicationFolder *folder, int position);
+    void startDelegateWidgetListDrag(qreal startX, qreal startY, qreal pointerOffsetX, qreal pointerOffsetY, QString appletPluginId);
     void cancelDelegateDrag();
 
     // from SwipeArea
@@ -409,4 +414,6 @@ private:
     QPropertyAnimation *m_folderPageAnim{nullptr};
     QPropertyAnimation *m_openSettingsAnim{nullptr};
     QPropertyAnimation *m_closeSettingsAnim{nullptr};
+
+    Plasma::Containment *m_containment{nullptr};
 };

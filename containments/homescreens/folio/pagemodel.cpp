@@ -233,7 +233,6 @@ PageModel::~PageModel() = default;
 PageModel *PageModel::fromJson(QJsonArray &arr, QObject *parent)
 {
     QList<FolioPageDelegate *> delegates;
-    QList<FolioPageDelegate *> folderDelegates;
 
     for (QJsonValueRef r : arr) {
         QJsonObject obj = r.toObject();
@@ -241,18 +240,14 @@ PageModel *PageModel::fromJson(QJsonArray &arr, QObject *parent)
         FolioPageDelegate *delegate = FolioPageDelegate::fromJson(obj, parent);
         if (delegate) {
             delegates.append(delegate);
-
-            if (delegate->type() == FolioDelegate::Folder) {
-                folderDelegates.append(delegate);
-            }
         }
     }
 
     PageModel *model = new PageModel{delegates, parent};
 
-    // ensure folders request saves
-    for (auto *delegate : folderDelegates) {
-        connect(delegate->folder(), &FolioApplicationFolder::saveRequested, model, &PageModel::save);
+    // ensure delegates can request saves
+    for (auto *delegate : delegates) {
+        model->connectSaveRequests(delegate);
     }
 
     return model;
@@ -379,6 +374,8 @@ bool PageModel::addDelegate(FolioPageDelegate *delegate)
     m_delegates.append(delegate);
     endInsertRows();
 
+    // ensure the delegate requests saves
+    connectSaveRequests(delegate);
     save();
 
     return true;
@@ -393,7 +390,7 @@ FolioPageDelegate *PageModel::getDelegate(int row, int col)
 
         // check if this is in a widget's space
         if (d->type() == FolioDelegate::Widget) {
-            if (row >= d->row() && row < d->row() + d->widget()->gridHeight() && col >= d->column() && col < d->column() + d->widget()->gridWidth()) {
+            if (d->widget()->isInBounds(d->row(), d->column(), row, col)) {
                 return d;
             }
         }
@@ -418,9 +415,9 @@ void PageModel::moveAndResizeWidgetDelegate(FolioPageDelegate *delegate, int new
     // NOT THREAD SAFE!
     // which is fine, because the GUI isn't multithreaded
     int index = m_delegates.indexOf(delegate);
-    m_delegates.remove(index); // remove the delegate, since we don't want it to check overlapping of itself
+    m_delegates.remove(index); // remove the delegate temporarily, since we don't want it to check overlapping of itself
     bool canAdd = canAddDelegate(newRow, newColumn, testDelegate);
-    m_delegates.insert(index, delegate);
+    m_delegates.insert(index, delegate); // add it back
 
     // cleanup test delegate
     testDelegate->deleteLater();
@@ -439,6 +436,15 @@ void PageModel::moveAndResizeWidgetDelegate(FolioPageDelegate *delegate, int new
 bool PageModel::isPageEmpty()
 {
     return m_delegates.size() == 0;
+}
+
+void PageModel::connectSaveRequests(FolioDelegate *delegate)
+{
+    if (delegate->type() == FolioDelegate::Folder && delegate->folder()) {
+        connect(delegate->folder(), &FolioApplicationFolder::saveRequested, this, &PageModel::save);
+    } else if (delegate->type() == FolioDelegate::Widget && delegate->widget()) {
+        connect(delegate->widget(), &FolioWidget::saveRequested, this, &PageModel::save);
+    }
 }
 
 void PageModel::save()

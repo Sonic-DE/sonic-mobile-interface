@@ -7,6 +7,8 @@
 
 #include <Plasma/Applet>
 
+// keeps a list of all of instances of Plasma::Applet that are loaded into the containment
+// allows for FolioWidgets to find their corresponding Plasma::Applet
 class WidgetsManager : public QObject
 {
     Q_OBJECT

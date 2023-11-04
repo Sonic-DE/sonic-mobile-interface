@@ -156,19 +156,3 @@ void PageListModel::setContainment(Plasma::Containment *containment)
 {
     m_containment = containment;
 }
-
-// TODO remove, was for testing purposes
-void PageListModel::createWidgetDelegate(QString name)
-{
-    if (!m_containment) {
-        return;
-    }
-
-    Plasma::Applet *applet = m_containment->createApplet(name);
-    FolioWidget *widget = new FolioWidget{this, applet, 2, 2};
-    FolioPageDelegate *d = new FolioPageDelegate{0, 0, widget, this};
-
-    if (m_pages.size() != 0) {
-        m_pages[m_pages.size() - 1]->addDelegate(d);
-    }
-}

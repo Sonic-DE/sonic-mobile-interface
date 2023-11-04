@@ -92,5 +92,6 @@ Q_SIGNALS:
     void saveRequested();
 
 private:
+    void connectSaveRequests(FolioDelegate *delegate);
     QList<FolioPageDelegate *> m_delegates;
 };

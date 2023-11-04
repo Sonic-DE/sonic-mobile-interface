@@ -61,11 +61,23 @@ MouseArea {
         anchors.bottomMargin: root.homeScreen.bottomMargin
 
         model: widgetExplorer.widgetsModel
-        cellWidth: (width - leftMargin - rightMargin) / 3 // TODO
+
+        readonly property real maxCellWidth: Kirigami.Units.gridUnit * 20
+        readonly property real intendedCellWidth: Kirigami.Units.gridUnit * 8
+        readonly property int columns: Math.min(5, (width - leftMargin - rightMargin) / intendedCellWidth)
+
+        cellWidth: (width - leftMargin - rightMargin) / columns
         cellHeight: cellWidth + Kirigami.Units.gridUnit * 3
 
-        leftMargin: Kirigami.Units.gridUnit
-        rightMargin: Kirigami.Units.gridUnit
+        readonly property real horizontalMargin: Math.round(width * 0.05)
+        leftMargin: horizontalMargin
+        rightMargin: horizontalMargin
+
+        MouseArea {
+            z: -1
+            anchors.fill: parent
+            onClicked: root.requestClose()
+        }
 
         delegate: MouseArea {
             id: delegate
@@ -77,9 +89,21 @@ MouseArea {
 
             readonly property string pluginName: model.pluginName
 
-            onClicked: {
-                // TODO drag and drop
-                Folio.PageListModel.createWidgetDelegate(pluginName);
+            onPressAndHold: {
+                root.requestClose();
+                Folio.HomeScreenState.closeSettingsView();
+
+                let mappedCoords = root.homeScreen.prepareStartDelegateDrag(null, delegate);
+                const widthOffset = Folio.HomeScreenState.pageCellWidth / 2;
+                const heightOffset = Folio.HomeScreenState.pageCellHeight / 2;
+                
+                Folio.HomeScreenState.startDelegateWidgetListDrag(
+                    mappedCoords.x + mouseX - widthOffset,
+                    mappedCoords.y + mouseY - heightOffset,
+                    widthOffset,
+                    heightOffset,
+                    pluginName
+                );
             }
 
             Rectangle {

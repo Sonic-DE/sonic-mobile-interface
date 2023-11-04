@@ -141,6 +141,11 @@ Item {
                 scaleAnim.restart();
             }
         }
+
+        // if the drop has been abandoned, just hide
+        function onNewDelegateDropAbandoned() {
+            root.visible = false;
+        }
     }
 
     // simulate an icon delegate
