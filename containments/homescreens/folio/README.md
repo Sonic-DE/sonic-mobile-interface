@@ -26,8 +26,6 @@ As such, all of the positioning and placement of delegates on the screen are top
 - FEATURE: option to turn off row/column swap
 - BUG: drag and drop animation when rejected on a different page
 
-- BUG: Widgets moved in landscape are not translated correctly
-
 - FEATURE: animate homescreen config opening
 
 - RESTORE app drawer overshoot

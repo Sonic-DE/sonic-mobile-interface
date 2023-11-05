@@ -72,6 +72,10 @@ Q_SIGNALS:
     void gridHeightChanged();
     void saveRequested();
 
+    // when we resize while the screen is rotated, the stored top left position
+    // changes, so we need to notify the model
+    void realTopLeftPositionChanged(int offsetRows, int offsetColumns);
+
 private:
     void init();
     void setVisualApplet(PlasmaQuick::AppletQuickItem *quickApplet);

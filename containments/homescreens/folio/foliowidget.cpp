@@ -5,11 +5,11 @@
 #include "homescreenstate.h"
 #include "widgetsmanager.h"
 
-FolioWidget::FolioWidget(QObject *parent, int id, int gridWidth, int gridHeight)
+FolioWidget::FolioWidget(QObject *parent, int id, int realGridWidth, int realGridHeight)
     : QObject{parent}
     , m_id{id}
-    , m_realGridWidth{gridWidth}
-    , m_realGridHeight{gridHeight}
+    , m_realGridWidth{realGridWidth}
+    , m_realGridHeight{realGridHeight}
     , m_applet{nullptr}
     , m_quickApplet{nullptr}
 {
@@ -20,11 +20,11 @@ FolioWidget::FolioWidget(QObject *parent, int id, int gridWidth, int gridHeight)
     init();
 }
 
-FolioWidget::FolioWidget(QObject *parent, Plasma::Applet *applet, int gridWidth, int gridHeight)
+FolioWidget::FolioWidget(QObject *parent, Plasma::Applet *applet, int realGridWidth, int realGridHeight)
     : QObject{parent}
     , m_id{applet ? static_cast<int>(applet->id()) : -1}
-    , m_realGridWidth{gridWidth}
-    , m_realGridHeight{gridHeight}
+    , m_realGridWidth{realGridWidth}
+    , m_realGridHeight{realGridHeight}
 {
     setApplet(applet);
     init();
@@ -93,15 +93,21 @@ void FolioWidget::setGridWidth(int gridWidth)
     case HomeScreenState::RegularPosition:
         setRealGridWidth(gridWidth);
         break;
-    case HomeScreenState::RotateClockwise:
+    case HomeScreenState::RotateClockwise: {
+        int oldGridHeight = m_realGridHeight;
         setRealGridHeight(gridWidth);
+        Q_EMIT realTopLeftPositionChanged(oldGridHeight - gridWidth, 0);
         break;
+    }
     case HomeScreenState::RotateCounterClockwise:
         setRealGridHeight(gridWidth);
         break;
-    case HomeScreenState::RotateUpsideDown:
+    case HomeScreenState::RotateUpsideDown: {
+        int oldGridWidth = m_realGridWidth;
         setRealGridWidth(gridWidth);
+        Q_EMIT realTopLeftPositionChanged(0, oldGridWidth - gridWidth);
         break;
+    }
     }
 }
 
@@ -129,12 +135,18 @@ void FolioWidget::setGridHeight(int gridHeight)
     case HomeScreenState::RotateClockwise:
         setRealGridWidth(gridHeight);
         break;
-    case HomeScreenState::RotateCounterClockwise:
+    case HomeScreenState::RotateCounterClockwise: {
+        int oldGridWidth = m_realGridWidth;
         setRealGridWidth(gridHeight);
+        Q_EMIT realTopLeftPositionChanged(0, oldGridWidth - gridHeight);
         break;
-    case HomeScreenState::RotateUpsideDown:
+    }
+    case HomeScreenState::RotateUpsideDown: {
+        int oldGridHeight = m_realGridHeight;
         setRealGridHeight(gridHeight);
+        Q_EMIT realTopLeftPositionChanged(oldGridHeight - gridHeight, 0);
         break;
+    }
     }
 }
 
@@ -191,7 +203,7 @@ GridPosition FolioWidget::topLeftCorner(int row, int column)
 
 bool FolioWidget::isInBounds(int widgetRow, int widgetColumn, int row, int column)
 {
-    return (row >= widgetRow) && (row < widgetRow + gridHeight()) && (column >= widgetColumn) && (column < widgetColumn + gridWidth());
+    return (row >= widgetRow) && (row <= widgetRow + gridHeight() - 1) && (column >= widgetColumn) && (column <= widgetColumn + gridWidth() - 1);
 }
 
 bool FolioWidget::overlapsWidget(int widgetRow, int widgetColumn, FolioWidget *otherWidget, int otherWidgetRow, int otherWidgetColumn)

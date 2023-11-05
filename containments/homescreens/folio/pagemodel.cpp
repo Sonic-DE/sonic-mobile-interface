@@ -65,7 +65,7 @@ void FolioPageDelegate::init()
 
         if (m_widget) {
             // since top-left in cw is bottom-left in portrait
-            m_realRow -= m_widget->realGridHeight() + 1;
+            m_realRow -= m_widget->realGridHeight() - 1;
         }
 
         break;
@@ -75,7 +75,7 @@ void FolioPageDelegate::init()
 
         if (m_widget) {
             // since top-left in ccw is top-right in portrait
-            m_realColumn -= m_widget->realGridWidth() + 1;
+            m_realColumn -= m_widget->realGridWidth() - 1;
         }
 
         break;
@@ -85,16 +85,23 @@ void FolioPageDelegate::init()
 
         if (m_widget) {
             // since top-left in upside-down is bottom-right in portrait
-            m_realRow -= m_widget->realGridHeight() + 1;
-            m_realColumn -= m_widget->realGridWidth() + 1;
+            m_realRow -= m_widget->realGridHeight() - 1;
+            m_realColumn -= m_widget->realGridWidth() - 1;
         }
 
         break;
     }
 
+    if (m_widget) {
+        connect(m_widget, &FolioWidget::realTopLeftPositionChanged, this, [this](int rowOffset, int columnOffset) {
+            m_realRow += rowOffset;
+            m_realColumn += columnOffset;
+        });
+    }
+
     connect(HomeScreenState::self(), &HomeScreenState::pageOrientationChanged, this, [this]() {
-        setRow(getTranslatedTopLeftRow(m_realRow, m_realColumn, this));
-        setColumn(getTranslatedTopRightRow(m_realRow, m_realColumn, this));
+        setRowOnly(getTranslatedTopLeftRow(m_realRow, m_realColumn, this));
+        setColumnOnly(getTranslatedTopLeftColumn(m_realRow, m_realColumn, this));
     });
 }
 
@@ -110,7 +117,7 @@ FolioPageDelegate *FolioPageDelegate::fromJson(QJsonObject &obj, QObject *parent
     int realColumn = obj[QStringLiteral("column")].toInt();
 
     int row = getTranslatedTopLeftRow(realRow, realColumn, fd);
-    int column = getTranslatedTopRightRow(realRow, realColumn, fd);
+    int column = getTranslatedTopLeftColumn(realRow, realColumn, fd);
 
     FolioPageDelegate *delegate = new FolioPageDelegate{row, column, fd, parent};
     fd->deleteLater();
@@ -131,7 +138,7 @@ int FolioPageDelegate::getTranslatedTopLeftRow(int realRow, int realColumn, Foli
     }
 }
 
-int FolioPageDelegate::getTranslatedTopRightRow(int realRow, int realColumn, FolioDelegate *fd)
+int FolioPageDelegate::getTranslatedTopLeftColumn(int realRow, int realColumn, FolioDelegate *fd)
 {
     int row = getTranslatedRow(realRow, realColumn);
     int column = getTranslatedColumn(realRow, realColumn);
@@ -192,6 +199,29 @@ int FolioPageDelegate::row()
 void FolioPageDelegate::setRow(int row)
 {
     if (m_row != row) {
+        // adjust stored data too
+        switch (HomeScreenState::self()->pageOrientation()) {
+        case HomeScreenState::RegularPosition:
+            m_realRow = row;
+            break;
+        case HomeScreenState::RotateClockwise:
+            m_realColumn += row - m_row;
+            break;
+        case HomeScreenState::RotateCounterClockwise:
+            m_realColumn += m_row - row;
+            break;
+        case HomeScreenState::RotateUpsideDown:
+            m_realRow += m_row - row;
+            break;
+        }
+
+        setRowOnly(row);
+    }
+}
+
+void FolioPageDelegate::setRowOnly(int row)
+{
+    if (m_row != row) {
         m_row = row;
         Q_EMIT rowChanged();
     }
@@ -203,6 +233,29 @@ int FolioPageDelegate::column()
 }
 
 void FolioPageDelegate::setColumn(int column)
+{
+    if (m_column != column) {
+        // adjust stored data too
+        switch (HomeScreenState::self()->pageOrientation()) {
+        case HomeScreenState::RegularPosition:
+            m_realColumn = column;
+            break;
+        case HomeScreenState::RotateClockwise:
+            m_realRow += m_column - column;
+            break;
+        case HomeScreenState::RotateCounterClockwise:
+            m_realRow += column - m_column;
+            break;
+        case HomeScreenState::RotateUpsideDown:
+            m_realColumn += m_column - column;
+            break;
+        }
+
+        setColumnOnly(column);
+    }
+}
+
+void FolioPageDelegate::setColumnOnly(int column)
 {
     if (m_column != column) {
         m_column = column;
@@ -336,9 +389,12 @@ bool PageModel::canAddDelegate(int row, int column, FolioDelegate *delegate)
             return false;
         }
 
+        qDebug() << "check" << row << column << delegate->widget()->gridWidth() << delegate->widget()->gridHeight();
+
         // check if any delegate exists at any of the spots where the widget is being added
         for (FolioPageDelegate *d : m_delegates) {
             if (delegate->widget()->isInBounds(row, column, d->row(), d->column())) {
+                qDebug() << "in bounds" << row << column << d->row() << d->column() << delegate->widget()->gridWidth() << delegate->widget()->gridHeight();
                 return false;
             } else if (d->type() == FolioDelegate::Widget) {
                 // 2 widgets overlapping scenario
@@ -409,7 +465,10 @@ void PageModel::moveAndResizeWidgetDelegate(FolioPageDelegate *delegate, int new
     }
 
     // test if we can add the delegate with new size and position
-    FolioWidget *testWidget = new FolioWidget(this, 0, newGridWidth, newGridHeight);
+    FolioWidget *testWidget = new FolioWidget(this, 0, 0, 0);
+    // we have to use setGridWidth and setGridHeight since it takes into account the page orientation
+    testWidget->setGridWidth(newGridWidth);
+    testWidget->setGridHeight(newGridHeight);
     FolioDelegate *testDelegate = new FolioDelegate(testWidget, this);
 
     // NOT THREAD SAFE!

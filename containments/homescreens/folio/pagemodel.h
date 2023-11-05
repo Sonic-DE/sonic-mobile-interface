@@ -28,7 +28,7 @@ public:
 
     static FolioPageDelegate *fromJson(QJsonObject &obj, QObject *parent);
     static int getTranslatedTopLeftRow(int realRow, int realColumn, FolioDelegate *fd);
-    static int getTranslatedTopRightRow(int realRow, int realColumn, FolioDelegate *fd);
+    static int getTranslatedTopLeftColumn(int realRow, int realColumn, FolioDelegate *fd);
     static int getTranslatedRow(int realRow, int realColumn);
     static int getTranslatedColumn(int realRow, int realColumn);
 
@@ -45,6 +45,8 @@ Q_SIGNALS:
     void columnChanged();
 
 private:
+    void setRowOnly(int row);
+    void setColumnOnly(int column);
     void init();
 
     int m_realRow;
