@@ -25,10 +25,8 @@ As such, all of the positioning and placement of delegates on the screen are top
 - FEATURE: option to darken wallpaper
 - FEATURE: option to turn off row/column swap
 - BUG: drag and drop animation when rejected on a different page
-- BUG: delegatetoucharea doesn't release on drag out
 
 - BUG: Widgets moved in landscape are not translated correctly
-- BUG: moving widgets to create new page doesn't work
 
 - FEATURE: animate homescreen config opening
 

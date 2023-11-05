@@ -59,6 +59,7 @@ Item {
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             opacity: 0
+            headerHeight: root.headerHeight
         }
 
         // opacity gradient at grid edges

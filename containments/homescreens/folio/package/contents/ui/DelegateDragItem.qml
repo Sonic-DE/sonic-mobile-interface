@@ -22,14 +22,14 @@ Item {
     readonly property bool isWidgetDrag: Folio.HomeScreenState.dragState.dropDelegate && Folio.HomeScreenState.dragState.dropDelegate.type === Folio.FolioDelegate.Widget
 
     visible: false
-    x: Math.round(Folio.HomeScreenState.delegateDragX)
-    y: Math.round(Folio.HomeScreenState.delegateDragY)
+    x: Folio.HomeScreenState.delegateDragX
+    y: Folio.HomeScreenState.delegateDragY
 
     function setXBinding() {
-        x = Qt.binding(() => Math.round(Folio.HomeScreenState.delegateDragX));
+        x = Qt.binding(() => Folio.HomeScreenState.delegateDragX);
     }
     function setYBinding() {
-        y = Qt.binding(() => Math.round(Folio.HomeScreenState.delegateDragY));
+        y = Qt.binding(() => Folio.HomeScreenState.delegateDragY);
     }
 
     // animate drop x
