@@ -23,6 +23,7 @@ import org.kde.notificationmanager as NotificationManager
 ContainmentItem {
     id: root
     Plasmoid.backgroundHints: PlasmaCore.Types.NoBackground
+    Plasmoid.status: PlasmaCore.Types.HiddenStatus // ensure that the panel never takes focus away from the running app
 
     // filled in by the shell (Panel.qml) with the plasma-workspace PanelView
     property var panel: null
