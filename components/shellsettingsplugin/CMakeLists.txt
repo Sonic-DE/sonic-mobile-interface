@@ -9,7 +9,7 @@ target_link_libraries(shellsettingsplugin PRIVATE
     Qt::DBus
     Qt::Gui
     Qt::Quick
-    KF6::WaylandClient
+    KWaylandClient
     KF6::Service
     KF6::ConfigWidgets
     KF6::Package
