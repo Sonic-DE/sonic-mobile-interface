@@ -10,6 +10,7 @@
 #include <QDomDocument>
 #include <QDomElement>
 #include <QFile>
+#include <QStandardPaths>
 
 #include <NetworkManagerQt/CdmaSetting>
 #include <NetworkManagerQt/ConnectionSettings>
@@ -105,7 +106,7 @@ NetworkManager::ModemDevice::Ptr AutoDetectAPN::findNMModem(ModemManager::Modem:
 
 AutoDetectAPN::APNEntry AutoDetectAPN::findAPN(const QString &operatorCode, const QString &gid1, const QString &spn, const QString &imsi) const
 {
-    const QString providersFile = QStringLiteral("/usr/share/plasma-mobile-apn-info/apns-full-conf.xml");
+    const QString providersFile = QStandardPaths::locate(QStandardPaths::GenericDataLocation, QStringLiteral("apns-full-conf.xml"));
     QFile file{providersFile};
 
     if (!file.open(QIODevice::ReadOnly)) {
