@@ -8,9 +8,11 @@
 #include <KUser>
 
 #include <QDBusReply>
+#include <QDebug>
 #include <QDomDocument>
 #include <QDomElement>
 #include <QFile>
+#include <QLoggingCategory>
 #include <QStandardPaths>
 
 #include <NetworkManagerQt/CdmaSetting>
@@ -26,6 +28,8 @@
 
 K_PLUGIN_FACTORY_WITH_JSON(StartFactory, "kded_plasma_mobile_autodetectapn.json", registerPlugin<AutoDetectAPN>();)
 
+static const QLoggingCategory LOGGING_CATEGORY("plasma-mobile-autodetectapn");
+
 AutoDetectAPN::AutoDetectAPN(QObject *parent, const QList<QVariant> &)
     : KDEDModule{parent}
 {
@@ -35,11 +39,11 @@ AutoDetectAPN::AutoDetectAPN(QObject *parent, const QList<QVariant> &)
 QCoro::Task<void> AutoDetectAPN::checkAndAddAutodetectedAPN()
 {
     if (!KRuntimePlatform::runtimePlatform().contains(QStringLiteral("phone"))) {
-        qDebug() << QStringLiteral("Not running APN autodetection because this is not a Plasma Mobile session...");
+        qCDebug(LOGGING_CATEGORY) << "Not running APN autodetection because this is not a Plasma Mobile session...";
         co_return;
     }
 
-    qDebug() << QStringLiteral("Running APN autodetection...");
+    qCDebug(LOGGING_CATEGORY) << "Running APN autodetection...";
 
     for (ModemManager::ModemDevice::Ptr mmDevice : ModemManager::modemDevices()) {
         ModemManager::Modem::Ptr mmModem = mmDevice->modemInterface();
@@ -48,11 +52,10 @@ QCoro::Task<void> AutoDetectAPN::checkAndAddAutodetectedAPN()
             continue;
         }
 
-        ModemManager::Modem3gpp::Ptr mm3gppDevice = mmDevice->interface(ModemManager::ModemDevice::GsmInterface).objectCast<ModemManager::Modem3gpp>();
-        NetworkManager::ModemDevice::Ptr nmModem = findNMModem(mmModem);
-        ModemManager::Sim::Ptr mmSim = mmDevice->sim();
+        const NetworkManager::ModemDevice::Ptr nmModem = findNMModem(mmModem);
+        const ModemManager::Sim::Ptr mmSim = mmDevice->sim();
 
-        if (!mm3gppDevice || !nmModem || !mmSim) {
+        if (!nmModem || !mmSim) {
             continue;
         }
 
@@ -60,22 +63,24 @@ QCoro::Task<void> AutoDetectAPN::checkAndAddAutodetectedAPN()
         // TODO: currently just check if there are any NM connections, this doesn't work if the user swapped out their SIM.
         //       we need something that detects when this occurs
         if (!nmModem->availableConnections().empty()) {
-            qDebug() << QStringLiteral("Modem") << nmModem->uni() << QStringLiteral("already has a connection configured");
+            qCDebug(LOGGING_CATEGORY) << "Modem" << nmModem->uni() << "already has a connection configured";
             continue;
         }
 
         // MCCMNC value
-        QString operatorCode = mmSim->operatorIdentifier();
-        QString gid1 = mmSim->gid1(); // for carriers using MVNO, which could cause duplicate MCCMNC values
-        QString spn = mmSim->operatorName();
-        QString imsi = mmSim->imsi();
+        const QString operatorCode = mmSim->operatorIdentifier();
+        const QString gid1 = mmSim->gid1(); // for carriers using MVNO, which could cause duplicate MCCMNC values
+        const QString spn = mmSim->operatorName();
+        const QString imsi = mmSim->imsi();
 
         // Autodetect an APN
-        APNEntry detectedAPN = findAPN(operatorCode, gid1, spn, imsi);
-        if (detectedAPN.apn.isEmpty()) {
-            qDebug() << QStringLiteral("Could not find an APN for the SIM with code") << operatorCode;
+        std::optional<APNEntry> detectedAPNOpt = findAPN(operatorCode, gid1, spn, imsi);
+        if (detectedAPNOpt == std::nullopt || (*detectedAPNOpt).apn.isEmpty()) {
+            qCDebug(LOGGING_CATEGORY) << "Could not find an APN for the SIM with code" << operatorCode;
             continue;
         }
+
+        APNEntry detectedAPN = *detectedAPNOpt;
 
         // Create connection
         NetworkManager::ConnectionSettings::Ptr settings{new NetworkManager::ConnectionSettings(NetworkManager::ConnectionSettings::Gsm)};
@@ -93,16 +98,17 @@ QCoro::Task<void> AutoDetectAPN::checkAndAddAutodetectedAPN()
 
         QDBusReply<QDBusObjectPath> reply = co_await NetworkManager::addAndActivateConnection(settings->toMap(), nmModem->uni(), "");
         if (!reply.isValid()) {
-            qWarning() << QStringLiteral("Error adding autodetected connection:") << reply.error().message();
+            qCWarning(LOGGING_CATEGORY) << "Error adding autodetected connection:" << reply.error().message();
         } else {
-            qDebug() << QStringLiteral("Successfully autodetected") << detectedAPN.carrier << QStringLiteral("with APN") << detectedAPN.apn << ".";
+            qCDebug(LOGGING_CATEGORY) << "Successfully autodetected" << detectedAPN.carrier << "with APN" << detectedAPN.apn << ".";
         }
     }
 }
 
 NetworkManager::ModemDevice::Ptr AutoDetectAPN::findNMModem(ModemManager::Modem::Ptr mmModem)
 {
-    for (NetworkManager::Device::Ptr nmDevice : NetworkManager::networkInterfaces()) {
+    const auto interfaces = NetworkManager::networkInterfaces();
+    for (const NetworkManager::Device::Ptr &nmDevice : interfaces) {
         if (nmDevice->udi() == mmModem->uni()) {
             return nmDevice.objectCast<NetworkManager::ModemDevice>();
         }
@@ -110,13 +116,13 @@ NetworkManager::ModemDevice::Ptr AutoDetectAPN::findNMModem(ModemManager::Modem:
     return nullptr;
 }
 
-AutoDetectAPN::APNEntry AutoDetectAPN::findAPN(const QString &operatorCode, const QString &gid1, const QString &spn, const QString &imsi) const
+std::optional<AutoDetectAPN::APNEntry> AutoDetectAPN::findAPN(const QString &operatorCode, const QString &gid1, const QString &spn, const QString &imsi) const
 {
-    const QString providersFile = QStandardPaths::locate(QStandardPaths::GenericDataLocation, QStringLiteral("apns-full-conf.xml"));
+    const QString providersFile = QStandardPaths::locate(QStandardPaths::GenericDataLocation, QStringLiteral("plasma-mobile-apn-info/apns-full-conf.xml"));
     QFile file{providersFile};
 
     if (!file.open(QIODevice::ReadOnly)) {
-        return {};
+        return std::nullopt;
     }
 
     QDomDocument document;
@@ -124,12 +130,12 @@ AutoDetectAPN::APNEntry AutoDetectAPN::findAPN(const QString &operatorCode, cons
 
     QDomElement root = document.documentElement();
     if (root.isNull()) {
-        return {};
+        return std::nullopt;
     }
 
     QDomNode apns = root.firstChild(); // <apns ...
-    if (!apns.isNull()) {
-        return {};
+    if (apns.isNull()) {
+        return std::nullopt;
     }
 
     QList<APNEntry> candidates;
@@ -153,7 +159,7 @@ AutoDetectAPN::APNEntry AutoDetectAPN::findAPN(const QString &operatorCode, cons
             if ((!gid1.isEmpty() && element.attribute("mvno_type") == "gid" && element.attribute("mvno_match_data") == gid1)
                 || (!spn.isEmpty() && element.attribute("mvno_type") == "spn" && element.attribute("mvno_match_data") == spn)
                 || (!imsi.isEmpty() && element.attribute("mvno_type") == "imsi" && imsi.startsWith(element.attribute("mvno_match_data")))) {
-                return entry;
+                return {entry};
             }
         }
 
@@ -161,9 +167,9 @@ AutoDetectAPN::APNEntry AutoDetectAPN::findAPN(const QString &operatorCode, cons
     }
 
     if (candidates.size() > 0) {
-        return candidates[0];
+        return {candidates[0]};
     } else {
-        return {};
+        return std::nullopt;
     }
 }
 

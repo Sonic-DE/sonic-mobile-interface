@@ -23,7 +23,7 @@ public:
         QString carrier;
     };
 
-    APNEntry findAPN(const QString &operatorCode, const QString &gid1, const QString &spn, const QString &imsi) const;
+    std::optional<APNEntry> findAPN(const QString &operatorCode, const QString &gid1, const QString &spn, const QString &imsi) const;
 
 private:
     QCoro::Task<void> checkAndAddAutodetectedAPN();
