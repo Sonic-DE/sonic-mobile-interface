@@ -33,6 +33,7 @@ include(ECMGenerateHeaders)
 include(ECMFindQmlModule)
 include(ECMGenerateQmlTypes)
 include(ECMFindQmlModule)
+include(ECMQtDeclareLoggingCategory)
 include(GenerateExportHeader)
 include(KDEGitCommitHooks)
 include(KDEClangFormat)
@@ -59,6 +60,7 @@ find_package(KF6 ${KF6_MIN_VERSION} REQUIRED COMPONENTS
     KIO
     Config
     DBusAddons
+    IconThemes
     ItemModels
     Service
     Notifications
@@ -71,6 +73,7 @@ find_package(KF6 ${KF6_MIN_VERSION} REQUIRED COMPONENTS
 )
 
 find_package(Plasma CONFIG REQUIRED)
+find_package(Plasma5Support CONFIG REQUIRED)
 find_package(PlasmaQuick CONFIG REQUIRED)
 find_package(KF6Screen CONFIG REQUIRED)
 find_package(KWayland CONFIG REQUIRED)
