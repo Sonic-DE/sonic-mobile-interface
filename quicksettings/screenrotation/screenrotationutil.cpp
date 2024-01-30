@@ -35,6 +35,9 @@ ScreenRotationUtil::ScreenRotationUtil(QObject *parent)
             Q_EMIT autoScreenRotationEnabledChanged();
             connect(output.data(), &KScreen::Output::autoRotatePolicyChanged, this, &ScreenRotationUtil::autoScreenRotationEnabledChanged);
         });
+
+        // update initial state
+        Q_EMIT autoScreenRotationEnabledChanged();
     });
 }
 
