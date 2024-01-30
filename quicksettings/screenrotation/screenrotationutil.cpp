@@ -46,7 +46,7 @@ bool ScreenRotationUtil::autoScreenRotationEnabled()
     const auto outputs = m_config->outputs();
 
     for (KScreen::OutputPtr output : outputs) {
-        if (output->autoRotatePolicy() != KScreen::Output::AutoRotatePolicy::Always) {
+        if (output->autoRotatePolicy() == KScreen::Output::AutoRotatePolicy::Never) {
             return false;
         }
     }
