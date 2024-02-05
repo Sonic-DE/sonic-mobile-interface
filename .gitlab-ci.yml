@@ -13,6 +13,7 @@ posix-script-compliance:
     entrypoint: [""]
   stage: build
   script:
+    - apt-get update
     - apt-get -y install shellcheck
     - shellcheck -x -s sh bin/startplasmamobile.in
     - shellcheck -x -s sh bin/startplasmamobile.in
