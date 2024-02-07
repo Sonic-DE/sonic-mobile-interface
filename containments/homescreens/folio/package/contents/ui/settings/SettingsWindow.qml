@@ -237,6 +237,23 @@ Window {
                 }
 
                 FormCard.FormHeader {
+                    title: i18n("Wallpaper")
+                }
+
+                FormCard.FormCard {
+                    FormCard.FormSwitchDelegate {
+                        id: showWallpaperBlur
+                        text: i18n("Show wallpaper blur effect")
+                        checked: Folio.FolioSettings.showWallpaperBlur
+                        onCheckedChanged: {
+                            if (checked != Folio.FolioSettings.showWallpaperBlur) {
+                                Folio.FolioSettings.showWallpaperBlur = checked;
+                            }
+                        }
+                    }
+                }
+
+                FormCard.FormHeader {
                     title: i18n("General")
                 }
 
@@ -244,7 +261,7 @@ Window {
                     Layout.bottomMargin: Kirigami.Units.gridUnit
                     FormCard.FormButtonDelegate {
                         id: containmentSettings
-                        text: i18n('Switch Homescreen')
+                        text: i18n('Switch homescreen and more wallpaper options')
                         icon.name: 'settings-configure'
                         onClicked: root.requestConfigureMenu()
                     }
