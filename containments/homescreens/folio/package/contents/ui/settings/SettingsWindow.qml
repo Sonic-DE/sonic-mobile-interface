@@ -261,7 +261,7 @@ Window {
                     Layout.bottomMargin: Kirigami.Units.gridUnit
                     FormCard.FormButtonDelegate {
                         id: containmentSettings
-                        text: i18nc("@action:button", "Switch homescreen and more wallpaper options")
+                        text: i18nc("@action:button", "Switch between homescreens and more wallpaper options")
                         icon.name: 'settings-configure'
                         onClicked: root.requestConfigureMenu()
                     }
