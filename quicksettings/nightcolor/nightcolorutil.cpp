@@ -8,7 +8,7 @@
 
 NightColorUtil::NightColorUtil(QObject *parent)
     : QObject{parent}
-    , m_ccInterface{new OrgKdeKwinNightLightInterface(QStringLiteral("org.kde.KWin.NightLight"),
+    , m_ccInterface{new OrgKdeKWinNightLightInterface(QStringLiteral("org.kde.KWin.NightLight"),
                                                       QStringLiteral("/org/kde/KWin/NightLight"),
                                                       QDBusConnection::sessionBus(),
                                                       this)}

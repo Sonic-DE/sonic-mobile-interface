@@ -30,6 +30,6 @@ public Q_SLOTS:
 
 private:
     bool m_enabled;
-    OrgKdeKwinNightLightInterface *m_ccInterface;
+    OrgKdeKWinNightLightInterface *m_ccInterface;
     NightColorSettings *m_settings;
 };
