@@ -1,0 +1,23 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "espidev@gmail.com",
+                "Name": "Devin Lin"
+            }
+        ],
+        "Category": "System Information",
+        "Description": "Configure the look of the system",
+        "EnabledByDefault": true,
+        "FormFactors": [
+            "handset",
+            "tablet"
+        ],
+        "Icon": "preferences-desktop-theme-global",
+        "License": "GPL",
+        "Name": "Appearance",
+        "Website": "https://plasma-mobile.org/"
+    },
+    "X-KDE-Keywords": "wallpaper",
+    "X-KDE-System-Settings-Parent-Category": "personalization"
+}
