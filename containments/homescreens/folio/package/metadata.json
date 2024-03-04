@@ -39,7 +39,8 @@
                 "Name[uk]": "Marco Martin",
                 "Name[x-test]": "xxMarco Martinxx",
                 "Name[zh_CN]": "Marco Martin",
-                "Name[zh_TW]": "Marco Martin"
+                "Name[zh_TW]": "Marco Martin",
+                "Website": "https://plasma-mobile.org"
             }
         ],
         "Category": "Containments",
