@@ -108,7 +108,7 @@ Q_SIGNALS:
     void appActivationStarted(const QString &appId, const QString &iconName);
 
     // Emitted the application has finished launching
-    void appActivationFinished();
+    void appActivationFinished(const QString &appId, const QString &iconName);
 
 private Q_SLOTS:
     void updateActiveWindowIsShell();
