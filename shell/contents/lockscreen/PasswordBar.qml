@@ -125,7 +125,7 @@ Rectangle {
         z: 1
         inputMethodHints: Qt.ImhNoPredictiveText
         
-        onFocusChanged: {
+        function onFocusChanged() {
             if (focus) {
                 Keyboards.KWinVirtualKeyboard.active = true;
             }
@@ -151,7 +151,7 @@ Rectangle {
             }
         }
         
-        onTextChanged: {
+        function onTextChanged() {
             if (!externalEdit) {
                 if (prevText.length > text.length) { // backspace
                     for (let i = 0; i < (prevText.length - text.length); i++) {
@@ -243,7 +243,7 @@ Rectangle {
                         }
                     }
                     
-                    onShowCharChanged: {
+                    function onShowCharChanged() {
                         if (!showChar) {
                             charAnimation.to = 0;
                             charAnimation.duration = 50;

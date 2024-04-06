@@ -213,7 +213,7 @@ Item {
     property bool floating: panel.floating
     readonly property bool screenCovered: !KWindowSystem.showingDesktop && touchingWindow && panel.visibilityMode == Panel.Global.NormalPanel
     property var stateTriggers: [floating, screenCovered, isOpaque, isAdaptive, isTransparent, KX11Extras.compositingActive]
-    onStateTriggersChanged: {
+    function onStateTriggersChanged() {
         let opaqueApplets = false
         let floatingApplets = false
         if ((!floating || screenCovered) && (isOpaque || (screenCovered && isAdaptive))) {
@@ -278,7 +278,7 @@ Item {
         translucentItem.prefix = opaqueItem.prefix = floatingTranslucentItem.prefix = floatingOpaqueItem.prefix = [pre, ""];
     }
 
-    onContainmentChanged: {
+    function onContainmentChanged() {
         if (!containment) {
             return;
         }

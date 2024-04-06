@@ -142,7 +142,7 @@ Rectangle {
                         shadowColor: keypadRoot.dropShadowColor
                     }
 
-                    onPressedChanged: {
+                    function onPressedChanged() {
                         if (pressed) {
                             haptics.buttonVibrate();
                         }

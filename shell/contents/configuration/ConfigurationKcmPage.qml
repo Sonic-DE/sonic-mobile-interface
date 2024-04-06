@@ -27,11 +27,11 @@ Kirigami.Page {
         internalPage.contextualActions
     ]
 
-    onInternalPageChanged: {
+    function onInternalPageChanged() {
         internalPage.parent = contentItem;
         internalPage.anchors.fill = contentItem;
     }
-    onActiveFocusChanged: {
+    function onActiveFocusChanged() {
         if (activeFocus) {
             internalPage.forceActiveFocus();
         }

@@ -28,7 +28,7 @@ MobileShell.GridView {
     property bool canOpenSearchWidget: false
     property real oldVerticalOvershoot: verticalOvershoot
     
-    onVerticalOvershootChanged: {
+    function onVerticalOvershootChanged() {
         if (dragging && canOpenSearchWidget && verticalOvershoot < 0) {
             if (!openingSearchWidget) {
                 if (oldVerticalOvershoot === 0) {
@@ -42,7 +42,7 @@ MobileShell.GridView {
         }
         oldVerticalOvershoot = verticalOvershoot;
     }
-    onDraggingChanged: {
+    function onDraggingChanged() {
         if (dragging) {
             canOpenSearchWidget = root.contentY <= 0;
         } else if (!dragging && openingSearchWidget) {

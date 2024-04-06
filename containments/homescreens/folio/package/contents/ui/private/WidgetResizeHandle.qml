@@ -43,7 +43,7 @@ MouseArea {
         pressY = mouseY;
     }
 
-    onPositionChanged: {
+    function onPositionChanged() {
         // HACK: need to call it twice to work
         updateDrag();
         updateDrag();

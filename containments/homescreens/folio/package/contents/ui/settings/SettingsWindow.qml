@@ -19,7 +19,7 @@ Window {
     flags: Qt.FramelessWindowHint
     color: 'transparent'
 
-    onVisibleChanged: {
+    function onVisibleChanged() {
         if (visible) {
             opacityAnim.to = 1;
             opacityAnim.restart();
@@ -124,7 +124,7 @@ Window {
                         from: 16
                         to: 128
                         value: Folio.FolioSettings.delegateIconSize
-                        onValueChanged: {
+                        function onValueChanged() {
                             if (value !== Folio.FolioSettings.delegateIconSize) {
                                 Folio.FolioSettings.delegateIconSize = value;
                             }
@@ -137,7 +137,7 @@ Window {
                         from: 3
                         to: 10
                         value: Folio.FolioSettings.homeScreenRows
-                        onValueChanged: {
+                        function onValueChanged() {
                             if (value !== Folio.FolioSettings.homeScreenRows) {
                                 Folio.FolioSettings.homeScreenRows = value;
                             }
@@ -150,7 +150,7 @@ Window {
                         from: 3
                         to: 10
                         value: Folio.FolioSettings.homeScreenColumns
-                        onValueChanged: {
+                        function onValueChanged() {
                             if (value !== Folio.FolioSettings.homeScreenColumns) {
                                 Folio.FolioSettings.homeScreenColumns = value;
                             }
@@ -171,7 +171,7 @@ Window {
                         id: showLabelsOnHomeScreen
                         text: i18n("Show labels on homescreen")
                         checked: Folio.FolioSettings.showPagesAppLabels
-                        onCheckedChanged: {
+                        function onCheckedChanged() {
                             if (checked != Folio.FolioSettings.showPagesAppLabels) {
                                 Folio.FolioSettings.showPagesAppLabels = checked;
                             }
@@ -184,7 +184,7 @@ Window {
                         id: showLabelsInFavourites
                         text: i18n("Show labels in favorites bar")
                         checked: Folio.FolioSettings.showFavouritesAppLabels
-                        onCheckedChanged: {
+                        function onCheckedChanged() {
                             if (checked != Folio.FolioSettings.showFavouritesAppLabels) {
                                 Folio.FolioSettings.showFavouritesAppLabels = checked;
                             }
@@ -228,7 +228,7 @@ Window {
                         text: i18n('Show background')
                         icon.name: 'draw-rectangle'
                         checked: Folio.FolioSettings.showFavouritesBarBackground
-                        onCheckedChanged: {
+                        function onCheckedChanged() {
                             if (checked !== Folio.FolioSettings.showFavouritesBarBackground) {
                                 Folio.FolioSettings.showFavouritesBarBackground = checked;
                             }
@@ -245,7 +245,7 @@ Window {
                         id: showWallpaperBlur
                         text: i18nc("@option:check", "Show wallpaper blur effect")
                         checked: Folio.FolioSettings.showWallpaperBlur
-                        onCheckedChanged: {
+                        function onCheckedChanged() {
                             if (checked != Folio.FolioSettings.showWallpaperBlur) {
                                 Folio.FolioSettings.showWallpaperBlur = checked;
                             }

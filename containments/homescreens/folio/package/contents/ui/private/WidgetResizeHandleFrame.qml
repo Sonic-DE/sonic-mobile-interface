@@ -55,16 +55,16 @@ Item {
     property int startWidgetRow: 0
     property int startWidgetColumn: 0
 
-    onWidgetWidthChanged: {
+    function onWidgetWidthChanged() {
         if (lockDrag === null) updateDimensions();
     }
-    onWidgetHeightChanged: {
+    function onWidgetHeightChanged() {
         if (lockDrag === null) updateDimensions();
     }
-    onWidgetXChanged: {
+    function onWidgetXChanged() {
         if (lockDrag === null) updateDimensions();
     }
-    onWidgetYChanged: {
+    function onWidgetYChanged() {
         if (lockDrag === null) updateDimensions();
     }
 

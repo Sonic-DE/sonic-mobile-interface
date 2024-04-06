@@ -30,11 +30,11 @@ QQC2.StackView {
         }
     }
 
-    onWallpaperPluginSourceChanged: {
+    function onWallpaperPluginSourceChanged() {
         loadSourceFile();
     }
 
-    onWallpaperPluginConfigChanged: {
+    function onWallpaperPluginConfigChanged() {
         onWallpaperConfigurationChanged();
     }
     

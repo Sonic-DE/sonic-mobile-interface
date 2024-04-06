@@ -57,7 +57,7 @@ Item {
     }
 
     Component.onCompleted: openAnim.restart()
-    onVisibleChanged: {
+    function onVisibleChanged() {
         if (visible) {
             openAnim.restart()
         }

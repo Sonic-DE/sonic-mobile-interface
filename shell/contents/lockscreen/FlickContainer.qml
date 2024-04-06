@@ -57,7 +57,7 @@ MobileShell.SwipeArea {
     property int oldPosition: position
     property bool movingUp: false 
     
-    onPositionChanged: {
+    function onPositionChanged() {
         movingUp = oldPosition <= position;
         oldPosition = position;
     }

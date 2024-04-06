@@ -63,7 +63,7 @@ Controls.Drawer {
             }
 
             property bool isCurrent: WallpaperImagePlugin.WallpaperPlugin.homescreenWallpaperPath == model.path
-            onIsCurrentChanged: {
+            function onIsCurrentChanged() {
                 if (isCurrent) {
                     wallpapersView.currentIndex = index;
                 }

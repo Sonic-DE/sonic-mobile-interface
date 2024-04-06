@@ -71,7 +71,7 @@ ColumnLayout {
                 textRole: "name"
                 valueRole: "pluginName"
                 currentIndex: determineCurrentIndex()
-                onCurrentIndexChanged: {
+                function onCurrentIndexChanged() {
                     root.containmentPlugin = configDialog.containmentPluginsConfigModel.get(currentIndex).pluginName;
                 }
 
@@ -97,7 +97,7 @@ ColumnLayout {
                 textRole: "name"
                 valueRole: "pluginName"
                 currentIndex: determineCurrentIndex()
-                onCurrentIndexChanged: {
+                function onCurrentIndexChanged() {
                     var model = configDialog.wallpaperConfigModel.get(currentIndex);
                     root.currentWallpaper = model.pluginName;
                     configDialog.currentWallpaper = model.pluginName;
@@ -181,7 +181,7 @@ ColumnLayout {
         // so we wouldn't load emptyConfig and break all over the place
         // hence set it to some random value initially
         property string sourceFile: "tbd"
-        onSourceFileChanged: {
+        function onSourceFileChanged() {
             var wallpaperConfig = configDialog.wallpaperConfiguration;
 
             if (wallpaperConfig && sourceFile) {

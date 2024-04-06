@@ -53,7 +53,7 @@ PlasmaComponents.Label {
             }
         }
         
-        onRunningChanged: {
+        function onRunningChanged() {
             if (!running) {
                 step = 0;
             }

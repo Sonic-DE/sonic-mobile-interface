@@ -98,7 +98,7 @@ Item {
             }
 
             // update position, and cap it at the keypad height
-            onPositionChanged: {
+            function onPositionChanged() {
                 if (position > keypadHeight) {
                     position = keypadHeight;
                 } else if (position < 0) {
