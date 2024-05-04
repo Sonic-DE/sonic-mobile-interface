@@ -55,7 +55,7 @@ MobileShell.BaseItem {
             layer.enabled: true
             layer.effect: MobileShell.TextDropShadow {}
 
-            onTextChanged: {
+            function onTextChanged() {
                 if (text.includes('\n')) {
                     // exit text edit mode when new line is entered
                     root.inFolderTitleEditMode = false;

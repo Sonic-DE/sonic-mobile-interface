@@ -112,12 +112,12 @@ Folio.DelegateTouchArea {
             return Math.min(root.height * 0.9, perRow * Folio.HomeScreenState.pageCellHeight + margin * 2);
         }
 
-        onWidthChanged: {
+        function onWidthChanged() {
             Folio.HomeScreenState.folderPageWidth = width;
             root.updateContentHeight();
             root.updateContentHeight();
         }
-        onHeightChanged: {
+        function onHeightChanged() {
             Folio.HomeScreenState.folderPageHeight = height;
             root.updateContentWidth();
             root.updateContentHeight();

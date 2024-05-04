@@ -29,7 +29,7 @@ Rectangle {
         }
     }
 
-    onContainmentChanged: {
+    function onContainmentChanged() {
         if (containment == null) {
             return;
         }

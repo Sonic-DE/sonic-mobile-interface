@@ -17,7 +17,7 @@ Flickable {
 
     // update position from horizontal flickable movement
     property real oldContentX
-    onContentXChanged: {
+    function onContentXChanged() {
         taskSwitcherState.xPosition += contentX - oldContentX;
         oldContentX = contentX;
     }
@@ -36,7 +36,7 @@ Flickable {
         taskSwitcherState.updateState();
     }
 
-    onDraggingChanged: {
+    function onDraggingChanged() {
         if (!dragging) {
             resetPosition();
             taskSwitcherState.updateState();

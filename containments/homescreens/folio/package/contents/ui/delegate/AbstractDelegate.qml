@@ -57,7 +57,7 @@ Folio.DelegateTouchArea {
     }
 
     cursorShape: Qt.PointingHandCursor
-    onPressedChanged: (pressed) => {
+    function onPressedChanged(pressed) {
         if (pressed) {
             growAnim.stop();
             shrinkAnim.restart();

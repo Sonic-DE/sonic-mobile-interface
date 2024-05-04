@@ -59,13 +59,13 @@ GridView {
         }
     }
 
-    onActiveFocusChanged: {
+    function onActiveFocusChanged() {
         if (!activeFocus) {
             currentIndex = -1;
         }
     }
 
-    onDraggingChanged: {
+    function onDraggingChanged() {
         if (dragging) {
             currentIndex = -1;
         }

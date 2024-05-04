@@ -56,7 +56,7 @@ Controls.ItemDelegate {
             Layout.preferredHeight: Kirigami.Units.iconSizes.smallMedium
             visible: type === "sink-input" || type === "source-output"
             source: "unknown"
-            onSourceChanged: {
+            function onSourceChanged() {
                 if (!valid && source != "unknown") {
                     source = "unknown";
                 }
@@ -185,14 +185,14 @@ Controls.ItemDelegate {
                         ignoreValueChange = false;
                     }
 
-                    onVolumeChanged: {
+                    function onVolumeChanged() {
                         var oldIgnoreValueChange = ignoreValueChange;
                         ignoreValueChange = true;
                         value = Volume;
                         ignoreValueChange = oldIgnoreValueChange;
                     }
 
-                    onValueChanged: {
+                    function onValueChanged() {
                         if (!ignoreValueChange) {
                             Volume = value;
                             Muted = value == 0;
@@ -203,7 +203,7 @@ Controls.ItemDelegate {
                         }
                     }
 
-                    onPressedChanged: {
+                    function onPressedChanged() {
                         if (!pressed) {
                             // Make sure to sync the volume once the button was
                             // released.

@@ -50,7 +50,7 @@ Canvas
     property real plotWidth: width - xPadding * 1.5
     property real plotHeight: height - yPadding * 2
 
-    onDataChanged: {
+    function onDataChanged() {
         canvas.requestPaint();
     }
 
