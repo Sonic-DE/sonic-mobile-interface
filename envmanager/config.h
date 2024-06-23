@@ -17,8 +17,8 @@
 const QMap<QString, QMap<QString, QVariant>> APPLICATIONS_BLACKLIST_DEFAULT_SETTINGS = {
     {"Applications",
      {{"blacklist",
-       "assistant,assistant-qt5,avahi-discover,bssh,bvnc,ciborium,cuttlefish,designer,designer-qt5,htop,ktelnetservice5,linguist,linguist-qt5,org.kde.ark,"
-       "org.kde.drkonqi.coredump.gui,org.kde.kcharselect,org.kde.kfind,org.kde.klipper,org.kde.kmag,org.kde.kmenuedit,org.kde.kmousetool,org.kde.krfb,"
+       "assistant,assistant-qt5,avahi-discover,bssh,bvnc,ciborium,cuttlefish,designer,designer-qt5,htop,ktelnetservice5,linguist,linguist-qt5,"
+       "org.kde.kcharselect,org.kde.kfind,org.kde.klipper,org.kde.kmag,org.kde.kmenuedit,org.kde.kmousetool,org.kde.krfb,"
        "org.kde.kuserfeedback-console,org.kde.kwalletmanager5,org.kde.okular,org.kde.perusecreator,org.kde.plasma.themeexplorer,org.kde.plasma-welcome,"
        "nvtop,qt5-qdbusviewer,qv4l2,qvidcap,syncmonitorhelper,UserFeedbackConsole,waydroid.com.android.calculator2,waydroid.com.android.camera2,"
        "waydroid.com.android.contacts,waydroid.com.android.deskclock,waydroid.com.android.documentsui,waydroid.com.android.gallery3d,"
