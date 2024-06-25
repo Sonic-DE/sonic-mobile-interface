@@ -29,9 +29,6 @@ Loader {
         interval: 200
     }
 
-    // move while swiping up
-    transform: Translate { y: Math.round((1 - root.opacity) * (-root.height / 6)) }
-
     asynchronous: true
     sourceComponent: Item {
         ColumnLayout {
