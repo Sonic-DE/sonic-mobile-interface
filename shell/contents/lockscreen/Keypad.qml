@@ -143,21 +143,11 @@ Item {
                     }
 
                     Kirigami.Icon {
-                        visible: modelData === "R"
+                        visible: modelData === "R" || modelData === "E"
                         anchors.centerIn: parent
                         width: Kirigami.Units.iconSizes.small
                         height: Kirigami.Units.iconSizes.small
-                        source: "edit-clear"
-                        Kirigami.Theme.inherit: false
-                        Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
-                    }
-
-                    Kirigami.Icon {
-                        visible: modelData === "E"
-                        anchors.centerIn: parent
-                        width: Kirigami.Units.iconSizes.small
-                        height: Kirigami.Units.iconSizes.small
-                        source: "go-next"
+                        source: modelData === "R" ? "edit-clear" : "go-next"
                         Kirigami.Theme.inherit: false
                         Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
                     }

@@ -49,7 +49,7 @@ QtObject {
         root.reset();
     }
 
-    function resetPinLabel() {
+    function resetPinLabel(): void {
         pinLabel = enterPinLabel;
     }
 
@@ -72,7 +72,7 @@ QtObject {
             Qt.quit();
         }
 
-        function onFailed(kind) {
+        function onFailed(kind: int): void {
             if (kind != 0) { // if this is coming from the noninteractive authenticators
                 return;
             }
