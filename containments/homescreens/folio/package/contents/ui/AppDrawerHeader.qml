@@ -18,7 +18,7 @@ Item {
     Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
     Kirigami.Theme.inherit: false
 
-    function clearSearchText() {
+    function clearSearchText(): void {
         searchField.text = '';
     }
 
@@ -35,7 +35,7 @@ Item {
             Layout.alignment: Qt.AlignHCenter
 
             background: Rectangle {
-                radius: Kirigami.Units.largeSpacing
+                radius: Kirigami.Units.cornerRadius
                 color: Qt.rgba(255, 255, 255, (searchField.hovered || searchField.focus) ? 0.2 : 0.1)
 
                 Behavior on color { ColorAnimation {} }
@@ -49,7 +49,7 @@ Item {
             Layout.fillWidth: true
 
             horizontalAlignment: QQC2.TextField.AlignHCenter
-            placeholderText: i18n("Search applications…")
+            placeholderText: i18nc("@info:placeholder", "Search applications…")
             placeholderTextColor: Qt.rgba(255, 255, 255, 0.8)
             color: 'white'
 
@@ -57,7 +57,7 @@ Item {
 
             Connections {
                 target: folio.HomeScreenState
-                function onViewStateChanged() {
+                function onViewStateChanged(): void {
                     if (folio.HomeScreenState.viewState !== Folio.HomeScreenState.AppDrawerView) {
                         // Reset search field if the app drawer is not shown
                         if (searchField.text !== '') {
