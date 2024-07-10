@@ -5,6 +5,8 @@ set(mobileshellstateplugin_SRCS
     shelldbusobject.cpp
     shelldbusclient.cpp
     lockscreendbusclient.cpp
+    startupfeedbackmodel.cpp
+    windowlistener.cpp
 )
 
 qt_generate_dbus_interface(
@@ -24,7 +26,7 @@ ecm_add_qml_module(mobileshellstateplugin URI org.kde.plasma.private.mobileshell
 
 target_sources(mobileshellstateplugin PRIVATE ${mobileshellstateplugin_SRCS} ${RESOURCES})
 
-target_link_libraries(mobileshellstateplugin 
+target_link_libraries(mobileshellstateplugin
     PUBLIC
         Qt::Core
     PRIVATE
