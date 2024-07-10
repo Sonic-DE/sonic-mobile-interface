@@ -18,6 +18,7 @@ target_sources(mobileshellplugin PRIVATE ${mobileshellplugin_SRCS})
 # Singleton declarations
 set_source_files_properties(qml/components/AppLaunch.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
 set_source_files_properties(qml/components/Constants.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
+set_source_files_properties(qml/volumeosd/StartupFeedbackWindows.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
 set_source_files_properties(qml/dataproviders/AudioInfo.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
 set_source_files_properties(qml/dataproviders/BatteryInfo.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
 set_source_files_properties(qml/dataproviders/BluetoothInfo.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
@@ -32,7 +33,7 @@ file(GLOB_RECURSE _qml_sources
 ecm_target_qml_sources(mobileshellplugin SOURCES ${_qml_sources})
 
 
-target_link_libraries(mobileshellplugin 
+target_link_libraries(mobileshellplugin
     PUBLIC
         Qt::Core
     PRIVATE

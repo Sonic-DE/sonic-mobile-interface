@@ -7,12 +7,15 @@
 #include <QString>
 #include <qqmlregistration.h>
 
+#include "startupfeedbackmodel.cpp"
+
 class ShellDBusObject : public QObject
 {
     Q_OBJECT
     QML_ELEMENT
     QML_SINGLETON
     Q_CLASSINFO("D-Bus Interface", "org.kde.plasmashell")
+    Q_PROPERTY(StartupFeedbackModel *startupFeedbackModel READ startupFeedbackModel CONSTANT)
 
 public:
     ShellDBusObject(QObject *parent = nullptr);
@@ -20,14 +23,14 @@ public:
     // called by QML
     Q_INVOKABLE void registerObject();
 
+    StartupFeedbackModel *startupFeedbackModel();
+
 Q_SIGNALS:
     Q_SCRIPTABLE void doNotDisturbChanged();
     Q_SCRIPTABLE void isActionDrawerOpenChanged();
     Q_SCRIPTABLE void isTaskSwitcherVisibleChanged();
     Q_SCRIPTABLE void openActionDrawerRequested();
     Q_SCRIPTABLE void closeActionDrawerRequested();
-    Q_SCRIPTABLE void openAppLaunchAnimationRequested(int screen, QString splashIcon);
-    Q_SCRIPTABLE void openAppLaunchAnimationWithPositionRequested(int screen, QString splashIcon, QString title, qreal x, qreal y, qreal sourceIconSize);
     Q_SCRIPTABLE void closeAppLaunchAnimationRequested();
     Q_SCRIPTABLE void openHomeScreenRequested();
     Q_SCRIPTABLE void resetHomeScreenPositionRequested();
@@ -56,9 +59,11 @@ public Q_SLOTS:
     Q_SCRIPTABLE void showVolumeOSD();
 
 private:
-    bool m_initialized = false;
+    bool m_initialized{false};
 
-    bool m_doNotDisturb = false;
-    bool m_isActionDrawerOpen = false;
-    bool m_isTaskSwitcherVisible = false;
+    bool m_doNotDisturb{false};
+    bool m_isActionDrawerOpen{false};
+    bool m_isTaskSwitcherVisible{false};
+
+    StartupFeedbackModel *m_startupFeedbackModel{nullptr};
 };

@@ -48,9 +48,6 @@ Q_SIGNALS:
     void isTaskSwitcherVisibleChanged();
     void openActionDrawerRequested();
     void closeActionDrawerRequested();
-    void openAppLaunchAnimationRequested(int screen, QString splashIcon);
-    void openAppLaunchAnimationWithPositionRequested(int screen, QString splashIcon, QString title, qreal x, qreal y, qreal sourceIconSize);
-    void closeAppLaunchAnimationRequested();
     void openHomeScreenRequested();
     void resetHomeScreenPositionRequested();
     void showVolumeOSDRequested();
