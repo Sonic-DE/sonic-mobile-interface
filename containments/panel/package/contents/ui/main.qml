@@ -90,7 +90,6 @@ ContainmentItem {
     Component.onCompleted: {
         // register dbus
         MobileShellState.ShellDBusObject.registerObject();
-        MobileShellState.StartupFeedbackWindows.parent = root; // TODO
 
         // HACK: we need to initialize the DBus server somewhere, it might as well be here...
         // initialize the volume osd, and volume keys

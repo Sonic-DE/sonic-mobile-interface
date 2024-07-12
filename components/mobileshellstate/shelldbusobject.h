@@ -7,7 +7,7 @@
 #include <QString>
 #include <qqmlregistration.h>
 
-#include "startupfeedbackmodel.cpp"
+#include "startupfeedbackmodel.h"
 
 class ShellDBusObject : public QObject
 {
@@ -50,8 +50,8 @@ public Q_SLOTS:
     Q_SCRIPTABLE void openActionDrawer();
     Q_SCRIPTABLE void closeActionDrawer();
 
-    Q_SCRIPTABLE void openAppLaunchAnimation(int screen, QString splashIcon);
-    Q_SCRIPTABLE void openAppLaunchAnimationWithPosition(int screen, QString splashIcon, QString title, qreal x, qreal y, qreal sourceIconSize);
+    Q_SCRIPTABLE void
+    openAppLaunchAnimationWithPosition(int screen, QString splashIcon, QString title, QString storageId, qreal x, qreal y, qreal sourceIconSize);
     Q_SCRIPTABLE void closeAppLaunchAnimation();
 
     Q_SCRIPTABLE void openHomeScreen();
