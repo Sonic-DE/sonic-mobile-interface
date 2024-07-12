@@ -78,14 +78,15 @@ bool ShellDBusClient::isTaskSwitcherVisible() const
     return m_isTaskSwitcherVisible;
 }
 
-void ShellDBusClient::openAppLaunchAnimation(int screen, QString splashIcon)
+void ShellDBusClient::openAppLaunchAnimationWithPosition(int screen,
+                                                         QString splashIcon,
+                                                         QString title,
+                                                         QString storageId,
+                                                         qreal x,
+                                                         qreal y,
+                                                         qreal sourceIconSize)
 {
-    m_interface->openAppLaunchAnimation(screen, splashIcon);
-}
-
-void ShellDBusClient::openAppLaunchAnimationWithPosition(int screen, QString splashIcon, QString title, qreal x, qreal y, qreal sourceIconSize)
-{
-    m_interface->openAppLaunchAnimationWithPosition(screen, splashIcon, title, x, y, sourceIconSize);
+    m_interface->openAppLaunchAnimationWithPosition(screen, splashIcon, title, storageId, x, y, sourceIconSize);
 }
 
 void ShellDBusClient::closeAppLaunchAnimation()

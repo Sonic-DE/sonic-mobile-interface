@@ -36,6 +36,7 @@ target_link_libraries(mobileshellstateplugin
         Qt::Quick
         Qt::DBus
         Plasma::Plasma
+        Plasma::KWaylandClient
         KF6::I18n
         KF6::Notifications
         Plasma::PlasmaQuick

@@ -40,10 +40,10 @@ QList<KWayland::Client::PlasmaWindow *> WindowListener::windowsFromStorageId(QSt
 
 void WindowListener::onWindowCreated(KWayland::Client::PlasmaWindow *window)
 {
-    QString storageId = window->appId() + QStringLiteral(".desktop");
+    QString storageId = window->appId();
 
     // ignore empty windows
-    if (storageId == ".desktop" || storageId == "org.kde.plasmashell.desktop") {
+    if (storageId == "" || storageId == "org.kde.plasmashell") {
         return;
     }
 

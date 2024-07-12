@@ -41,12 +41,6 @@ Item {
     property alias contentItem: itemContainer.contentItem
 
     /**
-     * Whether a component is being shown on top of the homescreen within the same
-     * window.
-     */
-    readonly property bool overlayShown: startupFeedback.visible
-
-    /**
      * The root PlasmoidItem of the containment this is used into
      */
     property PlasmoidItem plasmoidItem
@@ -100,26 +94,6 @@ Item {
 
         function onResetHomeScreenPositionRequested() {
             root.resetHomeScreenPosition();
-        }
-
-        function onOpenAppLaunchAnimationRequested(screen, splashIcon) {
-            if (screen !== Plasmoid.screen) {
-                return;
-            }
-
-            startupFeedback.open(splashIcon);
-        }
-
-        function onOpenAppLaunchAnimationWithPositionRequested(screen, splashIcon, title, x, y, sourceIconSize) {
-            if (screen !== Plasmoid.screen) {
-                return;
-            }
-
-            startupFeedback.openWithPosition(splashIcon, x, y, sourceIconSize);
-        }
-
-        function onCloseAppLaunchAnimationRequested() {
-            startupFeedback.close();
         }
 
         function onIsTaskSwitcherVisibleChanged() {
@@ -211,9 +185,22 @@ Item {
     }
 
     // start app animation component
-    MobileShell.StartupFeedback {
-        id: startupFeedback
-        z: 999999
+    // MobileShell.StartupFeedback {
+    //     id: startupFeedback
+    //     z: 999999
+    //     anchors.fill: parent
+    // }
+
+    MobileShell.StartupFeedbackWindows {
+        id: startupFeedbackWindows
+        screen: Plasmoid.screen
+
+        topMargin: root.topMargin
+        bottomMargin: root.bottomMargin
+        leftMargin: root.leftMargin
+        rightMargin: root.rightMargin
+
         anchors.fill: parent
+        visible: false
     }
 }

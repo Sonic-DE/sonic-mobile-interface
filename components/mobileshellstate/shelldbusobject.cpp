@@ -75,19 +75,19 @@ void ShellDBusObject::closeActionDrawer()
     Q_EMIT closeActionDrawerRequested();
 }
 
-void ShellDBusObject::openAppLaunchAnimation(int screen, QString splashIcon)
-{
-    // TODO
-    // Q_EMIT openAppLaunchAnimationRequested(screen, splashIcon);
-}
-
-void ShellDBusObject::openAppLaunchAnimationWithPosition(int screen, QString splashIcon, QString title, qreal x, qreal y, qreal sourceIconSize)
+void ShellDBusObject::openAppLaunchAnimationWithPosition(int screen,
+                                                         QString splashIcon,
+                                                         QString title,
+                                                         QString storageId,
+                                                         qreal x,
+                                                         qreal y,
+                                                         qreal sourceIconSize)
 {
     if (!m_startupFeedbackModel) {
         return;
     }
 
-    StartupFeedback *feedback = new StartupFeedback{m_startupFeedbackModel, title, splashIcon, x, y, sourceIconSize, screen};
+    StartupFeedback *feedback = new StartupFeedback{m_startupFeedbackModel, splashIcon, title, storageId, x, y, sourceIconSize, screen};
     m_startupFeedbackModel->addApp(feedback);
 }
 

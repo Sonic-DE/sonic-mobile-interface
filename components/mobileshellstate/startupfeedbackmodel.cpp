@@ -1,28 +1,43 @@
 // SPDX-FileCopyrightText: 2024 Devin Lin <devin@kde.org>
 // SPDX-License-Identifier: GPL-2.0-or-later
 
-#include "startupfeedback.h"
+#include "startupfeedbackmodel.h"
 #include "windowlistener.h"
 
-StartupFeedback::StartupFeedback(QObject *parent, QString appId, QString iconName, qreal iconStartX, qreal iconStartY, qreal iconSize, int screen)
+StartupFeedback::StartupFeedback(QObject *parent,
+                                 QString iconName,
+                                 QString title,
+                                 QString storageId,
+                                 qreal iconStartX,
+                                 qreal iconStartY,
+                                 qreal iconSize,
+                                 int screen)
     : QObject{parent}
-    , m_appId{appId}
     , m_iconName{iconName}
+    , m_title{title}
+    , m_storageId{storageId}
     , m_iconStartX{iconStartX}
     , m_iconStartY{iconStartY}
     , m_iconSize{iconSize}
     , m_screen{screen}
+    , m_timeoutTimer{new QTimer{this}}
 {
-}
-
-QString StartupFeedback::appId()
-{
-    return m_appId;
+    connect(m_timeoutTimer, &QTimer::timeout, this, &StartupFeedback::timeout);
 }
 
 QString StartupFeedback::iconName()
 {
     return m_iconName;
+}
+
+QString StartupFeedback::title()
+{
+    return m_title;
+}
+
+QString StartupFeedback::storageId()
+{
+    return m_storageId;
 }
 
 qreal StartupFeedback::iconStartX()
@@ -45,33 +60,35 @@ int StartupFeedback::screen()
     return m_screen;
 }
 
+void StartupFeedback::startTimeoutTimer()
+{
+    // Timeout of 5 seconds before closing
+    m_timeoutTimer->start(5000);
+}
+
 StartupFeedbackModel::StartupFeedbackModel(QObject *parent)
     : QAbstractListModel{parent}
 {
-    connect(WindowListener::instance(), &WindowListener::windowCreated, this, [this](QString storageId) {
-        QList<int> indicesToRemove;
-
-        // Remove startupfeedback when the respective window is created
-        for (auto *startupFeedback : m_list) {
-            if (startupFeedback->appId() == storageId) {
-                indicesToRemove.remove(storageId);
-            }
-        }
-
-        for (int index : indicesToRemove) {
-            Q_EMIT beginRemoveRows(QModelIndex{}, index, index);
-            m_list[index]->deleteLater();
-            m_list.removeAt(index);
-            Q_EMIT endRemoveRows();
-        }
-    });
+    connect(WindowListener::instance(), &WindowListener::windowCreated, this, &StartupFeedbackModel::onWindowOpened);
 }
 
 void StartupFeedbackModel::addApp(StartupFeedback *startupFeedback)
 {
-    Q_EMIT begininsertRows(QModelIndex{}, m_list.size(), m_list.size());
+    beginInsertRows(QModelIndex{}, m_list.size(), m_list.size());
+
     m_list.append(startupFeedback);
-    Q_EMIT endInsertRows();
+    startupFeedback->startTimeoutTimer();
+    connect(startupFeedback, &StartupFeedback::timeout, this, [this, startupFeedback]() {
+        int index = m_list.indexOf(startupFeedback);
+
+        if (index != -1) {
+            beginRemoveRows(QModelIndex{}, index, index);
+            m_list.removeAt(index);
+            endRemoveRows();
+        }
+    });
+
+    endInsertRows();
 }
 
 int StartupFeedbackModel::rowCount(const QModelIndex &parent) const
@@ -86,9 +103,13 @@ QVariant StartupFeedbackModel::data(const QModelIndex &index, int role) const
         return QVariant();
     }
 
+    auto delegate = m_list[index.row()];
+
     switch (role) {
     case DelegateRole:
-        return QVariant::fromValue(m_list[index]);
+        return QVariant::fromValue(delegate);
+    case ScreenRole:
+        return delegate->screen();
     default:
         return QVariant();
     }
@@ -96,5 +117,90 @@ QVariant StartupFeedbackModel::data(const QModelIndex &index, int role) const
 
 QHash<int, QByteArray> StartupFeedbackModel::roleNames() const
 {
-    return {{DelegateRole, QByteArrayLiteral("delegate")}};
+    return {{DelegateRole, QByteArrayLiteral("delegate")}, {ScreenRole, QByteArrayLiteral("screen")}};
+}
+
+void StartupFeedbackModel::onWindowOpened(QString storageId)
+{
+    int indexToRemove = 0;
+
+    // storageId may get suffixed with ".desktop", check for that
+    const QString suffix = QStringLiteral(".desktop");
+
+    // Remove StartupFeedback when the respective window is created
+    // NOTE: often, the window "appId" does not match the actual app storageId in third-party apps, so we can't rely on this.
+    for (int i = 0; i < m_list.size(); ++i) {
+        auto *startupFeedback = m_list[i];
+        if (startupFeedback->storageId() == storageId || startupFeedback->storageId() == storageId + suffix) {
+            indexToRemove = i;
+            break;
+        }
+    }
+
+    // If no windows were matched, the oldest StartupFeedback (since indexToRemove = 0)
+    // NOTE: This is our fallback if the window "appId" doesn't match anything.
+
+    if (m_list.size() > indexToRemove) {
+        beginRemoveRows(QModelIndex{}, indexToRemove, indexToRemove);
+        m_list[indexToRemove]->deleteLater();
+        m_list.removeAt(indexToRemove);
+        endRemoveRows();
+    }
+}
+
+StartupFeedbackFilterModel::StartupFeedbackFilterModel(QObject *parent)
+    : QSortFilterProxyModel(parent)
+{
+    setSortRole(StartupFeedbackModel::ScreenRole);
+}
+
+StartupFeedbackModel *StartupFeedbackFilterModel::startupFeedbackModel() const
+{
+    return m_startupFeedbackModel;
+}
+
+void StartupFeedbackFilterModel::setStartupFeedbackModel(StartupFeedbackModel *startupFeedbackModel)
+{
+    if (startupFeedbackModel == m_startupFeedbackModel) {
+        return;
+    }
+
+    m_startupFeedbackModel = startupFeedbackModel;
+    setSourceModel(m_startupFeedbackModel);
+    Q_EMIT startupFeedbackModelChanged();
+}
+
+int StartupFeedbackFilterModel::screen() const
+{
+    return m_screen;
+}
+
+void StartupFeedbackFilterModel::setScreen(int screen)
+{
+    if (m_screen == screen) {
+        return;
+    }
+
+    m_screen = screen;
+    Q_EMIT screenChanged();
+}
+
+bool StartupFeedbackFilterModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
+{
+    if (!m_startupFeedbackModel) {
+        return false;
+    }
+
+    const QModelIndex index = m_startupFeedbackModel->index(sourceRow, 0, sourceParent);
+    if (!index.isValid()) {
+        return false;
+    }
+    const QVariant data = index.data();
+    if (!data.isValid()) {
+        // an invalid QVariant is valid data
+        return true;
+    }
+
+    StartupFeedback *startupFeedback = qvariant_cast<StartupFeedback *>(data);
+    return startupFeedback->screen() == m_screen;
 }
