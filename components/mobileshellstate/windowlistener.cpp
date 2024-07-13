@@ -33,14 +33,6 @@ WindowListener *WindowListener::instance()
     return listener;
 }
 
-QList<KWayland::Client::PlasmaWindow *> WindowListener::windowsFromStorageId(QString &storageId) const
-{
-    if (!m_windows.contains(storageId)) {
-        return {};
-    }
-    return m_windows[storageId];
-}
-
 void WindowListener::onWindowCreated(KWayland::Client::PlasmaWindow *window)
 {
     QString storageId = window->appId();
@@ -56,16 +48,10 @@ void WindowListener::onWindowCreated(KWayland::Client::PlasmaWindow *window)
         return;
     }
 
-    if (!m_windows.contains(storageId)) {
-        m_windows[storageId] = {};
-    }
-    m_windows[storageId].push_back(window);
-
     // listen for window close
     connect(window, &KWayland::Client::PlasmaWindow::unmapped, this, [this, storageId]() {
-        m_windows.remove(storageId);
         Q_EMIT windowRemoved(storageId);
     });
 
-    Q_EMIT windowCreated(storageId);
+    Q_EMIT windowCreated(window);
 }

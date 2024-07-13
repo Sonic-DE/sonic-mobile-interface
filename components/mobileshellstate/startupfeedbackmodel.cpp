@@ -4,6 +4,8 @@
 #include "startupfeedbackmodel.h"
 #include "windowlistener.h"
 
+constexpr int STARTUP_FEEDBACK_TIMEOUT_MS = 8000;
+
 StartupFeedback::StartupFeedback(QObject *parent,
                                  QString iconName,
                                  QString title,
@@ -73,7 +75,7 @@ void StartupFeedback::setWindowUuid(QString uuid)
 void StartupFeedback::startTimeoutTimer()
 {
     // Timeout of 5 seconds before closing
-    m_timeoutTimer->start(5000);
+    m_timeoutTimer->start(STARTUP_FEEDBACK_TIMEOUT_MS);
 }
 
 StartupFeedbackModel::StartupFeedbackModel(QObject *parent)
@@ -147,8 +149,14 @@ bool StartupFeedbackModel::activeWindowIsStartupFeedback() const
     return m_activeWindowIsStartupFeedback;
 }
 
-void StartupFeedbackModel::onWindowOpened(QString storageId)
+void StartupFeedbackModel::onWindowOpened(KWayland::Client::PlasmaWindow *window)
 {
+    if (!window) {
+        return;
+    }
+
+    QString appId = window->appId();
+
     int indexToRemove = 0;
 
     // storageId may get suffixed with ".desktop", check for that
@@ -158,7 +166,7 @@ void StartupFeedbackModel::onWindowOpened(QString storageId)
     // NOTE: often, the window "appId" does not match the actual app storageId in third-party apps, so we can't rely on this.
     for (int i = 0; i < m_list.size(); ++i) {
         auto *startupFeedback = m_list[i];
-        if (startupFeedback->storageId() == storageId || startupFeedback->storageId() == storageId + suffix) {
+        if (startupFeedback->storageId() == appId || startupFeedback->storageId() == appId + suffix) {
             indexToRemove = i;
             break;
         }
@@ -168,13 +176,29 @@ void StartupFeedbackModel::onWindowOpened(QString storageId)
     // NOTE: This is our fallback if the window "appId" doesn't match anything.
 
     if (m_list.size() > indexToRemove) {
-        beginRemoveRows(QModelIndex{}, indexToRemove, indexToRemove);
+        StartupFeedback *feedbackToRemove = m_list[indexToRemove];
 
-        m_list[indexToRemove]->deleteLater();
-        m_list.removeAt(indexToRemove);
-        updateActiveWindowIsStartupFeedback();
+        // Only delete StartupFeedback once the window becomes active
+        // -> There is a gap of time between when a window is created and when it is actually visible/active
+        connect(window, &KWayland::Client::PlasmaWindow::activeChanged, this, [this, window, feedbackToRemove]() {
+            if (!window->isActive()) {
+                return;
+            }
 
-        endRemoveRows();
+            int indexToRemove = m_list.indexOf(feedbackToRemove);
+
+            if (indexToRemove != -1) {
+                beginRemoveRows(QModelIndex{}, indexToRemove, indexToRemove);
+
+                m_list[indexToRemove]->deleteLater();
+                m_list.removeAt(indexToRemove);
+                updateActiveWindowIsStartupFeedback();
+
+                endRemoveRows();
+            }
+
+            window->disconnect(this);
+        });
     }
 }
 
