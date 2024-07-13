@@ -184,13 +184,7 @@ Item {
         }
     }
 
-    // start app animation component
-    // MobileShell.StartupFeedback {
-    //     id: startupFeedback
-    //     z: 999999
-    //     anchors.fill: parent
-    // }
-
+    // App start animation component
     MobileShell.StartupFeedbackWindows {
         id: startupFeedbackWindows
         screen: Plasmoid.screen

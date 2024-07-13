@@ -168,14 +168,6 @@ ContainmentItem {
                 rightMargin: homeScreen.rightMargin
             }
         }
-
-        // listen to app launch errors
-        Connections {
-            target: folio.ApplicationListModel
-            function onLaunchError(msg) {
-                MobileShellState.ShellDBusClient.closeAppLaunchAnimation()
-            }
-        }
     }
 }
 
