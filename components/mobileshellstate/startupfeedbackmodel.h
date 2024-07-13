@@ -91,7 +91,7 @@ Q_SIGNALS:
     void activeWindowIsStartupFeedbackChanged();
 
 private Q_SLOTS:
-    void onWindowOpened(QString storageId);
+    void onWindowOpened(KWayland::Client::PlasmaWindow *window);
     void onPlasmaWindowOpened(KWayland::Client::PlasmaWindow *window);
     void onActiveWindowChanged(KWayland::Client::PlasmaWindow *activeWindow);
 

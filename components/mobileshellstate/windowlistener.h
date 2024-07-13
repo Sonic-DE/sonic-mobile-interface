@@ -26,12 +26,11 @@ public Q_SLOTS:
     void onWindowCreated(KWayland::Client::PlasmaWindow *window);
 
 Q_SIGNALS:
-    void windowCreated(QString storageId);
+    void windowCreated(KWayland::Client::PlasmaWindow *window);
     void plasmaWindowCreated(KWayland::Client::PlasmaWindow *window);
     void windowRemoved(QString storageId);
     void activeWindowChanged(KWayland::Client::PlasmaWindow *activeWindow);
 
 private:
     KWayland::Client::PlasmaWindowManagement *m_windowManagement{nullptr};
-    QHash<QString, QList<KWayland::Client::PlasmaWindow *>> m_windows; // <storageId, window>
 };
