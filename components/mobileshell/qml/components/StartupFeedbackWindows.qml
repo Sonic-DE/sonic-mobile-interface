@@ -105,6 +105,9 @@ Item {
 
                     ScriptAction {
                         script: {
+                            // Animation has finished, trigger event for panels to update color
+                            MobileShellState.ShellDBusClient.triggerAppLaunchMaximizePanelAnimation(root.screen, background.color);
+
                             // close the app drawer after it isn't visible
                             MobileShellState.ShellDBusClient.resetHomeScreenPosition();
                         }
@@ -135,6 +138,9 @@ Item {
 
                     ScriptAction {
                         script: {
+                            // Animation has finished, trigger event for panels to update color
+                            MobileShellState.ShellDBusClient.triggerAppLaunchMaximizePanelAnimation(root.screen, background.color);
+
                             // close the app drawer after it isn't visible
                             MobileShellState.ShellDBusClient.resetHomeScreenPosition();
                         }

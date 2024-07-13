@@ -27,7 +27,9 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void windowCreated(QString storageId);
+    void plasmaWindowCreated(KWayland::Client::PlasmaWindow *window);
     void windowRemoved(QString storageId);
+    void activeWindowChanged(KWayland::Client::PlasmaWindow *activeWindow);
 
 private:
     KWayland::Client::PlasmaWindowManagement *m_windowManagement{nullptr};

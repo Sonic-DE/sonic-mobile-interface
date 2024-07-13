@@ -91,9 +91,9 @@ void ShellDBusObject::openAppLaunchAnimationWithPosition(int screen,
     m_startupFeedbackModel->addApp(feedback);
 }
 
-void ShellDBusObject::closeAppLaunchAnimation()
+void ShellDBusObject::triggerAppLaunchMaximizePanelAnimation(int screen, QString color)
 {
-    Q_EMIT closeAppLaunchAnimationRequested();
+    Q_EMIT appLaunchMaximizePanelAnimationTriggered(screen, color);
 }
 
 void ShellDBusObject::openHomeScreen()
