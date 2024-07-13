@@ -9,7 +9,7 @@
 #include <QTimer>
 #include <qqmlregistration.h>
 
-// TODO: add kwin script to merge startup feedback with window
+#include <KWayland/Client/plasmawindowmanagement.h>
 
 class StartupFeedback : public QObject
 {
@@ -34,15 +34,19 @@ public:
 
     explicit StartupFeedback();
 
-    QString iconName();
-    QString title();
-    QString storageId();
+    QString iconName() const;
+    QString title() const;
+    QString storageId() const;
 
-    qreal iconStartX();
-    qreal iconStartY();
-    qreal iconSize();
+    qreal iconStartX() const;
+    qreal iconStartY() const;
+    qreal iconSize() const;
 
-    int screen();
+    int screen() const;
+
+    // Set by StartupFeedbackModel
+    QString windowUuid() const;
+    void setWindowUuid(QString uuid);
 
     void startTimeoutTimer();
 
@@ -50,13 +54,14 @@ Q_SIGNALS:
     void timeout();
 
 private:
-    QString m_iconName;
-    QString m_title;
-    QString m_storageId;
-    qreal m_iconStartX{0.0};
-    qreal m_iconStartY{0.0};
-    qreal m_iconSize{0.0};
-    int m_screen{0};
+    const QString m_iconName;
+    const QString m_title;
+    const QString m_storageId;
+    const qreal m_iconStartX;
+    const qreal m_iconStartY;
+    const qreal m_iconSize;
+    const int m_screen;
+    QString m_windowUuid;
 
     QTimer *m_timeoutTimer{nullptr};
 };
@@ -64,6 +69,7 @@ private:
 class StartupFeedbackModel : public QAbstractListModel
 {
     Q_OBJECT
+    Q_PROPERTY(bool activeWindowIsStartupFeedback READ activeWindowIsStartupFeedback NOTIFY activeWindowIsStartupFeedbackChanged)
 
 public:
     enum Roles {
@@ -75,17 +81,26 @@ public:
 
     void addApp(StartupFeedback *startupFeedback);
 
+    bool activeWindowIsStartupFeedback() const;
+
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int, QByteArray> roleNames() const override;
 
+Q_SIGNALS:
+    void activeWindowIsStartupFeedbackChanged();
+
 private Q_SLOTS:
     void onWindowOpened(QString storageId);
+    void onPlasmaWindowOpened(KWayland::Client::PlasmaWindow *window);
+    void onActiveWindowChanged(KWayland::Client::PlasmaWindow *activeWindow);
 
 private:
-    void init();
+    void updateActiveWindowIsStartupFeedback();
 
+    bool m_activeWindowIsStartupFeedback{false};
     QList<StartupFeedback *> m_list;
+    KWayland::Client::PlasmaWindow *m_activeWindow{nullptr};
 };
 
 class StartupFeedbackFilterModel : public QSortFilterProxyModel

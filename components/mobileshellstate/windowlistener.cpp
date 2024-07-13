@@ -18,6 +18,9 @@ WindowListener::WindowListener(QObject *parent)
     connect(registry, &KWayland::Client::Registry::plasmaWindowManagementAnnounced, this, [this, registry](quint32 name, quint32 version) {
         m_windowManagement = registry->createPlasmaWindowManagement(name, version, this);
         connect(m_windowManagement, &KWayland::Client::PlasmaWindowManagement::windowCreated, this, &WindowListener::onWindowCreated);
+        connect(m_windowManagement, &KWayland::Client::PlasmaWindowManagement::activeWindowChanged, this, [this]() {
+            Q_EMIT activeWindowChanged(m_windowManagement->activeWindow());
+        });
     });
 
     registry->setup();
@@ -42,8 +45,14 @@ void WindowListener::onWindowCreated(KWayland::Client::PlasmaWindow *window)
 {
     QString storageId = window->appId();
 
-    // ignore empty windows
-    if (storageId == "" || storageId == "org.kde.plasmashell") {
+    // Ignore empty windows
+    if (storageId == "") {
+        return;
+    }
+
+    // Special handling for plasmashell windows, don't track them
+    if (storageId == "org.kde.plasmashell") {
+        Q_EMIT plasmaWindowCreated(window);
         return;
     }
 

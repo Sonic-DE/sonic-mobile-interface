@@ -36,7 +36,7 @@ public:
 
     Q_INVOKABLE void
     openAppLaunchAnimationWithPosition(int screen, QString splashIcon, QString title, QString storageId, qreal x, qreal y, qreal sourceIconSize);
-    Q_INVOKABLE void closeAppLaunchAnimation();
+    Q_INVOKABLE void triggerAppLaunchMaximizePanelAnimation(int screen, QString color);
 
     Q_INVOKABLE void openHomeScreen();
     Q_INVOKABLE void resetHomeScreenPosition();
@@ -48,6 +48,7 @@ Q_SIGNALS:
     void isTaskSwitcherVisibleChanged();
     void openActionDrawerRequested();
     void closeActionDrawerRequested();
+    void appLaunchMaximizePanelAnimationTriggered(int screen, QString color);
     void openHomeScreenRequested();
     void resetHomeScreenPositionRequested();
     void showVolumeOSDRequested();

@@ -34,6 +34,10 @@ void ShellDBusClient::connectSignals()
     connect(m_interface, &OrgKdePlasmashellInterface::isTaskSwitcherVisibleChanged, this, &ShellDBusClient::updateIsTaskSwitcherVisible);
     connect(m_interface, &OrgKdePlasmashellInterface::openActionDrawerRequested, this, &ShellDBusClient::openActionDrawerRequested);
     connect(m_interface, &OrgKdePlasmashellInterface::closeActionDrawerRequested, this, &ShellDBusClient::closeActionDrawerRequested);
+    connect(m_interface,
+            &OrgKdePlasmashellInterface::appLaunchMaximizePanelAnimationTriggered,
+            this,
+            &ShellDBusClient::appLaunchMaximizePanelAnimationTriggered);
     connect(m_interface, &OrgKdePlasmashellInterface::openHomeScreenRequested, this, &ShellDBusClient::openHomeScreenRequested);
     connect(m_interface, &OrgKdePlasmashellInterface::resetHomeScreenPositionRequested, this, &ShellDBusClient::resetHomeScreenPositionRequested);
     connect(m_interface, &OrgKdePlasmashellInterface::showVolumeOSDRequested, this, &ShellDBusClient::showVolumeOSDRequested);
@@ -89,9 +93,9 @@ void ShellDBusClient::openAppLaunchAnimationWithPosition(int screen,
     m_interface->openAppLaunchAnimationWithPosition(screen, splashIcon, title, storageId, x, y, sourceIconSize);
 }
 
-void ShellDBusClient::closeAppLaunchAnimation()
+void ShellDBusClient::triggerAppLaunchMaximizePanelAnimation(int screen, QString color)
 {
-    m_interface->closeAppLaunchAnimation();
+    m_interface->triggerAppLaunchMaximizePanelAnimation(screen, color);
 }
 
 void ShellDBusClient::openHomeScreen()
