@@ -216,6 +216,66 @@ void SwipeArea::touchUngrabEvent()
     QQuickItem::touchUngrabEvent();
 }
 
+bool SwipeArea::eventFilter(QObject *obj, QEvent *event)
+{
+    if (!dynamic_cast<QWheelEvent *>(event)) {
+        return QQuickItem::eventFilter(obj, event);
+    }
+    qDebug() << "wheel event";
+    return true;
+}
+
+void SwipeArea::wheelEvent(QWheelEvent *event)
+{
+    if (!m_interactive) {
+        QQuickItem::wheelEvent(event);
+        return;
+    }
+
+    qDebug() << "event, is begin:" << event->isBeginEvent() << "is end:" << event->isEndEvent() << event->angleDelta() << event->device()
+             << m_touchpadScrolling;
+
+    event->setAccepted(false);
+
+    switch (event->phase()) {
+    case Qt::ScrollBegin:
+        if (!m_touchpadScrolling) {
+            event->accept();
+
+            m_touchpadScrolling = true;
+            m_totalScrollDelta = QPointF{0, 0};
+            Q_EMIT touchpadScrollStarted(event->points().first().position());
+
+            qDebug() << "BEGIN" << m_touchpadScrolling;
+        }
+        break;
+    case Qt::ScrollEnd:
+        if (m_touchpadScrolling) {
+            m_touchpadScrolling = false;
+            m_totalScrollDelta = QPointF{0, 0};
+            Q_EMIT touchpadScrollEnded();
+            qDebug() << "END";
+        }
+        break;
+    default:
+        break;
+    }
+
+    // HACK: if it isn't the touchpad, we never get the isBeginEvent() and isEndEvent() events
+    if (!m_touchpadScrolling) {
+        return;
+    }
+    event->addPassiveGrabber(event->points().first(), this);
+
+    // TODO: how do we properly convert this? currently it's in degrees
+    QPointF pixelDelta{event->angleDelta() / 8};
+
+    m_totalScrollDelta = QPointF{m_totalScrollDelta + pixelDelta};
+    Q_EMIT touchpadScrollMove(m_totalScrollDelta.x(), m_totalScrollDelta.y(), pixelDelta.x(), pixelDelta.y());
+
+    event->accept();
+}
+
 void SwipeArea::setMoving(bool moving)
 {
     m_moving = moving;
@@ -242,6 +302,8 @@ void SwipeArea::resetSwipe()
 
 void SwipeArea::handlePressEvent(QPointerEvent *event, QPointF point)
 {
+    Q_UNUSED(event);
+
     // ignore more touch events
     if (m_pressed) {
         return;
@@ -255,6 +317,9 @@ void SwipeArea::handlePressEvent(QPointerEvent *event, QPointF point)
 
 void SwipeArea::handleReleaseEvent(QPointerEvent *event, QPointF point)
 {
+    Q_UNUSED(event);
+    Q_UNUSED(point);
+
     // if we are in a swipe
     if (m_moving) {
         Q_EMIT swipeEnded();
@@ -265,6 +330,8 @@ void SwipeArea::handleReleaseEvent(QPointerEvent *event, QPointF point)
 
 void SwipeArea::handleMoveEvent(QPointerEvent *event, QPointF point)
 {
+    Q_UNUSED(event);
+
     if (!m_stealMouse) {
         if (!m_skipSwipeThreshold) {
             // if we haven't reached the swipe registering threshold yet, don't start the swipe
