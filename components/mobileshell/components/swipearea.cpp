@@ -216,6 +216,43 @@ void SwipeArea::touchUngrabEvent()
     QQuickItem::touchUngrabEvent();
 }
 
+void SwipeArea::wheelEvent(QWheelEvent *event)
+{
+    qDebug() << "event, is begin:" << event->isBeginEvent() << "is end:" << event->isEndEvent() << event->angleDelta() << event->device()
+             << m_touchpadScrolling;
+
+    if (event->isBeginEvent()) {
+        if (!m_touchpadScrolling) {
+            event->accept();
+            event->setExclusiveGrabber(event->points().first(), this);
+
+            m_touchpadScrolling = true;
+            m_totalScrollDelta = QPointF{0, 0};
+            Q_EMIT touchpadScrollStarted(event->points().first().position());
+
+            qDebug() << "BEGIN" << m_touchpadScrolling;
+        }
+    } else if (event->isEndEvent()) {
+        if (m_touchpadScrolling) {
+            m_touchpadScrolling = false;
+            m_totalScrollDelta = QPointF{0, 0};
+            Q_EMIT touchpadScrollEnded();
+            qDebug() << "END";
+        }
+    } else {
+        // HACK: if it isn't the touchpad, we never get the isBeginEvent() and isEndEvent() events
+        if (!m_touchpadScrolling) {
+            return;
+        }
+
+        // TODO: how do we properly convert this? currently it's in degrees
+        QPointF pixelDelta{event->angleDelta() / 8};
+
+        m_totalScrollDelta = QPointF{m_totalScrollDelta + pixelDelta};
+        Q_EMIT touchpadScrollMove(m_totalScrollDelta.x(), m_totalScrollDelta.y(), pixelDelta.x(), pixelDelta.y());
+    }
+}
+
 void SwipeArea::setMoving(bool moving)
 {
     m_moving = moving;
