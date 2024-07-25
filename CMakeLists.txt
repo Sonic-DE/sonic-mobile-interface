@@ -118,6 +118,7 @@ add_subdirectory(kwin)
 add_subdirectory(envmanager)
 add_subdirectory(initialstart)
 add_subdirectory(layout-templates)
+add_subdirectory(tests)
 
 find_program(PlasmaOpenSettings plasma-open-settings)
 set_package_properties(PlasmaOpenSettings PROPERTIES
