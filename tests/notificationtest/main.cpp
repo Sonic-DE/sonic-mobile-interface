@@ -9,7 +9,6 @@
 #include <QString>
 
 #include <KAboutData>
-#include <KLocalizedString>
 
 #include "tests.h"
 #include "utils.h"
@@ -17,9 +16,9 @@
 
 using namespace Qt::Literals::StringLiterals;
 
-QCommandLineParser *createParser()
+std::unique_ptr<QCommandLineParser> createParser()
 {
-    QCommandLineParser *parser = new QCommandLineParser;
+    auto parser = std::make_unique<QCommandLineParser>();
     parser->addOption(QCommandLineOption(u"list"_s, u"Lists the possible test notifications that can be set."_s));
     parser->addVersionOption();
     parser->addHelpOption();
@@ -31,33 +30,32 @@ int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
 
-    QScopedPointer<QCommandLineParser> parser{createParser()};
+    auto parser = createParser();
     parser->process(app);
 
-    KLocalizedString::setApplicationDomain("plasma-mobile-notificationtest");
     QCoreApplication::setApplicationName(u"plasma-mobile-notificationtest"_s);
     QCoreApplication::setApplicationVersion(QStringLiteral(PLASMA_MOBILE_VERSION_STRING));
     QCoreApplication::setOrganizationDomain(u"kde.org"_s);
 
-    QList<NotificationTest *> notificationTests = {new BasicNotificationTest,
-                                                   new UrlNotificationTest,
-                                                   new ReplyNotificationTest,
-                                                   new LowUrgencyNotificationTest,
-                                                   new HighUrgencyNotificationTest,
-                                                   new CriticalUrgencyNotificationTest};
+    std::vector<std::unique_ptr<NotificationTest>> notificationTests = {std::make_unique<BasicNotificationTest>(),
+                                                   std::make_unique<UrlNotificationTest>(),
+                                                   std::make_unique<ReplyNotificationTest>(),
+                                                   std::make_unique<LowUrgencyNotificationTest>(),
+                                                   std::make_unique<HighUrgencyNotificationTest>(),
+                                                   std::make_unique<CriticalUrgencyNotificationTest>()};
 
     if (parser->isSet(u"list"_s)) {
         for (auto notification : notificationTests) {
             qInfo() << notification->name();
         }
         return 0;
-    } else if (parser->positionalArguments().size() <= 0) {
+    } else if (parser->positionalArguments().size() == 0) {
         parser->showHelp();
         return 0;
     }
 
-    auto args = parser->positionalArguments();
-    QString name = args[0];
+    const auto args = parser->positionalArguments();
+    const QString name = args[0];
 
     bool found = false;
     for (auto notification : notificationTests) {
