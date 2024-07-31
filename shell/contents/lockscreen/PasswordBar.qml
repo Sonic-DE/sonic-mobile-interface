@@ -25,7 +25,7 @@ Rectangle {
     readonly property color headerTextInactiveColor: Qt.rgba(255, 255, 255, 0.4)
 
     radius: Kirigami.Units.largeSpacing
-    color: Qt.rgba(Kirigami.Theme.backgroundColor.r, Kirigami.Theme.backgroundColor.g, Kirigami.Theme.backgroundColor.b, 0.2)
+    color: Qt.rgba(Kirigami.Theme.backgroundColor.r, Kirigami.Theme.backgroundColor.g, Kirigami.Theme.backgroundColor.b, 0.3)
 
     // model for shown dots
     // we need to use a listmodel to avoid all delegates from reloading
