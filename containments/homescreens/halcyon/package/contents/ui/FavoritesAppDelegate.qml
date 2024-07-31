@@ -262,7 +262,7 @@ Item {
             Rectangle {
                 anchors.fill: parent
                 anchors.margins: Kirigami.Units.smallSpacing
-                color: Qt.rgba(Kirigami.Theme.backgroundColor.r, Kirigami.Theme.backgroundColor.g, Kirigami.Theme.backgroundColor.b5, 0.2)
+                color: Qt.rgba(Kirigami.Theme.backgroundColor.r, Kirigami.Theme.backgroundColor.g, Kirigami.Theme.backgroundColor.b, 0.2)
                 radius: Kirigami.Units.cornerRadius
                 opacity: delegate.dragFolderAnimationProgress
             }
