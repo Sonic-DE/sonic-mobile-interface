@@ -232,11 +232,14 @@ Item {
 
             Rectangle {
                 id: favouritesBarScrim
-                color: Qt.rgba(Kirigami.Theme.backgroundColor.r, Kirigami.Theme.backgroundColor.g, Kirigami.Theme.backgroundColor.b, 0.2)
+                color: Qt.rgba(Kirigami.Theme.backgroundColor.r, Kirigami.Theme.backgroundColor.g, Kirigami.Theme.backgroundColor.b, 0.3)
 
                 // don't show in settings mode
                 opacity: 1 - folio.HomeScreenState.settingsOpenProgress
                 visible: folio.FolioSettings.showFavouritesBarBackground
+
+                layer.enabled: true
+                layer.effect: DelegateShadow {}
 
                 anchors.top: folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Bottom ? favouritesBar.top : parent.top
                 anchors.bottom: parent.bottom
