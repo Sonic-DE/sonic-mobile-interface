@@ -178,7 +178,7 @@ Item {
                 }
 
                 background: Rectangle {
-                    readonly property real restingOpacity: (modelData !== "R" && modelData !== "E") ? 0.2 : 0.0
+                    readonly property real restingOpacity: (modelData !== "R" && modelData !== "E") ? 0.3 : 0.0
                     radius: width
                     color: Qt.rgba(Kirigami.Theme.backgroundColor.r, Kirigami.Theme.backgroundColor.g, Kirigami.Theme.backgroundColor.b,
                                     button.pressed ? 0.5 : restingOpacity)
