@@ -87,7 +87,7 @@ Folio.DelegateTouchArea {
 
     Rectangle {
         id: folderBackground
-        color: Qt.rgba(255, 255, 255, 0.3)
+        color: Qt.rgba(Kirigami.Theme.backgroundColor.r, Kirigami.Theme.backgroundColor.g, Kirigami.Theme.backgroundColor.b, 0.3)
         radius: Kirigami.Units.gridUnit
 
         readonly property real margin: Kirigami.Units.largeSpacing

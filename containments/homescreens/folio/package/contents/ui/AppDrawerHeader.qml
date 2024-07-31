@@ -15,8 +15,10 @@ Item {
     id: root
     property Folio.HomeScreen folio
 
-    Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
-    Kirigami.Theme.inherit: false
+    property color backgroundColor: Kirigami.Theme.backgroundColor
+
+    //Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
+    //Kirigami.Theme.inherit: false
 
     function clearSearchText(): void {
         searchField.text = '';
@@ -36,7 +38,7 @@ Item {
 
             background: Rectangle {
                 radius: Kirigami.Units.cornerRadius
-                color: Qt.rgba(255, 255, 255, (searchField.hovered || searchField.focus) ? 0.2 : 0.1)
+                color: Qt.rgba(backgroundColor.r, backgroundColor.g, backgroundColor.b, (searchField.hovered || searchField.focus) ? 0.2 : 0.1)
 
                 Behavior on color { ColorAnimation {} }
             }

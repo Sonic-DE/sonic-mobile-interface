@@ -187,7 +187,7 @@ Item {
         Rectangle {
             anchors.fill: parent
             radius: height / 2
-            color: mouseArea.pressed ? Qt.rgba(255, 255, 255, 0.2) : "transparent"
+            color: mouseArea.pressed ? Qt.rgba(Kirigami.Theme.backgroundColor.r, Kirigami.Theme.backgroundColor.g, Kirigami.Theme.backgroundColor.b, 0.2) : "transparent"
         }
 
         RowLayout {
@@ -262,7 +262,7 @@ Item {
             Rectangle {
                 anchors.fill: parent
                 anchors.margins: Kirigami.Units.smallSpacing
-                color: Qt.rgba(255, 255, 255, 0.2)
+                color: Qt.rgba(Kirigami.Theme.backgroundColor.r, Kirigami.Theme.backgroundColor.g, Kirigami.Theme.backgroundColor.b5, 0.2)
                 radius: Kirigami.Units.cornerRadius
                 opacity: delegate.dragFolderAnimationProgress
             }
@@ -310,7 +310,7 @@ Item {
                 id: rect
                 anchors.fill: parent
                 anchors.margins: Kirigami.Units.smallSpacing
-                color: Qt.rgba(255, 255, 255, 0.2)
+                color: Qt.rgba(Kirigami.Theme.backgroundColor.r, Kirigami.Theme.backgroundColor.g, Kirigami.Theme.backgroundColor.b, 0.2)
                 radius: Kirigami.Units.cornerRadius
 
                 transform: Scale {

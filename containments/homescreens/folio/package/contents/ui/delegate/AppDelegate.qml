@@ -54,7 +54,7 @@ AbstractDelegate {
         Rectangle {
             id: rect
             radius: Kirigami.Units.cornerRadius
-            color: Qt.rgba(255, 255, 255, 0.3)
+            color: Qt.rgba(Kirigami.Theme.backgroundColor.r, Kirigami.Theme.backgroundColor.g, Kirigami.Theme.backgroundColor.b, 0.3)
             anchors.fill: parent
 
             opacity: root.turnToFolder ? 1 : 0

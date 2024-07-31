@@ -28,7 +28,7 @@ Item {
     Rectangle {
         id: settingsViewBackground
         anchors.fill: parent
-        color: Qt.rgba(255, 255, 255, 0.2)
+        color: Qt.rgba(Kirigami.Theme.backgroundColor.r, Kirigami.Theme.backgroundColor.g, Kirigami.Theme.backgroundColor.b, 0.2)
         opacity: folio.HomeScreenState.settingsOpenProgress
         radius: Kirigami.Units.largeSpacing
     }

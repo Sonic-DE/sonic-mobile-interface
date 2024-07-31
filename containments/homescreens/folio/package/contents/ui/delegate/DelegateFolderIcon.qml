@@ -24,7 +24,7 @@ Item {
     Rectangle {
         id: rect
         radius: Kirigami.Units.cornerRadius
-        color: Qt.rgba(255, 255, 255, 0.3)
+        color: Qt.rgba(Kirigami.Theme.backgroundColor.r, Kirigami.Theme.backgroundColor.g, Kirigami.Theme.backgroundColor.b, 0.3)
         anchors.fill: parent
 
         property real scaleAmount: root.expandBackground ? 1.2 : 1.0
