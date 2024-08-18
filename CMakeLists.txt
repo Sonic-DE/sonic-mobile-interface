@@ -101,6 +101,8 @@ set_package_properties(KWinDBusInterface PROPERTIES DESCRIPTION "KWin DBus inter
     PURPOSE "Needed for virtual keyboard toggle button"
 )
 
+pkg_check_modules(SYSTEMD "systemd")
+
 include(CheckIncludeFiles)
 
 ecm_find_qmlmodule(org.kde.pipewire 0.1)
@@ -137,3 +139,10 @@ kde_clang_format(${ALL_CLANG_FORMAT_SOURCE_FILES})
 kde_configure_git_pre_commit_hook(CHECKS CLANG_FORMAT)
 
 ki18n_install(po)
+
+if (SYSTEMD_FOUND)
+    install(FILES
+        ${CMAKE_CURRENT_SOURCE_DIR}/plasma-mobile.service
+        DESTINATION ${KDE_INSTALL_SYSTEMDUNITDIR}
+    )
+endif()
