@@ -19,24 +19,114 @@ RowLayout {
 
     visible: MobileShell.BatteryInfo.isVisible
 
-    PW.BatteryIcon {
-        id: battery
-        Layout.preferredWidth: height
-        Layout.fillHeight: true
-        hasBattery: true
-        percent: MobileShell.BatteryInfo.percent
-        pluggedIn: MobileShell.BatteryInfo.pluggedIn
 
-        height: batteryLabel.height
-        width: batteryLabel.height
-    }
+    ListView {
+        id: batteryRepeater
+        spacing: root.elementSpacing
 
-    PlasmaComponents.Label {
-        id: batteryLabel
-        text: i18n("%1%", MobileShell.BatteryInfo.percent)
+        model: MobileShell.BatteryInfo.batteries
+
+        orientation: ListView.Horizontal
         Layout.alignment: Qt.AlignVCenter
+        Layout.preferredWidth: childrenRect.width
+//        Layout.preferredWidth: height * 6
+        Layout.fillHeight: true
 
-        color: Kirigami.Theme.textColor
-        font.pixelSize: textPixelSize
+        //spacing: Kirigami.Units.smallSpacing * 2
+
+/*
+        delegate: BatteryItem {
+            width: scrollView.availableWidth
+
+            batteryPercent: Percent
+            batteryCapacity: Capacity
+            batteryEnergy: Energy
+            batteryPluggedIn: PluggedIn
+            batteryIsPowerSupply: IsPowerSupply
+            batteryChargeState: ChargeState
+            batteryPrettyName: PrettyName
+            batteryType: Type
+            remainingTime: dialog.remainingTime
+
+            KeyNavigation.up: index === 0 ? (batteryRepeater.headerItem.visible ? batteryRepeater.headerItem : batteryRepeater.headerItem.KeyNavigation.up) : batteryRepeater.itemAtIndex(index - 1)
+            KeyNavigation.down: index + 1 < batteryRepeater.count ? batteryRepeater.itemAtIndex(index + 1) : batteryRepeater.footerItem
+
+            pluggedIn: dialog.pluggedIn
+            chargeStopThreshold: dialog.chargeStopThreshold
+
+            KeyNavigation.backtab: KeyNavigation.up
+            KeyNavigation.tab: KeyNavigation.down
+
+            Keys.onTabPressed: event => {
+                if (index === batteryRepeater.count - 1) {
+                    // Workaround to leave applet's focus on desktop
+                    nextItemInFocusChain(false).forceActiveFocus(Qt.TabFocusReason);
+                } else {
+                    event.accepted = false;
+                }
+            }
+
+            onActiveFocusChanged: if (activeFocus) scrollView.positionViewAtItem(this)
+        }
+        */
+
+
+        delegate: RowLayout {
+
+            /* Battery properties (from batterycontrol.h):
+             *     enum BatteryRoles {
+                *  Percent = Qt::UserRole + 1,
+                *  Capacity,
+                *  Energy,
+                *  PluggedIn,
+                *  IsPowerSupply,
+                *  ChargeState,
+                *  PrettyName,
+                *  Type }
+                */
+
+            Layout.preferredWidth: childrenRect.width
+            Layout.fillHeight: true
+
+            height: batteryLabel.height
+            width: childrenRect.width + (root.elementSpacing * index)
+
+            PW.BatteryIcon {
+                id: battery
+                //Layout.preferredWidth: height * 2
+                Layout.fillHeight: true
+                hasBattery: true
+                // percent: MobileShell.BatteryInfo.percent
+                // pluggedIn: MobileShell.BatteryInfo.pluggedIn
+                percent: Percent
+                pluggedIn: PluggedIn
+
+                height: batteryLabel.height
+                width: batteryLabel.height
+            }
+
+            PlasmaComponents.Label {
+                id: batteryLabel
+                //text: i18n("%1%", MobileShell.BatteryInfo.percent)
+                text: i18n("%1%", Percent)
+                //text: "hmm?"
+                Layout.alignment: Qt.AlignVCenter
+
+                color: Kirigami.Theme.textColor
+                font.pixelSize: textPixelSize
+            }
+            // Rectangle {
+            //
+            //     anchors.fill: parent
+            //     border.color: "red"
+            // }
+            Component.onCompleted: {
+                console.log("======> Created Battery " + index);
+                console.log("        PrettyName: " + PrettyName);
+                console.log("        Percent:    " + Percent);
+                console.log("        Type:       " + Type);
+                console.log("        Energy:     " + Energy);
+            }
+        }
     }
 }
