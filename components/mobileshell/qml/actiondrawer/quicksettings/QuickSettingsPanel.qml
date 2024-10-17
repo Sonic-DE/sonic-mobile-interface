@@ -13,6 +13,7 @@ import org.kde.ksvg 1.0 as KSvg
 import org.kde.plasma.private.mobileshell as MobileShell
 import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.private.mobileshell.quicksettingsplugin as QS
+import org.kde.plasma.private.mobileshell.shellsettingsplugin as ShellSettings
 
 /**
  * Quick settings panel for landscape view (right sidebar).
@@ -62,8 +63,8 @@ MobileShell.BaseItem {
                 id: statusBar
                 Layout.alignment: Qt.AlignTop
                 Layout.fillWidth: true
-                Layout.preferredHeight: Kirigami.Units.gridUnit * 1.5
-                Layout.maximumHeight: Kirigami.Units.gridUnit * 1.5
+                Layout.preferredHeight: Kirigami.Units.gridUnit * 1.5 * ShellSettings.Settings.statusBarScaleFactor
+                Layout.maximumHeight: Kirigami.Units.gridUnit * 1.5 * ShellSettings.Settings.statusBarScaleFactor
 
                 Kirigami.Theme.colorSet: Kirigami.Theme.Window
                 Kirigami.Theme.inherit: false
