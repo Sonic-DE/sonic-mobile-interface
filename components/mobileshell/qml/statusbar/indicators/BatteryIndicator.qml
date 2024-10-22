@@ -1,4 +1,5 @@
 /*
+ *  SPDX-FileCopyrightText: 2024 Sebastian Kügler <sebas@kde.org>
  *  SPDX-FileCopyrightText: 2021 Devin Lin <espidev@gmail.com>
  *  SPDX-FileCopyrightText: 2019 Marco Martin <mart@kde.org>
  *
@@ -13,6 +14,7 @@ import org.kde.kirigami 2.20 as Kirigami
 import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.plasma.workspace.components 2.0 as PW
 import org.kde.plasma.private.mobileshell as MobileShell
+import org.kde.plasma.private.battery // needed for charging state
 
 RowLayout {
     property real textPixelSize: Kirigami.Units.gridUnit * 0.6
@@ -49,10 +51,9 @@ RowLayout {
                 height: batteryLabel.height
                 width: batteryLabel.height
 
-                hasBattery: true
+                hasBattery: PluggedIn
                 percent: Percent
-                pluggedIn: PluggedIn
-
+                pluggedIn: ChargeState === BatteryControlModel.Charging
             }
 
             PlasmaComponents.Label {
@@ -65,14 +66,9 @@ RowLayout {
             }
 
             Component.onCompleted: {
+                // ListView & RowLayout have problems with childrenRect size,
+                // so set it here so it propagates up nicely
                 batteryRepeater.batteryWidth = batteryLabel.width + battery.width
-                console.log("======> Created Battery " + index);
-                console.log("        PrettyName: " + PrettyName);
-                console.log("        Percent:    " + Percent);
-                console.log("        Type:       " + Type);
-                console.log("        Energy:     " + Energy);
-                console.log("        PluggedIn:  " + PluggedIn);
-                console.log("        ChargeState:  " + ChargeState);
             }
         }
     }
