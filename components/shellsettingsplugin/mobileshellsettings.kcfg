@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+                          http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+  <kcfgfile name="plasmamobilerc">
+  </kcfgfile>
+  <group name="General">
+    <entry name="vibrationsEnabled" type="Bool">
+      <label>If haptic feedback is enabled.</label>
+      <default>true</default>
+    </entry>
+    <entry name="vibrationDuration" type="Int">
+      <label>Duration of vibration for haptic feedback.</label>
+      <default>10</default>
+    </entry>
+    <entry name="animationsEnabled" type="Bool">
+      <label>If animations in the shell are enabled.</label>
+      <default>true</default>
+    </entry>
+    <entry name="dateInStatusBar" type="Bool">
+      <label>If date should be displayed in status bar.</label>
+      <default>false</default>
+    </entry>
+    <entry name="statusBarScaleFactor" type="Double">
+      <label>Scale factor of status bar</label>
+      <default>1.0</default>
+    </entry>
+    <entry name="navigationPanelEnabled" type="Bool">
+      <label>If navigation panel should be enabled or gesture control.</label>
+      <default>true</default>
+    </entry>
+    <entry name="alwaysShowKeyboardToggleOnNavigationPanel" type="Bool">
+      <label>If show keyboard toggle should always be shown.</label>
+      <default>false</default>
+    </entry>
+    <entry name="actionDrawerTopLeftMode" type="Enum">
+      <label>Duration of vibration for haptic feedback</label>
+      <choices>
+        <choice name="pinned">
+            <label>Pinned</label>
+        </choice>
+        <choice name="expanded">
+            <label>Expanded</label>
+        </choice>
+      </choices>
+      <default>0</default>
+    </entry>
+    <entry name="actionDrawerTopRightMode" type="Enum">
+      <label>Duration of vibration for haptic feedback</label>
+      <choices>
+        <choice name="pinned">
+            <label>Pinned</label>
+        </choice>
+        <choice name="expanded">
+            <label>Expanded</label>
+        </choice>
+      </choices>
+      <default>1</default>
+    </entry>
+    <entry name="convergenceModeEnabled" type="Bool">
+      <label>If convergence mode is enabled.</label>
+      <default>false</default>
+    </entry>
+  </group>
+</kcfg>
