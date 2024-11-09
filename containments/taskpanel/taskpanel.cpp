@@ -27,9 +27,9 @@ KScreen::Output::Rotation mapReadingOrientation(QOrientationReading::Orientation
     case QOrientationReading::Orientation::TopDown:
         return KScreen::Output::Rotation::Inverted;
     case QOrientationReading::Orientation::LeftUp:
-        return KScreen::Output::Rotation::Right;
-    case QOrientationReading::Orientation::RightUp:
         return KScreen::Output::Rotation::Left;
+    case QOrientationReading::Orientation::RightUp:
+        return KScreen::Output::Rotation::Right;
     case QOrientationReading::Orientation::FaceUp:
     case QOrientationReading::Orientation::FaceDown:
     case QOrientationReading::Orientation::Undefined:
@@ -48,6 +48,7 @@ TaskPanel::TaskPanel(QObject *parent, const KPluginMetaData &data, const QVarian
     });
 
     connect(m_sensor, &QOrientationSensor::readingChanged, this, &TaskPanel::updateShowRotationButton);
+    m_sensor->start();
 }
 
 void TaskPanel::triggerTaskSwitcher() const
@@ -61,17 +62,29 @@ void TaskPanel::triggerTaskSwitcher() const
 
 void TaskPanel::rotateToSuggestedRotation()
 {
+    if (!m_config) {
+        return;
+    }
+
     const auto outputs = m_config->outputs();
     if (outputs.empty()) {
         return;
     }
 
     // HACK: Assume the output we care about is the first device
-    const auto output = outputs[0];
-    output->setRotation(m_rotateTo);
+    for (KScreen::OutputPtr output : outputs) {
+        if (!output) {
+            // apparently it's possible to get nullptr outputs?
+            continue;
+        }
+
+        output->setRotation(m_rotateTo);
+    }
 
     auto setop = new KScreen::SetConfigOperation(m_config, this);
     setop->exec();
+
+    updateShowRotationButton();
 }
 
 bool TaskPanel::showRotationButton() const
@@ -81,7 +94,15 @@ bool TaskPanel::showRotationButton() const
 
 void TaskPanel::updateShowRotationButton()
 {
+    if (!m_config) {
+        return;
+    }
+
     QOrientationReading *reading = m_sensor->reading();
+    if (!reading) {
+        return;
+    }
+
     m_rotateTo = mapReadingOrientation(reading->orientation());
 
     const auto outputs = m_config->outputs();
@@ -93,9 +114,16 @@ void TaskPanel::updateShowRotationButton()
     }
 
     // HACK: Assume the output we care about is the first device
-    const auto output = outputs[0];
-    m_showRotationButton = output->rotation() != m_rotateTo;
-    Q_EMIT showRotationButtonChanged();
+    for (KScreen::OutputPtr output : outputs) {
+        if (!output) {
+            // apparently it's possible to get nullptr outputs?
+            continue;
+        }
+
+        m_showRotationButton = output->rotation() != m_rotateTo;
+        Q_EMIT showRotationButtonChanged();
+        break;
+    }
 }
 
 K_PLUGIN_CLASS(TaskPanel)
