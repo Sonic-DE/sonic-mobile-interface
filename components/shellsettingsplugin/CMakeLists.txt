@@ -8,11 +8,6 @@ add_library(shellsettingsplugin ${shellsettingsplugin_LIB_SRCS})
 #target_compile_definitions(shellsettingsplugin PRIVATE -DPROJECT_VERSION="${PROJECT_VERSION}")
 generate_export_header(shellsettingsplugin)#EXPORT_FILE_NAME ${CMAKE_BINARY_DIR}/exports/shellsettingsplugin_export.h)
 target_include_directories(shellsettingsplugin PUBLIC ${CMAKE_BINARY_DIR}/exports)
-#target_include_directories(shellsettingsplugin PUBLIC
-#    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
-#    "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
-#    "$<INSTALL_INTERFACE:${KDE_INSTALL_INCLUDEDIR}>"
-#)
 target_link_libraries(shellsettingsplugin
     PUBLIC
         Qt::Core
@@ -31,13 +26,6 @@ target_link_libraries(shellsettingsplugin
         KF6::JobWidgets
 )
 
-#install(
-#    FILES
-#        mobileshellsettings.kcfg
-#    DESTINATION
-#        ${KDE_INSTALL_KCFGDIR}
-#)
-
 ecm_add_qml_module(shellsettingsplugin
     URI org.kde.plasma.private.mobileshell.shellsettingsplugin
     CLASS_NAME MobileShellSettings
@@ -45,9 +33,3 @@ ecm_add_qml_module(shellsettingsplugin
 )
 ecm_finalize_qml_module(shellsettingsplugin)
 install(TARGETS shellsettingsplugin EXPORT shellsettingspluginLibraryTargets ${KDE_INSTALL_TARGETS_DEFAULT_ARGS} )
-
-#set_property(TARGET shellsettingsplugin PROPERTY LIBRARY_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/org/kde/plasma/private/mobileshell/shellsettingsplugin)
-#file(COPY qmldir DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/org/kde/plasma/private/mobileshell/shellsettingsplugin)
-
-#install(TARGETS shellsettingsplugin DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/plasma/private/mobileshell/shellsettingsplugin)
-#install(FILES qmldir ${qml_SRC} DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/plasma/private/mobileshell/shellsettingsplugin)
