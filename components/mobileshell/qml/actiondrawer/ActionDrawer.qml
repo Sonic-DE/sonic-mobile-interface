@@ -278,9 +278,14 @@ Item {
 
             // Immediately open action drawer if we interact with it and it's already open
             // This allows us to have 2 quick flicks from minimized -> expanded
-            if (root.visible && !root.opened) {
+            if (root.intendedToBeVisible && !root.opened) {
                 root.opened = true;
+            } else if (!intendedToBeVisible) {
+                root.offset = 0;
+                root.oldOffset = 0;
             }
+
+            intendedToBeVisible = true;
         }
 
         function endSwipe() {
@@ -303,6 +308,8 @@ Item {
         ContentContainer {
             id: contentContainer
             anchors.fill: parent
+
+            opacity: root.opened || swipeArea.moving || drawerAnimation.running ||  root.offset > 0 ? 1 : 0
 
             actionDrawer: root
             quickSettingsModel: root.quickSettingsModel
