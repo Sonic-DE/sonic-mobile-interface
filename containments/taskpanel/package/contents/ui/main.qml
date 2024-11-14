@@ -91,8 +91,7 @@ ContainmentItem {
             root.panel.offset = intendedWindowOffset;
             root.panel.thickness = currentWindowFullscreen && !fullscreenExpandTouchArea ? Kirigami.Units.gridUnit : navigationPanelHeight;
             root.panel.location = intendedWindowLocation;
-            root.panel.layerMode = currentWindowFullscreen ? LayerShell.Window.LayerOverlay : LayerShell.Window.LayerTop
-            root.panel.exclusionZone = -1;
+            MobileShell.ShellUtil.setWindowLayer(root.panel, LayerShell.Window.LayerOverlay)
         }
     }
 
