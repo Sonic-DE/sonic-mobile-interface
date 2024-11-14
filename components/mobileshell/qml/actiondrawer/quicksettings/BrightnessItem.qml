@@ -64,6 +64,7 @@ Item {
             from: 1
             to: screenBrightness.maxBrightness
             value: screenBrightness.brightness
+            onMoved: screenBrightness.brightness = value;
 
             onPressedChanged: {
                 if (pressed) {
