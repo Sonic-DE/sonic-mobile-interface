@@ -14,8 +14,9 @@
 constexpr int ACTIVE_WINDOW_UPDATE_INVERVAL = 0;
 
 WindowUtil::WindowUtil(QObject *parent)
-    : QObject{parent}
-    , m_activeWindowTimer{new QTimer{this}}
+: QObject{parent}
+, m_isFullscreen(false)
+, m_activeWindowTimer{new QTimer{this}}
 {
     // use 0 tick timer to update active window to ensure window state has finished changing
     m_activeWindowTimer->setSingleShot(true);
@@ -128,6 +129,7 @@ void WindowUtil::updateActiveWindow()
     if (m_activeWindow) {
         disconnect(m_activeWindow.data(), &PlasmaWindow::closeableChanged, this, &WindowUtil::hasCloseableActiveWindowChanged);
         disconnect(m_activeWindow.data(), &PlasmaWindow::unmapped, this, &WindowUtil::forgetActiveWindow);
+        disconnect(m_activeWindow.data(), &PlasmaWindow::fullscreenChanged, this, &WindowUtil::onFullscreenChanged);
     }
 
     m_activeWindow = m_windowManagement->activeWindow();
@@ -136,9 +138,12 @@ void WindowUtil::updateActiveWindow()
     if (m_activeWindow) {
         connect(m_activeWindow.data(), &PlasmaWindow::closeableChanged, this, &WindowUtil::hasCloseableActiveWindowChanged);
         connect(m_activeWindow.data(), &PlasmaWindow::unmapped, this, &WindowUtil::forgetActiveWindow);
+        connect(m_activeWindow.data(), &PlasmaWindow::fullscreenChanged, this, &WindowUtil::onFullscreenChanged);
     }
 
     Q_EMIT hasCloseableActiveWindowChanged();
+
+    onFullscreenChanged();
 }
 
 bool WindowUtil::hasCloseableActiveWindow() const
@@ -241,8 +246,10 @@ void WindowUtil::forgetActiveWindow()
     if (m_activeWindow) {
         disconnect(m_activeWindow.data(), &PlasmaWindow::closeableChanged, this, &WindowUtil::hasCloseableActiveWindowChanged);
         disconnect(m_activeWindow.data(), &PlasmaWindow::unmapped, this, &WindowUtil::forgetActiveWindow);
+        disconnect(m_activeWindow.data(), &PlasmaWindow::fullscreenChanged, this, &WindowUtil::onFullscreenChanged);
     }
     m_activeWindow.clear();
+    onFullscreenChanged();
     Q_EMIT hasCloseableActiveWindowChanged();
 }
 
@@ -275,4 +282,21 @@ void WindowUtil::windowCreatedSlot(KWayland::Client::PlasmaWindow *window)
     });
 
     Q_EMIT windowChanged(storageId);
+}
+
+bool WindowUtil::isFullscreen() const {
+    return m_isFullscreen;
+
+}
+
+void WindowUtil::onFullscreenChanged() {
+    bool fullscreen = false;
+    if (m_activeWindow) {
+        fullscreen = m_activeWindow->isFullscreen();
+    }
+    if (m_isFullscreen != fullscreen) {
+        m_isFullscreen = fullscreen;
+        emit isFullscreenChanged();
+    }
+
 }
