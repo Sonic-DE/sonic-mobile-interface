@@ -64,9 +64,26 @@ Item {
             from: 1
             to: screenBrightness.maxBrightness
             value: screenBrightness.brightness
-            onMoved: screenBrightness.brightness = value;
 
-            onPressedChanged: brightnessPressedValue = pressed ? 0 : 1
+            onPressedChanged: {
+                if (pressed) {
+                    brightnessPressedTimer.restart();
+                } else{
+                    brightnessPressedTimer.stop();
+                    brightnessPressedValue = 1;
+                }
+            }
+
+            Timer {
+                id: brightnessPressedTimer
+                interval: 200
+                repeat: false
+                onTriggered: {
+                    if (brightnessSlider.pressed) {
+                        brightnessPressedValue = 0;
+                    }
+                }
+            }
 
             // HACK: for some reason, the slider initial value doesn't set without being done after the component completes loading
             Timer {
