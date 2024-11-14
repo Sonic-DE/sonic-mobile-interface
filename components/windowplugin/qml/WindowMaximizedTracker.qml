@@ -14,7 +14,9 @@ QtObject {
     // Set it to Plasmoid.containment.screenGeometry in a plasmoid to accomplish this.
     property alias screenGeometry: tasksModel.screenGeometry
 
-    readonly property bool showingWindow: __internal.count > 0 && !WindowPlugin.WindowUtil.isShowingDesktop
+    readonly property bool currentWindowFullscreen: WindowPlugin.WindowUtil.isFullscreen
+
+    readonly property bool showingWindow: (__internal.count > 0 || currentWindowFullscreen) && !WindowPlugin.WindowUtil.isShowingDesktop
     readonly property int windowCount: __internal.count
 
     property var __internal: KItemModels.KSortFilterProxyModel {

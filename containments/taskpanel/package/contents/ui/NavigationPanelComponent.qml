@@ -20,12 +20,13 @@ import org.kde.kirigami as Kirigami
 MobileShell.NavigationPanel {
     id: root
     required property bool opaqueBar
+    required property var navbarState
 
     // background is:
     // - opaque if an app is shown or vkbd is shown
     // - translucent if the task switcher is open
     // - transparent if on the homescreen
-    backgroundColor: (Keyboards.KWinVirtualKeyboard.active || opaqueBar) ? Kirigami.Theme.backgroundColor : "transparent";
+    backgroundColor: navbarState != "default" ? Qt.rgba(0, 0, 0, 0.65) : (Keyboards.KWinVirtualKeyboard.active || opaqueBar) ? Kirigami.Theme.backgroundColor : "transparent";
     foregroundColorGroup: opaqueBar ? Kirigami.Theme.Window : Kirigami.Theme.Complementary
     shadow: !opaqueBar
 
