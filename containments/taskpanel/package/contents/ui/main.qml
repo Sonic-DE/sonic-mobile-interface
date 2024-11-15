@@ -14,7 +14,6 @@ import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core as PlasmaCore
 import org.kde.kquickcontrolsaddons 2.0
 
-import org.kde.plasma.shell.panel 0.1 as Panel
 import org.kde.plasma.private.mobileshell as MobileShell
 import org.kde.plasma.private.mobileshell.shellsettingsplugin as ShellSettings
 import org.kde.plasma.private.mobileshell.windowplugin as WindowPlugin
@@ -30,6 +29,10 @@ ContainmentItem {
     property var panel: null
     onPanelChanged: {
         setWindowProperties()
+    }
+
+    MobileShell.HapticsEffect {
+        id: haptics
     }
 
     // filled in by the shell (Panel.qml)
@@ -130,7 +133,7 @@ ContainmentItem {
 
     readonly property alias currentWindowFullscreen: windowMaximizedTracker.currentWindowFullscreen
     onCurrentWindowFullscreenChanged: {
-        swipeArea.state = currentWindowFullscreen ? "hidden" : "default";
+        navigationPanel.state = currentWindowFullscreen ? "hidden" : "default";
     }
 
     WindowPlugin.WindowMaximizedTracker {
@@ -147,23 +150,40 @@ ContainmentItem {
         fullHeight: root.height
         screen: Plasmoid.screen
         maximizedTracker: windowMaximizedTracker
+
+        visible: !currentWindowFullscreen
     }
 
-    MobileShell.SwipeArea {
-        id: swipeArea
-        mode: MobileShell.SwipeArea.VerticalOnly
-        anchors.fill: parent
-        interactive: swipeArea.state == "hidden"
-
+    Item {
+        id: navigationPanel
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        height: root.navigationPanelHeight
         // contrasting colour
         Kirigami.Theme.colorSet: opaqueBar ? Kirigami.Theme.Window : Kirigami.Theme.Complementary
         Kirigami.Theme.inherit: false
 
         property real offset: 0
 
+        // load appropriate system navigation component
+        NavigationPanelComponent {
+            anchors.fill: parent
+            opaqueBar: root.opaqueBar
+            isVertical: root.inLandscape
+            navbarState: navigationPanel.state
+            enabled: true
+
+            transform: [
+                Translate {
+                    y: navigationPanel.offset
+                }
+            ]
+        }
+
         state: "default"
         onStateChanged: {
-            if (swipeArea.state != "hidden") {
+            if (navigationPanel.state != "hidden") {
                 root.fullscreenExpandTouchArea = true;
                 root.setWindowProperties();
                 hiddenTimer.restart();
@@ -175,8 +195,8 @@ ContainmentItem {
             running: false
             interval: 3000
             onTriggered: {
-                if (swipeArea.state == "visible") {
-                    swipeArea.state = "hidden";
+                if (navigationPanel.state == "visible") {
+                    navigationPanel.state = "hidden";
                 }
             }
         }
@@ -185,19 +205,19 @@ ContainmentItem {
             State {
                 name: "default"
                 PropertyChanges {
-                    target: swipeArea; offset: 0
+                    target: navigationPanel; offset: 0
                 }
             },
             State {
                 name: "visible"
                 PropertyChanges {
-                    target: swipeArea; offset: 0
+                    target: navigationPanel; offset: 0
                 }
             },
             State {
                 name: "hidden"
                 PropertyChanges {
-                    target: swipeArea; offset: root.navigationPanelHeight
+                    target: navigationPanel; offset: root.navigationPanelHeight
                 }
             }
         ]
@@ -206,17 +226,24 @@ ContainmentItem {
             SequentialAnimation {
                 ParallelAnimation {
                     PropertyAnimation {
-                        properties: "offset"; easing.type: Easing.OutExpo; duration: Kirigami.Units.longDuration
+                        properties: "offset"; easing.type: navigationPanel.state == "hidden" ? Easing.InExpo : Easing.OutExpo; duration: Kirigami.Units.longDuration
                     }
                 }
                 ScriptAction {
                     script: {
-                        fullscreenExpandTouchArea = swipeArea.state == "visible";
+                        fullscreenExpandTouchArea = navigationPanel.state == "visible";
                         root.setWindowProperties();
                     }
                 }
             }
         }
+    }
+
+    MobileShell.SwipeArea {
+        id: swipeArea
+        mode: MobileShell.SwipeArea.VerticalOnly
+        anchors.fill: navigationPanel
+        enabled: navigationPanel.state == "hidden"
 
         function startSwipeWithPoint(point) {
             fullscreenExpandTouchArea = true;
@@ -226,25 +253,25 @@ ContainmentItem {
             shapepath.verticalPoint = 0;
         }
 
-        function endSwipe() {
-            resetAn.restart()
-            if (shapepath.verticalPoint < -Kirigami.Units.gridUnit * 4) {
-                swipeArea.state = "visible";
-            }
-        }
-
         function updateOffset(offsetX, offsetY) {
             shapepath.horizontalPoint = offsetX;
             shapepath.verticalPoint = offsetY;
+            if (shapepath.verticalPoint < -Kirigami.Units.gridUnit * 5 && navigationPanel.state == "hidden") {
+                swipeArea.resetSwipe();
+                resetAn.restart();
+                haptics.buttonVibrate();
+                navigationPanel.state = "visible";
+            }
         }
 
         onSwipeStarted: (point) => startSwipeWithPoint(point)
-        onSwipeEnded: endSwipe()
+        onSwipeEnded:  resetAn.start()
         onSwipeMove: (totalDeltaX, totalDeltaY, deltaX, deltaY) => updateOffset(totalDeltaX, totalDeltaY);
 
         onPressedChanged: {
             if (!pressed && shapepath.verticalPoint == 0) {
-                swipeArea.state = "visible";
+                haptics.buttonVibrate();
+                navigationPanel.state = "visible";
             }
         }
 
@@ -257,29 +284,11 @@ ContainmentItem {
             duration: Kirigami.Units.longDuration
             easing.type: Easing.OutExpo
             onRunningChanged: {
-                if (!running && swipeArea.state == "hidden") {
+                if (!running && navigationPanel.state == "hidden") {
                     fullscreenExpandTouchArea = false;
                     root.setWindowProperties();
                 }
             }
-        }
-
-        // load appropriate system navigation component
-        NavigationPanelComponent {
-            id: navigationPanel
-            anchors.bottom: parent.bottom
-            anchors.left: parent.left
-            anchors.right: parent.right
-            height: root.navigationPanelHeight
-            opaqueBar: root.opaqueBar
-            isVertical: root.inLandscape
-            navbarState: swipeArea.state
-
-            transform: [
-                Translate {
-                    y: swipeArea.offset
-                }
-            ]
         }
 
         Shape {
