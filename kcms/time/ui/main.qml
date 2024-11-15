@@ -40,6 +40,7 @@ SimpleKCM {
                 checked: kcm.twentyFour
                 onCheckedChanged: {
                     kcm.twentyFour = checked
+                    checked = Qt.binding(function () { return kcm.twentyFour; });
                 }
             }
 
@@ -64,11 +65,8 @@ SimpleKCM {
                 description: i18n("Whether to set the time automatically.")
                 checked: kcm.useNtp
                 onCheckedChanged: {
-                    kcm.useNtp = checked
-                    if (!checked) {
-                        kcm.ntpServer = "";
-                        kcm.saveTime();
-                    }
+                    kcm.useNtp = checked;
+                    checked = Qt.binding(function () { return kcm.useNtp; });
                 }
             }
 
@@ -91,7 +89,10 @@ SimpleKCM {
                 description: Qt.formatDate(kcm.currentDate, Locale.LongFormat)
                 icon.name: "view-calendar"
                 enabled: !ntpCheckBox.checked
-                onClicked: datePickerDialog.open()
+                onClicked: {
+                    datePickerDialogLoader.active = true;
+                    datePickerDialogLoader.item.open();
+                }
             }
         }
     }
@@ -164,18 +165,22 @@ SimpleKCM {
             }
         },
 
-        DateAndTime.DatePopup {
-            id: datePickerDialog
-            modal: true
-            parent: timeModule
+        Loader {
+            id: datePickerDialogLoader
+            active: false
 
-            onOpened: {
-                value = kcm.currentDate;
-            }
+            sourceComponent: DateAndTime.DatePopup {
+                id: datePickerDialog
+                modal: true
 
-            onAccepted: {
-                kcm.currentDate = value;
-                kcm.saveTime();
+                onOpened: {
+                    value = kcm.currentDate;
+                }
+
+                onAccepted: {
+                    kcm.currentDate = value;
+                    kcm.saveTime();
+                }
             }
         },
 
