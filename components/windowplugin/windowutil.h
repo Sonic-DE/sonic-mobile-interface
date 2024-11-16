@@ -36,7 +36,6 @@ class WindowUtil : public QObject
     Q_PROPERTY(bool isShowingDesktop READ isShowingDesktop WRITE requestShowingDesktop NOTIFY showingDesktopChanged)
     Q_PROPERTY(bool hasCloseableActiveWindow READ hasCloseableActiveWindow NOTIFY hasCloseableActiveWindowChanged)
     Q_PROPERTY(bool activeWindowIsShell READ activeWindowIsShell NOTIFY activeWindowIsShellChanged)
-    Q_PROPERTY(bool isFullscreen READ isFullscreen NOTIFY isFullscreenChanged)
 
 public:
     WindowUtil(QObject *parent = nullptr);
@@ -56,11 +55,6 @@ public:
      * Whether the current active window can be closed.
      */
     bool hasCloseableActiveWindow() const;
-
-    /**
-     * Whether the current window is fullscreen.
-     */
-    bool isFullscreen() const;
 
     /**
      * Get the list of windows associated to a storage id.
@@ -106,7 +100,6 @@ Q_SIGNALS:
     void hasCloseableActiveWindowChanged();
     void activeWindowChanged();
     void activeWindowIsShellChanged();
-    void isFullscreenChanged();
 
     // Emitted on window open or close
     void windowChanged(QString storageId);
@@ -122,12 +115,10 @@ private Q_SLOTS:
     void forgetActiveWindow();
     void updateShowingDesktop(bool showing);
     void windowCreatedSlot(KWayland::Client::PlasmaWindow *window);
-    void onFullscreenChanged();
 
 private:
     void initWayland();
     void updateActiveWindow();
-    bool m_isFullscreen;
 
     KWayland::Client::PlasmaWindowManagement *m_windowManagement = nullptr;
     QPointer<KWayland::Client::PlasmaWindow> m_activeWindow;
@@ -135,5 +126,6 @@ private:
 
     bool m_showingDesktop = false;
     bool m_activeWindowIsShell = false;
+
     QHash<QString, QList<KWayland::Client::PlasmaWindow *>> m_windows; // <storageId, window>
 };

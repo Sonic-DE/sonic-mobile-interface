@@ -14,35 +14,44 @@ QtObject {
     // Set it to Plasmoid.containment.screenGeometry in a plasmoid to accomplish this.
     property alias screenGeometry: tasksModel.screenGeometry
 
-    readonly property bool currentWindowFullscreen: WindowPlugin.WindowUtil.isFullscreen
+    readonly property bool currentWindowFullscreen: __internalFullScreen.count > 0 && !WindowPlugin.WindowUtil.isShowingDesktop
+    readonly property bool showingWindow: (__internalMaximized.count + __internalFullScreen.count > 0) && !WindowPlugin.WindowUtil.isShowingDesktop
+    readonly property int windowCount: __internalMaximized.count + __internalFullScreen.count
 
-    readonly property bool showingWindow: (__internal.count > 0 || currentWindowFullscreen) && !WindowPlugin.WindowUtil.isShowingDesktop
-    readonly property int windowCount: __internal.count
 
-    property var __internal: KItemModels.KSortFilterProxyModel {
+    property var taskModel: TaskManager.TasksModel {
+        id: tasksModel
+        filterByVirtualDesktop: true
+        filterByActivity: true
+        filterMinimized: true
+        filterByScreen: true
+        filterHidden: true
+
+        virtualDesktop: virtualDesktopInfo.currentDesktop
+        activity: activityInfo.currentActivity
+
+        groupMode: TaskManager.TasksModel.GroupDisabled
+    }
+
+    property var vdi: TaskManager.VirtualDesktopInfo {
+        id: virtualDesktopInfo
+    }
+
+    property var ai: TaskManager.ActivityInfo {
+        id: activityInfo
+    }
+
+    property var __internalFullScreen: KItemModels.KSortFilterProxyModel {
+        id: visibleFullScreenWindowsModel
+        filterRoleName: 'IsFullScreen'
+        filterString: 'true'
+        sourceModel: taskModel
+    }
+
+    property var __internalMaximized: KItemModels.KSortFilterProxyModel {
         id: visibleMaximizedWindowsModel
-        filterRoleName: 'IsMinimized'
-        filterString: 'false'
-        sourceModel: TaskManager.TasksModel {
-            id: tasksModel
-            filterByVirtualDesktop: true
-            filterByActivity: true
-            filterNotMaximized: true
-            filterByScreen: true
-            filterHidden: true
-
-            virtualDesktop: virtualDesktopInfo.currentDesktop
-            activity: activityInfo.currentActivity
-
-            groupMode: TaskManager.TasksModel.GroupDisabled
-        }
-
-        property var vdi: TaskManager.VirtualDesktopInfo {
-            id: virtualDesktopInfo
-        }
-
-        property var ai: TaskManager.ActivityInfo {
-            id: activityInfo
-        }
+        filterRoleName: 'IsMaximized'
+        filterString: 'true'
+        sourceModel: taskModel
     }
 }

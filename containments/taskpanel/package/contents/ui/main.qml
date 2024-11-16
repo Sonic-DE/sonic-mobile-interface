@@ -18,6 +18,7 @@ import org.kde.plasma.private.mobileshell as MobileShell
 import org.kde.plasma.private.mobileshell.shellsettingsplugin as ShellSettings
 import org.kde.plasma.private.mobileshell.windowplugin as WindowPlugin
 import org.kde.plasma.private.mobileshell.state as MobileShellState
+import org.kde.plasma.workspace.keyboardlayout as Keyboards
 import org.kde.layershell 1.0 as LayerShell
 
 ContainmentItem {
@@ -154,15 +155,14 @@ ContainmentItem {
         visible: !currentWindowFullscreen
     }
 
-    Item {
+    Rectangle {
         id: navigationPanel
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        height: root.navigationPanelHeight
+        anchors.fill: parent
         // contrasting colour
-        Kirigami.Theme.colorSet: opaqueBar ? Kirigami.Theme.Window : Kirigami.Theme.Complementary
+        Kirigami.Theme.colorSet: root.opaqueBar ? Kirigami.Theme.Window : Kirigami.Theme.Complementary
         Kirigami.Theme.inherit: false
+
+        color: navigationPanel.state == "default" && (Keyboards.KWinVirtualKeyboard.active || root.opaqueBar) ? Kirigami.Theme.backgroundColor : "transparent"
 
         property real offset: 0
 
@@ -172,11 +172,11 @@ ContainmentItem {
             opaqueBar: root.opaqueBar
             isVertical: root.inLandscape
             navbarState: navigationPanel.state
-            enabled: true
 
             transform: [
                 Translate {
-                    y: navigationPanel.offset
+                    y: inLandscape ? 0 : navigationPanel.offset
+                    x: inLandscape ? navigationPanel.offset : 0
                 }
             ]
         }
@@ -241,22 +241,23 @@ ContainmentItem {
 
     MobileShell.SwipeArea {
         id: swipeArea
-        mode: MobileShell.SwipeArea.VerticalOnly
+        mode: inLandscape ? MobileShell.SwipeArea.HorizontalOnly : MobileShell.SwipeArea.VerticalOnly
         anchors.fill: navigationPanel
         enabled: navigationPanel.state == "hidden"
 
         function startSwipeWithPoint(point) {
             fullscreenExpandTouchArea = true;
             root.setWindowProperties();
-            resetAn.stop();
-            shapepath.startPoint = point.x;
-            shapepath.verticalPoint = 0;
+            resetAn.stop()
+            dragEffect.startPoint = inLandscape ? point.y - Screen.height / 2 : point.x - Screen.width / 2;
+            dragEffect.sidePoint = 0
+            dragEffect.offsetPoint = 0;
         }
 
         function updateOffset(offsetX, offsetY) {
-            shapepath.horizontalPoint = offsetX;
-            shapepath.verticalPoint = offsetY;
-            if (shapepath.verticalPoint < -Kirigami.Units.gridUnit * 5 && navigationPanel.state == "hidden") {
+            dragEffect.sidePoint = inLandscape ? offsetY : offsetX;
+            dragEffect.offsetPoint = inLandscape ? offsetX : offsetY;
+            if (dragEffect.offsetPoint < -Kirigami.Units.gridUnit * 5 && navigationPanel.state == "hidden") {
                 swipeArea.resetSwipe();
                 resetAn.restart();
                 haptics.buttonVibrate();
@@ -269,7 +270,7 @@ ContainmentItem {
         onSwipeMove: (totalDeltaX, totalDeltaY, deltaX, deltaY) => updateOffset(totalDeltaX, totalDeltaY);
 
         onPressedChanged: {
-            if (!pressed && shapepath.verticalPoint == 0) {
+            if (!pressed && dragEffect.offsetPoint == 0) {
                 haptics.buttonVibrate();
                 navigationPanel.state = "visible";
             }
@@ -278,10 +279,10 @@ ContainmentItem {
         NumberAnimation {
             id: resetAn
             running: false
-            target: shapepath
-            property: "verticalPoint"
+            target: dragEffect
+            property: "offsetPoint"
             to: 0
-            duration: Kirigami.Units.longDuration
+            duration: Kirigami.Units.longDuration * 1.5
             easing.type: Easing.OutExpo
             onRunningChanged: {
                 if (!running && navigationPanel.state == "hidden") {
@@ -291,34 +292,49 @@ ContainmentItem {
             }
         }
 
-        Shape {
-            id: shape
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: -4
+        MobileShell.ScreenEdgeDragEffect {
+            id: dragEffect
 
-            x: shapepath.startPoint - Kirigami.Units.gridUnit * 5
-            visible: shapepath.verticalPoint != 0
+            offsetLimit: root.inLandscape ? swipeArea.width : swipeArea.height
+            effectDirection: root.inLandscape ? MobileShell.ScreenEdgeDragEffect.EffectDirection.Right : MobileShell.ScreenEdgeDragEffect.EffectDirection.Up
+            flip: false
 
-            ShapePath {
-                id: shapepath
-                fillColor: "black"
-                strokeColor: "black"
+            visible: offsetPoint != 0
 
-                property real startPoint: 0
-                property real horizontalPoint: 0
-                property real verticalPoint: 0
-
-                readonly property real hp: Math.max(Math.min(horizontalPoint, Kirigami.Units.gridUnit * 10), -Kirigami.Units.gridUnit * 10)
-                readonly property real vp: Math.max(Math.min(-root.calculateResistance(-verticalPoint, 0), 0), -swipeArea.height + 3)
-
-                startX: 0; startY: 3
-                PathCurve { x: 0; y: 2 }
-                PathCurve { x: Kirigami.Units.gridUnit * 2 + shapepath.hp * 0.16; y: 0 }
-                PathCurve { x: Kirigami.Units.gridUnit * 5 + shapepath.hp * 0.35; y: shapepath.vp }
-                PathCurve { x: Kirigami.Units.gridUnit * 8 + shapepath.hp * 0.16; y: 0 }
-                PathCurve { x: Kirigami.Units.gridUnit * 10; y: 2 }
-                PathCurve { x: Kirigami.Units.gridUnit * 10; y: 3 }
-            }
+            states: [
+                State {
+                    name: "vertical"
+                    when: !root.inLandscape
+                    AnchorChanges {
+                        target: dragEffect
+                        anchors.right: undefined
+                        anchors.bottom: swipeArea.bottom
+                        anchors.horizontalCenter: swipeArea.horizontalCenter
+                        anchors.verticalCenter: undefined
+                    }
+                    PropertyChanges {
+                        target: dragEffect
+                        anchors.rightMargin: 0
+                        anchors.bottomMargin: -4
+                    }
+                },
+                State {
+                    name: "horizontal"
+                    when: root.inLandscape
+                    AnchorChanges {
+                        target: dragEffect
+                        anchors.right: swipeArea.right
+                        anchors.bottom: undefined
+                        anchors.horizontalCenter: undefined
+                        anchors.verticalCenter: swipeArea.verticalCenter
+                    }
+                    PropertyChanges {
+                        target: dragEffect
+                        anchors.rightMargin: -4
+                        anchors.bottomMargin: 0
+                    }
+                }
+            ]
         }
     }
 }
