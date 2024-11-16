@@ -14,44 +14,48 @@ QtObject {
     // Set it to Plasmoid.containment.screenGeometry in a plasmoid to accomplish this.
     property alias screenGeometry: tasksModel.screenGeometry
 
-    readonly property bool showingFullscreenWindow: __internalFullScreen.count > 0 && !WindowPlugin.WindowUtil.isShowingDesktop
-    readonly property bool showingWindow: (__internalMaximized.count + __internalFullScreen.count > 0) && !WindowPlugin.WindowUtil.isShowingDesktop
-    readonly property int windowCount: __internalMaximized.count + __internalFullScreen.count
+    property bool isCurrentWindowFullscreen: __internal.count > 0 && visibleWindowsModel.currentFullscreen && !WindowPlugin.WindowUtil.isShowingDesktop
 
+    readonly property bool showingWindow: __internal.count > 0 && !WindowPlugin.WindowUtil.isShowingDesktop
+    readonly property int windowCount: __internal.count
 
-    property var taskModel: TaskManager.TasksModel {
-        id: tasksModel
-        filterByVirtualDesktop: true
-        filterByActivity: true
-        filterMinimized: true
-        filterByScreen: true
-        filterHidden: true
-
-        virtualDesktop: virtualDesktopInfo.currentDesktop
-        activity: activityInfo.currentActivity
-
-        groupMode: TaskManager.TasksModel.GroupDisabled
-    }
-
-    property var vdi: TaskManager.VirtualDesktopInfo {
-        id: virtualDesktopInfo
-    }
-
-    property var ai: TaskManager.ActivityInfo {
-        id: activityInfo
-    }
-
-    property var __internalFullScreen: KItemModels.KSortFilterProxyModel {
-        id: visibleFullScreenWindowsModel
-        filterRoleName: 'IsFullScreen'
-        filterString: 'true'
+    property var __internal: KItemModels.KSortFilterProxyModel {
+        id: visibleWindowsModel
         sourceModel: taskModel
-    }
+        filterRowCallback: (sourceRow, sourceParent) => {
+            const task = sourceModel.index(sourceRow, 0, sourceParent);
+            let isFullScreen = sourceModel.data(task, TaskManager.AbstractTasksModel.IsFullScreen);
+            let isMaximized = sourceModel.data(task, TaskManager.AbstractTasksModel.IsMaximized);
+            if (sourceRow == 0) {
+                visibleWindowsModel.currentFullscreen = isFullScreen;
+            }
+            return isFullScreen || isMaximized;
+        }
 
-    property var __internalMaximized: KItemModels.KSortFilterProxyModel {
-        id: visibleMaximizedWindowsModel
-        filterRoleName: 'IsMaximized'
-        filterString: 'true'
-        sourceModel: taskModel
+        property bool currentFullscreen: false
+
+        property var taskModel: TaskManager.TasksModel {
+            id: tasksModel
+            filterByVirtualDesktop: true
+            filterByActivity: true
+            filterMinimized: true
+            filterByScreen: true
+            filterHidden: true
+
+            virtualDesktop: virtualDesktopInfo.currentDesktop
+            activity: activityInfo.currentActivity
+
+            sortMode: TaskManager.TasksModel.SortLastActivated
+
+            groupMode: TaskManager.TasksModel.GroupDisabled
+        }
+
+        property var vdi: TaskManager.VirtualDesktopInfo {
+            id: virtualDesktopInfo
+        }
+
+        property var ai: TaskManager.ActivityInfo {
+            id: activityInfo
+        }
     }
 }
