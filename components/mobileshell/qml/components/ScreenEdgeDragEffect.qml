@@ -11,19 +11,7 @@ import org.kde.kirigami 2.20 as Kirigami
 Item {
     id: root
 
-    enum EffectDirection {
-        Up,
-        Down,
-        Left,
-        Right
-    }
-
-    property int effectDirection: ScreenEdgeDragEffect.EffectDirection.Bottom
-
-    readonly property int flipValue: (effectDirection === ScreenEdgeDragEffect.EffectDirection.Left || effectDirection === ScreenEdgeDragEffect.EffectDirection.Down) ? -1 : 1
-    readonly property bool isHorizontal: effectDirection === ScreenEdgeDragEffect.EffectDirection.Left || effectDirection === ScreenEdgeDragEffect.EffectDirection.Right
-
-    property bool flip: false
+    property bool isHorizontal: false
     property real length: Kirigami.Units.gridUnit * 10
     property real offsetLimit: Kirigami.Units.gridUnit * 2
 
@@ -31,12 +19,14 @@ Item {
     property real sidePoint: 0
     property real offsetPoint: 0
 
+    visible: offsetPoint != 0
+
     Shape {
         id: shape
 
+        readonly property int flip: root.offsetPoint > 0 ? -1 : 1
         readonly property real position:  root.startPoint - root.length / 2
-
-        readonly property real sp: Math.max(Math.min(root.sidePoint, Kirigami.Units.gridUnit * 10), -Kirigami.Units.gridUnit * 10)
+        readonly property real sp: Math.max(Math.min(root.sidePoint, root.length), -Kirigami.Units.gridUnit * 10)
         readonly property real op: Math.max(Math.min(-shape.calculateResistance(-root.offsetPoint, 0), 0), -root.offsetLimit + 3)
 
         transform: [
@@ -55,13 +45,13 @@ Item {
         }
 
         readonly property var shapPath: [
-            Qt.point(3 * root.flipValue, 0),
-            Qt.point(2 * root.flipValue, 0),
+            Qt.point(3 * shape.flip, 0),
+            Qt.point(2 * shape.flip, 0),
             Qt.point(0, root.length * 0.2 + shape.sp * 0.16),
-            Qt.point(shape.op * root.flipValue, root.length * 0.5 + shape.sp * 0.35),
+            Qt.point(shape.op, root.length * 0.5 + shape.sp * 0.35),
             Qt.point(0, root.length * 0.8 + shape.sp * 0.16),
-            Qt.point(2 * root.flipValue, root.length),
-            Qt.point(3 * root.flipValue, root.length),
+            Qt.point(2 * shape.flip, root.length),
+            Qt.point(3 * shape.flip, root.length),
         ]
 
         ShapePath {
