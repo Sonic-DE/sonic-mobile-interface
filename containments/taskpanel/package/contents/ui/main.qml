@@ -32,10 +32,6 @@ ContainmentItem {
         setWindowProperties()
     }
 
-    MobileShell.HapticsEffect {
-        id: haptics
-    }
-
     // filled in by the shell (Panel.qml)
     property var tabBar: null
     onTabBarChanged: {
@@ -44,7 +40,9 @@ ContainmentItem {
         }
     }
 
-    property bool fullscreenExpandTouchArea: false
+    MobileShell.HapticsEffect {
+        id: haptics
+    }
 
     readonly property bool inLandscape: MobileShell.Constants.navigationPanelOnSide(Screen.width, Screen.height)
 
@@ -82,7 +80,7 @@ ContainmentItem {
         interval: 100
         onTriggered: {
             // maximize first, then we can apply offsets (otherwise they are overridden)
-            root.panel.maximize()
+            root.panel.maximize();
             root.panel.offset = intendedWindowOffset;
         }
     }
@@ -93,17 +91,25 @@ ContainmentItem {
             root.panel.floating = false;
             root.panel.maximize(); // maximize first, then we can apply offsets (otherwise they are overridden)
             root.panel.offset = intendedWindowOffset;
-            root.panel.thickness = currentWindowFullscreen && !fullscreenExpandTouchArea ? Kirigami.Units.gridUnit : navigationPanelHeight;
+            root.panel.thickness = navigationPanelHeight;
             root.panel.location = intendedWindowLocation;
-            MobileShell.ShellUtil.setWindowLayer(root.panel, LayerShell.Window.LayerOverlay)
+            MobileShell.ShellUtil.setWindowLayer(root.panel, LayerShell.Window.LayerOverlay);
+            root.updateTouchArea();
         }
     }
 
-    function calculateResistance(value : double, threshold : int) : double {
-        if (value > threshold) {
-            return threshold + Math.pow(value - threshold + 1, Math.max(0.8 - (value - threshold) / ((Screen.height - threshold) * 2), 0.65));
+    // update the touch area when hidden to minimize the space the panel takes for touch input
+    function updateTouchArea() {
+        const hiddenTouchAreaThickness = Kirigami.Units.gridUnit;
+
+        if (navigationPanel.state == "hidden") {
+            if (inLandscape) {
+                MobileShell.ShellUtil.setInputRegion(root.panel, Qt.rect(root.panel.width - hiddenTouchAreaThickness, 0, hiddenTouchAreaThickness, root.panel.height));
+            } else {
+                MobileShell.ShellUtil.setInputRegion(root.panel, Qt.rect(0, root.panel.height - hiddenTouchAreaThickness, root.panel.width, hiddenTouchAreaThickness));
+            }
         } else {
-            return value;
+            MobileShell.ShellUtil.setInputRegion(root.panel, Qt.rect(0, 0, 0, 0));
         }
     }
 
@@ -130,12 +136,9 @@ ContainmentItem {
 
     // only opaque if there are no maximized windows on this screen
     readonly property bool showingStartupFeedback: MobileShellState.ShellDBusObject.startupFeedbackModel.activeWindowIsStartupFeedback && windowMaximizedTracker.windowCount === 1
-    readonly property bool opaqueBar: (windowMaximizedTracker.showingWindow || currentWindowFullscreen) && !showingStartupFeedback
+    readonly property bool opaqueBar: (windowMaximizedTracker.showingWindow || showingFullscreenWindow) && !showingStartupFeedback
 
-    readonly property alias currentWindowFullscreen: windowMaximizedTracker.currentWindowFullscreen
-    onCurrentWindowFullscreenChanged: {
-        navigationPanel.state = currentWindowFullscreen ? "hidden" : "default";
-    }
+    readonly property alias showingFullscreenWindow: windowMaximizedTracker.showingFullscreenWindow
 
     WindowPlugin.WindowMaximizedTracker {
         id: windowMaximizedTracker
@@ -151,8 +154,6 @@ ContainmentItem {
         fullHeight: root.height
         screen: Plasmoid.screen
         maximizedTracker: windowMaximizedTracker
-
-        visible: !currentWindowFullscreen
     }
 
     Rectangle {
@@ -181,23 +182,10 @@ ContainmentItem {
             ]
         }
 
-        state: "default"
+        state: MobileShellState.ShellDBusClient.panelState
         onStateChanged: {
             if (navigationPanel.state != "hidden") {
-                root.fullscreenExpandTouchArea = true;
                 root.setWindowProperties();
-                hiddenTimer.restart();
-            }
-        }
-
-        Timer {
-            id: hiddenTimer
-            running: false
-            interval: 3000
-            onTriggered: {
-                if (navigationPanel.state == "visible") {
-                    navigationPanel.state = "hidden";
-                }
             }
         }
 
@@ -231,7 +219,6 @@ ContainmentItem {
                 }
                 ScriptAction {
                     script: {
-                        fullscreenExpandTouchArea = navigationPanel.state == "visible";
                         root.setWindowProperties();
                     }
                 }
@@ -246,9 +233,8 @@ ContainmentItem {
         enabled: navigationPanel.state == "hidden"
 
         function startSwipeWithPoint(point) {
-            fullscreenExpandTouchArea = true;
             root.setWindowProperties();
-            resetAn.stop()
+            resetAn.stop();
             dragEffect.startPoint = inLandscape ? point.y - Screen.height / 2 : point.x - Screen.width / 2;
             dragEffect.sidePoint = 0
             dragEffect.offsetPoint = 0;
@@ -256,12 +242,12 @@ ContainmentItem {
 
         function updateOffset(offsetX, offsetY) {
             dragEffect.sidePoint = inLandscape ? offsetY : offsetX;
-            dragEffect.offsetPoint = inLandscape ? offsetX : offsetY;
+            dragEffect.offsetPoint = Math.min(0, inLandscape ? offsetX : offsetY);
             if (dragEffect.offsetPoint < -Kirigami.Units.gridUnit * 5 && navigationPanel.state == "hidden") {
                 swipeArea.resetSwipe();
                 resetAn.restart();
                 haptics.buttonVibrate();
-                navigationPanel.state = "visible";
+                MobileShellState.ShellDBusClient.panelState = "visible";
             }
         }
 
@@ -272,7 +258,7 @@ ContainmentItem {
         onPressedChanged: {
             if (!pressed && dragEffect.offsetPoint == 0) {
                 haptics.buttonVibrate();
-                navigationPanel.state = "visible";
+                MobileShellState.ShellDBusClient.panelState = "visible";
             }
         }
 
@@ -286,7 +272,6 @@ ContainmentItem {
             easing.type: Easing.OutExpo
             onRunningChanged: {
                 if (!running && navigationPanel.state == "hidden") {
-                    fullscreenExpandTouchArea = false;
                     root.setWindowProperties();
                 }
             }
@@ -296,10 +281,7 @@ ContainmentItem {
             id: dragEffect
 
             offsetLimit: root.inLandscape ? swipeArea.width : swipeArea.height
-            effectDirection: root.inLandscape ? MobileShell.ScreenEdgeDragEffect.EffectDirection.Right : MobileShell.ScreenEdgeDragEffect.EffectDirection.Up
-            flip: false
-
-            visible: offsetPoint != 0
+            isHorizontal: root.inLandscape
 
             states: [
                 State {
@@ -312,11 +294,6 @@ ContainmentItem {
                         anchors.horizontalCenter: swipeArea.horizontalCenter
                         anchors.verticalCenter: undefined
                     }
-                    PropertyChanges {
-                        target: dragEffect
-                        anchors.rightMargin: 0
-                        anchors.bottomMargin: -4
-                    }
                 },
                 State {
                     name: "horizontal"
@@ -327,11 +304,6 @@ ContainmentItem {
                         anchors.bottom: undefined
                         anchors.horizontalCenter: undefined
                         anchors.verticalCenter: swipeArea.verticalCenter
-                    }
-                    PropertyChanges {
-                        target: dragEffect
-                        anchors.rightMargin: -4
-                        anchors.bottomMargin: 0
                     }
                 }
             ]

@@ -14,7 +14,7 @@ QtObject {
     // Set it to Plasmoid.containment.screenGeometry in a plasmoid to accomplish this.
     property alias screenGeometry: tasksModel.screenGeometry
 
-    readonly property bool currentWindowFullscreen: __internalFullScreen.count > 0 && !WindowPlugin.WindowUtil.isShowingDesktop
+    readonly property bool showingFullscreenWindow: __internalFullScreen.count > 0 && !WindowPlugin.WindowUtil.isShowingDesktop
     readonly property bool showingWindow: (__internalMaximized.count + __internalFullScreen.count > 0) && !WindowPlugin.WindowUtil.isShowingDesktop
     readonly property int windowCount: __internalMaximized.count + __internalFullScreen.count
 
