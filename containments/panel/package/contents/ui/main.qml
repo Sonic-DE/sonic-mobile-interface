@@ -150,36 +150,6 @@ ContainmentItem {
         visible: !root.isCurrentWindowFullscreen
     }
 
-    // swiping area for swipe-down drawer
-    MobileShell.ActionDrawerOpenSurface {
-        id: swipeArea
-        actionDrawer: drawer.actionDrawer
-        anchors.fill: parent
-
-        readonly property alias drawerVisible: drawer.visible
-        readonly property alias offset: drawer.actionDrawer.offset
-        property bool surfacePressed: false
-        onOffsetChanged: surfacePressed = false
-
-        // allow tapping to bring back up the status bar when it is hidden
-        onPressedChanged: {
-            if (!pressed && surfacePressed) {
-                haptics.buttonVibrate();
-                MobileShellState.ShellDBusClient.panelState = "visible";
-            } else {
-                surfacePressed = true;
-            }
-        }
-
-        // if in a fullscreen app, the panels are visible, and the action drawer is opened
-        // set the panels to a hidden state
-        onDrawerVisibleChanged: {
-            if (statusPanel.state == "visible") {
-                MobileShellState.ShellDBusClient.panelState = "hidden";
-            }
-        }
-    }
-
     Rectangle {
         id: statusPanel
         anchors.fill: parent
@@ -257,6 +227,36 @@ ContainmentItem {
                         root.setWindowProperties();
                     }
                 }
+            }
+        }
+    }
+
+    // swiping area for swipe-down drawer
+    MobileShell.ActionDrawerOpenSurface {
+        id: swipeArea
+        actionDrawer: drawer.actionDrawer
+        anchors.fill: parent
+
+        readonly property alias drawerVisible: drawer.visible
+        readonly property alias offset: drawer.actionDrawer.offset
+        property bool surfacePressed: false
+        onOffsetChanged: surfacePressed = false
+
+        // allow tapping to bring back up the status bar when it is hidden
+        onPressedChanged: {
+            if (!pressed && surfacePressed && root.isCurrentWindowFullscreen) {
+                haptics.buttonVibrate();
+                MobileShellState.ShellDBusClient.panelState = "visible";
+            } else {
+                surfacePressed = true;
+            }
+        }
+
+        // if in a fullscreen app, the panels are visible, and the action drawer is opened
+        // set the panels to a hidden state
+        onDrawerVisibleChanged: {
+            if (statusPanel.state == "visible") {
+                MobileShellState.ShellDBusClient.panelState = "hidden";
             }
         }
     }
