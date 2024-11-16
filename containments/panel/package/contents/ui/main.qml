@@ -43,7 +43,7 @@ ContainmentItem {
         id: maximizeTimer
         running: false
         interval: 100
-        onTriggered: root.panel.maximize()
+        onTriggered:  root.panel.maximize()
     }
 
     function setWindowProperties() {
@@ -79,9 +79,9 @@ ContainmentItem {
     readonly property bool showingStartupFeedback: MobileShellState.ShellDBusObject.startupFeedbackModel.activeWindowIsStartupFeedback && windowMaximizedTracker.windowCount === 1
     readonly property bool showingApp: windowMaximizedTracker.showingWindow && !showingStartupFeedback
     readonly property color backgroundColor: topPanel.colorScopeColor
-    readonly property alias showingFullscreenWindow: windowMaximizedTracker.showingFullscreenWindow
-    onShowingFullscreenWindowChanged: {
-        MobileShellState.ShellDBusClient.panelState = showingFullscreenWindow ? "hidden" : "default";
+    readonly property alias isCurrentWindowFullscreen: windowMaximizedTracker.isCurrentWindowFullscreen
+    onIsCurrentWindowFullscreenChanged: {
+        MobileShellState.ShellDBusClient.panelState = isCurrentWindowFullscreen ? "hidden" : "default";
     }
 
     WindowPlugin.WindowMaximizedTracker {
@@ -146,6 +146,8 @@ ContainmentItem {
         fullHeight: root.height
         screen: Plasmoid.screen
         maximizedTracker: windowMaximizedTracker
+
+        visible: !root.isCurrentWindowFullscreen
     }
 
     // swiping area for swipe-down drawer

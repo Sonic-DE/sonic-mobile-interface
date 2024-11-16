@@ -136,9 +136,9 @@ ContainmentItem {
 
     // only opaque if there are no maximized windows on this screen
     readonly property bool showingStartupFeedback: MobileShellState.ShellDBusObject.startupFeedbackModel.activeWindowIsStartupFeedback && windowMaximizedTracker.windowCount === 1
-    readonly property bool opaqueBar: (windowMaximizedTracker.showingWindow || showingFullscreenWindow) && !showingStartupFeedback
+    readonly property bool opaqueBar: (windowMaximizedTracker.showingWindow || isCurrentWindowFullscreen) && !showingStartupFeedback
 
-    readonly property alias showingFullscreenWindow: windowMaximizedTracker.showingFullscreenWindow
+    readonly property alias isCurrentWindowFullscreen: windowMaximizedTracker.isCurrentWindowFullscreen
 
     WindowPlugin.WindowMaximizedTracker {
         id: windowMaximizedTracker
@@ -154,6 +154,8 @@ ContainmentItem {
         fullHeight: root.height
         screen: Plasmoid.screen
         maximizedTracker: windowMaximizedTracker
+
+        visible: !root.isCurrentWindowFullscreen
     }
 
     Rectangle {
