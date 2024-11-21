@@ -64,12 +64,13 @@ Window {
     width: longestLength
     height: longestLength
 
-    visible: false
-
     signal timeChanged
+
+    Component.onCompleted: ShellUtil.setInputTransparent(notificationPopupManager, true)
 
     // Update the window touch region to encapsulate the notification area or the whole screen depending on the 'popupDrawerOpened' state
     function updateTouchArea() {
+        ShellUtil.setInputTransparent(notificationPopupManager, false);
         if (popupDrawerOpened) {
             ShellUtil.setInputRegion(notificationPopupManager, Qt.rect(0, 0, 0, 0));
         } else {
@@ -158,6 +159,7 @@ Window {
                 property int fullHeight: 0
                 onCountChanged: {
                     if (count == 0) {
+                        ShellUtil.setInputTransparent(notificationPopupManager, true);
                         notificationPopupManager.visible = false;
                         notificationPopupManager.popupDrawerOpened = false;
                         fullHeight = 0;
@@ -198,6 +200,8 @@ Window {
                     timeout: model.timeout
 
                     onUpdateTouchArea: notificationPopupManager.updateTouchArea()
+
+                    onSetInputTransparent: ShellUtil.setInputTransparent(notificationPopupManager, true)
 
                     onOpenPopupDrawer: notificationPopupManager.popupDrawerOpened = true
 

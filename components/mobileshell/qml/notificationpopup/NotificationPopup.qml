@@ -94,6 +94,7 @@ Item {
     signal expired()
     signal dismissClicked()
     signal updateTouchArea()
+    signal setInputTransparent()
     signal openPopupDrawer()
     signal setKeyboardFocus()
     signal removeKeyboardFocus()
@@ -275,6 +276,7 @@ Item {
     // this closes the popup notification with the relvent animation while updating the popup below to show, if any exist
     function closePopup() {
         notificationPopup.removeKeyboardFocus();
+        notificationPopup.setInputTransparent();
         if (popupIndex + 1 < popupCount) {
             popupNotifications.objectAt(popupIndex + 1).aboveNotificationHeight = 0;
             popupNotifications.objectAt(popupIndex + 1).aboveNotificationFullOffset = 0;
