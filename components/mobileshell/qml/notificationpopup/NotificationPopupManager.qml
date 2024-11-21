@@ -64,13 +64,12 @@ Window {
     width: longestLength
     height: longestLength
 
-    signal timeChanged
+    visible: false
 
-    Component.onCompleted: ShellUtil.setInputTransparent(notificationPopupManager, true)
+    signal timeChanged
 
     // Update the window touch region to encapsulate the notification area or the whole screen depending on the 'popupDrawerOpened' state
     function updateTouchArea() {
-        ShellUtil.setInputTransparent(notificationPopupManager, false);
         if (popupDrawerOpened) {
             ShellUtil.setInputRegion(notificationPopupManager, Qt.rect(0, 0, 0, 0));
         } else {
@@ -151,7 +150,7 @@ Window {
                 model: popupNotificationsModel
 
                 // get the height, drag offset, and idx of the current popup notifition and make it easily accessible by all popup notifications
-                property int currentPopupHeight: (count > 0 && currentPopupIndex < count) ? objectAt(currentPopupIndex).popupHeight : 0;
+                property int currentPopupHeight: (count > 0 && currentPopupIndex < count && objectAt(currentPopupIndex)) ? objectAt(currentPopupIndex).popupHeight : 0;
                 property int currentDragOffset: 0
                 property int currentPopupIndex: 0
 
@@ -159,7 +158,6 @@ Window {
                 property int fullHeight: 0
                 onCountChanged: {
                     if (count == 0) {
-                        ShellUtil.setInputTransparent(notificationPopupManager, true);
                         notificationPopupManager.visible = false;
                         notificationPopupManager.popupDrawerOpened = false;
                         fullHeight = 0;
@@ -201,8 +199,6 @@ Window {
 
                     onUpdateTouchArea: notificationPopupManager.updateTouchArea()
 
-                    onSetInputTransparent: ShellUtil.setInputTransparent(notificationPopupManager, true)
-
                     onOpenPopupDrawer: notificationPopupManager.popupDrawerOpened = true
 
                     onSetKeyboardFocus: notificationPopupManager.keyboardInteractivity = LayerShell.Window.KeyboardInteractivityOnDemand
@@ -224,7 +220,11 @@ Window {
                             // but don't actually invalidate the notification
                             model.expired = true;
                         } else {
-                            popupNotificationsModel.expire(popupNotificationsModel.index(index, 0));
+                            if (notificationModelType === NotificationsModelType.WatchedNotificationsModel) {
+                                popupNotificationsModel.expire(model.notificationId);
+                            } else if (notificationModelType === NotificationsModelType.NotificationsModel) {
+                                popupNotificationsModel.expire(popupNotificationsModel.index(index, 0));
+                            }
                         }
                     }
 
