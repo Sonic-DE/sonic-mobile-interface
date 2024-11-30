@@ -185,7 +185,7 @@ Q_SIGNALS:
 private:
     void invokeEffect();
 
-    MobileShellSettings *const m_shellSettings;
+    MobileShellSettings m_shellSettings;
 
     EffectTouchBorderState *const m_effectState;
     MobileTaskSwitcherState *const m_taskSwitcherState;
