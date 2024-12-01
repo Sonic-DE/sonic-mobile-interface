@@ -44,6 +44,7 @@ KCM.SimpleKCM {
                 onCheckedChanged: {
                     if (checked != kcm.Settings.animationsEnabled) {
                         kcm.Settings.animationsEnabled = checked;
+                        kcm.Settings.save()
                     }
                 }
             }
@@ -62,6 +63,7 @@ KCM.SimpleKCM {
                 onCheckedChanged: {
                     if (checked != kcm.Settings.dateInStatusBar) {
                         kcm.Settings.dateInStatusBar = checked;
+                        kcm.Settings.save();
                     }
                 }
             }

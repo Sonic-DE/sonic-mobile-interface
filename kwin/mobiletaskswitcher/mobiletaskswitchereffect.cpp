@@ -202,6 +202,7 @@ MobileTaskSwitcherEffect::MobileTaskSwitcherEffect()
     , m_shutdownTimer{new QTimer{this}}
     //, m_shellSettings{MobileShellSettings::self()}
 {
+    std::cout << "task switcher constructor" << std::endl;
     const char *uri = "org.kde.private.mobileshell.taskswitcher";
     qmlRegisterType<TaskFilterModel>(uri, 1, 0, "TaskFilterModel");
     qmlRegisterSingletonType<TaskModel>(uri, 1, 0, "TaskModel", [this](QQmlEngine *, QJSEngine *) -> QObject * {
@@ -211,7 +212,7 @@ MobileTaskSwitcherEffect::MobileTaskSwitcherEffect()
         return m_taskSwitcherState;
     });
     //qmlRegisterSingletonType<MobileShellSettings>("org.kde.plasma.private.mobileshell.shellsettingsplugin", 1, 0, "MobileShellSettings", [this](QQmlEngine *, QJSEngine *) -> QObject * {
-    //    return m_shellSettings;
+    //    return &m_shellSettings;
     //});
 
     std::cout << "hello? " << m_shellSettings.dateInStatusBar() << std::endl;

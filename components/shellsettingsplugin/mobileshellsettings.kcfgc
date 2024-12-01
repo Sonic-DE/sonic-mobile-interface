@@ -8,3 +8,5 @@ DefaultValueGetters=true
 ParentInConstructor=true
 GenerateProperties=true
 Notifiers=true
+QmlRegistration=true
+UseEnumTypes=true

@@ -37,6 +37,7 @@ ecm_target_qml_sources(mobileshellplugin SOURCES ${_qml_sources})
 target_link_libraries(mobileshellplugin
     PUBLIC
         Qt::Core
+        shellsettingsplugin
     PRIVATE
         Qt::DBus
         Qt::Qml

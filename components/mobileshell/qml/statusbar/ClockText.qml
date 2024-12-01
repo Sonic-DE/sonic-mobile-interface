@@ -21,6 +21,10 @@ RowLayout {
     required property int fontPixelSize
     required property P5Support.DataSource source
 
+    ShellSettings.MobileShellSettings {
+        id: shellSettings
+    }
+
     PlasmaComponents.Label {
         id: clock
 
@@ -34,7 +38,7 @@ RowLayout {
 
     PlasmaComponents.Label {
         id: date
-        visible: ShellSettings.Settings.dateInStatusBar && !root.showSecondRow
+        visible: shellSettings.dateInStatusBar && !root.showSecondRow
 
         text: Qt.formatDate(source.data.Local.DateTime, "ddd. MMMM d")
         color: Kirigami.Theme.textColor

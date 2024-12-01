@@ -25,6 +25,8 @@ set(homescreen_SRCS
 add_library(org.kde.plasma.mobile.homescreen.folio MODULE ${homescreen_SRCS})
 
 target_link_libraries(org.kde.plasma.mobile.homescreen.folio
+                      shellsettingsplugin
+
                       Qt::Gui
                       Qt::Qml
                       Qt::Quick
