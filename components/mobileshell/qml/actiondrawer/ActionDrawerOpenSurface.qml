@@ -6,8 +6,8 @@
 
 import QtQuick 2.15
 
-import org.kde.plasma.private.mobileshell.shellsettingsplugin as ShellSettings
 import org.kde.plasma.private.mobileshell as MobileShell
+import org.kde.plasma.private.mobileshell.shellsettingsplugin as ShellSettings
 
 /**
  * Component that triggers the opening and closing of an ActionDrawer when dragged on with touch or mouse.
@@ -17,6 +17,10 @@ MobileShell.SwipeArea {
     mode: MobileShell.SwipeArea.VerticalOnly
 
     required property ActionDrawer actionDrawer
+
+    //ShellSettings.MobileShellSettings {
+    //    id: shellSettings
+    //}
 
     function startSwipe() {
         if (actionDrawer.intendedToBeVisible) {
@@ -36,9 +40,10 @@ MobileShell.SwipeArea {
     function startSwipeWithPoint(point) {
         // if the user swiped from the top left, otherwise it's from the top right
         if (point.x < root.width / 2) {
-            actionDrawer.openToPinnedMode = ShellSettings.Settings.actionDrawerTopLeftMode == ShellSettings.Settings.Pinned;
+            //console.warn("hello!", ShellSettings.Settings.Pinned)
+            actionDrawer.openToPinnedMode = ShellSettings.MobileShellSettings.actionDrawerTopLeftMode == 0//ShellSettings.Settings.Pinned;
         } else {
-            actionDrawer.openToPinnedMode = ShellSettings.Settings.actionDrawerTopRightMode == ShellSettings.Settings.Pinned;
+            actionDrawer.openToPinnedMode = ShellSettings.MobileShellSettings.actionDrawerTopRightMode == 0//ShellSettings.Settings.Pinned;
         }
 
         startSwipe();

@@ -32,11 +32,15 @@ Folio.DelegateTouchArea {
     property real zoomScale: 1
     property bool clickRequested: false
 
+    //ShellSettings.MobileShellSettings {
+    //    id: shellSettings
+    //}
+
     NumberAnimation on zoomScale {
         id: shrinkAnim
         running: false
-        duration: ShellSettings.Settings.animationsEnabled ? 80 : 1
-        to: ShellSettings.Settings.animationsEnabled ? 0.8 : 1
+        duration: ShellSettings.animationsEnabled ? 80 : 1
+        to: ShellSettings.animationsEnabled ? 0.8 : 1
         onFinished: {
             if (!root.pressed) {
                 growAnim.restart();
@@ -47,7 +51,7 @@ Folio.DelegateTouchArea {
     NumberAnimation on zoomScale {
         id: growAnim
         running: false
-        duration: ShellSettings.Settings.animationsEnabled ? 80 : 1
+        duration: ShellSettings.animationsEnabled ? 80 : 1
         to: 1
         onFinished: {
             if (root.clickRequested) {

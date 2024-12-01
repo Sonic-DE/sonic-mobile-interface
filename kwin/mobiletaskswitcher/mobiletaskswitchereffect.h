@@ -23,6 +23,7 @@
 #include "effecttouchborder.h"
 #include "taskfiltermodel.h"
 #include "taskmodel.h"
+#include "mobileshellsettings.h"
 
 namespace KWin
 {
@@ -183,6 +184,8 @@ Q_SIGNALS:
 
 private:
     void invokeEffect();
+
+    MobileShellSettings *m_shellSettings;
 
     EffectTouchBorderState *const m_effectState;
     MobileTaskSwitcherState *const m_taskSwitcherState;

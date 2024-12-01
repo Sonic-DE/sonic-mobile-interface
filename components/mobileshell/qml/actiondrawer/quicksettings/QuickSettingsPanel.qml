@@ -66,8 +66,8 @@ MobileShell.BaseItem {
                 Layout.alignment: Qt.AlignTop
                 Layout.fillWidth: true
                 // Align these to double pixels to aid vertical alignment and sharper icon rendering
-                Layout.preferredHeight: Math.round(Kirigami.Units.gridUnit * 1.5 * ShellSettings.Settings.statusBarScaleFactor / 2) * 2
-                Layout.maximumHeight: Math.round(Kirigami.Units.gridUnit * 1.5 * ShellSettings.Settings.statusBarScaleFactor / 2) * 2
+                Layout.preferredHeight: Math.round(Kirigami.Units.gridUnit * 1.5 * ShellSettings.MobileShellSettings.statusBarScaleFactor / 2) * 2
+                Layout.maximumHeight: Math.round(Kirigami.Units.gridUnit * 1.5 * ShellSettings.MobileShellSettings.statusBarScaleFactor / 2) * 2
 
                 Kirigami.Theme.colorSet: Kirigami.Theme.Window
                 Kirigami.Theme.inherit: false

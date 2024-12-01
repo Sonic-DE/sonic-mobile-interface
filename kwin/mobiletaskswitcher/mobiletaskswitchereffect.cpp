@@ -12,6 +12,9 @@
 #include <QMetaObject>
 #include <QQuickItem>
 #include <window.h>
+#include <QDebug>
+#include "mobileshellsettings.h"
+#include <iostream>
 
 using namespace std::chrono_literals;
 
@@ -197,7 +200,9 @@ MobileTaskSwitcherEffect::MobileTaskSwitcherEffect()
     , m_border{new EffectTouchBorder{m_effectState}}
     , m_toggleAction{std::make_unique<QAction>()}
     , m_shutdownTimer{new QTimer{this}}
+    , m_shellSettings{MobileShellSettings::self()}
 {
+    std::cout << "task switcher constructor" << std::endl;
     const char *uri = "org.kde.private.mobileshell.taskswitcher";
     qmlRegisterType<TaskFilterModel>(uri, 1, 0, "TaskFilterModel");
     qmlRegisterSingletonType<TaskModel>(uri, 1, 0, "TaskModel", [this](QQmlEngine *, QJSEngine *) -> QObject * {
@@ -205,6 +210,29 @@ MobileTaskSwitcherEffect::MobileTaskSwitcherEffect()
     });
     qmlRegisterSingletonType<MobileTaskSwitcherState>(uri, 1, 0, "TaskSwitcherState", [this](QQmlEngine *, QJSEngine *) -> QObject * {
         return m_taskSwitcherState;
+    });
+    //qmlRegisterSingletonType<MobileShellSettings>("org.kde.plasma.private.mobileshell.shellsettingsplugin", 1, 0, "MobileShellSettings", [this](QQmlEngine *, QJSEngine *) -> QObject * {
+    //    return m_shellSettings;
+    //});
+
+    std::cout << "hello? " << m_shellSettings->dateInStatusBar() << std::endl;
+    connect(m_shellSettings, &MobileShellSettings::dateInStatusBarChanged, this, [this]() {
+        std::cout << "date in status bar changed triggered" << std::endl;
+        if (m_shellSettings->dateInStatusBar()) {
+            qWarning() << "date in status bar enabled";
+            reconfigure(ReconfigureFlag::ReconfigureAll);
+        } else {
+            qWarning() << "date in status bar disabled";
+        }
+    });
+   connect(m_shellSettings, &MobileShellSettings::navigationPanelEnabledChanged, this, [this]() {
+        std::cout << "nav panel enabled changed triggered" << std::endl;
+        if (m_shellSettings->navigationPanelEnabled()) {
+            qWarning() << "navigation panel enabled";
+            reconfigure(ReconfigureFlag::ReconfigureAll);
+        } else {
+            qWarning() << "navigation panel disabled";
+        }
     });
 
     connect(m_border, &EffectTouchBorder::touchPositionChanged, m_taskSwitcherState, &MobileTaskSwitcherState::processTouchPositionChanged);

@@ -40,10 +40,10 @@ KCM.SimpleKCM {
                 id: animationsSwitch
                 text: i18n("Animations")
                 description: i18n("If this is off, animations will be reduced as much as possible.")
-                checked: ShellSettings.Settings.animationsEnabled
+                checked: kcm.Settings.animationsEnabled
                 onCheckedChanged: {
-                    if (checked != ShellSettings.Settings.animationsEnabled) {
-                        ShellSettings.Settings.animationsEnabled = checked;
+                    if (checked != kcm.Settings.animationsEnabled) {
+                        kcm.Settings.animationsEnabled = checked;
                     }
                 }
             }
@@ -58,10 +58,11 @@ KCM.SimpleKCM {
                 id: dateInStatusBar
                 text: i18n("Date in status bar")
                 description: i18n("If on, date will be shown next to the clock in the status bar.")
-                checked: ShellSettings.Settings.dateInStatusBar
+                checked: kcm.Settings.dateInStatusBar
                 onCheckedChanged: {
-                    if (checked != ShellSettings.Settings.dateInStatusBar) {
-                        ShellSettings.Settings.dateInStatusBar = checked;
+                    if (checked != kcm.Settings.dateInStatusBar) {
+                        kcm.Settings.dateInStatusBar = checked;
+                        kcm.Settings.save();
                     }
                 }
             }
@@ -81,7 +82,7 @@ KCM.SimpleKCM {
                 text: i18n("Status Bar Size")
                 description: i18n("Size of the top panel (needs restart).")
 
-                currentIndex: indexOfValue(ShellSettings.Settings.statusBarScaleFactor)
+                currentIndex: indexOfValue(kcm.Settings.statusBarScaleFactor)
                 model: ListModel {
                     // We can't use i18n with ListElement, so use a property instead
                     Component.onCompleted: {
@@ -92,7 +93,7 @@ KCM.SimpleKCM {
                         append({"name": statusBarScaleFactorDelegate.xlargeString, "value": 2.0});
 
                         // indexOfValue doesn't bind to model changes unfortunately, set currentIndex manually here
-                        statusBarScaleFactorDelegate.currentIndex = statusBarScaleFactorDelegate.indexOfValue(ShellSettings.Settings.statusBarScaleFactor)
+                        statusBarScaleFactorDelegate.currentIndex = statusBarScaleFactorDelegate.indexOfValue(kcm.Settings.statusBarScaleFactor)
                     }
                 }
 
@@ -100,7 +101,10 @@ KCM.SimpleKCM {
                 valueRole: "value"
 
                 Component.onCompleted: dialog.parent = root
-                onCurrentValueChanged: ShellSettings.Settings.statusBarScaleFactor = currentValue
+                onCurrentValueChanged: {
+                    kcm.Settings.statusBarScaleFactor = currentValue
+                    kcm.Settings.save();
+                }
             }
 
         }
@@ -114,10 +118,11 @@ KCM.SimpleKCM {
                 id: gestureDelegate
                 text: i18n("Gesture-only Mode")
                 description: i18n("Whether to hide the navigation panel.")
-                checked: !ShellSettings.Settings.navigationPanelEnabled
+                checked: !kcm.Settings.navigationPanelEnabled
                 onCheckedChanged: {
-                    if (checked != !ShellSettings.Settings.navigationPanelEnabled) {
-                        ShellSettings.Settings.navigationPanelEnabled = !checked;
+                    if (checked != !kcm.Settings.navigationPanelEnabled) {
+                        kcm.Settings.navigationPanelEnabled = !checked;
+                        kcm.Settings.save();
                     }
                 }
             }
@@ -129,10 +134,11 @@ KCM.SimpleKCM {
                 visible: !gestureDelegate.checked
                 text: i18n("Always show keyboard toggle")
                 description: i18n("Whether to always show the keyboard toggle button on the navigation panel.")
-                checked: ShellSettings.Settings.alwaysShowKeyboardToggleOnNavigationPanel
+                checked: kcm.Settings.alwaysShowKeyboardToggleOnNavigationPanel
                 onCheckedChanged: {
-                    if (checked != ShellSettings.Settings.alwaysShowKeyboardToggleOnNavigationPanel) {
-                        ShellSettings.Settings.alwaysShowKeyboardToggleOnNavigationPanel = checked;
+                    if (checked != kcm.Settings.alwaysShowKeyboardToggleOnNavigationPanel) {
+                        kcm.Settings.alwaysShowKeyboardToggleOnNavigationPanel = checked;
+                        kcm.Settings.save();
                     }
                 }
             }
@@ -161,15 +167,15 @@ KCM.SimpleKCM {
                 text: i18n("Top Left Drawer Mode")
                 description: i18n("Mode when opening from the top left.")
 
-                currentIndex: indexOfValue(ShellSettings.Settings.actionDrawerTopLeftMode)
+                currentIndex: indexOfValue(kcm.Settings.actionDrawerTopLeftMode)
                 model: ListModel {
                     // we can't use i18n with ListElement
                     Component.onCompleted: {
-                        append({"name": quickSettings.pinnedString, "value": ShellSettings.Settings.Pinned});
-                        append({"name": quickSettings.expandedString, "value": ShellSettings.Settings.Expanded});
+                        append({"name": quickSettings.pinnedString, "value": 0});//kcm.Settings.Pinned});
+                        append({"name": quickSettings.expandedString, "value": 1});//kcm.Settings.Expanded});
 
                         // indexOfValue doesn't bind to model changes unfortunately, set currentIndex manually here
-                        topLeftActionDrawerModeDelegate.currentIndex = topLeftActionDrawerModeDelegate.indexOfValue(ShellSettings.Settings.actionDrawerTopLeftMode)
+                        topLeftActionDrawerModeDelegate.currentIndex = topLeftActionDrawerModeDelegate.indexOfValue(kcm.Settings.actionDrawerTopLeftMode)
                     }
                 }
 
@@ -177,7 +183,10 @@ KCM.SimpleKCM {
                 valueRole: "value"
 
                 Component.onCompleted: dialog.parent = root
-                onCurrentValueChanged: ShellSettings.Settings.actionDrawerTopLeftMode = currentValue
+                onCurrentValueChanged: {
+                    kcm.Settings.actionDrawerTopLeftMode = currentValue
+                    kcm.Settings.save();
+                }
             }
 
             FormCard.FormDelegateSeparator { above: topLeftActionDrawerModeDelegate; below: topRightActionDrawerModeDelegate }
@@ -190,11 +199,11 @@ KCM.SimpleKCM {
                 model: ListModel {
                     // we can't use i18n with ListElement
                     Component.onCompleted: {
-                        append({"name": quickSettings.pinnedString, "value": ShellSettings.Settings.Pinned});
-                        append({"name": quickSettings.expandedString, "value": ShellSettings.Settings.Expanded});
+                        append({"name": quickSettings.pinnedString, "value": 0});//kcm.Settings.Pinned});
+                        append({"name": quickSettings.expandedString, "value": 1});//kcm.Settings.Expanded});
 
                         // indexOfValue doesn't bind to model changes unfortunately, set currentIndex manually here
-                        topRightActionDrawerModeDelegate.currentIndex = topRightActionDrawerModeDelegate.indexOfValue(ShellSettings.Settings.actionDrawerTopRightMode)
+                        topRightActionDrawerModeDelegate.currentIndex = topRightActionDrawerModeDelegate.indexOfValue(kcm.Settings.actionDrawerTopRightMode)
                     }
                 }
 
@@ -204,7 +213,10 @@ KCM.SimpleKCM {
                 Component.onCompleted: {
                     dialog.parent = root
                 }
-                onCurrentValueChanged: ShellSettings.Settings.actionDrawerTopRightMode = currentValue
+                onCurrentValueChanged: {
+                    kcm.Settings.actionDrawerTopRightMode = currentValue
+                    kcm.Settings.save();
+                }
             }
         }
     }

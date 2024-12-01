@@ -10,10 +10,10 @@ import org.kde.plasma.private.mobileshell.quicksettingsplugin as QS
 QS.QuickSetting {
     text: i18n("Docked Mode")
     icon: "preferences-desktop-display-randr"
-    enabled: ShellSettings.Settings.convergenceModeEnabled
+    enabled: ShellSettings.MobileShellSettings.convergenceModeEnabled
 
     function toggle() {
-        ShellSettings.Settings.convergenceModeEnabled = !ShellSettings.Settings.convergenceModeEnabled;
+        ShellSettings.MobileShellSettings.convergenceModeEnabled = !ShellSettings.MobileShellSettings.convergenceModeEnabled;
     }
 }
 
