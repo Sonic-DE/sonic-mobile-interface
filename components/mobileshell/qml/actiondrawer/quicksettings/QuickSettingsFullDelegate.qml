@@ -22,7 +22,7 @@ QuickSettingsDelegate {
     iconItem: icon
 
     // scale animation on press
-    zoomScale: (ShellSettings.Settings.animationsEnabled && mouseArea.pressed) ? 0.9 : 1
+    zoomScale: (ShellSettings.MobileShellSettings.animationsEnabled && mouseArea.pressed) ? 0.9 : 1
 
     background: Item {
         // very simple shadow for performance

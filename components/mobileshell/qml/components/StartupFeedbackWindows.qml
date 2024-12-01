@@ -62,7 +62,7 @@ Item {
                         backgroundParent.y = -realHeight/2 + startupFeedback.iconStartY - root.topMargin;
                     }
 
-                    if (ShellSettings.Settings.animationsEnabled) {
+                    if (ShellSettings.MobileShellSettings.animationsEnabled) {
                         openAnimComplex.restart();
                     } else {
                         openAnimSimple.restart();

@@ -211,9 +211,9 @@ MobileTaskSwitcherEffect::MobileTaskSwitcherEffect()
     qmlRegisterSingletonType<MobileTaskSwitcherState>(uri, 1, 0, "TaskSwitcherState", [this](QQmlEngine *, QJSEngine *) -> QObject * {
         return m_taskSwitcherState;
     });
-    qmlRegisterSingletonType<MobileShellSettings>("org.kde.plasma.private.mobileshell.shellsettingsplugin", 1, 0, "MobileShellSettings", [this](QQmlEngine *, QJSEngine *) -> QObject * {
-        return m_shellSettings;
-    });
+    //qmlRegisterSingletonType<MobileShellSettings>("org.kde.plasma.private.mobileshell.shellsettingsplugin", 1, 0, "MobileShellSettings", [this](QQmlEngine *, QJSEngine *) -> QObject * {
+    //    return m_shellSettings;
+    //});
 
     std::cout << "hello? " << m_shellSettings->dateInStatusBar() << std::endl;
     connect(m_shellSettings, &MobileShellSettings::dateInStatusBarChanged, this, [this]() {

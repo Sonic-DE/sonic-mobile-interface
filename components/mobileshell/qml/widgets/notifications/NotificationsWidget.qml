@@ -145,7 +145,7 @@ Item {
 
         property var pendingNotificationWithAction
 
-        readonly property int animationDuration: ShellSettings.Settings.animationsEnabled ? Kirigami.Units.longDuration : 0
+        readonly property int animationDuration: ShellSettings.MobileShellSettings.animationsEnabled ? Kirigami.Units.longDuration : 0
 
         // If a screen overflow occurs, fix height in order to maintain tool buttons in place.
         readonly property bool listOverflowing: contentItem.childrenRect.height + toolButtons.height + spacing >= root.height

@@ -28,7 +28,7 @@ target_link_libraries(shellsettingsplugin
 
 ecm_add_qml_module(shellsettingsplugin
     URI org.kde.plasma.private.mobileshell.shellsettingsplugin
-    CLASS_NAME MobileShellSettings
+    CLASS_NAME Settings
     GENERATE_PLUGIN_SOURCE
 )
 ecm_finalize_qml_module(shellsettingsplugin)

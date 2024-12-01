@@ -42,10 +42,7 @@ RowLayout {
 
     PlasmaComponents.Label {
         id: date
-        visible: shellSettings.dateInStatusBar && !root.showSecondRow
-        Component.onCompleted: {
-            console.warn("clock", ShellSettings.dateInStatusBar);
-        }
+        visible: ShellSettings.MobileShellSettings.dateInStatusBar && !root.showSecondRow
 
         text: Qt.formatDate(source.data.Local.DateTime, "ddd. MMMM d")
         color: Kirigami.Theme.textColor

@@ -40,10 +40,10 @@ KCM.SimpleKCM {
                 id: animationsSwitch
                 text: i18n("Animations")
                 description: i18n("If this is off, animations will be reduced as much as possible.")
-                checked: ShellSettings.Settings.animationsEnabled
+                checked: kcm.Settings.animationsEnabled
                 onCheckedChanged: {
-                    if (checked != ShellSettings.Settings.animationsEnabled) {
-                        ShellSettings.Settings.animationsEnabled = checked;
+                    if (checked != kcm.Settings.animationsEnabled) {
+                        kcm.Settings.animationsEnabled = checked;
                     }
                 }
             }
@@ -101,7 +101,10 @@ KCM.SimpleKCM {
                 valueRole: "value"
 
                 Component.onCompleted: dialog.parent = root
-                onCurrentValueChanged: kcm.Settings.statusBarScaleFactor = currentValue
+                onCurrentValueChanged: {
+                    kcm.Settings.statusBarScaleFactor = currentValue
+                    kcm.Settings.save();
+                }
             }
 
         }
@@ -119,6 +122,7 @@ KCM.SimpleKCM {
                 onCheckedChanged: {
                     if (checked != !kcm.Settings.navigationPanelEnabled) {
                         kcm.Settings.navigationPanelEnabled = !checked;
+                        kcm.Settings.save();
                     }
                 }
             }
@@ -134,6 +138,7 @@ KCM.SimpleKCM {
                 onCheckedChanged: {
                     if (checked != kcm.Settings.alwaysShowKeyboardToggleOnNavigationPanel) {
                         kcm.Settings.alwaysShowKeyboardToggleOnNavigationPanel = checked;
+                        kcm.Settings.save();
                     }
                 }
             }
@@ -166,8 +171,8 @@ KCM.SimpleKCM {
                 model: ListModel {
                     // we can't use i18n with ListElement
                     Component.onCompleted: {
-                        append({"name": quickSettings.pinnedString, "value": kcm.Settings.Pinned});
-                        append({"name": quickSettings.expandedString, "value": kcm.Settings.Expanded});
+                        append({"name": quickSettings.pinnedString, "value": 0});//kcm.Settings.Pinned});
+                        append({"name": quickSettings.expandedString, "value": 1});//kcm.Settings.Expanded});
 
                         // indexOfValue doesn't bind to model changes unfortunately, set currentIndex manually here
                         topLeftActionDrawerModeDelegate.currentIndex = topLeftActionDrawerModeDelegate.indexOfValue(kcm.Settings.actionDrawerTopLeftMode)
@@ -178,7 +183,10 @@ KCM.SimpleKCM {
                 valueRole: "value"
 
                 Component.onCompleted: dialog.parent = root
-                onCurrentValueChanged: kcm.Settings.actionDrawerTopLeftMode = currentValue
+                onCurrentValueChanged: {
+                    kcm.Settings.actionDrawerTopLeftMode = currentValue
+                    kcm.Settings.save();
+                }
             }
 
             FormCard.FormDelegateSeparator { above: topLeftActionDrawerModeDelegate; below: topRightActionDrawerModeDelegate }
@@ -191,8 +199,8 @@ KCM.SimpleKCM {
                 model: ListModel {
                     // we can't use i18n with ListElement
                     Component.onCompleted: {
-                        append({"name": quickSettings.pinnedString, "value": kcm.Settings.Pinned});
-                        append({"name": quickSettings.expandedString, "value": kcm.Settings.Expanded});
+                        append({"name": quickSettings.pinnedString, "value": 0});//kcm.Settings.Pinned});
+                        append({"name": quickSettings.expandedString, "value": 1});//kcm.Settings.Expanded});
 
                         // indexOfValue doesn't bind to model changes unfortunately, set currentIndex manually here
                         topRightActionDrawerModeDelegate.currentIndex = topRightActionDrawerModeDelegate.indexOfValue(kcm.Settings.actionDrawerTopRightMode)
@@ -205,7 +213,10 @@ KCM.SimpleKCM {
                 Component.onCompleted: {
                     dialog.parent = root
                 }
-                onCurrentValueChanged: kcm.Settings.actionDrawerTopRightMode = currentValue
+                onCurrentValueChanged: {
+                    kcm.Settings.actionDrawerTopRightMode = currentValue
+                    kcm.Settings.save();
+                }
             }
         }
     }
