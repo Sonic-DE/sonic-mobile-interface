@@ -200,7 +200,7 @@ MobileTaskSwitcherEffect::MobileTaskSwitcherEffect()
     , m_border{new EffectTouchBorder{m_effectState}}
     , m_toggleAction{std::make_unique<QAction>()}
     , m_shutdownTimer{new QTimer{this}}
-    //, m_shellSettings{MobileShellSettings::self()}
+    , m_shellSettings{MobileShellSettings::self()}
 {
     std::cout << "task switcher constructor" << std::endl;
     const char *uri = "org.kde.private.mobileshell.taskswitcher";
@@ -211,23 +211,23 @@ MobileTaskSwitcherEffect::MobileTaskSwitcherEffect()
     qmlRegisterSingletonType<MobileTaskSwitcherState>(uri, 1, 0, "TaskSwitcherState", [this](QQmlEngine *, QJSEngine *) -> QObject * {
         return m_taskSwitcherState;
     });
-    //qmlRegisterSingletonType<MobileShellSettings>("org.kde.plasma.private.mobileshell.shellsettingsplugin", 1, 0, "MobileShellSettings", [this](QQmlEngine *, QJSEngine *) -> QObject * {
-    //    return &m_shellSettings;
-    //});
+    qmlRegisterSingletonType<MobileShellSettings>("org.kde.plasma.private.mobileshell.shellsettingsplugin", 1, 0, "MobileShellSettings", [this](QQmlEngine *, QJSEngine *) -> QObject * {
+        return m_shellSettings;
+    });
 
-    std::cout << "hello? " << m_shellSettings.dateInStatusBar() << std::endl;
-    connect(&m_shellSettings, &MobileShellSettings::dateInStatusBarChanged, this, [this]() {
+    std::cout << "hello? " << m_shellSettings->dateInStatusBar() << std::endl;
+    connect(m_shellSettings, &MobileShellSettings::dateInStatusBarChanged, this, [this]() {
         std::cout << "date in status bar changed triggered" << std::endl;
-        if (m_shellSettings.dateInStatusBar()) {
+        if (m_shellSettings->dateInStatusBar()) {
             qWarning() << "date in status bar enabled";
             reconfigure(ReconfigureFlag::ReconfigureAll);
         } else {
             qWarning() << "date in status bar disabled";
         }
     });
-   connect(&m_shellSettings, &MobileShellSettings::navigationPanelEnabledChanged, this, [this]() {
+   connect(m_shellSettings, &MobileShellSettings::navigationPanelEnabledChanged, this, [this]() {
         std::cout << "nav panel enabled changed triggered" << std::endl;
-        if (m_shellSettings.navigationPanelEnabled()) {
+        if (m_shellSettings->navigationPanelEnabled()) {
             qWarning() << "navigation panel enabled";
             reconfigure(ReconfigureFlag::ReconfigureAll);
         } else {

@@ -18,9 +18,9 @@ MobileShell.SwipeArea {
 
     required property ActionDrawer actionDrawer
 
-    ShellSettings.MobileShellSettings {
-        id: shellSettings
-    }
+    //ShellSettings.MobileShellSettings {
+    //    id: shellSettings
+    //}
 
     function startSwipe() {
         if (actionDrawer.intendedToBeVisible) {
@@ -40,7 +40,7 @@ MobileShell.SwipeArea {
     function startSwipeWithPoint(point) {
         // if the user swiped from the top left, otherwise it's from the top right
         if (point.x < root.width / 2) {
-            console.warn("hello!", shellSettings.Settings.ActionDrawerMode.Pinned)
+            console.warn("hello!", JSON.stringify(ShellSettings.MobileShellSettings))
             actionDrawer.openToPinnedMode = shellSettings.actionDrawerTopLeftMode == 0//ShellSettings.Settings.Pinned;
         } else {
             actionDrawer.openToPinnedMode = shellSettings.actionDrawerTopRightMode == 0//ShellSettings.Settings.Pinned;

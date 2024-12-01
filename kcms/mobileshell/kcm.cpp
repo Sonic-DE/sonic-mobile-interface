@@ -20,10 +20,10 @@ class KCMMobileShell : public KQuickManagedConfigModule
 public:
     KCMMobileShell(QObject *parent, const KPluginMetaData &data)
         : KQuickManagedConfigModule(parent, data),
-          m_config(new MobileShellSettings(this))
+          m_config(MobileShellSettings::self())//new MobileShellSettings(this))
     {
         setButtons({});
-        qmlRegisterAnonymousType<MobileShellSettings>("Settings", 1);
+        //qmlRegisterAnonymousType<MobileShellSettings>("Settings", 1);
     }
 
     MobileShellSettings *config() const {

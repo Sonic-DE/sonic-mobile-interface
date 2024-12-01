@@ -21,9 +21,13 @@ RowLayout {
     required property int fontPixelSize
     required property P5Support.DataSource source
 
-    ShellSettings.MobileShellSettings {
-        id: shellSettings
-    }
+    //ShellSettings.MobileShellSettings {
+    //    id: shellSettings
+
+    //    onDateInStatusBarChanged: {
+    //        console.warn("date in status bar changed");
+    //    }
+    //}
 
     PlasmaComponents.Label {
         id: clock
@@ -39,6 +43,9 @@ RowLayout {
     PlasmaComponents.Label {
         id: date
         visible: shellSettings.dateInStatusBar && !root.showSecondRow
+        Component.onCompleted: {
+            console.warn("clock", ShellSettings.dateInStatusBar);
+        }
 
         text: Qt.formatDate(source.data.Local.DateTime, "ddd. MMMM d")
         color: Kirigami.Theme.textColor

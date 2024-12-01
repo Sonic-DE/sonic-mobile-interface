@@ -40,11 +40,10 @@ KCM.SimpleKCM {
                 id: animationsSwitch
                 text: i18n("Animations")
                 description: i18n("If this is off, animations will be reduced as much as possible.")
-                checked: kcm.Settings.animationsEnabled
+                checked: ShellSettings.Settings.animationsEnabled
                 onCheckedChanged: {
-                    if (checked != kcm.Settings.animationsEnabled) {
-                        kcm.Settings.animationsEnabled = checked;
-                        kcm.Settings.save()
+                    if (checked != ShellSettings.Settings.animationsEnabled) {
+                        ShellSettings.Settings.animationsEnabled = checked;
                     }
                 }
             }
