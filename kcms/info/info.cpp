@@ -9,7 +9,9 @@
 #include <KLocalizedString>
 #include <KPluginFactory>
 #include <QClipboard>
+#include <QFile>
 #include <QGuiApplication>
+#include <QJsonArray>
 
 K_PLUGIN_CLASS_WITH_JSON(Info, "kcm_mobile_info.json")
 
@@ -20,6 +22,12 @@ Info::Info(QObject *parent, const KPluginMetaData &metaData)
     , m_hardwareInfo(new HardwareInfo(this))
 {
     setButtons({});
+
+    QFile vendorInfoFile;
+
+    vendorInfoFile.setFileName("/home/sebas/kde/vendorinfo.json");
+    vendorInfoFile.open(QIODevice::ReadOnly);
+    m_vendorInfo = QJsonDocument::fromJson(vendorInfoFile.readAll());
 
     qDebug() << "Info module loaded.";
 }
@@ -60,6 +68,16 @@ SoftwareInfo *Info::softwareInfo() const
 HardwareInfo *Info::hardwareInfo() const
 {
     return m_hardwareInfo;
+}
+
+QString Info::vendorInfoTitle() const
+{
+    return m_vendorInfo[QStringLiteral("Title")].toString();
+}
+
+QVariantList Info::vendorInfo() const
+{
+    return m_vendorInfo[QStringLiteral("Content")].toArray().toVariantList();
 }
 
 #include "info.moc"
