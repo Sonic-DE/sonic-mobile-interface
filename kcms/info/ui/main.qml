@@ -122,5 +122,24 @@ KCM.SimpleKCM {
                 }
             }
         }
+
+        FormCard.FormHeader {
+            visible: kcm.vendorInfoTitle !== ""
+            title: kcm.vendorInfoTitle
+        }
+
+        FormCard.FormCard {
+            visible: kcm.vendorInfoTitle !== ""
+            Repeater {
+                model: kcm.vendorInfo
+                ColumnLayout {
+                    FormCard.FormTextDelegate {
+                        text: modelData.Key
+                        description: modelData.Value
+                    }
+                    FormCard.FormDelegateSeparator {}
+                }
+            }
+        }
     }
 }
