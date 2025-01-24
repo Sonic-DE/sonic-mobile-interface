@@ -1,6 +1,3 @@
-// SPDX-FileCopyrightText: 2025 Sebastian Kŭgler <sebas@kde.org>
-// SPDX-License-Identifier: GPL-2.0-or-later
-
 import QtQuick
 import QtQuick.Controls
 
@@ -12,6 +9,7 @@ Window {
     property real darkOpacity: 0.6
     property real translucentOpacity: 0.0
     property int unlockDuration: 400
+    property int bgMargin: 20
 
     flags: Qt.ToolTip | Qt.FramelessWindowHint | Qt.WA_TranslucentBackground
 
@@ -56,10 +54,10 @@ Window {
 
     Rectangle {
         id: background
-        property int m: 20
+        //property int m: 20
         anchors.fill: parent
-        anchors.margins: m
-        radius: m
+        anchors.margins: root.bgMargin
+        radius: root.bgMargin
         color: "#000000"
         opacity: translucentOpacity
         Behavior on opacity {
@@ -67,13 +65,49 @@ Window {
         }
     }
 
+    Rectangle {
+        id: locked_background
+
+        anchors.fill: parent
+        anchors.margins: root.bgMargin
+        radius: root.bgMargin
+        color: "#000000"
+        opacity: 0.0
+
+        Label {
+            id: lockText
+            anchors.centerIn: parent
+            // anchors.bottom: unlockSlider.top
+            //anchors.bottomMargin: unlockSlider.sliderHeight
+            font.pointSize: unlockSlider.sliderHeight / 3
+            text: "Touchscreen Locked"
+            color: "white"
+            // opacity: 0.0
+            // Behavior on opacity {
+            //     NumberAnimation { duration: fadeDuration / 2 }
+            // }
+        }
+    }
+
+    SequentialAnimation {
+        id: lockAnimation
+        NumberAnimation { target: locked_background; property: "opacity"; to: 0.0; duration: fadeDuration * 2 }
+        ParallelAnimation {
+            NumberAnimation { target: locked_background; property: "scale"; from: 1.2; to: 1.0; duration: fadeDuration * 2 }
+            NumberAnimation { target: locked_background; property: "opacity"; to: 0.8; duration: fadeDuration * 2 }
+        }
+        ParallelAnimation {
+            NumberAnimation { target: locked_background; property: "scale"; to: 2.5; duration: fadeDuration }
+            NumberAnimation { target: locked_background; property: "opacity"; to: 0.0; duration: fadeDuration }
+        }
+        //NumberAnimation { target: unlockText; property: "opacity"; to: 0; duration: fadeDuration / 2  }
+    }
+
     ParallelAnimation {
         id: unlockAnimation
         NumberAnimation { target: background; property: "opacity"; to: 0; duration: unlockDuration }
         NumberAnimation { target: background; property: "scale"; to: 0; duration: unlockDuration }
-
         NumberAnimation { target: unlockText; property: "opacity"; to: 0; duration: unlockDuration / 2  }
-
     }
 
     Timer {
@@ -98,7 +132,14 @@ Window {
             unlockSlider.value = 0
             unlockText.opacity = 0.0
 
-            Qt.quit();
+            console.log("Destroying LockTouchScreen.");
+            root.visible = false;
+            console.log("rp: "+ root.parent);
+            if (root.parent != null) {
+                root.destroy();
+            } else {
+                Qt.quit();
+            }
         }
     }
 
@@ -178,6 +219,7 @@ Window {
         id: unlockText
         anchors.horizontalCenter: unlockSlider.horizontalCenter
         anchors.bottom: unlockSlider.top
+        //anchors.bottomMargin: unlockSlider.sliderHeight
         font.pointSize: unlockSlider.sliderHeight / 3
         text: "Unlocking."
         color: "white"
@@ -185,5 +227,11 @@ Window {
         Behavior on opacity {
             NumberAnimation { duration: fadeDuration / 2 }
         }
+    }
+
+    Component.onCompleted: {
+        console.log("Created LockTouchScreen.")
+        lockAnimation.running = true;
+
     }
 }
