@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: 2025 Sebastian Kŭgler <sebas@kde.org>
-// SPDX-License-Identifier: LGPL-2.0-or-later
+// SPDX-License-Identifier: GPL-2.0-or-later
 
 import QtQuick
 
