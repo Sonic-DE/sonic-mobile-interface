@@ -21,3 +21,5 @@ posix-script-compliance:
     - shellcheck -x -s sh bin/startplasmamobile.in
     - shellcheck -x -s sh bin/startplasmamobile.in
     - shellcheck -x --exclude=1091 -s sh bin/startplasmamobile-dev.sh.cmake # ignore error from file not existing (given by cmake)
+      - /gitlab-templates/xml-lint.yml
+      - /gitlab-templates/yaml-lint.yml
