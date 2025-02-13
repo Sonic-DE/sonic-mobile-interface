@@ -5,7 +5,9 @@
 
 #include "homescreen.h"
 
+#include <QEnableSharedFromThis>
 #include <QObject>
+#include <QSharedPointer>
 
 #include <Plasma/Applet>
 #include <PlasmaQuick/AppletQuickItem>
@@ -22,7 +24,7 @@ public:
 /**
  * @short Object that represents a widget on the homescreen.
  */
-class FolioWidget : public QObject
+class FolioWidget : public QObject, public QEnableSharedFromThis<FolioWidget>
 {
     Q_OBJECT
     Q_PROPERTY(int id READ id NOTIFY idChanged)
@@ -32,10 +34,12 @@ class FolioWidget : public QObject
     Q_PROPERTY(PlasmaQuick::AppletQuickItem *visualApplet READ visualApplet NOTIFY visualAppletChanged)
 
 public:
+    typedef QSharedPointer<FolioWidget> Ptr;
+
     FolioWidget(HomeScreen *parent = nullptr, int id = -1, int gridWidth = 0, int gridHeight = 0);
     FolioWidget(HomeScreen *parent, Plasma::Applet *applet, int gridWidth, int gridHeight);
 
-    static FolioWidget *fromJson(QJsonObject &obj, HomeScreen *parent);
+    static QSharedPointer<FolioWidget> fromJson(QJsonObject &obj, HomeScreen *parent);
     QJsonObject toJson() const;
 
     int id() const;
@@ -59,7 +63,7 @@ public:
     // query whether (row, column) is inside this widget, if it was at position (widgetRow, widgetColumn)
     bool isInBounds(int widgetRow, int widgetColumn, int row, int column);
 
-    bool overlapsWidget(int widgetRow, int widgetColumn, FolioWidget *otherWidget, int otherWidgetRow, int otherWidgetColumn);
+    bool overlapsWidget(int widgetRow, int widgetColumn, QSharedPointer<FolioWidget> otherWidget, int otherWidgetRow, int otherWidgetColumn);
 
     Plasma::Applet *applet() const;
     void setApplet(Plasma::Applet *applet);
