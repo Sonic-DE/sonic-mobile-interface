@@ -43,7 +43,7 @@ public Q_SLOTS:
 
 protected:
     HomeScreen *m_homeScreen{nullptr};
-    QList<FolioDelegate *> m_delegates;
+    QList<QSharedPointer<FolioDelegate>> m_delegates;
 };
 
 class ApplicationListSearchModel : public QSortFilterProxyModel

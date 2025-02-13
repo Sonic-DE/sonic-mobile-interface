@@ -55,7 +55,7 @@ void ApplicationListModel::load()
 
     m_delegates.clear();
 
-    QList<FolioDelegate *> unorderedList;
+    QList<FolioDelegate::Ptr> unorderedList;
 
     auto filter = [blacklist](const KService::Ptr &service) -> bool {
         if (service->noDisplay()) {
@@ -76,12 +76,12 @@ void ApplicationListModel::load()
     const KService::List apps = KApplicationTrader::query(filter);
 
     for (const KService::Ptr &service : apps) {
-        FolioApplication *app = new FolioApplication{m_homeScreen, service};
-        FolioDelegate *delegate = new FolioDelegate{app, m_homeScreen};
+        FolioApplication::Ptr app = FolioApplication::Ptr::create(m_homeScreen, service);
+        FolioDelegate::Ptr delegate = FolioDelegate::Ptr::create(app, m_homeScreen);
         unorderedList << delegate;
     }
 
-    std::sort(unorderedList.begin(), unorderedList.end(), [](FolioDelegate *a1, FolioDelegate *a2) {
+    std::sort(unorderedList.begin(), unorderedList.end(), [](FolioDelegate::Ptr &a1, FolioDelegate::Ptr &a2) {
         return a1->application()->name().compare(a2->application()->name(), Qt::CaseInsensitive) < 0;
     });
 
@@ -96,12 +96,12 @@ QVariant ApplicationListModel::data(const QModelIndex &index, int role) const
         return QVariant();
     }
 
-    FolioDelegate *delegate = m_delegates.at(index.row());
+    FolioDelegate::Ptr delegate = m_delegates.at(index.row());
 
     switch (role) {
     case Qt::DisplayRole:
     case DelegateRole:
-        return QVariant::fromValue(delegate);
+        return QVariant::fromValue(delegate.data());
     case NameRole:
         if (!delegate->application()) {
             return QVariant();
