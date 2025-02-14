@@ -30,6 +30,8 @@ int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
 
+    LOGGING_CATEGORY();
+
     auto parser = createParser();
     parser->process(app);
 
