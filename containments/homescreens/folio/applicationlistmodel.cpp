@@ -30,9 +30,7 @@ ApplicationListModel::ApplicationListModel(HomeScreen *parent)
     m_reloadAppsTimer->setInterval(100ms);
     connect(m_reloadAppsTimer, &QTimer::timeout, this, &ApplicationListModel::sycocaDbChanged);
 
-    connect(KSycoca::self(), &KSycoca::databaseChanged, this, [this]() {
-        m_reloadAppsTimer->start();
-    });
+    connect(KSycoca::self(), &KSycoca::databaseChanged, m_reloadAppsTimer, &QTimer::start);
 
     // initialize wayland window checking
     KWayland::Client::ConnectionThread *connection = KWayland::Client::ConnectionThread::fromApplication(this);
