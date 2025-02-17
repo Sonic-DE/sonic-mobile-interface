@@ -79,7 +79,7 @@ QVariant PageModel::data(const QModelIndex &index, int role) const
 
     switch (role) {
     case DelegateRole:
-        return QVariant::fromValue(m_delegates.at(index.row()).data());
+        return QVariant::fromValue(m_delegates.at(index.row()).get());
     }
 
     return QVariant();
@@ -165,7 +165,7 @@ bool PageModel::canAddDelegate(int row, int column, FolioDelegate *delegate)
 
 bool PageModel::addDelegate(FolioPageDelegate::Ptr delegate)
 {
-    if (!canAddDelegate(delegate->row(), delegate->column(), delegate.data())) {
+    if (!canAddDelegate(delegate->row(), delegate->column(), delegate.get())) {
         return false;
     }
 
@@ -208,11 +208,11 @@ void PageModel::moveAndResizeWidgetDelegate(FolioPageDelegate *delegate, int new
     }
 
     // Test if we can add the delegate with new size and position
-    FolioWidget::Ptr testWidget = FolioWidget::Ptr::create(m_homeScreen, 0, 0, 0);
+    FolioWidget::Ptr testWidget = std::make_shared<FolioWidget>(m_homeScreen, 0, 0, 0);
     // We have to use setGridWidth and setGridHeight since it takes into account the page orientation
     testWidget->setGridWidth(newGridWidth);
     testWidget->setGridHeight(newGridHeight);
-    FolioDelegate::Ptr testDelegate = FolioDelegate::Ptr::create(testWidget, m_homeScreen);
+    FolioDelegate::Ptr testDelegate = std::make_shared<FolioDelegate>(testWidget, m_homeScreen);
 
     // testWidget and testDelegate will get cleaned up automatically since are smart pointers
 
@@ -220,7 +220,7 @@ void PageModel::moveAndResizeWidgetDelegate(FolioPageDelegate *delegate, int new
     // which is fine, because the GUI isn't multithreaded
     int index = m_delegates.indexOf(delegate->sharedPageDelegate());
     m_delegates.remove(index); // remove the delegate temporarily, since we don't want it to check overlapping of itself
-    bool canAdd = canAddDelegate(newRow, newColumn, testDelegate.data());
+    bool canAdd = canAddDelegate(newRow, newColumn, testDelegate.get());
     m_delegates.insert(index, delegate->sharedPageDelegate()); // add it back
 
     if (!canAdd) {
@@ -241,9 +241,9 @@ bool PageModel::isPageEmpty()
 void PageModel::connectSaveRequests(FolioDelegate::Ptr delegate)
 {
     if (delegate->type() == FolioDelegate::Folder && delegate->folder()) {
-        connect(delegate->folder().data(), &FolioApplicationFolder::saveRequested, this, &PageModel::save);
+        connect(delegate->folder().get(), &FolioApplicationFolder::saveRequested, this, &PageModel::save);
     } else if (delegate->type() == FolioDelegate::Widget && delegate->widget()) {
-        connect(delegate->widget().data(), &FolioWidget::saveRequested, this, &PageModel::save);
+        connect(delegate->widget().get(), &FolioWidget::saveRequested, this, &PageModel::save);
     }
 }
 

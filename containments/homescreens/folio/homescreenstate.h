@@ -208,9 +208,9 @@ public:
     int folderGridLength() const;
     void calculateFolderGridLength();
 
-    QSharedPointer<FolioApplicationFolder> currentFolder() const;
+    std::shared_ptr<FolioApplicationFolder> currentFolder() const;
     FolioApplicationFolder *currentFolderRaw() const;
-    void setCurrentFolder(QSharedPointer<FolioApplicationFolder> folder);
+    void setCurrentFolder(std::shared_ptr<FolioApplicationFolder> folder);
 
     // the progress for the opening of the settings view
     qreal settingsOpenProgress();
@@ -390,7 +390,7 @@ private:
     qreal m_folderPageContentWidth{0};
     qreal m_folderPageContentHeight{0};
     qreal m_folderOpenProgress{0};
-    QSharedPointer<FolioApplicationFolder> m_currentFolder{nullptr};
+    std::shared_ptr<FolioApplicationFolder> m_currentFolder{nullptr};
     int m_folderGridLength{0};
 
     qreal m_settingsOpenProgress{0};

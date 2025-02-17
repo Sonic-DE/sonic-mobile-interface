@@ -29,7 +29,7 @@ public:
         ShownRole,
     };
 
-    PageModel(QList<QSharedPointer<FolioPageDelegate>> delegates = QList<QSharedPointer<FolioPageDelegate>>{},
+    PageModel(QList<std::shared_ptr<FolioPageDelegate>> delegates = QList<std::shared_ptr<FolioPageDelegate>>{},
               QObject *parent = nullptr,
               HomeScreen *m_homeScreen = nullptr);
     ~PageModel();
@@ -45,8 +45,8 @@ public:
     Q_INVOKABLE void removeDelegate(int row, int col);
     Q_INVOKABLE void removeDelegate(int index);
     Q_INVOKABLE bool canAddDelegate(int row, int column, FolioDelegate *delegate);
-    bool addDelegate(QSharedPointer<FolioPageDelegate> delegate);
-    QSharedPointer<FolioPageDelegate> getDelegate(int row, int col);
+    bool addDelegate(std::shared_ptr<FolioPageDelegate> delegate);
+    std::shared_ptr<FolioPageDelegate> getDelegate(int row, int col);
 
     Q_INVOKABLE void moveAndResizeWidgetDelegate(FolioPageDelegate *delegate, int newRow, int newColumn, int newGridWidth, int newGridHeight);
 
@@ -59,8 +59,8 @@ Q_SIGNALS:
     void saveRequested();
 
 private:
-    void connectSaveRequests(QSharedPointer<FolioDelegate> delegate);
+    void connectSaveRequests(std::shared_ptr<FolioDelegate> delegate);
 
     HomeScreen *m_homeScreen{nullptr};
-    QList<QSharedPointer<FolioPageDelegate>> m_delegates;
+    QList<std::shared_ptr<FolioPageDelegate>> m_delegates;
 };

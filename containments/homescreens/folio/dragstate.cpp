@@ -116,7 +116,7 @@ FolioApplicationFolder::Ptr DelegateDragPosition::folder() const
 
 FolioApplicationFolder *DelegateDragPosition::folderRaw() const
 {
-    return m_folder.data();
+    return m_folder.get();
 }
 
 void DelegateDragPosition::setFolder(FolioApplicationFolder::Ptr folder)
@@ -209,7 +209,7 @@ FolioDelegate::Ptr DragState::dropDelegate() const
 
 FolioDelegate *DragState::dropDelegateRaw() const
 {
-    return m_dropDelegate.data();
+    return m_dropDelegate.get();
 }
 
 void DragState::setDropDelegate(FolioDelegate::Ptr dropDelegate)
@@ -440,7 +440,7 @@ void DragState::onDelegateDragPositionOverPageViewChanged()
     PageModel *pageModel = m_homeScreen->pageListModel()->getPage(page);
     if (pageModel) {
         // get delegate being hovered over
-        QSharedPointer<FolioDelegate> delegate = pageModel->getDelegate(row, column);
+        FolioDelegate::Ptr delegate = pageModel->getDelegate(row, column);
 
         // check delegate is a folder and the drop delegate is an app
         if (delegate && delegate->type() == FolioDelegate::Folder && m_dropDelegate && m_dropDelegate->type() == FolioDelegate::Application) {
@@ -505,8 +505,8 @@ void DragState::onDelegateDragFromAppDrawerStarted(QString storageId)
 {
     // fetch delegate at start position
     if (KService::Ptr service = KService::serviceByStorageId(storageId)) {
-        FolioApplication::Ptr app = FolioApplication::Ptr::create(m_homeScreen, service);
-        setDropDelegate(FolioDelegate::Ptr::create(app, m_homeScreen));
+        FolioApplication::Ptr app = std::make_shared<FolioApplication>(m_homeScreen, service);
+        setDropDelegate(std::make_shared<FolioDelegate>(app, m_homeScreen));
     } else {
         setDropDelegate(nullptr);
     }
@@ -521,7 +521,7 @@ void DragState::onDelegateDragFromFolderStarted(FolioApplicationFolder *folder, 
     setDropDelegate(folder->applications()->getDelegate(position));
 
     // set start location
-    m_startPosition->setFolder(folder->sharedFromThis());
+    m_startPosition->setFolder(folder->shared_from_this());
     m_startPosition->setFolderPosition(position);
     m_startPosition->setLocation(DelegateDragPosition::Folder);
 }
@@ -530,8 +530,8 @@ void DragState::onDelegateDragFromWidgetListStarted(QString appletPluginId)
 {
     // default widget has dimensions of 1x1, and id of -1
     m_createdAppletPluginId = appletPluginId;
-    FolioWidget::Ptr widget = QSharedPointer<FolioWidget>{new FolioWidget(m_homeScreen, -1, 1, 1)};
-    setDropDelegate(FolioDelegate::Ptr::create(widget, m_homeScreen));
+    FolioWidget::Ptr widget = std::make_shared<FolioWidget>(m_homeScreen, -1, 1, 1);
+    setDropDelegate(std::make_shared<FolioDelegate>(widget, m_homeScreen));
 
     // set start location
     m_startPosition->setLocation(DelegateDragPosition::WidgetList);
@@ -667,7 +667,7 @@ void DragState::onOpenFolderTimerFinished()
     }
 
     // open the folder
-    m_state->openFolder(screenPosition.x(), screenPosition.y(), folder.data());
+    m_state->openFolder(screenPosition.x(), screenPosition.y(), folder.get());
 }
 
 void DragState::onLeaveFolderTimerFinished()
@@ -792,7 +792,7 @@ bool DragState::createDropPositionDelegate()
         int column = m_candidateDropPosition->pageColumn();
 
         // delegate to add
-        FolioPageDelegate::Ptr delegate = FolioPageDelegate::Ptr::create(row, column, m_dropDelegate, m_homeScreen);
+        FolioPageDelegate::Ptr delegate = std::make_shared<FolioPageDelegate>(row, column, m_dropDelegate, m_homeScreen);
 
         // delegate that exists at the drop position
         FolioPageDelegate::Ptr existingDelegate = page->getDelegate(row, column);
@@ -811,10 +811,10 @@ bool DragState::createDropPositionDelegate()
                 } else if (existingDelegate->type() == FolioDelegate::Application && !isStartPositionEqualDropPosition()) {
                     // create a folder from the two apps
 
-                    FolioApplicationFolder::Ptr folder = FolioApplicationFolder::Ptr::create(m_homeScreen, DEFAULT_FOLDER_NAME);
+                    FolioApplicationFolder::Ptr folder = std::make_shared<FolioApplicationFolder>(m_homeScreen, DEFAULT_FOLDER_NAME);
                     folder->addDelegate(delegate, 0);
                     folder->addDelegate(existingDelegate, 0);
-                    FolioPageDelegate::Ptr folderDelegate = FolioPageDelegate::Ptr::create(row, column, folder, m_homeScreen);
+                    FolioPageDelegate::Ptr folderDelegate = std::make_shared<FolioPageDelegate>(row, column, folder, m_homeScreen);
 
                     page->removeDelegate(row, column);
                     page->addDelegate(folderDelegate);
@@ -854,10 +854,10 @@ bool DragState::createDropPositionDelegate()
                 } else if (existingDelegate->type() == FolioDelegate::Application && !isStartPositionEqualDropPosition()) {
                     // create a folder from the two apps
 
-                    FolioApplicationFolder::Ptr folder = FolioApplicationFolder::Ptr::create(m_homeScreen, DEFAULT_FOLDER_NAME);
+                    FolioApplicationFolder::Ptr folder = std::make_shared<FolioApplicationFolder>(m_homeScreen, DEFAULT_FOLDER_NAME);
                     folder->addDelegate(m_dropDelegate, 0);
                     folder->addDelegate(existingDelegate, 0);
-                    FolioDelegate::Ptr folderDelegate = FolioDelegate::Ptr::create(folder, m_homeScreen);
+                    FolioDelegate::Ptr folderDelegate = std::make_shared<FolioDelegate>(folder, m_homeScreen);
 
                     m_homeScreen->favouritesModel()->removeEntry(m_candidateDropPosition->favouritesPosition());
                     m_homeScreen->favouritesModel()->addEntry(m_candidateDropPosition->favouritesPosition(), folderDelegate);
