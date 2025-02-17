@@ -21,11 +21,11 @@ FolioApplicationFolder::Ptr FolioApplicationFolder::fromJson(QJsonObject &obj, H
     QList<FolioApplication::Ptr> apps;
     for (auto storageId : obj[QStringLiteral("apps")].toArray()) {
         if (KService::Ptr service = KService::serviceByStorageId(storageId.toString())) {
-            apps.append(FolioApplication::Ptr::create(parent, service));
+            apps.append(std::make_shared<FolioApplication>(parent, service));
         }
     }
 
-    FolioApplicationFolder::Ptr folder = FolioApplicationFolder::Ptr::create(parent, name);
+    FolioApplicationFolder::Ptr folder = std::make_shared<FolioApplicationFolder>(parent, name);
     folder->setApplications(apps);
     return folder;
 }
@@ -69,7 +69,7 @@ QList<FolioApplication *> FolioApplicationFolder::appPreviews()
         if (!m_delegates[i].delegate->application()) {
             continue;
         }
-        previews.push_back(m_delegates[i].delegate->application().data());
+        previews.push_back(m_delegates[i].delegate->application().get());
     }
     return previews;
 }
@@ -166,7 +166,7 @@ QVariant ApplicationFolderModel::data(const QModelIndex &index, int role) const
 
     switch (role) {
     case DelegateRole:
-        return QVariant::fromValue(m_folder->m_delegates.at(index.row()).delegate.data());
+        return QVariant::fromValue(m_folder->m_delegates.at(index.row()).delegate.get());
     case columnIndexRole:
         return QVariant::fromValue(m_folder->m_delegates.at(index.row()).columnIndex);
     case rowIndexRole:
@@ -238,14 +238,14 @@ bool ApplicationFolderModel::addDelegate(FolioDelegate::Ptr delegate, int index)
 
     if (index == m_folder->m_delegates.size()) {
         beginInsertRows(QModelIndex(), index, index);
-        m_folder->m_delegates.append({delegate, 0, 0});
+        m_folder->m_delegates.append({delegate, 0, 0, 0});
         evaluateDelegateIndexes(false);
         endInsertRows();
     } else if (m_folder->m_delegates[index].delegate->type() == FolioDelegate::None) {
         replaceGhostEntry(delegate);
     } else {
         beginInsertRows(QModelIndex(), index, index);
-        m_folder->m_delegates.insert(index, {delegate, 0, 0});
+        m_folder->m_delegates.insert(index, {delegate, 0, 0, 0});
         evaluateDelegateIndexes(false);
         endInsertRows();
     }
@@ -328,7 +328,7 @@ void ApplicationFolderModel::setGhostEntry(int index)
     }
 
     if (!ghost) {
-        ghost = FolioDelegate::Ptr::create(m_folder->m_homeScreen);
+        ghost = std::make_shared<FolioDelegate>(m_folder->m_homeScreen);
     }
 
     // add empty delegate at new position

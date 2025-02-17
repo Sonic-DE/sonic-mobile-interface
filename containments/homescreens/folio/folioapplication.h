@@ -3,11 +3,9 @@
 
 #pragma once
 
-#include <QEnableSharedFromThis>
 #include <QJsonObject>
 #include <QObject>
 #include <QQuickItem>
-#include <QSharedPointer>
 #include <QString>
 
 #include <KIO/ApplicationLauncherJob>
@@ -25,7 +23,7 @@ class HomeScreen;
 /**
  * @short Object that represents an application.
  */
-class FolioApplication : public QObject, public QEnableSharedFromThis<FolioApplication>
+class FolioApplication : public QObject, public std::enable_shared_from_this<FolioApplication>
 {
     Q_OBJECT
     Q_PROPERTY(bool running READ running NOTIFY windowChanged)
@@ -34,7 +32,7 @@ class FolioApplication : public QObject, public QEnableSharedFromThis<FolioAppli
     Q_PROPERTY(QString storageId READ storageId NOTIFY storageIdChanged)
 
 public:
-    typedef QSharedPointer<FolioApplication> Ptr;
+    typedef std::shared_ptr<FolioApplication> Ptr;
 
     FolioApplication(HomeScreen *parent = nullptr, KService::Ptr service = QExplicitlySharedDataPointer<KService>{nullptr});
 

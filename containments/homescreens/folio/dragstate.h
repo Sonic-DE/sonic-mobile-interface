@@ -53,9 +53,9 @@ public:
     void setFolderPosition(int folderPosition);
 
     // TODO: what if the folder becomes invalid? we need to clear it
-    QSharedPointer<FolioApplicationFolder> folder() const;
+    std::shared_ptr<FolioApplicationFolder> folder() const;
     FolioApplicationFolder *folderRaw() const;
-    void setFolder(QSharedPointer<FolioApplicationFolder> folder);
+    void setFolder(std::shared_ptr<FolioApplicationFolder> folder);
 
 Q_SIGNALS:
     void locationChanged();
@@ -73,7 +73,7 @@ private:
     int m_pageColumn{0};
     int m_favouritesPosition{0};
     int m_folderPosition{0};
-    QSharedPointer<FolioApplicationFolder> m_folder{nullptr};
+    std::shared_ptr<FolioApplicationFolder> m_folder{nullptr};
 };
 
 Q_DECLARE_METATYPE(DelegateDragPosition);
@@ -91,9 +91,9 @@ public:
     DelegateDragPosition *candidateDropPosition() const;
     DelegateDragPosition *startPosition() const;
 
-    QSharedPointer<FolioDelegate> dropDelegate() const;
+    std::shared_ptr<FolioDelegate> dropDelegate() const;
     FolioDelegate *dropDelegateRaw() const;
-    void setDropDelegate(QSharedPointer<FolioDelegate> dropDelegate);
+    void setDropDelegate(std::shared_ptr<FolioDelegate> dropDelegate);
 
 Q_SIGNALS:
     void dropDelegateChanged();
@@ -160,7 +160,7 @@ private:
     int m_favouritesInsertBetweenIndex{0};
 
     // the delegate that is being dropped
-    QSharedPointer<FolioDelegate> m_dropDelegate{nullptr};
+    std::shared_ptr<FolioDelegate> m_dropDelegate{nullptr};
 
     // where we are hovering over, potentially to drop the delegate
     DelegateDragPosition *const m_candidateDropPosition{nullptr};

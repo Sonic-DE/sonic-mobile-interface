@@ -40,7 +40,7 @@ QVariant FavouritesModel::data(const QModelIndex &index, int role) const
 
     switch (role) {
     case DelegateRole:
-        return QVariant::fromValue(m_delegates.at(index.row()).delegate.data());
+        return QVariant::fromValue(m_delegates.at(index.row()).delegate.get());
     }
 
     return QVariant();
@@ -186,7 +186,7 @@ void FavouritesModel::setGhostEntry(int row)
 
     // if it doesn't, add a new empty delegate
     if (!found) {
-        FolioDelegate::Ptr ghost = FolioDelegate::Ptr::create(m_homeScreen);
+        FolioDelegate::Ptr ghost = std::make_shared<FolioDelegate>(m_homeScreen);
         addEntry(row, ghost);
     }
 }
@@ -278,7 +278,7 @@ void FavouritesModel::loadFromJson(QJsonArray arr)
 void FavouritesModel::connectSaveRequests(FolioDelegate::Ptr delegate)
 {
     if (delegate->type() == FolioDelegate::Folder && delegate->folder()) {
-        connect(delegate->folder().data(), &FolioApplicationFolder::saveRequested, this, &FavouritesModel::save);
+        connect(delegate->folder().get(), &FolioApplicationFolder::saveRequested, this, &FavouritesModel::save);
     }
 }
 

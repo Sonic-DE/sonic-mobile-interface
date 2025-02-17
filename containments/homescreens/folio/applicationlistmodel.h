@@ -44,7 +44,7 @@ public Q_SLOTS:
 protected:
     HomeScreen *m_homeScreen{nullptr};
 
-    QList<QSharedPointer<FolioDelegate>> m_delegates;
+    QList<std::shared_ptr<FolioDelegate>> m_delegates;
     QTimer *m_reloadAppsTimer{nullptr};
 };
 

@@ -56,7 +56,7 @@ FolioWidget::Ptr FolioWidget::fromJson(QJsonObject &obj, HomeScreen *parent)
     int id = obj[QStringLiteral("id")].toInt();
     int gridWidth = obj[QStringLiteral("gridWidth")].toInt();
     int gridHeight = obj[QStringLiteral("gridHeight")].toInt();
-    return QSharedPointer<FolioWidget>{new FolioWidget(parent, id, gridWidth, gridHeight)};
+    return std::make_shared<FolioWidget>(parent, id, gridWidth, gridHeight);
 }
 
 QJsonObject FolioWidget::toJson() const

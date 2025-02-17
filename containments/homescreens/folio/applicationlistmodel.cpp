@@ -85,8 +85,8 @@ void ApplicationListModel::load()
     const KService::List apps = KApplicationTrader::query(filter);
 
     for (const KService::Ptr &service : apps) {
-        FolioApplication::Ptr app = FolioApplication::Ptr::create(m_homeScreen, service);
-        FolioDelegate::Ptr delegate = FolioDelegate::Ptr::create(app, m_homeScreen);
+        FolioApplication::Ptr app = std::make_shared<FolioApplication>(m_homeScreen, service);
+        FolioDelegate::Ptr delegate = std::make_shared<FolioDelegate>(app, m_homeScreen);
         unorderedList << delegate;
     }
 
@@ -110,7 +110,7 @@ QVariant ApplicationListModel::data(const QModelIndex &index, int role) const
     switch (role) {
     case Qt::DisplayRole:
     case DelegateRole:
-        return QVariant::fromValue(delegate.data());
+        return QVariant::fromValue(delegate.get());
     case NameRole:
         if (!delegate->application()) {
             return QVariant();

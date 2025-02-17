@@ -524,7 +524,7 @@ FolioApplicationFolder::Ptr HomeScreenState::currentFolder() const
 
 FolioApplicationFolder *HomeScreenState::currentFolderRaw() const
 {
-    return m_currentFolder.data();
+    return m_currentFolder.get();
 }
 
 void HomeScreenState::setCurrentFolder(FolioApplicationFolder::Ptr folder)
@@ -667,17 +667,17 @@ FolioDelegate *HomeScreenState::getPageDelegateAt(int page, int row, int column)
         return nullptr;
     }
 
-    QSharedPointer<FolioDelegate> delegate = pageModel->getDelegate(row, column);
+    FolioDelegate::Ptr delegate = pageModel->getDelegate(row, column);
     if (!delegate) {
         return nullptr;
     }
 
-    return delegate.data();
+    return delegate.get();
 }
 
 FolioDelegate *HomeScreenState::getFavouritesDelegateAt(int position)
 {
-    return m_homeScreen->favouritesModel()->getEntryAt(position).data();
+    return m_homeScreen->favouritesModel()->getEntryAt(position).get();
 }
 
 FolioDelegate *HomeScreenState::getFolderDelegateAt(int position)
@@ -686,7 +686,7 @@ FolioDelegate *HomeScreenState::getFolderDelegateAt(int position)
         return nullptr;
     }
 
-    return m_currentFolder->applications()->getDelegate(position).data();
+    return m_currentFolder->applications()->getDelegate(position).get();
 }
 
 QPointF HomeScreenState::getPageDelegateScreenPosition(int page, int row, int column)
@@ -804,7 +804,7 @@ void HomeScreenState::goToFolderPage(int page, bool snap)
 
 void HomeScreenState::openFolder(qreal delegateX, qreal delegateY, FolioApplicationFolder *folder)
 {
-    setCurrentFolder(folder->sharedFromThis());
+    setCurrentFolder(folder->shared_from_this());
 
     m_openFolderAnim->stop();
     m_closeFolderAnim->stop();
