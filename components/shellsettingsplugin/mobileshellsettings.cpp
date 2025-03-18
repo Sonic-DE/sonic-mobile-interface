@@ -33,7 +33,6 @@ MobileShellSettings::MobileShellSettings(QObject *parent)
             Q_EMIT animationsEnabledChanged();
             Q_EMIT dateInStatusBarChanged();
             Q_EMIT statusBarScaleFactorChanged();
-            Q_EMIT showAllBatteriesChanged();
             Q_EMIT showBatteryPercentageChanged();
             Q_EMIT navigationPanelEnabledChanged();
             Q_EMIT alwaysShowKeyboardToggleOnNavigationPanelChanged();
@@ -113,19 +112,6 @@ void MobileShellSettings::setStatusBarScaleFactor(float statusBarScaleFactor)
 {
     auto group = KConfigGroup{m_config, GENERAL_CONFIG_GROUP};
     group.writeEntry("statusBarScaleFactor", statusBarScaleFactor, KConfigGroup::Notify);
-    m_config->sync();
-}
-
-bool MobileShellSettings::showAllBatteries() const
-{
-    auto group = KConfigGroup{m_config, GENERAL_CONFIG_GROUP};
-    return group.readEntry("showAllBatteries", true);
-}
-
-void MobileShellSettings::setShowAllBatteries(bool showAllBatteries)
-{
-    auto group = KConfigGroup{m_config, GENERAL_CONFIG_GROUP};
-    group.writeEntry("showAllBatteries", showAllBatteries, KConfigGroup::Notify);
     m_config->sync();
 }
 

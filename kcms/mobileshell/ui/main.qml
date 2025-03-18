@@ -82,20 +82,6 @@ KCM.SimpleKCM {
 
             FormCard.FormDelegateSeparator { above: quickSettingsButton; below: topLeftActionDrawerModeDelegate }
 
-            FormCard.FormSwitchDelegate {
-                id: showAllBatteries
-                text: i18n("Show All Batteries")
-                description: i18n("If on, all connected batteries will populate the status bar.")
-                checked: ShellSettings.Settings.showAllBatteries
-                onCheckedChanged: {
-                    if (checked != ShellSettings.Settings.showAllBatteries) {
-                        ShellSettings.Settings.showAllBatteries = checked;
-                    }
-                }
-            }
-
-            FormCard.FormDelegateSeparator { above: quickSettingsButton; below: topLeftActionDrawerModeDelegate }
-
             FormCard.FormComboBoxDelegate {
                 id: statusBarScaleFactorDelegate
 
@@ -267,7 +253,7 @@ KCM.SimpleKCM {
                 }
                 onCurrentValueChanged: ShellSettings.Settings.lockscreenLeftButtonAction = currentValue
             }
-            
+
             FormCard.FormDelegateSeparator { above: lockscreenRightButtonDelegate; below: lockscreenLeftButtonDelegate }
 
             FormCard.FormComboBoxDelegate {

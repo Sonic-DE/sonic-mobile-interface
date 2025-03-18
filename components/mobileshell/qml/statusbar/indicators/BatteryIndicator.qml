@@ -25,7 +25,7 @@ RowLayout {
     ListView {
         id: batteryRepeater
 
-        spacing: ShellSettings.Settings.showAllBatteries ? root.elementSpacing : 0
+        spacing: 0
         model: MobileShell.BatteryInfo.batteries
         orientation: ListView.Horizontal
 
@@ -37,13 +37,14 @@ RowLayout {
         delegate: RowLayout {
             id: batteryBase
 
-            width: (batteryBase.visible ? ((batteryLabel.visible ? batteryLabel.width : 0) + battery.width ) + (ShellSettings.Settings.showBatteryPercentage ? root.elementSpacing : 0) : 0)
+            width: (batteryBase.visible ? ((batteryLabel.visible ? batteryLabel.width : 0) + battery.width) + (ShellSettings.Settings.showBatteryPercentage ? root.elementSpacing : 0) : 0)
             Layout.fillHeight: false
             Layout.alignment: Qt.AlignVCenter
 
             height: batteryRepeater.height
 
-            visible: ShellSettings.Settings.showAllBatteries || Type === "Battery"
+            // only show the internal battery
+            visible: Type === "Battery"
 
             PW.BatteryIcon {
                 id: battery
