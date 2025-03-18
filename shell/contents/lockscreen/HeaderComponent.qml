@@ -24,7 +24,7 @@ Item {
 
     signal passwordRequested()
 
-    // The status bar and quicksettings take a while to load, don't pause initial lockscrseen loading for it
+    // The status bar and quicksettings take a while to load, don't pause initial lockscreen loading for it
     Timer {
         id: loadTimer
         running: true

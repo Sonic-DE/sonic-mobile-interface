@@ -20,7 +20,7 @@ Item {
     required property var contentContainer
     required property var swipeArea
 
-    property alias mediaControlsWidget: notificationWidget.mediaControlsWidget
+    property alias mediaControlsWidget: notificationWidget.header
     property alias notificationWidget: notificationWidget
     property real contentY: notificationWidget.listView.contentY
 
@@ -67,7 +67,7 @@ Item {
         actionsRequireUnlock: actionDrawer.restrictedPermissions
         onUnlockRequested: actionDrawer.permissionsRequested()
         topPadding: root.topPadding
-        showMediaControlsWidget: actionDrawer.mode != ActionDrawer.Portrait
+        showHeader: actionDrawer.mode != ActionDrawer.Portrait
         listView.interactive: !actionDrawer.dragging && root.listOverflowing
 
         Connections {
@@ -77,8 +77,6 @@ Item {
                 notificationWidget.runPendingAction();
             }
         }
-
-        onBackgroundClicked: actionDrawer.close();
     }
 
     // time and date displayed in landscape mode
