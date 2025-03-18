@@ -32,8 +32,8 @@ class MobileShellSettings : public QObject
     // status bar
     Q_PROPERTY(bool dateInStatusBar READ dateInStatusBar WRITE setDateInStatusBar NOTIFY dateInStatusBarChanged)
     Q_PROPERTY(float statusBarScaleFactor READ statusBarScaleFactor WRITE setStatusBarScaleFactor NOTIFY statusBarScaleFactorChanged)
-    Q_PROPERTY(float showAllBatteries READ showAllBatteries WRITE setShowAllBatteries NOTIFY showAllBatteriesChanged)
-    Q_PROPERTY(float showBatteryPercentage READ showBatteryPercentage WRITE setShowBatteryPercentage NOTIFY showBatteryPercentageChanged)
+    Q_PROPERTY(bool showAllBatteries READ showAllBatteries WRITE setShowAllBatteries NOTIFY showAllBatteriesChanged)
+    Q_PROPERTY(bool showBatteryPercentage READ showBatteryPercentage WRITE setShowBatteryPercentage NOTIFY showBatteryPercentageChanged)
 
     // navigation panel
     Q_PROPERTY(bool navigationPanelEnabled READ navigationPanelEnabled WRITE setNavigationPanelEnabled NOTIFY navigationPanelEnabledChanged)
