@@ -54,27 +54,27 @@ Item {
     property bool actionsRequireUnlock: false
 
     /**
-     * top paddding of the notification list
+     * Top padding of the notification list.
      */
     property int topPadding: 0
 
     /**
-     * bottom paddding of the notification list
+     * Bottom padding of the notification list.
      */
     property int bottomPadding: 0
 
     /**
-     * media controls widget
+     * Header component for notification list.
      */
-    property var mediaControlsWidget
+    property var header
 
     /**
-     * whether to show the media control widget
+     * whether to show the header component.
      */
-    property bool showMediaControlsWidget: false
+    property bool showHeader: false
 
     /**
-     * gives access to the list view outside of the notification widget
+     * Gives access to the notification list view outside of the notification widget.
      */
     property alias listView: list
 
@@ -177,7 +177,7 @@ Item {
         readonly property int listHeight: contentItem.childrenRect.height
 
         bottomMargin: spacing
-        height: count === 0 ? root.topPadding + (showMediaControlsWidget ? mediaControlsWidget.height : 0) : (listOverflowing ? root.height : listHeight + bottomMargin)
+        height: count === 0 ? (root.topPadding + (showHeader ? root.header.height + listHeight : 0)) : (listOverflowing ? root.height : listHeight + bottomMargin)
 
         anchors {
             top: parent.top
@@ -201,9 +201,9 @@ Item {
                 width: parent.width
 
                 MobileShell.BaseItem {
-                    id: mediaControlsWidgetProxy
+                    id: headerComponentProxy
 
-                    contentItem: showMediaControlsWidget ? mediaControlsWidget : null
+                    contentItem: showHeader ? root.header : null
                     y: root.topPadding - Kirigami.Units.largeSpacing
 
                     width: parent.width - Kirigami.Units.gridUnit * 2
@@ -321,7 +321,7 @@ Item {
                     Item {
                         id: headerSpace
                         width: parent.width
-                        height: index == 0 ? root.topPadding + (showMediaControlsWidget ? mediaControlsWidget.height : 0) : 0
+                        height: index == 0 ? root.topPadding + (showHeader ? root.header.height : 0) : 0
                         visible: index == 0
                     }
 
@@ -345,7 +345,7 @@ Item {
                     Item {
                         id: headerSpace
                         width: parent.width
-                        height: index == 0 ? root.topPadding + (showMediaControlsWidget ? mediaControlsWidget.height : 0) : 0
+                        height: index == 0 ? root.topPadding + (showHeader ? root.header.height : 0) : 0
                         visible: index == 0
                     }
 

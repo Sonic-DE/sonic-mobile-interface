@@ -12,7 +12,7 @@ OpacityMask {
     id: root
 
     property var flickable
-    property bool fadeAtTop: false
+    property bool fadeAtTop: true
 
     source: flickable
     maskSource: Rectangle {
@@ -23,7 +23,7 @@ OpacityMask {
         property real gradientPct: (Kirigami.Units.gridUnit * 2) / flickable.height
 
         gradient: Gradient {
-            GradientStop { position: 0.0; color: flickable.atYBeginning || !fadeAtTop ? 'white' : 'transparent' }
+            GradientStop { position: 0.0; color: flickable.atYBeginning && fadeAtTop ? 'white' : 'transparent' }
             GradientStop { position: mask.gradientPct; color: 'white' }
             GradientStop { position: 1.0 - mask.gradientPct; color: 'white' }
             GradientStop { position: 1.0; color: flickable.atYEnd ? 'white' : 'transparent' }

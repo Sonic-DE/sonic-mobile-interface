@@ -62,7 +62,15 @@ Item {
     /**
      * Same as offset value except this adds resistance when passing the open position of the current drawer state.
      */
-    property real offsetResistance: 0
+    readonly property real offsetResistance: {
+        if (!openToPinnedMode) {
+            return root.calculateResistance(offset, contentContainer.maximizedQuickSettingsOffset);
+        } else if (!opened) {
+            return root.calculateResistance(offset, contentContainer.minimizedQuickSettingsOffset);
+        } else {
+            return root.calculateResistance(offset, contentContainer.maximizedQuickSettingsOffset);
+        }
+    }
 
     /**
      * Whether the panel is being dragged.
@@ -137,15 +145,6 @@ Item {
         root.direction = (oldOffset === offset)
             ? MobileShell.Direction.None
             : (offset > oldOffset ? MobileShell.Direction.Down : MobileShell.Direction.Up);
-
-        // set offset resistance based off of the current state
-        if (!openToPinnedMode) {
-            offsetResistance = root.calculateResistance(offset, contentContainer.maximizedQuickSettingsOffset);
-        } else if (!opened) {
-            offsetResistance = root.calculateResistance(offset, contentContainer.minimizedQuickSettingsOffset);
-        } else {
-            offsetResistance = root.calculateResistance(offset, contentContainer.maximizedQuickSettingsOffset);
-        }
 
         oldOffset = offset;
 
