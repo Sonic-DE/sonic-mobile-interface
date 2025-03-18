@@ -119,7 +119,7 @@ void MobileShellSettings::setStatusBarScaleFactor(float statusBarScaleFactor)
 bool MobileShellSettings::showAllBatteries() const
 {
     auto group = KConfigGroup{m_config, GENERAL_CONFIG_GROUP};
-    return group.readEntry("showAllBatteries", false);
+    return group.readEntry("showAllBatteries", true);
 }
 
 void MobileShellSettings::setShowAllBatteries(bool showAllBatteries)

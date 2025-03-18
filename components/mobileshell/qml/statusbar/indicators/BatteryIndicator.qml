@@ -43,7 +43,7 @@ RowLayout {
 
             height: batteryRepeater.height
 
-            visible: ShellSettings.Settings.showAllBatteries || Type == "Battery"
+            visible: ShellSettings.Settings.showAllBatteries || Type === "Battery"
 
             PW.BatteryIcon {
                 id: battery
