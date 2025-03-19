@@ -21,7 +21,6 @@ Loader {
     property real topMargin: 0
     property real bottomMargin: 0
 
-    property bool fadeAtTop: true
     property real topPadding: 0
 
     readonly property bool notificationsShown: item && item.notificationsList.hasNotifications
@@ -99,9 +98,13 @@ Loader {
 
             // opacity gradient at flickable edges
             MobileShell.FlickableOpacityGradient {
-                anchors.fill: notificationsList
-                flickable: notificationsList
-                fadeAtTop: root.fadeAtTop
+                anchors {
+                    top: notificationsList.top
+                    left: notificationsList.left
+                    right: notificationsList.right
+                }
+                height: notificationsList.listView.height
+                flickable: notificationsList.listView
             }
         }
     }

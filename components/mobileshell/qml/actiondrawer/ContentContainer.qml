@@ -84,6 +84,73 @@ Item {
             visible: root.actionDrawer.mode != ActionDrawer.Portrait
             LayoutItemProxy { target: contentContainerLoader }
         }
+
+        // Mouse area for dismissing action drawer in portrait mode when background is clicked.
+        MouseArea {
+            anchors.fill: parent
+            visible: root.actionDrawer.mode == ActionDrawer.Portrait
+
+            // dismiss drawer when background is clicked
+            onClicked: root.actionDrawer.close();
+        }
+
+        // The clear all notification history button.
+        Item {
+            id: toolButtons
+            height: visible ? spacer.height + toolLayout.height + toolLayout.anchors.topMargin + toolLayout.anchors.bottomMargin : 0
+
+            visible: actionDrawer.intendedToBeVisible
+            opacity: Math.max(0, Math.min(root.brightnessPressedValue, actionDrawer.offsetResistance / root.minimizedQuickSettingsOffset))
+
+            anchors {
+                topMargin: notificationDrawer.height
+                leftMargin: actionDrawer.mode == ActionDrawer.Portrait ? 0 : 10
+                rightMargin: actionDrawer.mode == ActionDrawer.Portrait ? 0 : notificationDrawer.notificationWidget.anchors.rightMargin + Kirigami.Units.gridUnit - notificationDrawer.anchors.leftMargin + 370
+                top: parent.top
+                left: parent.left
+                right: parent.right
+            }
+
+            Rectangle {
+                id: spacer
+                anchors.left: parent.left
+                anchors.right: parent.right
+
+                visible: notificationDrawer.listOverflowing
+                height: 1
+                opacity: 0.25
+                color: Kirigami.Theme.textColor
+            }
+
+            RowLayout {
+                id: toolLayout
+
+                anchors {
+                    top: spacer.bottom
+                    right: parent.right
+                    left: parent.left
+                    leftMargin: Kirigami.Units.largeSpacing
+                    rightMargin: Kirigami.Units.largeSpacing
+                    topMargin: Kirigami.Units.largeSpacing
+                    bottomMargin: Kirigami.Units.largeSpacing
+                }
+
+                PlasmaComponents.ToolButton {
+                    id: clearButton
+
+                    Layout.alignment: Qt.AlignCenter
+
+                    visible: notificationDrawer.hasNotifications
+
+                    font.bold: true
+                    font.pointSize: Kirigami.Theme.smallFont.pointSize
+
+                    icon.name: "edit-clear-history"
+                    text: i18n("Clear All Notifications")
+                    onClicked: notificationDrawer.notificationWidget.clearHistory()
+                }
+            }
+        }
     }
 
     // notification drawer ui
@@ -177,64 +244,6 @@ Item {
 
             quickSettings: root.quickSettings
             statusBar: root.statusBar
-        }
-    }
-
-    // The clear all notification history button.
-    Item {
-        id: toolButtons
-        height: visible ? spacer.height + toolLayout.height + toolLayout.anchors.topMargin + toolLayout.anchors.bottomMargin : 0
-
-        visible: actionDrawer.intendedToBeVisible
-        opacity: Math.max(0, Math.min(root.brightnessPressedValue, actionDrawer.offsetResistance / root.minimizedQuickSettingsOffset))
-
-        anchors {
-            topMargin: notificationDrawer.height
-            leftMargin: actionDrawer.mode == ActionDrawer.Portrait ? 0 : 10
-            rightMargin: actionDrawer.mode == ActionDrawer.Portrait ? 0 : notificationDrawer.notificationWidget.anchors.rightMargin + Kirigami.Units.gridUnit - notificationDrawer.anchors.leftMargin + 370
-            top: parent.top
-            left: parent.left
-            right: parent.right
-        }
-
-        Rectangle {
-            id: spacer
-            anchors.left: parent.left
-            anchors.right: parent.right
-
-            visible: notificationDrawer.listOverflowing
-            height: 1
-            opacity: 0.25
-            color: Kirigami.Theme.textColor
-        }
-
-        RowLayout {
-            id: toolLayout
-
-            anchors {
-                top: spacer.bottom
-                right: parent.right
-                left: parent.left
-                leftMargin: Kirigami.Units.largeSpacing
-                rightMargin: Kirigami.Units.largeSpacing
-                topMargin: Kirigami.Units.largeSpacing
-                bottomMargin: Kirigami.Units.largeSpacing
-            }
-
-            PlasmaComponents.ToolButton {
-                id: clearButton
-
-                Layout.alignment: Qt.AlignCenter
-
-                visible: notificationDrawer.hasNotifications
-
-                font.bold: true
-                font.pointSize: Kirigami.Theme.smallFont.pointSize
-
-                icon.name: "edit-clear-history"
-                text: i18n("Clear All Notifications")
-                onClicked: notificationDrawer.notificationWidget.clearHistory()
-            }
         }
     }
 
