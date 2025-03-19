@@ -78,7 +78,7 @@ Loader {
             MobileShell.NotificationsWidget {
                 id: notificationsList
                 anchors.fill: parent
-                opacity: 0
+                opacity: 0 // we display with the opacity gradient below
 
                 historyModelType: MobileShell.NotificationsModelType.WatchedNotificationsModel
                 actionsRequireUnlock: true

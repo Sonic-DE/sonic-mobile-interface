@@ -174,7 +174,7 @@ Item {
 
                     icon.name: "edit-clear-history"
                     text: i18n("Clear All Notifications")
-                    onClicked: clearHistory()
+                    onClicked: notificationDrawer.notificationWidget.clearHistory()
                 }
             }
         }
@@ -197,6 +197,26 @@ Item {
             right: parent.right
             rightMargin: root.actionDrawer.mode == ActionDrawer.Portrait ? 0 : 360
             leftMargin: actionDrawer.mode == ActionDrawer.Portrait ? 0 : notificationDrawer.minWidthHeight * 0.06
+        }
+    }
+
+    // Shadow gradient for the bottom of the portrait quick settings panel.
+    // Separated over here so it can be layered on top on the notification list.
+    Rectangle {
+        height: Kirigami.Units.smallSpacing * 2
+        visible: root.actionDrawer.mode == ActionDrawer.Portrait
+        opacity: brightnessPressedValue
+
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
+            topMargin: actionDrawer.offsetResistance // Kirigami.Units.smallSpacing * 2 +
+        }
+
+        gradient: Gradient {
+            GradientStop { position: 0.0; color: Qt.rgba(0,0,0,0.15)}
+            GradientStop { position: 1.0; color: "transparent" }
         }
     }
 

@@ -69,7 +69,7 @@ Item {
     property var header
 
     /**
-     * whether to show the header component.
+     * Whether to show the header component.
      */
     property bool showHeader: false
 
@@ -97,11 +97,6 @@ Item {
      * Only emitted if actionsRequireUnlock is enabled.
      */
     signal unlockRequested()
-
-    /**
-     * Emitted when the background is clicked (not a notification or other element).
-     */
-    signal backgroundClicked()
 
     /**
      * Run pending action that was pending for authentication when unlockRequested() was emitted.
@@ -151,13 +146,6 @@ Item {
         connectedSources: ["Local"]
         interval: 60000 // 1 min
         intervalAlignment: P5Support.Types.AlignToMinute
-    }
-
-    // implement background clicking signal
-    MouseArea {
-        anchors.fill: parent
-        onClicked: backgroundClicked()
-        z: -1 // ensure that this is below notification items so we don't steal button clicks
     }
 
     ListView {
@@ -385,7 +373,7 @@ Item {
                                 return false;
 
                             return (model.groupChildrenCount > model.expandedGroupChildrenCount || model.isGroupExpanded)
-                                && delegateLoader.ListView.nextSection != delegateLoader.ListView.section;
+                            && delegateLoader.ListView.nextSection != delegateLoader.ListView.section;
                         }
 
                         // state + transition: animates the item when it becomes visible. Fade off is handled by above ListView.onRemove.
@@ -405,8 +393,8 @@ Item {
                         sourceComponent: PlasmaComponents3.ToolButton {
                             icon.name: model.isGroupExpanded ? "arrow-up" : "arrow-down"
                             text: model.isGroupExpanded ? i18n("Show Fewer")
-                                                        : i18nc("Expand to show n more notifications",
-                                                                "Show %1 More", (model.groupChildrenCount - model.expandedGroupChildrenCount))
+                            : i18nc("Expand to show n more notifications",
+                                    "Show %1 More", (model.groupChildrenCount - model.expandedGroupChildrenCount))
                             onClicked: {
                                 list.setGroupExpanded(model.index, !model.isGroupExpanded)
                             }

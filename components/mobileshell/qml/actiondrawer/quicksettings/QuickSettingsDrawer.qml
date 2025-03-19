@@ -6,7 +6,6 @@ import QtQuick.Controls as QQC2
 import QtQuick.Layouts
 
 import org.kde.kirigami 2.12 as Kirigami
-import org.kde.ksvg 1.0 as KSvg
 
 import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.private.mobileshell as MobileShell
@@ -57,10 +56,28 @@ MobileShell.BaseItem {
     rightPadding: Kirigami.Units.smallSpacing
     bottomPadding: Kirigami.Units.smallSpacing * 4
 
-    background: KSvg.FrameSvgItem {
-        enabledBorders: KSvg.FrameSvgItem.BottomBorder
-        imagePath: "widgets/background"
+    Rectangle {
+        id: background
+        property int borderWidth: 1
+
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
+            topMargin: -background.borderWidth
+            leftMargin: -background.borderWidth
+            rightMargin: -background.borderWidth
+        }
+
+        Kirigami.Theme.colorSet: Kirigami.Theme.View
+        Kirigami.Theme.inherit: false
+
+        height: Math.max(actionDrawer.offsetResistance, root.minimizedHeight) - background.borderWidth + Kirigami.Units.smallSpacing / 2
+        color: Kirigami.Theme.backgroundColor
+        border.width: borderWidth
+        border.color: Kirigami.ColorUtils.tintWithAlpha(Kirigami.Theme.textColor, Kirigami.Theme.backgroundColor, 0.8)
         opacity: brightnessPressedValue
+        z: -1
     }
 
     contentItem: Item {
