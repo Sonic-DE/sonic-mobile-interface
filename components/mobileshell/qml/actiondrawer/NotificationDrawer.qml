@@ -33,14 +33,6 @@ Item {
 
     height: Math.min(actionDrawer.height - toolButtons.height, notificationWidget.listView.contentHeight + 10 + topMargin)
 
-    // update top margin for the mouse area
-    // this can only be updated when not being dragged to prevent issues
-    onTopMarginChanged: {
-        if (!actionDrawer.dragging) {
-            mouseArea.anchors.topMargin = topMargin;
-        }
-    }
-
     // time source for the time and date whenin landscape mode
     P5Support.DataSource {
         id: timeSource
@@ -51,6 +43,10 @@ Item {
 
     Kirigami.Theme.colorSet: Kirigami.Theme.View
     Kirigami.Theme.inherit: false
+
+    MobileShell.VelocityCalculator {
+        id: velocityCalculator
+    }
 
     // notification list widget
     // margin adjusted to fit and postion into the action drawer
@@ -77,6 +73,84 @@ Item {
                 notificationWidget.runPendingAction();
             }
         }
+
+        // the first swipe when at the top of the notification list is handeled using a MouseArea, not the flickable
+        // this is so one can swipe down from the top of the notification drawer to expand the action drawer
+        DragHandler {
+            id: dragHandler
+            yAxis.enabled: true
+            xAxis.enabled: false
+
+            property bool startActive: false
+
+            property real startOffset: 0
+            property real startMouseY: 0
+            property real lastMouseY: 0
+
+            property bool startedAtYBeginning: false
+            property bool startedAtYEnd: false
+            property bool drawerDrag: true
+
+            property string currentState
+
+            onTranslationChanged: {
+                if (startActive) {
+                    dragHandler.startedAtYBeginning = notificationWidget.listView.atYBeginning;
+                    dragHandler.startedAtYEnd = notificationWidget.listView.atYEnd;
+                    startActive = false;
+
+                    if (notificationWidget.listView.atYBeginning) {
+                        currentState = actionDrawer.state;
+                        actionDrawer.cancelAnimations();
+                        actionDrawer.dragging = true;
+                        actionDrawer.opened = true;
+                        dragHandler.startOffset = actionDrawer.offset;
+                        dragHandler.startMouseY = translation.y;
+                        dragHandler.lastMouseY = dragHandler.startMouseY;
+                        dragHandler.drawerDrag = true;
+
+                        velocityCalculator.startMeasure();
+                        velocityCalculator.changePosition(notificationWidget.listView.contentY);
+                    }
+                }
+
+                if (!actionDrawer.dragging) {
+                    return;
+                }
+
+                if (!(dragHandler.startedAtYBeginning && dragHandler.startedAtYEnd) && ((dragHandler.startedAtYBeginning && (dragHandler.startMouseY - translation.y) > 0) || (dragHandler.startedAtYEnd && (translation.y - dragHandler.startMouseY) > 0))) {
+                    actionDrawer.state = currentState;
+                    dragHandler.drawerDrag = false;
+                }
+
+                if (dragHandler.drawerDrag) {
+                    actionDrawer.offset = dragHandler.startOffset - (dragHandler.startMouseY - translation.y);
+                } else {
+                    let contentY = notificationWidget.listView.contentY - (translation.y - dragHandler.lastMouseY);
+
+                    notificationWidget.listView.contentY = contentY;
+                    velocityCalculator.changePosition(notificationWidget.listView.contentY);
+                    dragHandler.lastMouseY = translation.y;
+                }
+            }
+
+            onActiveChanged: {
+                startActive = active;
+
+                if (!active) { // release event
+                    if (actionDrawer.dragging) {
+                        if (dragHandler.drawerDrag) {
+                            actionDrawer.updateState();
+                        } else {
+                            notificationWidget.listView.flick(0, -velocityCalculator.velocity);
+                        }
+                    }
+                    actionDrawer.dragging = false;
+                    dragHandler.drawerDrag = true;
+                }
+            }
+        }
+
     }
 
     // time and date displayed in landscape mode
@@ -121,91 +195,6 @@ Item {
 
             font.pixelSize: Math.min(20, minWidthHeight * 0.05)
             font.weight: Font.Light
-        }
-    }
-
-    MobileShell.VelocityCalculator {
-        id: velocityCalculator
-    }
-
-    // the first swipe when at the top of the notification list is handeled using a MouseArea, not the flickable
-    // this is so one can swipe down from the top of the notification drawer to expand the action drawer
-    MouseArea {
-        id: mouseArea
-        anchors.fill: parent
-        enabled: actionDrawer.mode == ActionDrawer.Portrait && (notificationWidget.listView.atYBeginning || actionDrawer.dragging)
-        preventStealing: actionDrawer.mode == ActionDrawer.Portrait && Math.abs(actionDrawer.offset - startOffset) > Kirigami.Units.largeSpacing
-
-        property real startOffset: 0
-        property real startMouseY: 0
-        property real lastMouseY: 0
-
-        property bool startedAtYBeginning: false
-        property bool startedAtYEnd: false
-        property bool drawerDrag: true
-
-        property string currentState
-
-        onPressed: {
-            mouseArea.startedAtYBeginning = notificationWidget.listView.atYBeginning;
-            mouseArea.startedAtYEnd = notificationWidget.listView.atYEnd;
-
-            if (notificationWidget.listView.atYBeginning) {
-                currentState = actionDrawer.state;
-                actionDrawer.cancelAnimations();
-                actionDrawer.dragging = true;
-                actionDrawer.opened = true;
-                mouseArea.startOffset = actionDrawer.offset;
-                mouseArea.startMouseY = mouseY;
-                mouseArea.lastMouseY = mouseArea.startMouseY;
-                mouseArea.drawerDrag = true;
-
-                velocityCalculator.startMeasure();
-                velocityCalculator.changePosition(notificationWidget.listView.contentY);
-            }
-        }
-
-        onReleased: {
-            if (actionDrawer.dragging) {
-                if (mouseArea.drawerDrag) {
-                    actionDrawer.updateState();
-                } else {
-                    notificationWidget.listView.flick(0, -velocityCalculator.velocity);
-                }
-            }
-            actionDrawer.dragging = false;
-            mouseArea.drawerDrag = true;
-            mouseArea.anchors.topMargin = topMargin;
-        }
-
-        onCanceled: {
-            if (actionDrawer.dragging) {
-                actionDrawer.state = currentState;
-                actionDrawer.dragging = false;
-                mouseArea.drawerDrag = true;
-                mouseArea.anchors.topMargin = topMargin;
-            }
-        }
-
-        onPositionChanged: {
-            if (!actionDrawer.dragging) {
-                return;
-            }
-
-            if (!(mouseArea.startedAtYBeginning && mouseArea.startedAtYEnd) && ((mouseArea.startedAtYBeginning && (mouseArea.startMouseY - mouseY) > 0) || (mouseArea.startedAtYEnd && (mouseY - mouseArea.startMouseY) > 0))) {
-                actionDrawer.state = currentState;
-                mouseArea.drawerDrag = false;
-            }
-
-            if (mouseArea.drawerDrag) {
-                actionDrawer.offset = mouseArea.startOffset - (mouseArea.startMouseY - mouseY);
-            } else {
-                let contentY = notificationWidget.listView.contentY - (mouseY - mouseArea.lastMouseY);
-
-                notificationWidget.listView.contentY = contentY;
-                velocityCalculator.changePosition(notificationWidget.listView.contentY);
-                mouseArea.lastMouseY = mouseY;
-            }
         }
     }
 }

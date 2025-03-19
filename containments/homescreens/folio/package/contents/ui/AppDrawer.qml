@@ -62,7 +62,7 @@ Item {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            opacity: 0
+            opacity: 0 // we display with the opacity gradient below
             headerHeight: root.headerHeight
         }
 
