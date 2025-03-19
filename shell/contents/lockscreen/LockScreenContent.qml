@@ -114,8 +114,6 @@ Item {
         bottomMargin: Kirigami.Units.gridUnit * 2
         scrollLock: root.scrollLock
 
-        fadeAtTop: root.isVertical && !mediaControlsWidget.visible
-
         onPasswordRequested: root.passwordRequested()
         onNotificationsShownChanged: root.notificationsShown = notificationsShown
     }

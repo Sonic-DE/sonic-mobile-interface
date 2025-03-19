@@ -73,16 +73,4 @@ Item {
             }
         }
     }
-
-    MouseArea {
-        anchors {
-            top: quickSettingsDrawer.bottom
-            bottom: parent.bottom
-            left: parent.left
-            right: parent.right
-        }
-
-        // dismiss drawer when background is clicked
-        onClicked: root.actionDrawer.close();
-    }
 }
