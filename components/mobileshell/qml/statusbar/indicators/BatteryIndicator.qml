@@ -43,8 +43,7 @@ RowLayout {
 
             height: batteryRepeater.height
 
-            // only show the internal battery
-            visible: Type === "Battery"
+            visible: Type === "Battery" // only show the internal battery
 
             PW.BatteryIcon {
                 id: battery
