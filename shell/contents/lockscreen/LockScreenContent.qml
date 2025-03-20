@@ -151,7 +151,7 @@ Item {
         }
 
         // Spacer
-        Item {Layout.fillWidth: true}
+        Item { Layout.fillWidth: true }
 
         // Right quick action button.
         QuickActionButton {

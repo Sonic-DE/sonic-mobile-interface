@@ -16,7 +16,7 @@ AbstractButton {
     property int buttonAction
 
     property bool buttonHeld: false
-    property double scale: pressed ? 1.5 : 1
+    property double scale: pressed ? (buttonHeld ? 1.7 : 1.5) : 1
 
     Behavior on scale {
         NumberAnimation {
@@ -30,8 +30,7 @@ AbstractButton {
     }
 
     visible: buttonAction !== ShellSettings.Settings.None
-    implicitWidth: Math.round(Kirigami.Units.gridUnit * 2.25)
-    implicitHeight: Math.round(Kirigami.Units.gridUnit * 2.25)
+    padding: Math.round(Kirigami.Units.gridUnit * 1.25)
 
     transform: Scale {
         origin.x: width / 2
@@ -42,7 +41,7 @@ AbstractButton {
 
     background: Rectangle {
         radius: width
-        color: Qt.rgba(255, 255, 255, 0.5)
+        color: Qt.rgba(255, 255, 255, pressed ? (buttonHeld ? 0.7 : 0.5) : 0.2)
     }
 
     contentItem: Item {
@@ -85,7 +84,6 @@ AbstractButton {
                 flickable.goToOpenPosition();
                 return;
         }
-        buttonHeld = false;
     }
 
     Timer {
