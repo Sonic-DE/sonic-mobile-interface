@@ -64,10 +64,7 @@ Item {
             from: 1
             to: screenBrightness.maxBrightness
             value: screenBrightness.brightness
-            onMoved: {
-                brightnessPressedTimer.restart();
-                screenBrightness.brightness = value;
-            }
+            onMoved: screenBrightness.brightness = value;
 
             onPressedChanged: {
                 if (pressed) {
@@ -80,7 +77,7 @@ Item {
 
             Timer {
                 id: brightnessPressedTimer
-                interval: Kirigami.Units.longDuration * 2
+                interval: 100
                 repeat: false
                 onTriggered: {
                     if (brightnessSlider.pressed) {
