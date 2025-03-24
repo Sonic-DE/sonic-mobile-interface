@@ -44,6 +44,9 @@ public:
     bool canAddEntry(int row, std::shared_ptr<FolioDelegate> delegate);
     bool addEntry(int row, std::shared_ptr<FolioDelegate> delegate);
     std::shared_ptr<FolioDelegate> getEntryAt(int row);
+    bool contains(std::shared_ptr<FolioDelegate> delegate);
+
+    std::shared_ptr<FolioDelegate> getEntryFromFolder(std::shared_ptr<FolioApplicationFolder> folder);
 
     // whether the dock is full, we can't add any more items
     bool isFull() const;

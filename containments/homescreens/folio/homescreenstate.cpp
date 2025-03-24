@@ -551,6 +551,19 @@ void HomeScreenState::calculateFolderGridLength()
     }
 }
 
+FolioDelegate *HomeScreenState::keyboardFocusedDelegate()
+{
+    return m_keyboardFocusedDelegate.data();
+}
+
+void HomeScreenState::setKeyboardFocusedDelegate(FolioDelegate::Ptr delegate)
+{
+    if (delegate != m_keyboardFocusedDelegate) {
+        m_keyboardFocusedDelegate = delegate;
+        Q_EMIT keyboardFocusedDelegateChanged();
+    }
+}
+
 qreal HomeScreenState::settingsOpenProgress()
 {
     return m_settingsOpenProgress;
@@ -820,6 +833,76 @@ void HomeScreenState::closeFolder()
     m_closeFolderAnim->stop();
     m_closeFolderAnim->setStartValue(m_folderOpenProgress);
     m_closeFolderAnim->start();
+}
+
+void HomeScreenState::moveKeyboardNavigate(int dx, int dy)
+{
+    if (viewState() == SearchWidgetView || viewState() == SettingsView || viewState() == AppDrawerView) {
+        // No behaviour, these are handled in the QML components themselves.
+        setKeyboardFocusedDelegate(nullptr);
+    } else if (viewState() == ViewState::FolderView) {
+        // If current folder is invalid, ignore.
+        if (!m_currentFolder) {
+            setKeyboardFocusedDelegate(nullptr);
+            return;
+        }
+
+        // Get neighbour of current delegate in the folder.
+        auto pair = m_currentFolder->getNeighborDelegate(m_keyboardFocusedDelegate, dx, dy);
+        FolioDelegate::Ptr newDelegate = pair.first;
+        int newPage = pair.second;
+
+        // If neighbour exists, navigate to it.
+        if (newDelegate) {
+            setKeyboardFocusedDelegate(newDelegate);
+            goToFolderPage(newPage, false); // Navigate to new page
+            return;
+        }
+
+        // Otherwise, exit the folder, and select it.
+
+        // Try to obtain FolioDelegate from favourites model
+        // TODO: extract to helper function
+        newDelegate = m_homeScreen->favouritesModel()->getEntryFromFolder(m_currentFolder);
+        if (!newDelegate) {
+            // Otherwise, the folder is on the current page
+            PageModel *pageModel = m_homeScreen->pageListModel()->getPage(m_pageNum);
+            if (!pageModel) {
+                setKeyboardFocusedDelegate(nullptr);
+                return;
+            }
+
+            newDelegate = std::static_pointer_cast<FolioDelegate>(pageModel->getEntryFromFolder(m_currentFolder));
+        }
+
+        // Select and close folder.
+        setKeyboardFocusedDelegate(newDelegate);
+        closeFolder();
+
+    } else if (viewState() == ViewState::PageView) {
+        if (m_homeScreen->favouritesModel()->contains(m_keyboardFocusedDelegate)) {
+            // If delegate is in the favourites bar.
+
+            switch (favouritesBarLocation()) {
+            case FavouritesBarLocation::Bottom:
+                if (dy < 0) {
+                    // TODO: Go to bottom of current page
+                    return;
+                } else if (dy > 0) {
+                    openAppDrawer();
+                    return;
+                }
+                break;
+            case FavouritesBarLocation::Left:
+                break;
+            case FavouritesBarLocation::Right:
+                break;
+            }
+
+        } else {
+            // If delegate is on the current page.
+        }
+    }
 }
 
 void HomeScreenState::openSettingsView()

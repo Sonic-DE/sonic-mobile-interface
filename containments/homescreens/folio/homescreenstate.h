@@ -63,6 +63,9 @@ class HomeScreenState : public QObject
     Q_PROPERTY(FolioApplicationFolder *currentFolder READ currentFolderRaw NOTIFY currentFolderChanged)
     Q_PROPERTY(qreal folderGridLength READ folderGridLength NOTIFY folderGridLengthChanged)
 
+    // keyboard navigation
+    Q_PROPERTY(FolioDelegate *delegate keyboardFocusedDelegate READ keyboardFocusedDelegate NOTIFY keyboardFocusedDelegateChanged)
+
     Q_PROPERTY(qreal settingsOpenProgress READ settingsOpenProgress WRITE setSettingsOpenProgress NOTIFY settingsOpenProgressChanged)
 
     Q_PROPERTY(qreal appDrawerOpenProgress READ appDrawerOpenProgress NOTIFY appDrawerOpenProgressChanged)
@@ -71,6 +74,7 @@ class HomeScreenState : public QObject
     Q_PROPERTY(qreal searchWidgetOpenProgress READ searchWidgetOpenProgress NOTIFY searchWidgetOpenProgressChanged)
     Q_PROPERTY(qreal searchWidgetY READ searchWidgetY WRITE setSearchWidgetY NOTIFY searchWidgetYChanged)
 
+    // drag state
     Q_PROPERTY(qreal delegateDragX READ delegateDragX NOTIFY delegateDragXChanged)
     Q_PROPERTY(qreal delegateDragY READ delegateDragY NOTIFY delegateDragYChanged)
 
@@ -212,6 +216,10 @@ public:
     FolioApplicationFolder *currentFolderRaw() const;
     void setCurrentFolder(std::shared_ptr<FolioApplicationFolder> folder);
 
+    // the currently focused delegate for keyboard navigation
+    FolioDelegate *keyboardFocusedDelegate();
+    void setKeyboardFocusedDelegate(std::shared_ptr<FolioDelegate> delegate);
+
     // the progress for the opening of the settings view
     qreal settingsOpenProgress();
     void setSettingsOpenProgress(qreal settingsOpenProgress);
@@ -293,6 +301,7 @@ Q_SIGNALS:
     void folderOpenProgressChanged();
     void folderGridLengthChanged();
     void currentFolderChanged();
+    void keyboardFocusedDelegateChanged();
     void settingsOpenProgressChanged();
     void appDrawerOpenProgressChanged();
     void appDrawerYChanged();
@@ -327,6 +336,8 @@ public Q_SLOTS:
     void goToFolderPage(int page, bool snap);
     void openFolder(qreal delegateX, qreal delegateY, FolioApplicationFolder *folder);
     void closeFolder();
+
+    void moveKeyboardNavigate(int dx, int dy);
 
     void openSettingsView();
     void closeSettingsView();
@@ -392,6 +403,8 @@ private:
     qreal m_folderOpenProgress{0};
     std::shared_ptr<FolioApplicationFolder> m_currentFolder{nullptr};
     int m_folderGridLength{0};
+
+    std::shared_ptr<FolioDelegate> m_keyboardFocusedDelegate{nullptr};
 
     qreal m_settingsOpenProgress{0};
 

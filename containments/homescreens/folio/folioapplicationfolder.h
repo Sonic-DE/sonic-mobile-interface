@@ -58,6 +58,11 @@ public:
     int dropInsertPosition(int page, qreal x, qreal y);
     bool isDropPositionOutside(qreal x, qreal y);
 
+    // For keyboard navigation, returns nullptr if no neighbour exists.
+    // Only supports dx, dy in {-1, 0, 1}
+    // @returns <delegate, page it is on>
+    std::pair<std::shared_ptr<FolioDelegate>, int> getNeighborDelegate(std::shared_ptr<FolioDelegate> delegate, int dx, int dy);
+
 Q_SIGNALS:
     void nameChanged();
     void saveRequested();

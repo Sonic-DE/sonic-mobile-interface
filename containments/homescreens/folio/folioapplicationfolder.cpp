@@ -122,6 +122,64 @@ bool FolioApplicationFolder::isDropPositionOutside(qreal x, qreal y)
     return m_applicationFolderModel->isDropPositionOutside(x, y);
 }
 
+FolioDelegate::Ptr FolioApplicationFolder::getNeighborDelegate(std::shared_ptr<FolioDelegate> delegate, int dx, int dy)
+{
+    if (!delegate) {
+        // If there is no delegate, just return the first element (if it exists)
+        return {getDelegate(0), 0};
+    }
+
+    int rowIndex = -1;
+    int columnIndex = -1;
+    int pageIndex = -1;
+
+    // Find delegate and the position it is at
+    for (const ApplicationDelegate &d : m_delegates) {
+        if (d.delegate == delegate) {
+            rowIndex = d.rowIndex;
+            columnIndex = d.columnIndex;
+            pageIndex = d.pageIndex;
+            break;
+        }
+    }
+
+    if (rowIndex == -1) {
+        // Delegate was not found
+        return {nullptr, 0};
+    }
+
+    int gridLength = m_applicationFolderModel->numGridLengthOnPage();
+
+    // Add delta position for neighbour's coordinate.
+    rowIndex += dx;
+    columnIndex += dy;
+
+    if (rowIndex < 0 || rowIndex >= gridLength) {
+        // Above or below the folder
+        return {nullptr, 0};
+    }
+
+    if (columnIndex >= gridLength) {
+        // Go to next page
+        pageIndex++;
+        columnIndex = 0;
+    }
+    if (columnIndex < 0) {
+        // Go to previous page
+        pageIndex--;
+        columnIndex = gridLength - 1;
+    }
+
+    // Find new delegate at coordinate
+    for (const ApplicationDelegate &d : m_delegates) {
+        if (d.rowIndex == rowIndex && d.columnIndex == columnIndex && d.pageIndex == pageIndex) {
+            return {d.delegate, pageIndex};
+        }
+    }
+
+    return {nullptr, 0};
+}
+
 ApplicationFolderModel::ApplicationFolderModel(FolioApplicationFolder *parent)
     : QAbstractListModel{parent}
     , m_folder{parent}

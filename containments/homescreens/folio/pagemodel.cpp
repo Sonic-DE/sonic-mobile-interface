@@ -212,6 +212,17 @@ FolioPageDelegate::Ptr PageModel::getDelegate(int row, int col)
     return nullptr;
 }
 
+std::shared_ptr<FolioPageDelegate> getDelegateFromFolder(std::shared_ptr<FolioApplicationFolder> folder)
+{
+    for (FolioPageDelegate::Ptr d : m_delegates) {
+        if (d->folder() == folder) {
+            return d;
+        }
+    }
+
+    return nullptr;
+}
+
 void PageModel::moveAndResizeWidgetDelegate(FolioPageDelegate *delegate, int newRow, int newColumn, int newGridWidth, int newGridHeight)
 {
     if (delegate->type() != FolioDelegate::Widget) {

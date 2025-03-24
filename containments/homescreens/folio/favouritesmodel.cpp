@@ -148,6 +148,27 @@ FolioDelegate::Ptr FavouritesModel::getEntryAt(int row)
     return m_delegates[row].delegate;
 }
 
+bool FavouritesModel::contains(std::shared_ptr<FolioDelegate> delegate)
+{
+    for (auto &favouritesDelegate : m_delegates) {
+        if (favouritesDelegate.delegate == delegate) {
+            return true;
+        }
+    }
+    return false;
+}
+
+std::shared_ptr<FolioDelegate> getEntryFromFolder(std::shared_ptr<FolioApplicationFolder> folder)
+{
+    for (auto &favouritesDelegate : m_delegates) {
+        if (favouritesDelegate.delegate->folder == folder) {
+            return favouritesDelegate.delegate;
+        }
+    }
+
+    return nullptr;
+}
+
 bool FavouritesModel::isFull() const
 {
     auto homeScreenState = m_homeScreen->homeScreenState();

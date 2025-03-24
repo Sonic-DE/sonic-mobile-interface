@@ -48,6 +48,8 @@ public:
     bool addDelegate(std::shared_ptr<FolioPageDelegate> delegate);
     std::shared_ptr<FolioPageDelegate> getDelegate(int row, int col);
 
+    std::shared_ptr<FolioPageDelegate> getDelegateFromFolder(std::shared_ptr<FolioApplicationFolder> folder);
+
     Q_INVOKABLE void moveAndResizeWidgetDelegate(FolioPageDelegate *delegate, int newRow, int newColumn, int newGridWidth, int newGridHeight);
 
     bool isPageEmpty();
