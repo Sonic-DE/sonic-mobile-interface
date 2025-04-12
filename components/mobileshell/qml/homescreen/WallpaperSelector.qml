@@ -60,7 +60,7 @@ Controls.Drawer {
             bottomPadding: padding
 
             background: Rectangle {
-                color: Qt.rgba(255, 255, 255, (openSettings.down || openSettings.highlighted) ? 0.3 : 0.2)
+                color: Qt.rgba(Kirigami.Theme.backgroundColor.r, Kirigami.Theme.backgroundColor.g, Kirigami.Theme.backgroundColor.b, (openSettings.down || openSettings.highlighted) ? 0.3 : 0.2)
                 radius: Kirigami.Units.gridUnit / 4
                 anchors.fill: parent
                 anchors.margins: Kirigami.Units.gridUnit / 4
@@ -128,6 +128,7 @@ Controls.Drawer {
             }
             background: Item {
                 Rectangle {
+                    color: Kirigami.Theme.backgroundColor
                     anchors {
                         fill: parent
                         margins: wallpapersView.currentIndex === index ? 0 : Kirigami.Units.gridUnit / 4

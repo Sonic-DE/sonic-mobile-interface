@@ -122,7 +122,7 @@ MobileShell.GridView {
                 // button background
                 Rectangle {
                     anchors.fill: parent
-                    color: Qt.rgba(255, 255, 255, button.pressed ? 0.2 : 0)
+                    color: Qt.rgba(Kirigami.Theme.backgroundColor.r, Kirigami.Theme.backgroundColor.g, Kirigami.Theme.backgroundColor.b, button.pressed ? 0.2 : 0)
                     radius: button.width / 2
                 }
 
