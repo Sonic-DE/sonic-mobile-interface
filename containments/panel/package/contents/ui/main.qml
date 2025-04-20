@@ -156,7 +156,7 @@ ContainmentItem {
         screen: Plasmoid.screen
         maximizedTracker: windowMaximizedTracker
 
-        visible: !root.fullscreen && startupFeedbackVisible
+        visible: !root.fullscreen
     }
 
     Rectangle {
