@@ -174,6 +174,9 @@ Item {
                     labelOpacity: delegate.opacity
 
                     onPressAndHold: {
+                        // prevent editing if lock layout is enabled
+                        if (folio.FolioSettings.lockLayout === true) return;
+
                         let mappedCoords = root.homeScreen.prepareStartDelegateDrag(delegate.pageDelegate, appDelegate.delegateItem);
                         folio.HomeScreenState.startDelegatePageDrag(
                             mappedCoords.x,
@@ -253,6 +256,9 @@ Item {
                     }
 
                     onPressAndHold: {
+                        // prevent editing if lock layout is enabled
+                        if (folio.FolioSettings.lockLayout === true) return;
+
                         let mappedCoords = root.homeScreen.prepareStartDelegateDrag(delegate.pageDelegate, appFolderDelegate.delegateItem);
                         folio.HomeScreenState.startDelegatePageDrag(
                             mappedCoords.x,
@@ -326,6 +332,9 @@ Item {
                     widget: suppressAppletReparent ? null : delegate.pageDelegate.widget
 
                     onStartEditMode: (pressPoint) => {
+                        // prevent editing if lock layout is enabled
+                        if (folio.FolioSettings.lockLayout === true) return;
+
                         let mappedCoords = root.homeScreen.prepareStartDelegateDrag(delegate.pageDelegate, widgetDelegate);
                         folio.HomeScreenState.startDelegatePageDrag(
                             mappedCoords.x,
@@ -348,7 +357,7 @@ Item {
                         }
                     }
 
-                    layer.enabled: widgetDelegate.editMode
+                    layer.enabled: widgetDelegate.editMode && folio.FolioSettings.lockLayout === false
                     layer.effect: DarkenEffect {}
 
                     PC3.ToolTip {
