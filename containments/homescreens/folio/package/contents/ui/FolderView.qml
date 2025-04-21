@@ -246,6 +246,9 @@ Folio.DelegateTouchArea {
                                 labelOpacity: delegate.opacity
 
                                 onPressAndHold: {
+                                    // prevent editing if lock layout is enabled
+                                    if (folio.FolioSettings.lockLayout === true) return;
+
                                     let mappedCoords = root.homeScreen.prepareStartDelegateDrag(delegate.delegateModel, appDelegate.delegateItem);
                                     folio.HomeScreenState.startDelegateFolderDrag(
                                         mappedCoords.x,
