@@ -29,7 +29,7 @@ ActionButton {
         }
         if (!RotationPlugin.RotationUtil.showRotationButton) return;
         // Position at the bottom left edge of actual device, regardless of current rotation.
-        root.screenCorner = (4 + currentRotation - deviceRotation) % 4;
+        root.screenCorner = currentRotation % 4;
         // match angle to physical device rotation.
         root.angle = ((4 + currentRotation - deviceRotation) % 4) * 90;
         root.active = true;
