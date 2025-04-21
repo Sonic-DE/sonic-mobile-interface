@@ -140,7 +140,7 @@ void MobileShellSettings::setNavigationPanelEnabled(bool navigationPanelEnabled)
     group.writeEntry("navigationPanelEnabled", navigationPanelEnabled, KConfigGroup::Notify);
     m_config->sync();
 
-    updateNavigationBarsInPlasma(navigationPanelEnabled);
+    updateNavigationBarsInPlasma();
 }
 
 bool MobileShellSettings::alwaysShowKeyboardToggleOnNavigationPanel() const
@@ -199,9 +199,12 @@ void MobileShellSettings::setConvergenceModeEnabled(bool enabled)
     job->setUiDelegate(new KNotificationJobUiDelegate(KJobUiDelegate::AutoErrorHandlingEnabled));
     job->setDesktopName(QStringLiteral("org.kde.plasma-mobile-envmanager"));
     job->start();
+
+    // update Plasma panels
+    updateNavigationBarsInPlasma();
 }
 
-void MobileShellSettings::updateNavigationBarsInPlasma(bool navigationPanelEnabled)
+void MobileShellSettings::updateNavigationBarsInPlasma()
 {
     // Do not update panels when not in Plasma Mobile
     bool isMobilePlatform = KRuntimePlatform::runtimePlatform().contains("phone");
@@ -214,25 +217,66 @@ void MobileShellSettings::updateNavigationBarsInPlasma(bool navigationPanelEnabl
                                                   QLatin1String("org.kde.PlasmaShell"),
                                                   QLatin1String("evaluateScript"));
 
-    if (navigationPanelEnabled) {
-        QString createNavigationPanelScript = R"(
-            loadTemplate("org.kde.plasma.mobile.defaultNavigationPanel");
-        )";
-
-        message << createNavigationPanelScript;
-
-    } else {
-        QString deleteNavigationPanelScript = R"(
+    QString deletePanelsScript = R"(
             let allPanels = panels();
-            for (var i = 0; i < allPanels.length; i++) {
-                if (allPanels[i].type === "org.kde.plasma.mobile.taskpanel") {
+            for (let i = 0; i < allPanels.length; i++) {
+                if (allPanels[i].type === "org.kde.plasma.mobile.taskpanel" || allPanels[i].type === "org.kde.panel") {
                     allPanels[i].remove();
                 }
             }
         )";
 
-        message << deleteNavigationPanelScript;
+    QString createNavigationPanelScript = R"(
+            loadTemplate("org.kde.plasma.mobile.defaultNavigationPanel");
+        )";
+
+    QString createDesktopPanelScript = R"(
+            if (knownPanelTypes.includes("org.kde.panel")) {
+                // Create a panel for each screen
+                for (let i = 0; i < screenCount; i++) {
+                    loadTemplate("org.kde.plasma.mobile.defaultDesktopPanel");
+                }
+
+                let panelsList = panels();
+                let curScreen = 0;
+
+                // Set the location and screen that each panel is on
+                for (let i = 0; i < panelsList.length; i++) {
+                    let panel = panelsList[i];
+                    if (panel.type === "org.kde.panel") {
+                        panel.location = 'bottom';
+
+                        if (panel.screen !== curScreen) {
+                            panel.screen = curScreen;
+                        }
+                        curScreen++;
+                    }
+                }
+            }
+        )";
+
+    // If the desktop panel doesn't get created (ex. Plasma Desktop is not installed), fallback to navbar
+    QString checkIfDesktopPanelCreatedScript = R"(
+            if (!knownPanelTypes.includes("org.kde.panel")) {
+                print("Plasma Desktop is not installed, cannot add desktop panel.");
+                loadTemplate("org.kde.plasma.mobile.defaultNavigationPanel");
+            }
+        )";
+
+    QString str = deletePanelsScript;
+
+    if (convergenceModeEnabled()) {
+        str += createDesktopPanelScript;
+
+        if (navigationPanelEnabled()) {
+            str += checkIfDesktopPanelCreatedScript;
+        }
+
+    } else if (navigationPanelEnabled()) {
+        str += createNavigationPanelScript;
     }
+
+    message << str;
 
     // TODO check for error response
     QDBusConnection::sessionBus().asyncCall(message);

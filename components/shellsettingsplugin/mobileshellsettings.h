@@ -267,7 +267,7 @@ Q_SIGNALS:
     void lockscreenRightButtonActionChanged();
 
 private:
-    void updateNavigationBarsInPlasma(bool navigationPanelEnabled);
+    void updateNavigationBarsInPlasma();
 
     KConfigWatcher::Ptr m_configWatcher;
     KSharedConfig::Ptr m_config;
