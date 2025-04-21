@@ -61,8 +61,6 @@ Folio.DelegateTouchArea {
     onPressedChanged: (pressed) => {
         if (pressed) {
             growAnim.stop();
-            // prevent shrink animation if lock layout is enabled
-            if (folio.FolioSettings.lockLayout === true) return;
             shrinkAnim.restart();
         } else if (!pressed && !shrinkAnim.running) {
             growAnim.restart();
