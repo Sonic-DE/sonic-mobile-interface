@@ -36,9 +36,18 @@ ActionButton {
 
     // Rotate to suggested rotation if button is pressed.
     onTriggered: {
-        RotationPlugin.RotationUtil.rotateToSuggestedRotation();
+        root.visible = false;
         root.active = false;
         timeout.stop();
+        rotate.restart();
+    }
+
+    // rotate on timeout to give time to hide the button before rotation happens
+    Timer {
+        id: rotate
+        interval: 0
+        repeat: false
+        onTriggered: RotationPlugin.RotationUtil.rotateToSuggestedRotation();
     }
 
     // When the button is active, hide it after a certain amount of time has passed.
