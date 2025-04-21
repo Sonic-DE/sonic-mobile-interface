@@ -92,7 +92,7 @@ MobileShell.GridView {
 
         onPressAndHold: {
             // prevent editing if lock layout is enabled
-            if (folio.FolioSettings.lockLayout === true) return;
+            if (folio.FolioSettings.lockLayout) return;
 
             const mappedCoords = root.homeScreen.prepareStartDelegateDrag(model.delegate, appDelegate.delegateItem, true);
             folio.HomeScreenState.closeAppDrawer();
