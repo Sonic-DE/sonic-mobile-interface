@@ -3,10 +3,12 @@
 
 #pragma once
 
+#include <QList>
 #include <QObject>
 #include <qqmlregistration.h>
 
-#include "hfdinterface.h"
+#include "hapticinterface.h"
+#include "vibrationevent.h"
 
 class VibrationManager : public QObject
 {
@@ -20,5 +22,5 @@ public:
     Q_INVOKABLE void vibrate(int durationMs);
 
 private:
-    com::lomiri::hfd::Vibrator *m_interface{nullptr};
+    OrgSigxcpuFeedbackHapticInterface *m_interface{nullptr};
 };
