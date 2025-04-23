@@ -440,17 +440,17 @@ Item {
                     PropertyAnimation {
                         properties: "offset";
                         easing.type: closedWithSwipe || (notificationPopup.popupCount - notificationPopup.popupIndex > 1) ? Easing.Linear : (notificationItem.state == "open" || notificationItem.state == "inDrawerClosed" ? Easing.OutQuint : Easing.InQuint);
-                        duration: closedWithSwipe || (notificationPopup.popupCount - notificationPopup.popupIndex > 1) ? Kirigami.Units.veryLongDuration * 0.75 : Kirigami.Units.veryLongDuration * 1.25
+                        duration: closedWithSwipe || (notificationPopup.popupCount - notificationPopup.popupIndex > 1) ? Kirigami.Units.veryLongDuration * 0.5 : Kirigami.Units.veryLongDuration * 1.25
                     }
                     PropertyAnimation {
                         properties: "scale";
                         easing.type: closedWithSwipe || (notificationPopup.popupCount - notificationPopup.popupIndex > 1) ? Easing.Linear : (notificationItem.state == "open" || notificationItem.state == "inDrawerClosed" ? Easing.OutQuint : Easing.InQuint);
-                        duration: closedWithSwipe || (notificationPopup.popupCount - notificationPopup.popupIndex > 1) ? Kirigami.Units.veryLongDuration * 0.75 : Kirigami.Units.veryLongDuration * 1.25
+                        duration: closedWithSwipe || (notificationPopup.popupCount - notificationPopup.popupIndex > 1) ? Kirigami.Units.veryLongDuration * 0.5 : Kirigami.Units.veryLongDuration * 1.25
                     }
                     PropertyAnimation {
                         properties: "popupOpacity";
                         easing.type: closedWithSwipe || (notificationPopup.popupCount - notificationPopup.popupIndex > 1) ? Easing.Linear : (notificationItem.state == "open" || notificationItem.state == "inDrawerClosed" ? Easing.OutQuint : Easing.InQuint);
-                        duration: closedWithSwipe || (notificationPopup.popupCount - notificationPopup.popupIndex > 1) ? Kirigami.Units.veryLongDuration * 0.75 : Kirigami.Units.veryLongDuration * 1.25
+                        duration: closedWithSwipe || (notificationPopup.popupCount - notificationPopup.popupIndex > 1) ? Kirigami.Units.veryLongDuration * 0.5 : Kirigami.Units.veryLongDuration * 1.25
                     }
                 }
                 ScriptAction {
