@@ -1,7 +1,9 @@
 # SPDX-FileCopyrightText: 2023 Devin Lin <devin@kde.org>
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-qt_add_dbus_interfaces(DBUS_SRCS dbus/com.lomiri.hfd.xml)
+qt_add_dbus_interfaces(DBUS_SRCS
+    dbus/org.sigxcpu.Feedback.xml
+    dbus/org.sigxcpu.Feedback.Haptic.xml)
 
 ecm_add_qml_module(hapticsplugin URI org.kde.plasma.private.mobileshell.hapticsplugin GENERATE_PLUGIN_SOURCE)
 target_sources(hapticsplugin PRIVATE
