@@ -22,6 +22,7 @@ set_source_files_properties(qml/components/Constants.qml PROPERTIES QT_QML_SINGL
 set_source_files_properties(qml/dataproviders/AudioInfo.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
 set_source_files_properties(qml/dataproviders/BatteryInfo.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
 set_source_files_properties(qml/dataproviders/BluetoothInfo.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
+set_source_files_properties(qml/dataproviders/NetworkInfo.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
 set_source_files_properties(qml/dataproviders/SignalStrengthInfo.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
 set_source_files_properties(qml/popups/PopupProviderLoader.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
 
