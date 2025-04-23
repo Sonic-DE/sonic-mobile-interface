@@ -106,6 +106,7 @@ Item {
 
         interactive: root.interactive &&
             settings.homeScreenInteractive &&
+            !folio.HomeScreenState.settingsOpenProgress &&
             (appDrawer.flickable.contentY <= 10 || // disable the swipe area when we are swiping in the app drawer, and not in drag-and-drop
                 folio.HomeScreenState.swipeState === Folio.HomeScreenState.AwaitingDraggingDelegate ||
                 folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate ||
