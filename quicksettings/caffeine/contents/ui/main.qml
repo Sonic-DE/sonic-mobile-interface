@@ -18,7 +18,7 @@ QS.QuickSetting {
         if (enabled) {
             inhibitionControl.uninhibit();
         } else {
-            const reason = 'Plasma Mobile has enabled system-wide inhibition';
+            const reason = i18nc("@info", "Plasma Mobile has enabled system-wide inhibition");
             inhibitionControl.inhibit(reason);
         }
     }
