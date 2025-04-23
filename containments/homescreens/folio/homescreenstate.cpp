@@ -919,7 +919,7 @@ void HomeScreenState::swipeEnded()
     switch (m_swipeState) {
     case SwipeState::SwipingOpenAppDrawer:
     case SwipeState::SwipingCloseAppDrawer:
-        if (m_movingUp || m_viewState == ViewState::SettingsView) {
+        if (m_movingUp) {
             closeAppDrawer();
         } else {
             openAppDrawer();
@@ -930,7 +930,7 @@ void HomeScreenState::swipeEnded()
         break;
     case SwipeState::SwipingOpenSearchWidget:
     case SwipeState::SwipingCloseSearchWidget:
-        if (m_movingUp && m_viewState != ViewState::SettingsView) {
+        if (m_movingUp) {
             openSearchWidget();
         } else {
             closeSearchWidget();
@@ -971,6 +971,11 @@ void HomeScreenState::swipeEnded()
     setSwipeState(SwipeState::None);
 }
 
+void HomeScreenState::swipeCancelled()
+{
+    setSwipeState(SwipeState::None);
+}
+
 void HomeScreenState::swipeMoved(qreal totalDeltaX, qreal totalDeltaY, qreal deltaX, qreal deltaY)
 {
     m_movingUp = deltaY > 0;
@@ -982,12 +987,10 @@ void HomeScreenState::swipeMoved(qreal totalDeltaX, qreal totalDeltaY, qreal del
         break;
     case SwipeState::SwipingOpenSearchWidget:
     case SwipeState::SwipingCloseSearchWidget:
-        if (m_settingsOpenProgress) { break; }
         setSearchWidgetY(m_searchWidgetY - deltaY);
         break;
     case SwipeState::SwipingOpenAppDrawer:
     case SwipeState::SwipingCloseAppDrawer:
-        if (m_settingsOpenProgress) { break; }
         setAppDrawerY(m_appDrawerY + deltaY);
         break;
     case SwipeState::SwipingAppDrawerGrid:
