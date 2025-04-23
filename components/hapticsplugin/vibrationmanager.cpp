@@ -12,8 +12,13 @@ void VibrationManager::vibrate(int durationMs)
 {
     // Only create interface when needed.
     if (!m_interface) {
-        const auto objectPath = QStringLiteral("/com/lomiri/hfd");
-        m_interface = new com::lomiri::hfd::Vibrator("com.lomiri.hfd", objectPath, QDBusConnection::systemBus(), this);
+        const auto objectPath = QStringLiteral("/org/sigxcpu/Feedback");
+        m_interface = new org::sigxcpu::Feedback::Haptic("org.sigxcpu.Feedback.Haptic", objectPath, QDBusConnection::systemBus(), this);
     }
-    m_interface->vibrate(durationMs);
+
+    const QString appId = QStringLiteral("org.kde.plasma.mobileshell");
+    const QVariant stamp = QVariant::fromValue(QPair<double, int>(1.0, durationMs));
+    const QVariantList pattern = {stamp};
+    bool success = m_interface->Vibrate(appId, pattern);
+    Q_UNUSED(success);
 }
