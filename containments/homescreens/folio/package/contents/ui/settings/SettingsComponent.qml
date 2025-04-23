@@ -52,15 +52,13 @@ Item {
         Kirigami.Theme.inherit: false
         Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
 
-        readonly property bool isLocationBottom: folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Bottom
-
-        anchors.bottomMargin: settingsBar.isLocationBottom ? Kirigami.Units.largeSpacing + Math.round(root.bottomMargin / 2) : 0
+        anchors.bottomMargin: folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Bottom ? Kirigami.Units.largeSpacing + Math.round(root.bottomMargin / 2) : 0
         anchors.rightMargin: folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Right ? Kirigami.Units.largeSpacing + Math.round(root.rightMargin / 2) : 0
         anchors.leftMargin: folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Left ? Kirigami.Units.largeSpacing + Math.round(root.leftMargin / 2) : 0
 
         GridLayout {
             id: settingsOptions
-            flow: settingsBar.isLocationBottom ? GridLayout.LeftToRight : GridLayout.TopToBottom
+            flow: folio.HomeScreenState.favouritesBarLocation === Folio.HomeScreenState.Bottom ? GridLayout.LeftToRight : GridLayout.TopToBottom
 
             anchors.centerIn: parent
 
