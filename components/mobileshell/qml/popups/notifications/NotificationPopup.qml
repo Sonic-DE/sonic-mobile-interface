@@ -33,7 +33,7 @@ Item {
     property real aboveNotificationFullOffset: 0
     property int aboveNotificationHeight: 0
 
-    // true when notification is swiped up
+    // set to true when notification is swiped up by user
     property bool closedWithSwipe: false
 
     // the drag offset on the current popup notification - used to position notification when stacked underneath
@@ -357,21 +357,44 @@ Item {
         property real offset: closedOffset
         property real scale: 1.0
         property real popupOpacity: 1.0
-        property real drawerScale: notificationPopup.popupDrawerOpened ? 0 : Math.max(Math.min(notificationPopup.popupIndex - popupNotifications.currentPopupIndex, 2), 0) * 0.075
+        property real drawerScale: {
+            if (notificationPopup.popupDrawerOpened) {
+                return 0; // when popup drawer is opened, reset scale to 0
+            }
+            let index = notificationPopup.popupIndex - popupNotifications.currentPopupIndex;
+            // clamp the index value to avoid scaling too much with animations
+            let indexClamped = Math.max(Math.min(index, 2), 0);
+            return indexClamped * 0.075;
+        }
+        property real drawerAddedOffset: {
+            if (notificationPopup.popupDrawerOpened) {
+                return 0; // when popup drawer is opened, reset any added height to 0
+            }
+            let index = notificationPopup.popupIndex - popupNotifications.currentPopupIndex;
+            // clamp the index value to avoid moving too much with animations
+            let indexClamped = Math.max(Math.min(index, 2), -1);
+            return Kirigami.Units.gridUnit * 0.5 * indexClamped;
+        }
+        property real drawerOpacity: {
+            let index = notificationPopup.popupIndex - popupNotifications.currentPopupIndex;
+            if (index > 2 && !notificationPopup.popupDrawerOpened) {
+                return 0; // make this popup invisible if it is below 3 other popups
+            } else {
+                return 1; // when popup drawer is opened, reset opacity to 1
+            }
+        }
         Behavior on drawerScale {
             NumberAnimation {
                 duration: Kirigami.Units.veryLongDuration * 1.25
                 easing.type: Easing.OutQuint
             }
         }
-        property real drawerAddedOffset: notificationPopup.popupDrawerOpened ? 0 : Kirigami.Units.gridUnit * 0.5 * Math.max(Math.min(notificationPopup.popupIndex - popupNotifications.currentPopupIndex, 2), -1)
         Behavior on drawerAddedOffset {
             NumberAnimation {
                 duration: Kirigami.Units.veryLongDuration * 1.25
                 easing.type: Easing.OutQuint
             }
         }
-        property real drawerOpacity: (notificationPopup.popupIndex - popupNotifications.currentPopupIndex > 2) && !notificationPopup.popupDrawerOpened ? 0 : 1
         Behavior on drawerOpacity {
             NumberAnimation {
                 duration: Kirigami.Units.veryLongDuration * 1.25
@@ -434,23 +457,58 @@ Item {
             }
         ]
 
+        readonly property int notificationEasing: {
+            // check whether the popup is the current one or above it
+            let topPopup = popupNotifications.currentPopupIndex >= notificationPopup.popupIndex;
+            // check whether the popup has any popups below it
+            let popupBelow = notificationPopup.popupCount - notificationPopup.popupIndex > 1;
+            let popupOpening = notificationItem.state == "open" || notificationItem.state == "inDrawerClosed";
+            let popupClosing = notificationItem.state == "closeWithMove" || notificationItem.state == "closeWithScale"
+            if (notificationPopup.closedWithSwipe || (topPopup && popupClosing && popupBelow)) {
+                // set the easing type to linear when closed with a swipe or if a popup is below when closing
+                // as to make sure the popup feels like it is keeping it's momentum
+                return Easing.Linear;
+            } else if (popupOpening) {
+                // set the easing type to 'Out' when opening so the popup will have a gentle landing
+                return Easing.OutQuint;
+            } else {
+                // if above conditions fail, set the easing type to 'In' so the popup will build up speed for it's exit
+                return Easing.InQuint;
+            }
+        }
+
+        readonly property real notificationDuration: {
+            // check whether the popup is the current one or above it
+            let topPopup = popupNotifications.currentPopupIndex >= notificationPopup.popupIndex;
+            // check whether the popup has any popups below it
+            let popupBelow = notificationPopup.popupCount - notificationPopup.popupIndex > 1;
+            let popupClosing = notificationItem.state == "closeWithMove" || notificationItem.state == "closeWithScale"
+            if (notificationPopup.closedWithSwipe || (topPopup && popupClosing && popupBelow)) {
+                // make sure the speed it faster when closed with a swipe or if there is a popup below when closing
+                // as to make sure the speed feels comparable with the easing type is set to linear
+                return Kirigami.Units.veryLongDuration * 0.5;
+            } else {
+                return Kirigami.Units.veryLongDuration * 1.25;
+            }
+        }
+
         transitions: Transition {
             SequentialAnimation {
                 ParallelAnimation {
                     PropertyAnimation {
-                        properties: "offset";
-                        easing.type: closedWithSwipe || (notificationPopup.popupCount - notificationPopup.popupIndex > 1) ? Easing.Linear : (notificationItem.state == "open" || notificationItem.state == "inDrawerClosed" ? Easing.OutQuint : Easing.InQuint);
-                        duration: closedWithSwipe || (notificationPopup.popupCount - notificationPopup.popupIndex > 1) ? Kirigami.Units.veryLongDuration * 0.5 : Kirigami.Units.veryLongDuration * 1.25
+                        properties: "offset"
+                        easing.type: notificationItem.notificationEasing
+                        duration: notificationItem.notificationDuration
                     }
                     PropertyAnimation {
-                        properties: "scale";
-                        easing.type: closedWithSwipe || (notificationPopup.popupCount - notificationPopup.popupIndex > 1) ? Easing.Linear : (notificationItem.state == "open" || notificationItem.state == "inDrawerClosed" ? Easing.OutQuint : Easing.InQuint);
-                        duration: closedWithSwipe || (notificationPopup.popupCount - notificationPopup.popupIndex > 1) ? Kirigami.Units.veryLongDuration * 0.5 : Kirigami.Units.veryLongDuration * 1.25
+                        properties: "scale"
+                        easing.type: notificationItem.notificationEasing
+                        duration: notificationItem.notificationDuration
                     }
                     PropertyAnimation {
-                        properties: "popupOpacity";
-                        easing.type: closedWithSwipe || (notificationPopup.popupCount - notificationPopup.popupIndex > 1) ? Easing.Linear : (notificationItem.state == "open" || notificationItem.state == "inDrawerClosed" ? Easing.OutQuint : Easing.InQuint);
-                        duration: closedWithSwipe || (notificationPopup.popupCount - notificationPopup.popupIndex > 1) ? Kirigami.Units.veryLongDuration * 0.5 : Kirigami.Units.veryLongDuration * 1.25
+                        properties: "popupOpacity"
+                        easing.type: notificationItem.notificationEasing
+                        duration: notificationItem.notificationDuration
                     }
                 }
                 ScriptAction {
