@@ -260,7 +260,7 @@ Item {
         if (notificationPopup.popupDrawerOpened && notificationItem.state != "inDrawerClosed" && notificationItem.state != "open") {
             notificationItem.offset = openOffset;
             notificationItem.scale = 0.75;
-            notificationItem.opacity = 0.0;
+            notificationItem.popupOpacity = 0.0;
         }
         notificationItem.state = "inDrawerClosed";
         notificationPopup.removeKeyboardFocus();
@@ -271,7 +271,7 @@ Item {
         if (notificationPopup.popupDrawerOpened && notificationItem.state != "open" && notificationItem.state != "inDrawerClosed") {
             notificationItem.offset = openOffset;
             notificationItem.scale = 0.75;
-            notificationItem.opacity = 0.0;
+            notificationItem.popupOpacity = 0.0;
         }
         notificationItem.state = "open";
         notificationPopup.removeKeyboardFocus();
