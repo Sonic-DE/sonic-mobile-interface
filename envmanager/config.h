@@ -32,7 +32,7 @@ const QMap<QString, QMap<QString, QVariant>> KDEGLOBALS_DEFAULT_SETTINGS = {{"Ge
 
 const QMap<QString, QMap<QString, QVariant>> KDEGLOBALS_SETTINGS = {{"KDE", {{"LookAndFeelPackage", "org.kde.breeze.mobile"}}}};
 
-// kwinrc
+// kwinrc-plasma-mobile
 QMap<QString, QMap<QString, QVariant>> getKwinrcSettings(KSharedConfig::Ptr m_mobileConfig)
 {
     auto group = KConfigGroup{m_mobileConfig, QStringLiteral("General")};

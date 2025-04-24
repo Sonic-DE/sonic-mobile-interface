@@ -16,6 +16,9 @@ export QT_QUICK_CONTROLS_MOBILE=true
 export PLASMA_INTEGRATION_USE_PORTAL=1
 export PLASMA_PLATFORM=phone:handset
 
+# Set KWin config override file
+export KWIN_OVERLAY_KWINRC_PATH=~/.config/kwinrc-plasma-mobile
+
 # if coredumpd knows about the dumps, make sure drkonqi catches them
 if grep -q '/systemd-coredump' /proc/sys/kernel/core_pattern
 then
