@@ -356,7 +356,7 @@ Item {
 
         property real offset: closedOffset
         property real scale: 1.0
-        property real popupOpacity: 1.0
+        property real popupOpacity: 1.0 // controls the opacity of the notification popup when outside the popup drawer
         property real drawerScale: {
             if (notificationPopup.popupDrawerOpened) {
                 return 0; // when popup drawer is opened, reset scale to 0
