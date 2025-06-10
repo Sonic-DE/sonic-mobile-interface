@@ -42,13 +42,14 @@ private:
     bool m_isMobilePlatform;
 
     KSharedConfig::Ptr m_mobileConfig;
-    KSharedConfig::Ptr m_kwinrcConfig; // (~/.config/kwinrc-plasma-mobile)
+    KSharedConfig::Ptr m_kwinrcConfig; // (~/.config/plasma-mobile/kwinrc)
     KSharedConfig::Ptr m_appBlacklistConfig;
-    KSharedConfig::Ptr m_kdeglobalsConfig;
-    KSharedConfig::Ptr m_ksmServerConfig;
+    KSharedConfig::Ptr m_kdeglobalsConfig; // (~/.config/plasma-mobile/kdeglobals)
+    KSharedConfig::Ptr m_ksmServerConfig; // (~/.config/plamsma-mobile/ksmserverrc)
 
-    // For legacy upgrade purposes (~/.config/kwinrc)
-    KSharedConfig::Ptr m_originalKwinrcConfig;
+    // For legacy upgrade purposes
+    KSharedConfig::Ptr m_originalKdeglobalsConfig; // (~/.config/kdeglobals)
+    KSharedConfig::Ptr m_originalKwinrcConfig; // (~/.config/kwinrc)
 
     KConfigWatcher::Ptr m_configWatcher;
 };
