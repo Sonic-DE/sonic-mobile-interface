@@ -72,7 +72,7 @@ void setOptionsImmutable(bool immutable, const QString &configFilePath, const QM
     }
 
     QTextStream out(&file);
-    for (const QString &line : lines) {
+    for (const QString &line : std::as_const(lines)) {
         out << line << "\n";
     }
     file.close();
