@@ -24,8 +24,8 @@ OpacityMask {
     property font font
     property var textFormat: Text.RichText
     // properties for the marquee label scroll speed and wait duration
-    property real scollSpeed: 0.025
-    property int waitDuration: 2000
+    readonly property real scrollSpeed: 0.025
+    readonly property int waitDuration: 2000
 
     readonly property string filteredText: inputText.replace(/\n/g, ' ') // remove new line characters
     readonly property bool charactersOverflowing: txtMeter.advanceWidth > root.width // true when text is overflowing
@@ -95,7 +95,7 @@ OpacityMask {
         onRunningChanged: row.scrollPosition = 0
         loops: Animation.Infinite
         PauseAnimation { duration: root.waitDuration }
-        NumberAnimation { target: row; property: "scrollPosition"; from: 0; to: -txtMeter.advanceWidth - row.spacing; duration: (txtMeter.advanceWidth + row.spacing) / root.scollSpeed }
+        NumberAnimation { target: row; property: "scrollPosition"; from: 0; to: -txtMeter.advanceWidth - row.spacing; duration: (txtMeter.advanceWidth + row.spacing) / root.scrollSpeed }
     }
 
     // gradient mask to smoothly fade the ends of the label when it is scrolling
