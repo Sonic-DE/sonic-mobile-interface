@@ -87,15 +87,27 @@ Window {
                 }
 
                 FormCard.FormCard {
-                    FormCard.FormSwitchDelegate {
-                        id: showWallpaperBlur
-                        text: i18nc("@option:check", "Show wallpaper blur effect")
-                        checked: Plasmoid.settings.showWallpaperBlur
-                        onCheckedChanged: {
-                            if (checked != Plasmoid.settings.showWallpaperBlur) {
-                                Plasmoid.settings.showWallpaperBlur = checked;
+                    FormCard.FormComboBoxDelegate {
+                        id: wallpaperBlurCombobox
+                        text: i18n("Wallpaper blur effect")
+
+                        currentIndex: indexOfValue(Plasmoid.settings.wallpaperBlurEffect)
+                        model: ListModel {
+                            // we can't use i18n with ListElement
+                            Component.onCompleted: {
+                                append({"name": i18n("None"), "value": 0});
+                                append({"name": i18n("Simple"), "value": 1});
+                                append({"name": i18n("Full"), "value": 2});
+
+                                // indexOfValue doesn't bind to model changes unfortunately, set currentIndex manually here
+                                wallpaperBlurCombobox.currentIndex = wallpaperBlurCombobox.indexOfValue(Plasmoid.settings.wallpaperBlurEffect)
                             }
                         }
+
+                        textRole: "name"
+                        valueRole: "value"
+
+                        onCurrentValueChanged: Plasmoid.settings.wallpaperBlurEffect = currentValue
                     }
 
                     FormCard.FormDelegateSeparator { above: showWallpaperBlur; below: doubleTapToSleepSwitch }
