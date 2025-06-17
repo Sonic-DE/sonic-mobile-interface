@@ -43,10 +43,21 @@ MobileShell.BaseItem {
     rightPadding: Kirigami.Units.smallSpacing * 4
     bottomPadding: Kirigami.Units.smallSpacing * 4
 
-    background: KSvg.FrameSvgItem {
-        enabledBorders: KSvg.FrameSvgItem.AllBorders
-        imagePath: "widgets/background"
-        opacity: brightnessPressedValue
+    background: Item {
+        Kirigami.ShadowedRectangle {
+            id: background
+            anchors.fill: parent
+            anchors.margins: Kirigami.Units.largeSpacing
+            color: Kirigami.Theme.backgroundColor
+            opacity: brightnessPressedValue
+
+            shadow.color: Qt.rgba(0, 0, 0, 0.075)
+            shadow.size: 15
+            radius: Kirigami.Units.cornerRadius
+
+            border.color: Kirigami.ColorUtils.tintWithAlpha(Kirigami.Theme.textColor, Kirigami.Theme.backgroundColor, 0.75)
+            border.width: 1
+        }
     }
 
     contentItem: Item {
