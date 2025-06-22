@@ -58,8 +58,8 @@ Item {
         return Kirigami.ColorUtils.tintWithAlpha(Kirigami.Theme.backgroundColor, "white", tintPercent)
     }
     // in some circumstances, panels can change there type
-    // for example, popup notifition when open the popup notifition drawer
-    // in these incidents, we animate then to prevent harsh transitions
+    // for example, popup notifition when opening the popup notifition drawer
+    // in these incidents, we animate the color to prevent harsh transitions
     Behavior on panelColor {
         ColorAnimation {
             duration: animate ? Kirigami.Units.veryLongDuration * 1.5 : 0
