@@ -20,6 +20,11 @@ Item {
     default property Item contentItem
 
     /**
+     * The panel background type for this notification.
+     */
+    property int panelType: MobileShell.PanelBackground.PanelType.Drawer
+
+    /**
      * Whether this is a popup notification.
      */
     property bool popupNotification: false
@@ -30,20 +35,9 @@ Item {
     property bool inPopupDrawer: false
 
     /**
-     * Whether this popup notification drawer is opened.
-     */
-    property bool popupDrawerOpened: false
-
-    /**
      * Whether this notification is within the lockscreen.
      */
-    property bool inLockscreen: false
-
-    /**
-     * Whether this notification is within the lockscreen notification drawer.
-     */
-    property bool inLockScreenDrawer: false
-
+    property bool inLockScreen: false
 
     /**
      * The current notification popup height.
@@ -104,15 +98,7 @@ Item {
     MobileShell.PanelBackground {
         anchors.fill: mainCard
         animate: true
-        panelType: {
-            if (inLockScreenDrawer) {
-                return MobileShell.PanelBackground.PanelType.Wallpaper
-            } else if (popupNotification && !popupDrawerOpened) {
-                return MobileShell.PanelBackground.PanelType.Popup
-            } else {
-                return MobileShell.PanelBackground.PanelType.Drawer
-            }
-        }
+        panelType: root.panelType
     }
 
     // card

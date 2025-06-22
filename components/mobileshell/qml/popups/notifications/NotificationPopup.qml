@@ -324,7 +324,9 @@ Item {
         notificationsModel: notificationPopup.notificationsModel
         notificationsModelType: notificationPopup.notificationsModelType
         timeSource: notificationPopup.timeDataSource
-        popupDrawerOpened: notificationPopup.popupDrawerOpened
+        panelType:  notificationPopup.popupDrawerOpened ?
+                    MobileShell.PanelBackground.PanelType.Drawer :
+                    MobileShell.PanelBackground.PanelType.Popup
 
         currentPopupHeight: popupNotifications.currentPopupHeight
 
