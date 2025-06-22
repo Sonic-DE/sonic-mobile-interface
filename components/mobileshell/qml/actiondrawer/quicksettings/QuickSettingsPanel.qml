@@ -86,6 +86,7 @@ MobileShell.BaseItem {
                 Layout.maximumWidth: column.width
             }
 
+            // add extra space here to prevent the bottom handle from overlapping with the BrightnessItem
             Item { Layout.fillHeight: true; height: Kirigami.Units.largeSpacing }
         }
 
