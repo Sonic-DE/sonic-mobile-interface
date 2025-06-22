@@ -21,8 +21,7 @@ Item {
     id: root
     visible: sourceRepeater.count > 0
 
-    property bool inEmbeddedActionDrawer: false
-    property bool inLockScreenDrawer: false
+    property int panelType: MobileShell.PanelBackground.PanelType.Drawer
     property bool detailledView: false
 
     readonly property real padding: Kirigami.Units.gridUnit
@@ -65,13 +64,7 @@ Item {
 
     MobileShell.PanelBackground {
         anchors.fill: parent
-        panelType: {
-            if (inLockScreenDrawer) {
-                return MobileShell.PanelBackground.PanelType.Wallpaper
-            } else {
-                return MobileShell.PanelBackground.PanelType.Drawer
-            }
-        }
+        panelType: root.panelType
     }
 
     // list of app media widgets

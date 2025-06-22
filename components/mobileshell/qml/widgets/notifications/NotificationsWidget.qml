@@ -30,12 +30,12 @@ Item {
     /**
      * If the notification is in the lockscreen.
      */
-    property bool inLockscreen: false
+    property bool inLockScreen: false
 
     /**
-     * If the notification is in the lockscreen notification drawer.
+     * The panel background type for all the notifications within the widget.
      */
-    property bool inLockScreenDrawer: false
+    property int panelType: MobileShell.PanelBackground.PanelType.Drawer
 
     /**
      * The notification model for the widget.
@@ -350,8 +350,8 @@ Item {
                         width: parent.width
                         height: implicitHeight
 
-                        inLockscreen: root.inLockscreen
-                        inLockScreenDrawer: root.inLockScreenDrawer
+                        inLockScreen: root.inLockScreen
+                        panelType: root.panelType
 
                         model: delegateLoader.model
                         modelIndex: delegateLoader.index
