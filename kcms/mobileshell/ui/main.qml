@@ -48,6 +48,18 @@ KCM.SimpleKCM {
                 }
             }
 
+            FormCard.FormSwitchDelegate {
+                id: doubleTapToSleepSwitch
+                text: i18n("Double Tap to Sleep")
+                description: i18n("If this is on, double tapping the screen on home screen will put the device to sleep.")
+                checked: ShellSettings.Settings.doubleTapToSleep
+                onCheckedChanged: {
+                    if (checked != ShellSettings.Settings.doubleTapToSleep) {
+                        ShellSettings.Settings.doubleTapToSleep = checked;
+                    }
+                }
+            }
+
             FormCard.FormDelegateSeparator { above: shellVibrationsButton; below: animationsSwitch }
 
             FormCard.FormSwitchDelegate {
