@@ -164,7 +164,6 @@ ContainmentItem {
         onHomeTriggered: root.homeAction()
 
         contentItem: Item {
-
             // homescreen component
             HomeScreen {
                 id: folioHomeScreen
@@ -175,6 +174,12 @@ ContainmentItem {
                 bottomMargin: homeScreen.bottomMargin
                 leftMargin: homeScreen.leftMargin
                 rightMargin: homeScreen.rightMargin
+            }
+
+            MobileShell.DoubleTapToSleep {
+                id: doubleTapToSleep
+                enabled: folio.FolioSettings.doubleTapToSleep
+                anchors.fill: parent
             }
         }
     }
