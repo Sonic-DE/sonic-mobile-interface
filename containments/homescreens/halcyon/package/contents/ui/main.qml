@@ -118,6 +118,11 @@ ContainmentItem {
                 leftMargin: homeScreen.leftMargin
                 rightMargin: homeScreen.rightMargin
             }
+
+            MobileShell.DoubleTapToSleep {
+                id: doubleTapToSleep
+                anchors.fill: parent
+            }
         }
     }
 }
