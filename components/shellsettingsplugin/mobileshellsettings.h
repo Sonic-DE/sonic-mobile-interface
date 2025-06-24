@@ -28,6 +28,7 @@ class MobileShellSettings : public QObject
     Q_PROPERTY(bool vibrationsEnabled READ vibrationsEnabled WRITE setVibrationsEnabled NOTIFY vibrationsEnabledChanged)
     Q_PROPERTY(int vibrationDuration READ vibrationDuration WRITE setVibrationDuration NOTIFY vibrationDurationChanged)
     Q_PROPERTY(bool animationsEnabled READ animationsEnabled WRITE setAnimationsEnabled NOTIFY animationsEnabledChanged)
+    Q_PROPERTY(bool doubleTapToSleep READ doubleTapToSleep WRITE setDoubleTapToSleep NOTIFY doubleTapToSleepChanged)
 
     // status bar
     Q_PROPERTY(bool dateInStatusBar READ dateInStatusBar WRITE setDateInStatusBar NOTIFY dateInStatusBarChanged)
@@ -112,6 +113,18 @@ public:
      * @param animationsEnabled Whether animations should be enabled in the shell.
      */
     void setAnimationsEnabled(bool animationsEnabled);
+
+    /**
+     * Whether double tap to sleep is enabled.
+     */
+    bool doubleTapToSleep() const;
+
+    /**
+     * Set whether double tap to sleep is enabled.
+     *
+     * @param doubleTapToSleep Whether double tap to sleep is enabled.
+     */
+    void setDoubleTapToSleep(bool doubleTapToSleep);
 
     /**
      * Whether date is shown in the status bar.
@@ -270,6 +283,7 @@ Q_SIGNALS:
     void alwaysShowKeyboardToggleOnNavigationPanelChanged();
     void keyboardButtonEnabledChanged();
     void animationsEnabledChanged();
+    void doubleTapToSleepChanged();
     void dateInStatusBarChanged();
     void statusBarScaleFactorChanged();
     void showBatteryPercentageChanged();

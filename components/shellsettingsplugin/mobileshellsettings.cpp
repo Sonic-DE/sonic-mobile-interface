@@ -31,6 +31,7 @@ MobileShellSettings::MobileShellSettings(QObject *parent)
             Q_EMIT vibrationsEnabledChanged();
             Q_EMIT vibrationDurationChanged();
             Q_EMIT animationsEnabledChanged();
+            Q_EMIT doubleTapToSleepChanged();
             Q_EMIT dateInStatusBarChanged();
             Q_EMIT statusBarScaleFactorChanged();
             Q_EMIT showBatteryPercentageChanged();
@@ -87,6 +88,19 @@ void MobileShellSettings::setAnimationsEnabled(bool animationsEnabled)
 {
     auto group = KConfigGroup{m_config, GENERAL_CONFIG_GROUP};
     group.writeEntry("animationsEnabled", animationsEnabled, KConfigGroup::Notify);
+    m_config->sync();
+}
+
+bool MobileShellSettings::doubleTapToSleep() const
+{
+    auto group = KConfigGroup{m_config, GENERAL_CONFIG_GROUP};
+    return group.readEntry("doubleTapToSleep", false);
+}
+
+void MobileShellSettings::setDoubleTapToSleep(bool doubleTapToSleep)
+{
+    auto group = KConfigGroup{m_config, GENERAL_CONFIG_GROUP};
+    group.writeEntry("doubleTapToSleep", doubleTapToSleep, KConfigGroup::Notify);
     m_config->sync();
 }
 
