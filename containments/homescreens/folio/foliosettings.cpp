@@ -153,6 +153,20 @@ void FolioSettings::setShowWallpaperBlur(bool showWallpaperBlur)
     }
 }
 
+bool FolioSettings::doubleTapToSleep() const
+{
+    return m_doubleTapToSleep;
+}
+
+void FolioSettings::setDoubleTapToSleep(bool doubleTapToSleep)
+{
+    if (m_doubleTapToSleep != doubleTapToSleep) {
+        m_doubleTapToSleep = doubleTapToSleep;
+        Q_EMIT doubleTapToSleepChanged();
+        save();
+    }
+}
+
 void FolioSettings::save()
 {
     if (!m_homeScreen) {
@@ -195,6 +209,7 @@ void FolioSettings::load()
     Q_EMIT lockLayoutChanged();
     Q_EMIT delegateIconSizeChanged();
     Q_EMIT showWallpaperBlurChanged();
+    Q_EMIT doubleTapToSleepChanged();
 }
 
 bool FolioSettings::saveLayoutToFile(QString path)
