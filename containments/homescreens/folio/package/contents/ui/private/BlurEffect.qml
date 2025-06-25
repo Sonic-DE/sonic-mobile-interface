@@ -19,7 +19,7 @@ Item {
     readonly property int fastBlurRadius: 42
 
     property var sourceComponent
-    property Component maskSourceComponent
+    property var maskSourceComponent
 
     // only take samples from wallpaper when we need the blur for performance
     ShaderEffectSource {
@@ -61,7 +61,6 @@ Item {
         anchors.fill: parent
         layer.enabled: true
         layer.smooth: true
-        layer.textureSize: root.textureSize
         opacity: 0
 
         Loader {
@@ -69,7 +68,18 @@ Item {
             active: root.maskSourceComponent && root.fullBlur != 1 && root.active
             anchors.fill: parent
 
-            sourceComponent: root.maskSourceComponent
+            sourceComponent: maskSource
+
+            property Component maskSource: Item {
+                ShaderEffectSource {
+                    anchors.fill: parent
+
+                    sourceItem: root.maskSourceComponent
+                    hideSource: false
+                    live: true
+                }
+            }
+
         }
     }
 

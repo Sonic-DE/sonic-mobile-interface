@@ -6,20 +6,20 @@ import QtQuick.Layouts
 
 import org.kde.kirigami 2.20 as Kirigami
 import org.kde.private.mobile.homescreen.folio 1.0 as Folio
+import org.kde.plasma.private.mobileshell.masklayerplugin as MaskLayer
 
 import "./delegate"
 
 Item {
     id: root
     property Folio.HomeScreen folio
+    property MaskLayer.MaskManager maskManager
     property Folio.FolioDelegate delegate
 
     width: folio.HomeScreenState.pageCellWidth
     height: folio.HomeScreenState.pageCellHeight
 
     readonly property real dropAnimationRunning: dragXAnim.running || dragYAnim.running
-    readonly property var snapPositionX: dragXAnim.to
-    readonly property var snapPositionY: dragYAnim.to
 
     // ignore widget dragging, that is not handled by this component
     readonly property bool isWidgetDrag: folio.HomeScreenState.dragState.dropDelegate && folio.HomeScreenState.dragState.dropDelegate.type === Folio.FolioDelegate.Widget
@@ -27,13 +27,6 @@ Item {
     visible: false
     x: folio.HomeScreenState.delegateDragX
     y: folio.HomeScreenState.delegateDragY
-
-    signal animateDrop()
-
-    onAnimateDrop: {
-        dragXAnim.restart();
-        dragYAnim.restart();
-    }
 
     function setXBinding() {
         x = Qt.binding(() => folio.HomeScreenState.delegateDragX);
@@ -43,7 +36,7 @@ Item {
     }
 
     // animate drop x
-    XAnimator on x {
+    NumberAnimation on x {
         id: dragXAnim
         running: false
         duration: Kirigami.Units.longDuration
@@ -55,7 +48,7 @@ Item {
     }
 
     // animate drop y
-    YAnimator on y {
+    NumberAnimation on y {
         id: dragYAnim
         running: false
         duration: Kirigami.Units.longDuration
@@ -140,7 +133,8 @@ Item {
 
             dragXAnim.to = pos.x;
             dragYAnim.to = pos.y;
-            animateDrop();
+            dragXAnim.restart();
+            dragYAnim.restart();
 
             if (stateWatcher.delegateDroppedOn &&
                 stateWatcher.delegateDroppedOn.type != Folio.FolioDelegate.None &&
@@ -166,6 +160,7 @@ Item {
         DelegateIconLoader {
             id: loader
             folio: root.folio
+            maskManager: root.maskManager
             Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
             Layout.minimumWidth: folio.FolioSettings.delegateIconSize
             Layout.minimumHeight: folio.FolioSettings.delegateIconSize

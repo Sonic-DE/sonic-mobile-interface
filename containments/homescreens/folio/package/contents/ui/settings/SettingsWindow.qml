@@ -115,8 +115,7 @@ Window {
 
                 FormCard.FormCard {
                     id: iconsCard
-                    readonly property bool isVerticalOrientation: folio.HomeScreenState.pageOrientation === Folio.HomeScreenState.RegularPosition ||
-                        folio.HomeScreenState.pageOrientation === Folio.HomeScreenState.RotateUpsideDown
+                    readonly property bool isVerticalOrientation:  folio.HomeScreenState.pageOrientation === Folio.HomeScreenState.RegularPosition || folio.HomeScreenState.pageOrientation === Folio.HomeScreenState.RotateUpsideDown
 
                     readonly property string numOfRowsText: i18n("Number of rows")
                     readonly property string numOfColumnsText: i18n("Number of columns")

@@ -9,18 +9,16 @@ import QtQuick.Effects
 import org.kde.kirigami 2.20 as Kirigami
 
 import org.kde.private.mobile.homescreen.folio 1.0 as Folio
+import org.kde.plasma.private.mobileshell.masklayerplugin as MaskLayer
 
 Item {
     id: root
     property Folio.HomeScreen folio
+    property MaskLayer.MaskManager maskManager
 
     property Folio.FolioApplicationFolder folder
 
     property bool expandBackground: false
-
-    property bool maskIcon: false
-
-    readonly property alias scaleAmount: rect.scaleAmount
 
     height: folio.FolioSettings.delegateIconSize
     width: folio.FolioSettings.delegateIconSize
@@ -28,8 +26,14 @@ Item {
     Rectangle {
         id: rect
         radius: Kirigami.Units.cornerRadius
-        color: maskIcon ? "white" : Qt.rgba(255, 255, 255, 0.3)
+        color:  Qt.rgba(255, 255, 255, 0.3)
         anchors.fill: parent
+
+        Component.onCompleted: {
+            if (maskManager) {
+                maskManager.assignToMask(this)
+            }
+        }
 
         property real scaleAmount: root.expandBackground ? 1.2 : 1.0
 
@@ -43,29 +47,21 @@ Item {
         }
     }
 
-    Loader {
-        id: pageMask
+    Grid {
+        id: previewGrid
         anchors.fill: parent
-        asynchronous: true
-        active: !maskIcon
-        visible: active
+        anchors.margins: Kirigami.Units.smallSpacing * 2
+        columns: 2
+        spacing: Kirigami.Units.smallSpacing
 
-        sourceComponent: Grid {
-            id: previewGrid
-            anchors.fill: parent
-            anchors.margins: Kirigami.Units.smallSpacing * 2
-            columns: 2
-            spacing: Kirigami.Units.smallSpacing
+        property var previews: root.folder.appPreviews
 
-            property var previews: root.folder.appPreviews
-
-            Repeater {
-                model: previewGrid.previews
-                delegate: Kirigami.Icon {
-                    implicitWidth: Math.round((previewGrid.width - previewGrid.spacing) / 2)
-                    implicitHeight: Math.round((previewGrid.width - previewGrid.spacing) / 2)
-                    source: modelData.icon
-                }
+        Repeater {
+            model: previewGrid.previews
+            delegate: Kirigami.Icon {
+                implicitWidth: Math.round((previewGrid.width - previewGrid.spacing) / 2)
+                implicitHeight: Math.round((previewGrid.width - previewGrid.spacing) / 2)
+                source: modelData.icon
             }
         }
     }

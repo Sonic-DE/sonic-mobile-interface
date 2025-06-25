@@ -9,10 +9,12 @@ import org.kde.plasma.components 3.0 as PC3
 import org.kde.plasma.private.mobileshell as MobileShell
 import org.kde.kirigami 2.10 as Kirigami
 import org.kde.private.mobile.homescreen.folio 1.0 as Folio
+import org.kde.plasma.private.mobileshell.masklayerplugin as MaskLayer
 
 MouseArea {
     id: root
     property Folio.HomeScreen folio
+    property MaskLayer.MaskManager maskManager
 
     property var homeScreen
 
@@ -28,49 +30,13 @@ MouseArea {
         haptics.buttonVibrate();
     }
 
-    // loads and combines all the homescreen page layer masks
-    property Component maskComponent: Item {
-        id: maskComponent
-        anchors.fill: parent
-        anchors.leftMargin: root.horizontalMargin
-        anchors.rightMargin: root.horizontalMargin
-        anchors.topMargin: root.verticalMargin
-        anchors.bottomMargin: root.verticalMargin
-
-        Repeater {
-            model: pageRepeater.count
-
-            delegate: Loader {
-                id: pageMask
-                asynchronous: true
-                active: folio.FolioSettings.wallpaperBlurEffect > 1
-                anchors.fill: parent
-
-                readonly property var page: pageRepeater.itemAt(model.index)
-
-                sourceComponent: page.maskComponent
-                visible: page.visible
-                opacity: page.opacity
-
-                // x position of page
-                Connections {
-                    target: page
-
-                    function onPositionXChanged() {
-                        pageMask.transform = pageMask.page.transform
-                    }
-                }
-            }
-        }
-    }
-
     Repeater {
-        id: pageRepeater
         model: folio.PageListModel
 
         delegate: HomeScreenPage {
             id: homeScreenPage
             folio: root.folio
+            maskManager: root.maskManager
             pageNum: model.index
             pageModel: model.delegate
             homeScreen: root.homeScreen

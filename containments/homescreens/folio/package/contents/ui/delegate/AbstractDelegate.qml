@@ -14,10 +14,12 @@ import org.kde.kquickcontrolsaddons 2.0
 import org.kde.private.mobile.homescreen.folio 1.0 as Folio
 import org.kde.plasma.private.mobileshell.shellsettingsplugin as ShellSettings
 import org.kde.plasma.private.mobileshell as MobileShell
+import org.kde.plasma.private.mobileshell.masklayerplugin as MaskLayer
 
 Folio.DelegateTouchArea {
     id: root
     property Folio.HomeScreen folio
+    property MaskLayer.MaskManager maskManager
 
     property string name
     property bool shadow: false
@@ -29,10 +31,10 @@ Folio.DelegateTouchArea {
     signal afterClickAnimation()
 
     // grow/shrink animation
-    property real zoomScale: 1
+    property real scaleAmount: 1
     property bool clickRequested: false
 
-    NumberAnimation on zoomScale {
+    NumberAnimation on scaleAmount {
         id: shrinkAnim
         running: false
         duration: ShellSettings.Settings.animationsEnabled ? 80 : 1
@@ -44,7 +46,7 @@ Folio.DelegateTouchArea {
         }
     }
 
-    NumberAnimation on zoomScale {
+    NumberAnimation on scaleAmount {
         id: growAnim
         running: false
         duration: ShellSettings.Settings.animationsEnabled ? 80 : 1
@@ -86,8 +88,8 @@ Folio.DelegateTouchArea {
             transform: Scale {
                 origin.x: root.width / 2;
                 origin.y: root.height / 2;
-                xScale: root.zoomScale
-                yScale: root.zoomScale
+                xScale: root.scaleAmount
+                yScale: root.scaleAmount
             }
 
             MobileShell.BaseItem {

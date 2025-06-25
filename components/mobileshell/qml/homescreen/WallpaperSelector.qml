@@ -6,16 +6,18 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Window
 import QtQuick.Controls as Controls
-import Qt5Compat.GraphicalEffects
 
 import org.kde.kirigami 2.20 as Kirigami
 import org.kde.plasma.wallpapers.image 2.0 as Wallpaper
 import org.kde.kquickcontrolsaddons 2.0 as Addons
 import org.kde.plasma.private.mobileshell.wallpaperimageplugin as WallpaperImagePlugin
+import org.kde.plasma.private.mobileshell.masklayerplugin as MaskLayer
 
 Controls.Drawer {
     id: imageWallpaperDrawer
     dragMargin: 0
+
+    property MaskLayer.MaskManager maskManager
 
     required property bool horizontal
 
@@ -35,31 +37,6 @@ Controls.Drawer {
     }
 
     background: null
-
-    // creates a wallpaper selector mask layer to be able to blur behind it
-    property Component maskComponent: Item {
-        anchors.fill: parent
-        ThresholdMask {
-            width: imageWallpaperDrawer.width
-            height: imageWallpaperDrawer.height
-            implicitWidth: imageWallpaperDrawer.implicitWidth
-            implicitHeight: imageWallpaperDrawer.implicitHeight
-
-            anchors.leftMargin: imageWallpaperDrawer.leftMargin
-            anchors.rightMargin: imageWallpaperDrawer.rightMargin
-            anchors.bottomMargin: imageWallpaperDrawer.bottomMargin
-
-            x: imageWallpaperDrawer.x
-            y: imageWallpaperDrawer.y
-
-            source: Rectangle {
-                width: wallpapersView.width
-                height: wallpapersView.height
-            }
-            maskSource: wallpapersView
-            threshold: 0.0
-        }
-    }
 
     ListView {
         id: wallpapersView
@@ -88,6 +65,12 @@ Controls.Drawer {
             background: Rectangle {
                 radius: Kirigami.Units.cornerRadius
                 color: Qt.rgba(255, 255, 255, (openSettings.down || openSettings.highlighted) ? 0.3 : 0.2)
+
+                Component.onCompleted: {
+                    if (maskManager) {
+                        maskManager.assignToMask(this)
+                    }
+                }
             }
 
             contentItem: Item {
@@ -169,6 +152,12 @@ Controls.Drawer {
             background: Rectangle {
                 color: Qt.rgba(255, 255, 255, (delegate.down || delegate.highlighted) ? 0.4 : 0.2)
                 radius: Kirigami.Units.cornerRadius
+
+                Component.onCompleted: {
+                    if (maskManager) {
+                        maskManager.assignToMask(this)
+                    }
+                }
             }
         }
     }

@@ -11,6 +11,7 @@ import org.kde.plasma.private.mobileshell.state as MobileShellState
 import org.kde.plasma.private.mobileshell as MobileShell
 import org.kde.private.mobile.homescreen.folio 1.0 as Folio
 import org.kde.kirigami as Kirigami
+import org.kde.plasma.private.mobileshell.masklayerplugin as MaskLayer
 
 import "./delegate"
 import "./private"
@@ -18,6 +19,7 @@ import "./private"
 Item {
     id: root
     property Folio.HomeScreen folio
+    property MaskLayer.MaskManager maskManager
 
     property int pageNum
 
@@ -35,75 +37,6 @@ Item {
         color: Qt.rgba(255, 255, 255, 0.2)
         opacity: folio.HomeScreenState.settingsOpenProgress
         radius: Kirigami.Units.largeSpacing
-    }
-
-    // creates the homescreen page mask layer for the folder icons
-    property Component maskComponent: Repeater {
-        model: root.pageModel
-        delegate: Item {
-            property var maskDelegate: pageRepeater.itemAt(index)
-
-            Loader {
-                id: maskLoader
-                active: folio.FolioSettings.wallpaperBlurEffect > 1
-                asynchronous: true
-                anchors.top: parent.top
-                anchors.left: parent.left
-
-                sourceComponent: {
-                    if (!maskDelegate) {
-                        return noneComponent;
-                    } else if (maskDelegate.pageDelegate.type === Folio.FolioDelegate.Application) {
-                        return appComponent;
-                    } else if (maskDelegate.pageDelegate.type === Folio.FolioDelegate.Folder) {
-                        return folderComponent;
-                    } else if (maskDelegate.pageDelegate.type === Folio.FolioDelegate.Widget) {
-                        return noneComponent;
-                    } else {
-                        return noneComponent;
-                    }
-                }
-            }
-
-            Component {
-                id: noneComponent
-
-                Item {}
-            }
-
-            // blur mask for behind icons when a app is hovered over it and it is turning into a folder
-            Component {
-                id: appComponent
-
-                IconMaskDelegate {
-                    folio: root.folio
-                    item: maskDelegate
-                    visible: item.visible && item.componentItem.visible && scaleAmount > 1
-
-                    expandBackground: item.isAppHoveredOver
-                }
-            }
-
-            // blur mask for folders
-            Component {
-                id: folderComponent
-
-                IconMaskDelegate {
-                    folio: root.folio
-                    item: maskDelegate
-                    visible: item.visible && item.componentItem.visible
-
-                    expandBackground: item.isAppHoveredOver
-
-                    transform: Scale {
-                        origin.x: maskDelegate.width / 2;
-                        origin.y: maskDelegate.height / 2;
-                        xScale: maskDelegate.componentItem.zoomScale;
-                        yScale: maskDelegate.componentItem.zoomScale;
-                    }
-                }
-            }
-        }
     }
 
     // square that shows when hovering over a spot to drop a delegate on
@@ -157,7 +90,6 @@ Item {
 
     // repeater of all delegates in the page
     Repeater {
-        id: pageRepeater
         model: root.pageModel
 
         delegate: Item {
@@ -178,8 +110,6 @@ Item {
                 dragState.dropDelegate &&
                 dragState.dropDelegate.type === Folio.FolioDelegate.Application &&
                 isDropPositionThis
-
-            property var componentItem: loader.item
 
             implicitWidth: loader.item ? loader.item.implicitWidth : 0
             implicitHeight: loader.item ? loader.item.implicitHeight : 0
@@ -233,6 +163,7 @@ Item {
                 AppDelegate {
                     id: appDelegate
                     folio: root.folio
+                    maskManager: root.maskManager
                     name: folio.FolioSettings.showPagesAppLabels ? delegate.pageDelegate.application.name : ""
                     application: delegate.pageDelegate.application
                     turnToFolder: delegate.isAppHoveredOver
@@ -310,6 +241,7 @@ Item {
                 AppFolderDelegate {
                     id: appFolderDelegate
                     folio: root.folio
+                    maskManager: root.maskManager
                     name: folio.FolioSettings.showPagesAppLabels ? delegate.pageDelegate.folder.name : ""
                     folder: delegate.pageDelegate.folder
 

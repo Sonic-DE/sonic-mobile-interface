@@ -10,6 +10,7 @@ import org.kde.plasma.private.mobileshell.state as MobileShellState
 import org.kde.private.mobile.homescreen.folio 1.0 as Folio
 import org.kde.plasma.private.mobileshell as MobileShell
 import org.kde.kirigami 2.10 as Kirigami
+import org.kde.plasma.private.mobileshell.masklayerplugin as MaskLayer
 
 import "./private"
 import "./delegate"
@@ -17,6 +18,7 @@ import "./delegate"
 MouseArea {
     id: root
     property Folio.HomeScreen folio
+    property MaskLayer.MaskManager maskManager
 
     property var homeScreen
 
@@ -29,76 +31,6 @@ MouseArea {
 
     MobileShell.HapticsEffect {
         id: haptics
-    }
-
-    // creates the favourites bar mask layer for the folder icons
-    // only in use when the favourites bar background in trunned off
-    property Component maskComponent: Repeater {
-        model: folio.FavouritesModel
-        delegate: Item {
-            property var maskDelegate: repeater.itemAt(index)
-
-            Loader {
-                id: maskLoader
-                active: folio.FolioSettings.wallpaperBlurEffect > 1
-                asynchronous: true
-                anchors.top: parent.top
-                anchors.left: parent.left
-
-                sourceComponent: {
-                    if (!maskDelegate) {
-                        return noneComponent;
-                    } else if (maskDelegate.delegateModel.type === Folio.FolioDelegate.Application) {
-                        return appComponent;
-                    } else if (maskDelegate.delegateModel.type === Folio.FolioDelegate.Folder) {
-                        return folderComponent;
-                    } else {
-                        return noneComponent;
-                    }
-                }
-            }
-
-            Component {
-                id: noneComponent
-
-                Item {}
-            }
-
-            // blur mask for behind icons when a app is hovered over it and it is turning into a folder
-            Component {
-                id: appComponent
-
-                IconMaskDelegate {
-                    folio: root.folio
-                    id: folder
-                    item: maskDelegate
-                    visible: item.visible && item.componentItem.visible && scaleAmount > 1
-
-                    expandBackground: item.isAppHoveredOver
-                }
-            }
-
-            // blur mask for folders
-            Component {
-                id: folderComponent
-
-                IconMaskDelegate {
-                    folio: root.folio
-                    id: folder
-                    item: maskDelegate
-                    visible: item.visible && item.componentItem.visible
-
-                    expandBackground: item.isAppHoveredOver
-
-                    transform: Scale {
-                        origin.x: maskDelegate.width / 2;
-                        origin.y: maskDelegate.height / 2;
-                        xScale: maskDelegate.componentItem.zoomScale;
-                        yScale: maskDelegate.componentItem.zoomScale;
-                    }
-                }
-            }
-        }
     }
 
     Repeater {
@@ -138,10 +70,7 @@ MouseArea {
             width: folio.HomeScreenState.pageCellWidth
             height: folio.HomeScreenState.pageCellHeight
 
-            property var componentItem: loader.item
-
             Loader {
-                id: loader
                 anchors.fill: parent
 
                 sourceComponent: {
@@ -174,6 +103,7 @@ MouseArea {
                 AppDelegate {
                     id: appDelegate
                     folio: root.folio
+                    maskManager: root.maskManager
                     application: delegate.delegateModel.application
                     name: folio.FolioSettings.showFavouritesAppLabels ? delegate.delegateModel.application.name : ""
                     shadow: true
@@ -247,6 +177,7 @@ MouseArea {
                 AppFolderDelegate {
                     id: appFolderDelegate
                     folio: root.folio
+                    maskManager: root.maskManager
                     shadow: true
                     folder: delegate.delegateModel.folder
                     name: folio.FolioSettings.showFavouritesAppLabels ? delegate.delegateModel.folder.name : ""

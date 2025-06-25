@@ -16,9 +16,8 @@ import org.kde.plasma.private.mobileshell.state as MobileShellState
 import org.kde.private.mobile.homescreen.folio 1.0 as Folio
 import org.kde.plasma.private.mobileshell.windowplugin as WindowPlugin
 import org.kde.plasma.private.mobileshell.shellsettingsplugin as ShellSettings
+import org.kde.plasma.private.mobileshell.masklayerplugin as MaskLayer
 
-import "./settings"
-import "./delegate"
 import "./private"
 
 ContainmentItem {
@@ -34,6 +33,16 @@ ContainmentItem {
         forceActiveFocus();
     }
 
+    property MaskLayer.MaskManager maskManager: MaskLayer.MaskManager {
+        height: root.height
+        width: root.width
+    }
+
+    property MaskLayer.MaskManager frontMaskManager: MaskLayer.MaskManager {
+        height: root.height
+        width: root.width
+    }
+
     Loader {
         id: wallpaperBlurLoader
         active: folio.FolioSettings.wallpaperBlurEffect
@@ -44,14 +53,14 @@ ContainmentItem {
         sourceComponent: BlurEffect {
             active: true
             fullBlur: Math.min(1, Math.max(0,
-                1 - homeScreen.contentOpacity,
-                folio.HomeScreenState.appDrawerOpenProgress * 2, // blur faster during swipe
-                folio.HomeScreenState.searchWidgetOpenProgress * 1.5, // blur faster during swipe
-                folio.HomeScreenState.folderOpenProgress
+                                           1 - homeScreen.contentOpacity,
+                                           folio.HomeScreenState.appDrawerOpenProgress * 2, // blur faster during swipe
+                                           folio.HomeScreenState.searchWidgetOpenProgress * 1.5, // blur faster during swipe
+                                           folio.HomeScreenState.folderOpenProgress
             ))
 
             sourceComponent: Plasmoid.wallpaperGraphicsObject
-            maskSourceComponent: folio.FolioSettings.wallpaperBlurEffect > 1 ? folioHomeScreen.maskComponent : null
+            maskSourceComponent: folio.FolioSettings.wallpaperBlurEffect > 1 ? maskManager.maskLayer : null
 
             opacity: 1 - folio.HomeScreenState.settingsOpenProgress
         }
@@ -154,9 +163,8 @@ ContainmentItem {
             HomeScreen {
                 id: folioHomeScreen
                 folio: root.folio
+                maskManager: root.maskManager
                 anchors.fill: parent
-
-                zoomScale: homeScreen.zoomScale
 
                 topMargin: homeScreen.topMargin
                 bottomMargin: homeScreen.bottomMargin
@@ -168,7 +176,6 @@ ContainmentItem {
         }
     }
 
-    // homescreen top blur layer
     Loader {
         id: topLayerBlurLoader
         active: folio.FolioSettings.wallpaperBlurEffect > 1 && ((delegateDragItem.visible && folio.HomeScreenState.dragState.dropDelegate.type === Folio.FolioDelegate.Folder) || wallpaperSelectorLoader.active)
@@ -183,7 +190,7 @@ ContainmentItem {
             fullBlur: 0
 
             sourceComponent: homeScreenLayer
-            maskSourceComponent: maskComponent
+            maskSourceComponent: frontMaskManager.maskLayer
 
             // stacking both wallpaper and homescreen layers so we can blur them in one pass
             Item {
@@ -209,28 +216,6 @@ ContainmentItem {
                     hideSource: false
                 }
             }
-
-            // load in the mask layer so we can utilize it with the OpacityMask
-            property Component maskComponent: Item {
-                anchors.fill: parent
-
-                // load mask layer for the drag and drop item so we can blur behind it
-                Loader {
-                    asynchronous: true
-                    active: topLayerBlurLoader.active && delegateDragItem.visible && folio.HomeScreenState.dragState.dropDelegate.type === Folio.FolioDelegate.Folder
-
-                    sourceComponent: DragIconMaskDelegate { folio: root.folio; item: delegateDragItem }
-                }
-
-                // load mask layer for the wallpaper selector so we can blur behind it
-                Loader {
-                    asynchronous: true
-                    active: topLayerBlurLoader.active && wallpaperSelectorLoader.item && wallpaperSelectorLoader.active
-                    anchors.fill: parent
-
-                    sourceComponent: wallpaperSelectorLoader.active ? wallpaperSelectorLoader.item.maskComponent : null
-                }
-            }
         }
     }
 
@@ -238,6 +223,7 @@ ContainmentItem {
     DelegateDragItem {
         id: delegateDragItem
         folio: root.folio
+        maskManager: root.frontMaskManager
     }
 
     // drag and drop for widgets
@@ -258,6 +244,7 @@ ContainmentItem {
         }
 
         sourceComponent: MobileShell.WallpaperSelector {
+            maskManager: root.frontMaskManager
             horizontal: root.width > root.height
             edge: horizontal ? Qt.LeftEdge : Qt.BottomEdge
             bottomMargin: horizontal ? 0 : folioHomeScreen.bottomMargin
