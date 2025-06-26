@@ -6,7 +6,8 @@
 #include <QSGFlatColorMaterial>
 
 // helper function for creating rounded rectangles
-static void createRoundedRectGeometry(QSGGeometry *geometry, const QRectF &rect, qreal radius) {
+static void createRoundedRectGeometry(QSGGeometry *geometry, const QRectF &rect, qreal radius)
+{
     geometry->setDrawingMode(QSGGeometry::DrawTriangles);
     radius = qMin(radius, qMin(rect.width(), rect.height()) / 2.0); // clamp radius
 
