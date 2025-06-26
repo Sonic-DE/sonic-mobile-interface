@@ -229,9 +229,7 @@ QSGNode *MaskLayer::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *)
 
             QSGGeometry *geometry = new QSGGeometry(QSGGeometry::defaultAttributes_Point2D(), 0);
 
-            geometry->setDrawingMode(QSGGeometry::DrawTriangleFan);
             geometryNode->setGeometry(geometry);
-            geometryNode->setFlags(QSGNode::OwnsGeometry);
 
             QSGFlatColorMaterial *material = new QSGFlatColorMaterial();
             geometryNode->setMaterial(material);
@@ -246,10 +244,7 @@ QSGNode *MaskLayer::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *)
         QSGFlatColorMaterial *material = static_cast<QSGFlatColorMaterial*>(geometryNode->material());
         QColor color = Qt::white;
         color.setAlphaF(accumulatedOpacity);
-        if (material->color() != color) {
-            material->setColor(color);
-            geometryNode->markDirty(QSGNode::DirtyMaterial);
-        }
+        if (material->color() != color) material->setColor(color);
 
         QRectF rect(0, 0, item->width(), item->height());
         createRoundedRectGeometry(geometryNode->geometry(), rect, radius);

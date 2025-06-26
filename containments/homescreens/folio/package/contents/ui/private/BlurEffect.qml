@@ -88,7 +88,6 @@ Item {
         anchors.fill: parent
         source: controlledWallpaperSource
         maskSource: blurMask
-        opacity: root.maskSourceComponent ? 1 - root.fullBlur : 0
         visible: opacity > 0 && root.active
     }
 }
