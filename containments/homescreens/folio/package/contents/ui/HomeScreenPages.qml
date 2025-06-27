@@ -9,12 +9,11 @@ import org.kde.plasma.components 3.0 as PC3
 import org.kde.plasma.private.mobileshell as MobileShell
 import org.kde.kirigami 2.10 as Kirigami
 import org.kde.private.mobile.homescreen.folio 1.0 as Folio
-import org.kde.plasma.private.mobileshell.masklayerplugin as MaskLayer
 
 MouseArea {
     id: root
     property Folio.HomeScreen folio
-    property MaskLayer.MaskManager maskManager
+    property MobileShell.MaskManager maskManager
 
     property var homeScreen
 

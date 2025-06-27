@@ -11,13 +11,13 @@ import org.kde.kirigami 2.20 as Kirigami
 import org.kde.plasma.wallpapers.image 2.0 as Wallpaper
 import org.kde.kquickcontrolsaddons 2.0 as Addons
 import org.kde.plasma.private.mobileshell.wallpaperimageplugin as WallpaperImagePlugin
-import org.kde.plasma.private.mobileshell.masklayerplugin as MaskLayer
+import org.kde.plasma.private.mobileshell as MobileShell
 
 Controls.Drawer {
     id: imageWallpaperDrawer
     dragMargin: 0
 
-    property MaskLayer.MaskManager maskManager
+    property MobileShell.MaskManager maskManager
 
     required property bool horizontal
 

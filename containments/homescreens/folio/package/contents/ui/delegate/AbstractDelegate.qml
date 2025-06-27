@@ -14,12 +14,11 @@ import org.kde.kquickcontrolsaddons 2.0
 import org.kde.private.mobile.homescreen.folio 1.0 as Folio
 import org.kde.plasma.private.mobileshell.shellsettingsplugin as ShellSettings
 import org.kde.plasma.private.mobileshell as MobileShell
-import org.kde.plasma.private.mobileshell.masklayerplugin as MaskLayer
 
 Folio.DelegateTouchArea {
     id: root
     property Folio.HomeScreen folio
-    property MaskLayer.MaskManager maskManager
+    property MobileShell.MaskManager maskManager
 
     property string name
     property bool shadow: false

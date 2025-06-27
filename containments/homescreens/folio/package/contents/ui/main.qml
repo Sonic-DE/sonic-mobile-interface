@@ -16,7 +16,6 @@ import org.kde.plasma.private.mobileshell.state as MobileShellState
 import org.kde.private.mobile.homescreen.folio 1.0 as Folio
 import org.kde.plasma.private.mobileshell.windowplugin as WindowPlugin
 import org.kde.plasma.private.mobileshell.shellsettingsplugin as ShellSettings
-import org.kde.plasma.private.mobileshell.masklayerplugin as MaskLayer
 
 import "./private"
 
@@ -33,12 +32,12 @@ ContainmentItem {
         forceActiveFocus();
     }
 
-    property MaskLayer.MaskManager maskManager: MaskLayer.MaskManager {
+    property MobileShell.MaskManager maskManager: MobileShell.MaskManager {
         height: root.height
         width: root.width
     }
 
-    property MaskLayer.MaskManager frontMaskManager: MaskLayer.MaskManager {
+    property MobileShell.MaskManager frontMaskManager: MobileShell.MaskManager {
         height: root.height
         width: root.width
     }
