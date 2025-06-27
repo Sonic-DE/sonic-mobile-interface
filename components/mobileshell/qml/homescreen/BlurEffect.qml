@@ -9,8 +9,8 @@ import Qt5Compat.GraphicalEffects
 Loader {
     id: root
 
-    property var sourceLayer
-    property var maskSourceLayer
+    property Item sourceLayer
+    property Item maskSourceLayer
     // this value is used to switch between blurring the whole wallpaper or just behind the mask areas
     property real fullBlur: 1
     // gets multiplied against the screen size to set the texture size

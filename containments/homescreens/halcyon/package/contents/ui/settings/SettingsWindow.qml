@@ -91,26 +91,23 @@ Window {
                         id: wallpaperBlurCombobox
                         text: i18n("Wallpaper blur effect")
 
-                        currentIndex: indexOfValue(Plasmoid.settings.wallpaperBlurEffect)
-                        model: ListModel {
-                            // we can't use i18n with ListElement
-                            Component.onCompleted: {
-                                append({"name": i18n("None"), "value": 0});
-                                append({"name": i18n("Simple"), "value": 1});
-                                append({"name": i18n("Full"), "value": 2});
-
-                                // indexOfValue doesn't bind to model changes unfortunately, set currentIndex manually here
-                                wallpaperBlurCombobox.currentIndex = wallpaperBlurCombobox.indexOfValue(Plasmoid.settings.wallpaperBlurEffect)
-                            }
-                        }
+                        model: [
+                            {"name": i18nc("Wallpaper blur effect", "None"), "value": 0},
+                            {"name": i18nc("Wallpaper blur effect", "Simple"), "value": 1},
+                            {"name": i18nc("Wallpaper blur effect", "Full"), "value": 2}
+                        ]
 
                         textRole: "name"
                         valueRole: "value"
 
+                        Component.onCompleted: {
+                            currentIndex = indexOfValue(Plasmoid.settings.wallpaperBlurEffect);
+                            dialog.parent = root;
+                        }
                         onCurrentValueChanged: Plasmoid.settings.wallpaperBlurEffect = currentValue
                     }
 
-                    FormCard.FormDelegateSeparator { above: showWallpaperBlur; below: doubleTapToSleepSwitch }
+                    FormCard.FormDelegateSeparator { above: wallpaperBlurCombobox; below: doubleTapToSleepSwitch }
 
                     FormCard.FormSwitchDelegate {
                         id: doubleTapToSleepSwitch

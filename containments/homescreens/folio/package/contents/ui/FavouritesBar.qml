@@ -193,8 +193,8 @@ MouseArea {
 
                     // do not show if the drop animation is running to this delegate, and the drop delegate is a folder
                     visible: !(root.homeScreen.dropAnimationRunning &&
-                    delegate.isDropPositionThis &&
-                    delegate.dragState.dropDelegate.type === Folio.FolioDelegate.Folder)
+                        delegate.isDropPositionThis &&
+                        delegate.dragState.dropDelegate.type === Folio.FolioDelegate.Folder)
 
                     appHoveredOver: delegate.isAppHoveredOver
 

@@ -108,12 +108,12 @@ Item {
         anchors.fill: parent
 
         interactive: root.interactive &&
-        settings.homeScreenInteractive &&
-        (appDrawer.flickable.contentY <= 10 || // disable the swipe area when we are swiping in the app drawer, and not in drag-and-drop
-        folio.HomeScreenState.swipeState === Folio.HomeScreenState.AwaitingDraggingDelegate ||
-        folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate ||
-        folio.HomeScreenState.swipeState === Folio.HomeScreenState.SwipingAppDrawerGrid ||
-        folio.HomeScreenState.viewState !== Folio.HomeScreenState.AppDrawerView)
+            settings.homeScreenInteractive &&
+            (appDrawer.flickable.contentY <= 10 || // disable the swipe area when we are swiping in the app drawer, and not in drag-and-drop
+            folio.HomeScreenState.swipeState === Folio.HomeScreenState.AwaitingDraggingDelegate ||
+            folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate ||
+            folio.HomeScreenState.swipeState === Folio.HomeScreenState.SwipingAppDrawerGrid ||
+            folio.HomeScreenState.viewState !== Folio.HomeScreenState.AppDrawerView)
 
         onSwipeStarted: (currentPos, startPos) => {
             const deltaX = currentPos.x - startPos.x;

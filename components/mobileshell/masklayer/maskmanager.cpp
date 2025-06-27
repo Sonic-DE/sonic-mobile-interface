@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 Micah Stnaley <stanleymicah@proton.me>
+// SPDX-FileCopyrightText: 2025 Micah Stanley <stanleymicah@proton.me>
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include "maskmanager.h"

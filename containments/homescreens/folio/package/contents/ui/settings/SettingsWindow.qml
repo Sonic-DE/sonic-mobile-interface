@@ -273,22 +273,19 @@ Window {
                         id: wallpaperBlurCombobox
                         text: i18n("Wallpaper blur effect")
 
-                        currentIndex: indexOfValue(folio.FolioSettings.wallpaperBlurEffect)
-                        model: ListModel {
-                            // we can't use i18n with ListElement
-                            Component.onCompleted: {
-                                append({"name": i18n("None"), "value": 0});
-                                append({"name": i18n("Simple"), "value": 1});
-                                append({"name": i18n("Full"), "value": 2});
-
-                                // indexOfValue doesn't bind to model changes unfortunately, set currentIndex manually here
-                                wallpaperBlurCombobox.currentIndex = wallpaperBlurCombobox.indexOfValue(folio.FolioSettings.wallpaperBlurEffect)
-                            }
-                        }
+                        model: [
+                            {"name": i18nc("Wallpaper blur effect", "None"), "value": 0},
+                            {"name": i18nc("Wallpaper blur effect", "Simple"), "value": 1},
+                            {"name": i18nc("Wallpaper blur effect", "Full"), "value": 2}
+                        ]
 
                         textRole: "name"
                         valueRole: "value"
 
+                        Component.onCompleted: {
+                            currentIndex = indexOfValue(folio.FolioSettings.wallpaperBlurEffect);
+                            dialog.parent = root;
+                        }
                         onCurrentValueChanged: folio.FolioSettings.wallpaperBlurEffect = currentValue
                     }
                 }
@@ -331,18 +328,17 @@ Window {
                 title: i18n("Export layout to")
                 fileMode: FileDialog.SaveFile
                 defaultSuffix: 'json'
-                    nameFilters: ["JSON files (*.json)"]
-                    onAccepted: {
-                        console.log('saving layout to ' + selectedFile);
-                        if (selectedFile) {
-                            let status = folio.FolioSettings.saveLayoutToFile(selectedFile);
-                            if (status) {
-                                exportedSuccessfullyPrompt.open();
-                            } else {
-                                exportFailedPrompt.open();
-                            }
+                nameFilters: ["JSON files (*.json)"]
+                onAccepted: {
+                    console.log('saving layout to ' + selectedFile);
+                    if (selectedFile) {
+                        let status = folio.FolioSettings.saveLayoutToFile(selectedFile);                            if (status) {
+                            exportedSuccessfullyPrompt.open();
+                        } else {
+                            exportFailedPrompt.open();
                         }
                     }
+                }
             }
 
             FileDialog {
