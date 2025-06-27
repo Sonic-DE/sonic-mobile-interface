@@ -41,7 +41,6 @@ Item {
     }
 
     onFullRepresentationChanged: {
-
         if (!fullRepresentation) {
             return;
         }
@@ -49,6 +48,16 @@ Item {
         fullRepresentation.parent = appletParent;
         fullRepresentation.anchors.fill = fullRepresentation.parent;
         fullRepresentation.anchors.margins = appletParent.margins.top;
+        fullRepresentation.visible = true;
+        updateExpandedOverlay();
+    }
+
+    function updateExpandedOverlay() {
+      if (plasmoidItem.expanded && fullRepresentation) {
+        expandedOverlay.showFullScreen()
+      } else {
+        expandedOverlay.visible = false;
+      }
     }
 
     FocusScope {
@@ -95,18 +104,14 @@ Item {
     Connections {
         target: plasmoidItem
         function onExpandedChanged() {
-            if (plasmoidItem.expanded) {
-                expandedOverlay.showFullScreen()
-            } else {
-                expandedOverlay.visible = false;
-            }
+          updateExpandedOverlay();
         }
     }
 
     NanoShell.FullScreenOverlay {
         id: expandedOverlay
         color: Qt.rgba(0, 0, 0, 0.6)
-        visible: plasmoidItem && plasmoidItem.expanded
+        visible: plasmoidItem && plasmoidItem.expanded && fullRepresentation
         width: Screen.width
         height: Screen.height
         MouseArea {
