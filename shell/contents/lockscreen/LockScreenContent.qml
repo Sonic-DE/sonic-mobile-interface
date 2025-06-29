@@ -11,8 +11,9 @@ import org.kde.notificationmanager as Notifications
 import org.kde.plasma.private.mobileshell as MobileShell
 import org.kde.plasma.private.mobileshell.shellsettingsplugin as ShellSettings
 
-Item {
+MobileShell.SwipeArea {
     id: root
+    interactive: false
 
     required property bool isVertical
     required property var lockScreenState
@@ -25,6 +26,20 @@ Item {
     property bool scrollLock: false
 
     signal passwordRequested()
+
+    MouseArea {
+        anchors.fill: parent
+
+        onDoubleClicked: (mouse) => {
+            if (ShellSettings.KWinSettings.doubleTapWakeup) {
+                deviceLock.triggerLock();
+            }
+        }
+
+        MobileShell.DeviceLock {
+            id: deviceLock
+        }
+    }
 
     // Vertical layout
     ColumnLayout {
