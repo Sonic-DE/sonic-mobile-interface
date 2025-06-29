@@ -10,6 +10,7 @@ import org.kde.plasma.core as PlasmaCore
 import org.kde.notificationmanager as Notifications
 import org.kde.plasma.private.mobileshell as MobileShell
 import org.kde.plasma.private.mobileshell.dpmsplugin as DPMS
+import org.kde.plasma.private.mobileshell.shellsettingsplugin as ShellSettings
 import org.kde.plasma.components 3.0 as PC3
 
 import org.kde.kirigami 2.12 as Kirigami
@@ -19,8 +20,9 @@ import org.kde.kirigami 2.12 as Kirigami
  *
  * Special attention must be paid to ensuring the GUI loads as fast as possible.
  */
-Item {
+MobileShell.SwipeArea {
     id: root
+    interactive: false
 
     readonly property var lockScreenState: LockScreenState {}
     readonly property var notifModel: Notifications.WatchedNotificationsModel {}
@@ -30,6 +32,18 @@ Item {
     property bool notificationsShown: false
 
     property var passwordBar: flickableLoader.item ? flickableLoader.item.flickable.passwordBar : null
+    
+    MouseArea {
+        onDoubleClicked: (mouse) => {
+            if (ShellSettings.KWinSettings.doubleTapWakeup) {
+                deviceLock.triggerLock();
+            }
+        }
+
+        MobileShell.DeviceLock {
+            id: deviceLock
+        }
+    }
 
     Component.onCompleted: {
         forceActiveFocus();
