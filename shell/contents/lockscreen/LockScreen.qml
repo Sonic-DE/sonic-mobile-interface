@@ -11,6 +11,7 @@ import org.kde.notificationmanager as Notifications
 import org.kde.plasma.private.mobileshell as MobileShell
 import org.kde.plasma.private.mobileshell.dpmsplugin as DPMS
 import org.kde.plasma.components 3.0 as PC3
+import org.kde.plasma.private.mobileshell.shellsettingsplugin as ShellSettings
 
 import org.kde.kirigami 2.12 as Kirigami
 
@@ -205,6 +206,22 @@ Item {
                         visible: opacity > 0
                         opacity: flickable.openFactor
                         color: Qt.rgba(0, 0, 0, 0.5)
+                    }
+
+                    MouseArea {
+                        // Disable Double Tap to Lock when keypad is open to avoid accidental locking
+                        enabled: flickable.openFactor < 0.1
+                        anchors.fill: parent
+
+                        onDoubleClicked: (mouse) => {
+                            if (ShellSettings.KWinSettings.doubleTapWakeup) {
+                                deviceLock.triggerLock();
+                            }
+                        }
+
+                        MobileShell.DeviceLock {
+                            id: deviceLock
+                        }
                     }
 
                     Keypad {
