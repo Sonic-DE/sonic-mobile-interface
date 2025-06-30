@@ -43,7 +43,7 @@ private:
     bool eventFilter(QObject *watched, QEvent *event) override;
 
     bool m_initialized = false;
-    int m_serial = 0;
     QWindow *m_window = nullptr;
+    int m_serial = 0;
     std::unique_ptr<WaylandAboveLockscreen> m_implementation;
 };

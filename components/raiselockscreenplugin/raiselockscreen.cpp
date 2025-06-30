@@ -13,8 +13,6 @@
 
 #include "qwayland-kde-lockscreen-overlay-v1.h"
 
-static int globalSerial = 0;
-
 class WaylandAboveLockscreen : public QWaylandClientExtensionTemplate<WaylandAboveLockscreen>, public QtWayland::kde_lockscreen_overlay_v1
 {
 public:
@@ -27,11 +25,10 @@ public:
 
 RaiseLockscreen::RaiseLockscreen(QObject *parent)
     : QObject{parent}
-    , m_serial{globalSerial++} // Use unique serial for each instance of RaiseLockscreen
     , m_implementation(std::make_unique<WaylandAboveLockscreen>())
 {
     QObject::connect(KWaylandExtras::self(), &KWaylandExtras::xdgActivationTokenArrived, this, [this](int serial, const QString &token) {
-        if (serial != m_serial) {
+        if (!m_window || serial != m_serial) {
             return;
         }
 
@@ -135,6 +132,8 @@ void RaiseLockscreen::raiseOverlay()
     if (!m_initialized) {
         qCWarning(LOGGING_CATEGORY) << "Unable to raise overlay: window is not initialized for lockscreen overlaying, trying anyway...";
     }
+
+    m_serial = KWaylandExtras::lastInputSerial(m_window);
 
     qCDebug(LOGGING_CATEGORY) << "Attempting to raise overlay: " << m_window << m_initialized;
     KWaylandExtras::requestXdgActivationToken(m_window, m_serial, QStringLiteral("org.kde.plasmashell.desktop"));
