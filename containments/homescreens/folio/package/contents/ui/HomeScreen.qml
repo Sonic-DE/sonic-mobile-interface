@@ -143,6 +143,13 @@ Item {
             }
         }
 
+        Loader {
+            anchors.fill: parent
+            asynchronous: true
+
+            sourceComponent: settings
+        }
+
         SettingsComponent {
             id: settings
             folio: root.folio
@@ -163,6 +170,7 @@ Item {
             settingsModeHomeScreenScale: root.settingsModeHomeScreenScale
             homeScreen: root
         }
+
 
         Item {
             id: mainHomeScreen
