@@ -143,26 +143,31 @@ Item {
             }
         }
 
-        SettingsComponent {
-            id: settings
-            folio: root.folio
-            width: parent.width
-            height: parent.height
-            opacity: folio.HomeScreenState.settingsOpenProgress
-            z: 1
+        Loader {
+            anchors.fill: parent
 
-            bottomMargin: root.bottomMargin
-            leftMargin: root.leftMargin
-            rightMargin: root.rightMargin
+            sourceComponent: SettingsComponent {
+                id: settings
+                folio: root.folio
+                width: parent.width
+                height: parent.height
+                opacity: folio.HomeScreenState.settingsOpenProgress
+                z: 1
 
-            // move the settings out of the way if it is not visible
-            // NOTE: we do this instead of setting visible to false, because
-            //       it doesn't mess with widget drag and drop
-            y: (opacity > 0) ? 0 : parent.height
+                bottomMargin: root.bottomMargin
+                leftMargin: root.leftMargin
+                rightMargin: root.rightMargin
 
-            settingsModeHomeScreenScale: root.settingsModeHomeScreenScale
-            homeScreen: root
+                // move the settings out of the way if it is not visible
+                // NOTE: we do this instead of setting visible to false, because
+                //       it doesn't mess with widget drag and drop
+                y: (opacity > 0) ? 0 : parent.height
+
+                settingsModeHomeScreenScale: root.settingsModeHomeScreenScale
+                homeScreen: root
+            }
         }
+
 
         Item {
             id: mainHomeScreen
