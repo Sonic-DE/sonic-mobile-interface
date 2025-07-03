@@ -7,6 +7,7 @@ import QtQuick.Layouts
 import QtQuick.Dialogs
 import QtQuick.Controls as QQC2
 
+import org.kde.newstuff as NewStuff
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.plasmoid
 import org.kde.plasma.private.shell 2.0
@@ -62,6 +63,27 @@ MouseArea {
             text: i18n("Widgets")
             font.weight: Font.Bold
             font.pointSize: Kirigami.Theme.defaultFont.pointSize * 1.5
+        }
+
+        NewStuff.Button {
+            text: i18nd("plasma_shell_org.kde.plasma.desktop", "Get New Plugins…")
+            configFile: "plasmoids.knsrc"
+            onEntryEvent: (entry, event) => {
+                if (event !== NewStuff.Engine.StatusChangedEvent) {
+                    return
+                }
+
+                switch(entry.status) {
+                    case NewStuff.Entry.Installed:
+                        console.log("Installed")
+                        break;
+                    case NewStuff.Entry.Deleted:
+                        console.log("Deleted")
+                        break;
+                }
+
+                console.log(entry)
+            }
         }
     }
 
