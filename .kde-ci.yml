@@ -11,6 +11,7 @@ Dependencies:
     'frameworks/kio': '@latest-kf6'
     'frameworks/kitemmodels': '@latest-kf6'
     'frameworks/knotifications': '@latest-kf6'
+    'frameworks/knewstuff': '@latest-kf6'
     'frameworks/kpackage': '@latest-kf6'
     'frameworks/kservice': '@latest-kf6'
     'frameworks/kwindowsystem': '@latest-kf6'
