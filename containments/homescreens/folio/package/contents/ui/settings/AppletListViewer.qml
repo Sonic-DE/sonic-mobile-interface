@@ -7,6 +7,7 @@ import QtQuick.Layouts
 import QtQuick.Dialogs
 import QtQuick.Controls as QQC2
 
+import org.kde.newstuff as NewStuff
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.plasmoid
 import org.kde.plasma.private.shell 2.0
@@ -30,6 +31,10 @@ MouseArea {
     Kirigami.Theme.inherit: false
     Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
 
+    function refreshWidgetExplorer() {
+        // TODO: Implement it
+    }
+    
     MobileShell.HapticsEffect {
         id: haptics
     }
@@ -62,6 +67,27 @@ MouseArea {
             text: i18n("Widgets")
             font.weight: Font.Bold
             font.pointSize: Kirigami.Theme.defaultFont.pointSize * 1.5
+        }
+
+        NewStuff.Button {
+            text: i18nd("plasma_shell_org.kde.plasma.desktop", "Get New Plugins…")
+            configFile: "plasmoids.knsrc"
+            flat: true
+            Kirigami.Theme.inherit: false
+            Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
+
+            onEntryEvent: (entry, event) => {
+                if (event !== NewStuff.Engine.StatusChangedEvent) {
+                    return
+                }
+
+                if (entry.status !== NewStuff.Entry.Installed
+                    && entry.status !== NewStuff.Entry.Deleted) {
+                  return
+                }
+
+                refreshWidgetExplorer()
+            }
         }
     }
 
@@ -213,5 +239,7 @@ MouseArea {
     WidgetExplorer {
         id: widgetExplorer
         containment: Plasmoid
+
+        onShouldClose: root.requestClose()
     }
 }
