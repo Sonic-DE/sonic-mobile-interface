@@ -77,6 +77,31 @@ void WaydroidState::refreshSessionInfo()
     Q_EMIT ipAddressChanged();
 }
 
+void WaydroidState::refreshAndroidId()
+{
+    if (m_status != Initialized) {
+        return;
+    }
+
+    KAuth::Action writeAction(u"org.kde.plasma.mobileshell.waydroidhelper.getandroidid"_s);
+    writeAction.setHelperId(u"org.kde.plasma.mobileshell.waydroidhelper"_s);
+
+    KAuth::ExecuteJob *job = writeAction.execute();
+    job->start();
+
+    connect(job, &KAuth::ExecuteJob::finished, this, [this](KJob *job, auto) {
+        KAuth::ExecuteJob *executeJob = dynamic_cast<KAuth::ExecuteJob *>(job);
+        if (executeJob->error() == 0) {
+            m_androidId = executeJob->data()["android_id"].toString();
+        } else {
+            m_androidId = "";
+            qDebug() << "KAuth returned an error code:" << executeJob->error();
+        }
+
+        Q_EMIT androidIdChanged();
+    });
+}
+
 void WaydroidState::refreshPropsInfo()
 {
     if (m_sessionStatus != SessionRunning) {
@@ -201,6 +226,11 @@ WaydroidState::SessionStatus WaydroidState::sessionStatus() const
 QString WaydroidState::ipAddress() const
 {
     return m_ipAddress;
+}
+
+QString WaydroidState::androidId() const
+{
+    return m_androidId;
 }
 
 bool WaydroidState::multiWindows() const

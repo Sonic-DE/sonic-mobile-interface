@@ -23,6 +23,9 @@ ColumnLayout {
         FormCard.FormTextDelegate {
             text: `${i18n("IP address:")} ${AIP.WaydroidState.ipAddress}`
         }
+        FormCard.FormTextDelegate {
+            text: `${i18n("Android ID:")} ${AIP.WaydroidState.androidId}`
+        }
     }
 
     // Some informations as IP address can take time to be set by Waydroid
@@ -96,5 +99,12 @@ ColumnLayout {
         Layout.alignment: Qt.AlignHCenter
 
         onClicked: AIP.WaydroidState.stopSession()
+    }
+
+    PC3.Button {
+        text: i18n("Get Android Id")
+        Layout.alignment: Qt.AlignHCenter
+
+        onClicked: AIP.WaydroidState.refreshAndroidId()
     }
 }
