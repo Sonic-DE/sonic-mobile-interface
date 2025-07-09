@@ -17,6 +17,7 @@
 
 #include <KAuth/Action>
 #include <KAuth/ExecuteJob>
+#include <KLocalizedString>
 
 using namespace Qt::StringLiterals;
 
@@ -107,6 +108,17 @@ void WaydroidState::refreshPropsInfo()
     Q_EMIT ueventChanged();
 }
 
+void WaydroidState::resetError()
+{
+    m_errorTitle = "";
+    Q_EMIT errorTitleChanged();
+
+    if (m_errorMessage != "") {
+        m_errorMessage = "";
+        Q_EMIT errorMessageChanged();
+    }
+}
+
 void WaydroidState::initialize(const SystemType systemType, const RomType romType, const bool forced)
 {
     if (m_status == Initializing) {
@@ -115,11 +127,6 @@ void WaydroidState::initialize(const SystemType systemType, const RomType romTyp
 
     m_status = Initializing;
     Q_EMIT statusChanged();
-
-    if (m_errorMessage != "") {
-        m_errorMessage = "";
-        Q_EMIT errorMessageChanged();
-    }
 
     QString systemTypeArg;
     switch (systemType) {
@@ -158,10 +165,12 @@ void WaydroidState::initialize(const SystemType systemType, const RomType romTyp
         if (job->error() == 0) {
             m_status = Initialized;
         } else {
+            m_errorTitle = i18n("Failed to initialize Waydroid.");
+            Q_EMIT errorTitleChanged();
             m_errorMessage = job->errorString();
             Q_EMIT errorMessageChanged();
 
-            m_status = FailedToInitialize;
+            m_status = NotInitialized;
             qCWarning(WAYDROIDINTEGRATIONPLUGIN) << "KAuth returned an error code:" << job->error() << " message: " << job->errorString();
         }
 
@@ -183,6 +192,27 @@ void WaydroidState::startSession()
     // Don't wait for result because the command is blocking
     QProcess *process = new QProcess(this);
     process->start(WAYDROID_COMMAND, arguments);
+
+    connect(process, &QProcess::finished, this, [this, process](int exitCode, QProcess::ExitStatus exitStatus) {
+        Q_UNUSED(exitStatus);
+
+        if (exitCode == 0) {
+            return;
+        }
+
+        m_sessionStatus = SessionStopped;
+        Q_EMIT sessionStatusChanged();
+
+        QByteArray errorData = process->readAllStandardError();
+        QString errorString = QString::fromUtf8(errorData);
+
+        m_errorTitle = i18n("Failed to start the Waydroid session.");
+        Q_EMIT errorTitleChanged();
+        m_errorMessage = errorString;
+        Q_EMIT errorMessageChanged();
+
+        qCWarning(WAYDROIDINTEGRATIONPLUGIN) << "Failed to start the Waydroid session: " << errorString;
+    });
 
     checkSessionStarting(10);
 }
@@ -225,6 +255,11 @@ WaydroidState::SessionStatus WaydroidState::sessionStatus() const
 QString WaydroidState::ipAddress() const
 {
     return m_ipAddress;
+}
+
+QString WaydroidState::errorTitle() const
+{
+    return m_errorTitle;
 }
 
 QString WaydroidState::errorMessage() const
@@ -342,6 +377,10 @@ QString WaydroidState::extractRegExp(const QString text, const QRegularExpressio
 
 void WaydroidState::checkSessionStarting(const int limit, const int tried)
 {
+    if (m_sessionStatus != SessionStarting) {
+        return;
+    }
+
     const QString output = fetchSessionInfo();
     const QString sessionMatchResult = extractRegExp(output, sessionRegExp);
 

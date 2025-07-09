@@ -46,7 +46,7 @@ ColumnLayout {
         id: autoRefreshSessionTimer
         interval: 2000
         repeat: true
-        running: true
+        running: root.visible
         onTriggered: AIP.WaydroidState.refreshSessionInfo()
     }
 
