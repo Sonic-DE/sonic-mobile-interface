@@ -16,3 +16,11 @@ find_package(KF6Auth NO_MODULE)
 
 kauth_install_helper_files(waydroidhelper org.kde.plasma.mobileshell.waydroidhelper root)
 kauth_install_actions(org.kde.plasma.mobileshell.waydroidhelper waydroidhelper.actions)
+
+ecm_qt_declare_logging_category(waydroidhelper
+    HEADER waydroidhelper_debug.h
+    IDENTIFIER WAYDROIDHELPER
+    DEFAULT_SEVERITY Warning
+    CATEGORY_NAME org.kde.plasma.mobileshell.waydroidhelper
+    DESCRIPTION "Helper for Waydroid for some actions need root access"
+)
