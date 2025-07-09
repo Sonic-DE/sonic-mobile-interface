@@ -24,7 +24,7 @@ KCM.SimpleKCM {
     rightPadding: 0
 
     ColumnLayout {
-        visible: AIP.WaydroidState.status == AIP.WaydroidState.NotSupported
+        visible: AIP.WaydroidState.errorTitle === "" && AIP.WaydroidState.status == AIP.WaydroidState.NotSupported
         anchors.centerIn: parent
         spacing: Kirigami.Units.largeSpacing
 
@@ -43,16 +43,16 @@ KCM.SimpleKCM {
     }
 
     WaydroidInitialConfigurationForm {
-        visible: AIP.WaydroidState.status == AIP.WaydroidState.NotInitialized
+        visible: AIP.WaydroidState.errorTitle === "" && AIP.WaydroidState.status == AIP.WaydroidState.NotInitialized
     }
 
     WaydroidLoader {
-        visible: AIP.WaydroidState.status == AIP.WaydroidState.Initializing
+        visible: AIP.WaydroidState.errorTitle === "" && AIP.WaydroidState.status == AIP.WaydroidState.Initializing
         text: i18n("Waydroid is initializing.\nIt can take a few minutes.")
     }
 
     ColumnLayout {
-        visible: AIP.WaydroidState.status == AIP.WaydroidState.Initialized && AIP.WaydroidState.sessionStatus == AIP.WaydroidState.SessionStopped
+        visible: AIP.WaydroidState.errorTitle === "" && AIP.WaydroidState.status == AIP.WaydroidState.Initialized && AIP.WaydroidState.sessionStatus == AIP.WaydroidState.SessionStopped
         anchors.centerIn: parent
         spacing: Kirigami.Units.largeSpacing
 
@@ -70,16 +70,16 @@ KCM.SimpleKCM {
     }
 
     WaydroidLoader {
-        visible: AIP.WaydroidState.status == AIP.WaydroidState.Initialized && AIP.WaydroidState.sessionStatus == AIP.WaydroidState.SessionStarting
+        visible: AIP.WaydroidState.errorTitle === "" && AIP.WaydroidState.status == AIP.WaydroidState.Initialized && AIP.WaydroidState.sessionStatus == AIP.WaydroidState.SessionStarting
         text: i18n("Waydroid session is starting.\nIt can take a few seconds.")
     }
 
     WaydroidConfigurationForm {
-        visible: AIP.WaydroidState.status == AIP.WaydroidState.Initialized && AIP.WaydroidState.sessionStatus == AIP.WaydroidState.SessionRunning
+        visible: AIP.WaydroidState.errorTitle === "" && AIP.WaydroidState.status == AIP.WaydroidState.Initialized && AIP.WaydroidState.sessionStatus == AIP.WaydroidState.SessionRunning
     }
 
     ColumnLayout {
-        visible: AIP.WaydroidState.status == AIP.WaydroidState.FailedToInitialize
+        visible: AIP.WaydroidState.errorTitle !== ""
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent
         anchors.leftMargin: Kirigami.Units.largeSpacing
@@ -88,12 +88,13 @@ KCM.SimpleKCM {
         spacing: Kirigami.Units.largeSpacing
 
         QQC2.Label {
-            text: i18n("Failed to initialize Waydroid.")
+            text: AIP.WaydroidState.errorTitle
             Layout.alignment: Qt.AlignHCenter
             horizontalAlignment: Text.AlignHCenter
         }
 
         QQC2.TextArea {
+            visible: AIP.WaydroidState.errorMessage !== ""
             text: AIP.WaydroidState.errorMessage
             readOnly: true
             wrapMode: TextEdit.Wrap
@@ -103,7 +104,7 @@ KCM.SimpleKCM {
         PC3.Button {
             text: i18n("Go back")
             Layout.alignment: Qt.AlignHCenter
-            onClicked: AIP.WaydroidState.refreshSupportsInfo()
+            onClicked: AIP.WaydroidState.resetError()
         }
     }
 }

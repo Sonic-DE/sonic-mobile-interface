@@ -26,6 +26,7 @@ class WaydroidState : public QObject
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
     Q_PROPERTY(SessionStatus sessionStatus READ sessionStatus NOTIFY sessionStatusChanged)
     Q_PROPERTY(QString ipAddress READ ipAddress NOTIFY ipAddressChanged)
+    Q_PROPERTY(QString errorTitle READ errorTitle NOTIFY errorTitleChanged)
     Q_PROPERTY(QString errorMessage READ errorMessage NOTIFY errorMessageChanged)
     Q_PROPERTY(bool multiWindows READ multiWindows WRITE setMultiWindows NOTIFY multiWindowsChanged)
     Q_PROPERTY(bool suspend READ suspend WRITE setSuspend NOTIFY suspendChanged)
@@ -42,8 +43,7 @@ public:
         NotSupported = 0,
         NotInitialized,
         Initializing,
-        Initialized,
-        FailedToInitialize
+        Initialized
     };
     Q_ENUM(Status)
 
@@ -84,6 +84,7 @@ public:
     Q_INVOKABLE void refreshSupportsInfo();
     Q_INVOKABLE void refreshSessionInfo();
     Q_INVOKABLE void refreshPropsInfo();
+    Q_INVOKABLE void resetError();
     Q_INVOKABLE void initialize(const SystemType systemType, const RomType romType, const bool forced = false);
     Q_INVOKABLE void startSession();
     Q_INVOKABLE void stopSession();
@@ -92,6 +93,7 @@ public:
     Status status() const;
     SessionStatus sessionStatus() const;
     QString ipAddress() const;
+    QString errorTitle() const;
     QString errorMessage() const;
     bool multiWindows() const;
     void setMultiWindows(const bool multiWindows);
@@ -107,12 +109,14 @@ Q_SIGNALS:
     void multiWindowsChanged();
     void suspendChanged();
     void ueventChanged();
+    void errorTitleChanged();
     void errorMessageChanged();
 
 private:
     Status m_status{NotInitialized};
     SessionStatus m_sessionStatus{SessionStopped};
     QString m_ipAddress{""};
+    QString m_errorTitle{""};
     QString m_errorMessage{""};
 
     // Waydroid props. See https://docs.waydro.id/usage/waydroid-prop-options
