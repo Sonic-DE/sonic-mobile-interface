@@ -26,6 +26,7 @@ class WaydroidState : public QObject
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
     Q_PROPERTY(SessionStatus sessionStatus READ sessionStatus NOTIFY sessionStatusChanged)
     Q_PROPERTY(QString ipAddress READ ipAddress NOTIFY ipAddressChanged)
+    Q_PROPERTY(QString errorMessage READ errorMessage NOTIFY errorMessageChanged)
     Q_PROPERTY(bool multiWindows READ multiWindows WRITE setMultiWindows NOTIFY multiWindowsChanged)
     Q_PROPERTY(bool suspend READ suspend WRITE setSuspend NOTIFY suspendChanged)
     Q_PROPERTY(bool uevent READ uevent WRITE setUevent NOTIFY ueventChanged)
@@ -91,6 +92,7 @@ public:
     Status status() const;
     SessionStatus sessionStatus() const;
     QString ipAddress() const;
+    QString errorMessage() const;
     bool multiWindows() const;
     void setMultiWindows(const bool multiWindows);
     bool suspend() const;
@@ -105,11 +107,13 @@ Q_SIGNALS:
     void multiWindowsChanged();
     void suspendChanged();
     void ueventChanged();
+    void errorMessageChanged();
 
 private:
     Status m_status{NotInitialized};
     SessionStatus m_sessionStatus{SessionStopped};
     QString m_ipAddress{""};
+    QString m_errorMessage{""};
 
     // Waydroid props. See https://docs.waydro.id/usage/waydroid-prop-options
     bool m_multiWindows{false};

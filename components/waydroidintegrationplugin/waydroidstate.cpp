@@ -116,6 +116,11 @@ void WaydroidState::initialize(const SystemType systemType, const RomType romTyp
     m_status = Initializing;
     Q_EMIT statusChanged();
 
+    if (m_errorMessage != "") {
+        m_errorMessage = "";
+        Q_EMIT errorMessageChanged();
+    }
+
     QString systemTypeArg;
     switch (systemType) {
     case SystemType::Vanilla:
@@ -153,6 +158,9 @@ void WaydroidState::initialize(const SystemType systemType, const RomType romTyp
         if (job->error() == 0) {
             m_status = Initialized;
         } else {
+            m_errorMessage = job->errorString();
+            Q_EMIT errorMessageChanged();
+
             m_status = FailedToInitialize;
             qCWarning(WAYDROIDINTEGRATIONPLUGIN) << "KAuth returned an error code:" << job->error() << " message: " << job->errorString();
         }
@@ -217,6 +225,11 @@ WaydroidState::SessionStatus WaydroidState::sessionStatus() const
 QString WaydroidState::ipAddress() const
 {
     return m_ipAddress;
+}
+
+QString WaydroidState::errorMessage() const
+{
+    return m_errorMessage;
 }
 
 bool WaydroidState::multiWindows() const

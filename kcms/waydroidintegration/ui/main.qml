@@ -80,13 +80,24 @@ KCM.SimpleKCM {
 
     ColumnLayout {
         visible: AIP.WaydroidState.status == AIP.WaydroidState.FailedToInitialize
-        anchors.centerIn: parent
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: parent
+        anchors.leftMargin: Kirigami.Units.largeSpacing
+        anchors.right: parent
+        anchors.rightMargin: Kirigami.Units.largeSpacing
         spacing: Kirigami.Units.largeSpacing
 
         QQC2.Label {
             text: i18n("Failed to initialize Waydroid.")
             Layout.alignment: Qt.AlignHCenter
             horizontalAlignment: Text.AlignHCenter
+        }
+
+        QQC2.TextArea {
+            text: AIP.WaydroidState.errorMessage
+            readOnly: true
+            wrapMode: TextEdit.Wrap
+            Layout.fillWidth: true
         }
 
         PC3.Button {

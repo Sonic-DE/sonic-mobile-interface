@@ -45,8 +45,14 @@ KAuth::ActionReply WaydroidHelper::initialize(const QVariantMap &args)
     if (process->exitCode() == 0) {
         return KAuth::ActionReply::SuccessReply();
     } else {
-        qCWarning(WAYDROIDHELPER) << "Failed to initialize Waydroid: " << process->readAllStandardError();
-        return KAuth::ActionReply::HelperErrorReply();
+        QByteArray errorData = process->readAllStandardError();
+        QString errorString = QString::fromUtf8(errorData);
+
+        qCWarning(WAYDROIDHELPER) << "Failed to initialize Waydroid: " << errorString;
+
+        KAuth::ActionReply reply = KAuth::ActionReply::HelperErrorReply();
+        reply.setErrorDescription(errorString);
+        return reply;
     }
 }
 
