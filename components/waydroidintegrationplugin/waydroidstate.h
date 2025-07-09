@@ -84,6 +84,7 @@ public:
     Q_INVOKABLE void refreshSupportsInfo();
     Q_INVOKABLE void refreshSessionInfo();
     Q_INVOKABLE void refreshPropsInfo();
+    Q_INVOKABLE void resetError();
     Q_INVOKABLE void initialize(const SystemType systemType, const RomType romType, const bool forced = false);
     Q_INVOKABLE void startSession();
     Q_INVOKABLE void stopSession();

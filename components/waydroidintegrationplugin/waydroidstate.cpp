@@ -17,6 +17,7 @@
 
 #include <KAuth/Action>
 #include <KAuth/ExecuteJob>
+#include <KLocalizedString>
 
 using namespace Qt::StringLiterals;
 
@@ -107,6 +108,19 @@ void WaydroidState::refreshPropsInfo()
     Q_EMIT ueventChanged();
 }
 
+void WaydroidState::resetError()
+{
+    if (m_status == FailedToInitialize) {
+        m_status = NotInitialized;
+        Q_EMIT statusChanged();
+    }
+
+    if (m_errorMessage != "") {
+        m_errorMessage = "";
+        Q_EMIT errorMessageChanged();
+    }
+}
+
 void WaydroidState::initialize(const SystemType systemType, const RomType romType, const bool forced)
 {
     if (m_status == Initializing) {
@@ -115,11 +129,6 @@ void WaydroidState::initialize(const SystemType systemType, const RomType romTyp
 
     m_status = Initializing;
     Q_EMIT statusChanged();
-
-    if (m_errorMessage != "") {
-        m_errorMessage = "";
-        Q_EMIT errorMessageChanged();
-    }
 
     QString systemTypeArg;
     switch (systemType) {
@@ -183,6 +192,16 @@ void WaydroidState::startSession()
     // Don't wait for result because the command is blocking
     QProcess *process = new QProcess(this);
     process->start(WAYDROID_COMMAND, arguments);
+
+    connect(process, &QProcess::errorOccurred, this, [this, process](QProcess::ProcessError error) {
+        m_sessionStatus = SessionStopped;
+        Q_EMIT sessionStatusChanged();
+
+        m_errorMessage = i18n("Failed to start the Waydroid session");
+        Q_EMIT errorMessageChanged();
+
+        qCWarning(WAYDROIDINTEGRATIONPLUGIN) << "Failed to start the Waydroid session: " << error << " Log: " << process->readAllStandardError();
+    });
 
     checkSessionStarting(10);
 }
@@ -342,6 +361,10 @@ QString WaydroidState::extractRegExp(const QString text, const QRegularExpressio
 
 void WaydroidState::checkSessionStarting(const int limit, const int tried)
 {
+    if (m_sessionStatus != SessionStarting) {
+        return;
+    }
+
     const QString output = fetchSessionInfo();
     const QString sessionMatchResult = extractRegExp(output, sessionRegExp);
 
