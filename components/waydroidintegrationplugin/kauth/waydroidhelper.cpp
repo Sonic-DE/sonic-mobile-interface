@@ -4,6 +4,8 @@
  *   SPDX-License-Identifier: GPL-2.0-or-later
  */
 
+#include "waydroidhelper_debug.h"
+
 #include <KAuth/ActionReply>
 #include <KAuth/HelperSupport>
 
@@ -43,7 +45,7 @@ KAuth::ActionReply WaydroidHelper::initialize(const QVariantMap &args)
     if (process->exitCode() == 0) {
         return KAuth::ActionReply::SuccessReply();
     } else {
-        qWarning() << "Failed to initialize Waydroid: " << process->readAllStandardError();
+        qCWarning(WAYDROIDHELPER) << "Failed to initialize Waydroid: " << process->readAllStandardError();
         return KAuth::ActionReply::HelperErrorReply();
     }
 }

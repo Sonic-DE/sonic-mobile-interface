@@ -5,6 +5,7 @@
  */
 
 #include "waydroidstate.h"
+#include "waydroidintegrationplugin_debug.h"
 
 #include <QClipboard>
 #include <QDebug>
@@ -153,7 +154,7 @@ void WaydroidState::initialize(const SystemType systemType, const RomType romTyp
             m_status = Initialized;
         } else {
             m_status = FailedToInitialize;
-            qWarning() << "KAuth returned an error code:" << job->error() << " message: " << job->errorString();
+            qCWarning(WAYDROIDINTEGRATIONPLUGIN) << "KAuth returned an error code:" << job->error() << " message: " << job->errorString();
         }
 
         Q_EMIT statusChanged();
@@ -194,7 +195,7 @@ void WaydroidState::stopSession()
         m_sessionStatus = SessionStopped;
         Q_EMIT sessionStatusChanged();
     } else {
-        qWarning() << "Failed to stop the Waydroid session: " << process->readAllStandardError();
+        qCWarning(WAYDROIDINTEGRATIONPLUGIN) << "Failed to stop the Waydroid session: " << process->readAllStandardError();
     }
 }
 
@@ -337,7 +338,7 @@ void WaydroidState::checkSessionStarting(const int limit, const int tried)
     } else if (tried == limit) {
         m_sessionStatus = SessionStopped;
         Q_EMIT sessionStatusChanged();
-        qWarning() << "Failed to start the session after " << tried << " tries";
+        qCWarning(WAYDROIDINTEGRATIONPLUGIN) << "Failed to start the session after " << tried << " tries";
     } else {
         QTimer::singleShot(500, [this, tried, limit]() {
             checkSessionStarting(limit, tried + 1);
