@@ -24,9 +24,21 @@ ColumnLayout {
             text: i18n("IP address")
             description: AIP.WaydroidState.ipAddress
             trailing: PC3.Button {
+                visible: AIP.WaydroidState.ipAddress !== ""
                 text: i18n('Copy')
                 icon.name: 'edit-copy-symbolic'
                 onClicked: AIP.WaydroidState.copyToClipboard(AIP.WaydroidState.ipAddress)
+            }
+        }
+
+        FormCard.FormTextDelegate {
+            text: i18n("Get Android Id")
+            description: AIP.WaydroidState.androidId
+            trailing: PC3.Button {
+                visible: AIP.WaydroidState.androidId !== ""
+                text: i18n('Copy')
+                icon.name: 'edit-copy-symbolic'
+                onClicked: AIP.WaydroidState.copyToClipboard(AIP.WaydroidState.androidId)
             }
         }
 
@@ -47,7 +59,13 @@ ColumnLayout {
         interval: 2000
         repeat: true
         running: root.visible
-        onTriggered: AIP.WaydroidState.refreshSessionInfo()
+        onTriggered: { 
+            AIP.WaydroidState.refreshSessionInfo()
+
+            if (AIP.WaydroidState.androidId === "") {
+                AIP.WaydroidState.refreshAndroidId()
+            }
+        }
     }
 
     FormCard.FormHeader {
