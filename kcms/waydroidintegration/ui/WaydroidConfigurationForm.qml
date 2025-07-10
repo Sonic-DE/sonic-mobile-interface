@@ -24,6 +24,7 @@ ColumnLayout {
             text: i18n("IP address")
             description: AIP.WaydroidState.ipAddress
             trailing: PC3.Button {
+                visible: AIP.WaydroidState.ipAddress !== ""
                 text: i18n('Copy')
                 icon.name: 'edit-copy-symbolic'
                 onClicked: AIP.WaydroidState.copyToClipboard(AIP.WaydroidState.ipAddress)
@@ -39,6 +40,12 @@ ColumnLayout {
                 onClicked: AIP.WaydroidState.stopSession()
             }
         }
+
+        FormCard.FormButtonDelegate {
+            id: quickSettingsButton
+            text: i18n("Certify my device for Google services")
+            onClicked: kcm.push("WaydroidGoogleServiceConfigurationPage.qml")
+        }
     }
 
     // Some informations as IP address can take time to be set by Waydroid
@@ -47,7 +54,13 @@ ColumnLayout {
         interval: 2000
         repeat: true
         running: root.visible
-        onTriggered: AIP.WaydroidState.refreshSessionInfo()
+        onTriggered: { 
+            AIP.WaydroidState.refreshSessionInfo()
+
+            if (AIP.WaydroidState.androidId === "") {
+                AIP.WaydroidState.refreshAndroidId()
+            }
+        }
     }
 
     FormCard.FormHeader {
