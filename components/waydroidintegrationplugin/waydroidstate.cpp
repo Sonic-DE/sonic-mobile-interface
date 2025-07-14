@@ -31,6 +31,7 @@ static const QRegularExpression ipAdressRegExp(u"IP address:\\s*(\\d+\\.\\d+\\.\
 
 WaydroidState::WaydroidState(QObject *parent)
     : QObject{parent}
+    , m_applicationListModel{new WaydroidApplicationListModel{this}}
 {
     // Connect it-self to auto-refresh when required status has changed
     connect(this, &WaydroidState::statusChanged, this, &WaydroidState::refreshSessionInfo);
@@ -265,6 +266,11 @@ QString WaydroidState::errorTitle() const
 QString WaydroidState::errorMessage() const
 {
     return m_errorMessage;
+}
+
+WaydroidApplicationListModel *WaydroidState::applicationListModel() const
+{
+    return m_applicationListModel;
 }
 
 bool WaydroidState::multiWindows() const
