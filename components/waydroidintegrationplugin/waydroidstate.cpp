@@ -33,6 +33,7 @@ static const QRegularExpression systemOtaRegExp(u"system_ota\\s*=\\s*(\\S+)"_s);
 
 WaydroidState::WaydroidState(QObject *parent)
     : QObject{parent}
+    , m_applicationListModel{new WaydroidApplicationListModel{this}}
 {
     // Connect it-self to auto-refresh when required status has changed
     connect(this, &WaydroidState::statusChanged, this, &WaydroidState::refreshSessionInfo);
@@ -333,6 +334,11 @@ QString WaydroidState::errorMessage() const
 QString WaydroidState::androidId() const
 {
     return m_androidId;
+}
+
+WaydroidApplicationListModel *WaydroidState::applicationListModel() const
+{
+    return m_applicationListModel;
 }
 
 bool WaydroidState::multiWindows() const

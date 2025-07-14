@@ -1,0 +1,40 @@
+/*
+ *   SPDX-FileCopyrightText: 2025 Florian RICHER <florian.richer@protonmail.com>
+ *
+ *   SPDX-License-Identifier: GPL-2.0-or-later
+ */
+
+#pragma once
+
+#include "waydroidapplication.h"
+#include "waydroidstate.h"
+
+#include <QAbstractListModel>
+#include <QObject>
+
+class WaydroidState;
+
+class WaydroidApplicationListModel : public QAbstractListModel
+{
+    Q_OBJECT
+
+public:
+    enum Roles {
+        DelegateRole = Qt::UserRole + 1,
+        NameRole,
+        IdRole
+    };
+
+    WaydroidApplicationListModel(WaydroidState *parent = nullptr);
+    ~WaydroidApplicationListModel() override;
+
+    int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
+    QHash<int, QByteArray> roleNames() const Q_DECL_OVERRIDE;
+
+private:
+    WaydroidState *m_waydroidState{nullptr};
+    QList<WaydroidApplication::Ptr> m_applications;
+
+    void refreshApplications();
+};
