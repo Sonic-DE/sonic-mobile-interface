@@ -54,7 +54,7 @@ QMap<QString, QMap<QString, QVariant>> getKwinrcSettings(KSharedConfig::Ptr m_mo
              }},
             {"Wayland",
              {
-                 {"InputMethod", "/usr/share/applications/com.github.maliit.keyboard.desktop"}, // ensure maliit is our vkbd
+                 {"InputMethod", "/home/devin/kde/usr/share/applications/org.kde.plasma.keyboard.desktop"}, // ensure maliit is our vkbd
                  {"VirtualKeyboardEnabled", true} // enable vkbd
              }},
             {"org.kde.kdecoration2",
