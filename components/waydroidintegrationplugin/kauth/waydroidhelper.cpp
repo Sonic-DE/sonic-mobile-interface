@@ -15,11 +15,15 @@
 #include <QLoggingCategory>
 #include <QObject>
 #include <QProcess>
-#include <kauth/helpersupport.h>
+#include <QRegularExpression>
 
 using namespace Qt::StringLiterals;
 
 #define WAYDROID_COMMAND "waydroid"
+
+// Extract current downloaded size, total_size and speed.
+// Exemple of log: "[Downloading]   62.19 MB/1197.24 MB    96740.75 kbps(approx.)"
+static const QRegularExpression downloadingStatusRegExp(R"(\[Downloading]\s*(\d+\.\d+)\s*MB/(\d+\.\d+)\s*MB\s*(\d+\.\d+)\s*kbps\(approx\.\))");
 
 class WaydroidHelper : public QObject
 {
@@ -42,7 +46,28 @@ KAuth::ActionReply WaydroidHelper::initialize(const QVariantMap &args)
 
     QProcess *process = new QProcess(this);
     process->start(WAYDROID_COMMAND, arguments);
-    process->waitForFinished(3600000); // HACK: 1 hour to wait installation
+
+    connect(process, &QProcess::readyReadStandardOutput, this, [process]() {
+        const QByteArray output = process->readAllStandardOutput();
+        const QByteArray lastLine = output.split('\r').last();
+
+        QVariantMap informations = {{u"log"_s, lastLine.constData()}};
+
+        QRegularExpressionMatch match = downloadingStatusRegExp.match(lastLine);
+        if (match.hasMatch()) {
+            QString downloadedMB = match.captured(1);
+            QString totalMB = match.captured(2);
+            QString speedKbps = match.captured(3);
+
+            informations.insert(u"downloaded"_s, downloadedMB);
+            informations.insert(u"total"_s, totalMB);
+            informations.insert(u"speed"_s, speedKbps);
+        }
+
+        KAuth::HelperSupport::progressStep(informations);
+    });
+
+    process->waitForFinished(-1);
 
     if (process->exitCode() == 0) {
         return KAuth::ActionReply::SuccessReply();
