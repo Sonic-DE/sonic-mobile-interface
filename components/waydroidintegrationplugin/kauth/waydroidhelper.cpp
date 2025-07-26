@@ -15,6 +15,7 @@
 #include <QLoggingCategory>
 #include <QObject>
 #include <QProcess>
+#include <kauth/helpersupport.h>
 
 using namespace Qt::StringLiterals;
 
@@ -41,7 +42,7 @@ KAuth::ActionReply WaydroidHelper::initialize(const QVariantMap &args)
 
     QProcess *process = new QProcess(this);
     process->start(WAYDROID_COMMAND, arguments);
-    process->waitForFinished();
+    process->waitForFinished(3600000); // HACK: 1 hour to wait installation
 
     if (process->exitCode() == 0) {
         return KAuth::ActionReply::SuccessReply();
