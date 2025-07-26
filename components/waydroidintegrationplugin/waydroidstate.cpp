@@ -215,10 +215,16 @@ void WaydroidState::initialize(const SystemType systemType, const RomType romTyp
     KAuth::Action writeAction(u"org.kde.plasma.mobileshell.waydroidhelper.initialize"_s);
     writeAction.setHelperId(u"org.kde.plasma.mobileshell.waydroidhelper"_s);
     writeAction.setArguments(args);
-    writeAction.setTimeout(3600000); // HACK: 1 hour to wait installation
 
     KAuth::ExecuteJob *job = writeAction.execute();
     job->start();
+
+    connect(job, &KAuth::ExecuteJob::newData, this, [](const QVariantMap &data) {
+        qCWarning(WAYDROIDINTEGRATIONPLUGIN) << "log: " << data.value("log", "No log");
+        qCWarning(WAYDROIDINTEGRATIONPLUGIN) << "downloaded: " << data.value("downloaded", "NA") << "MB";
+        qCWarning(WAYDROIDINTEGRATIONPLUGIN) << "total: " << data.value("log", "No log") << "MB";
+        qCWarning(WAYDROIDINTEGRATIONPLUGIN) << "speed: " << data.value("log", "No log") << "kbps";
+    });
 
     connect(job, &KAuth::ExecuteJob::finished, this, [this](KJob *job, auto) {
         if (job->error() == 0) {
