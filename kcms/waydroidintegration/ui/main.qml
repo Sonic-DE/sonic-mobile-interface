@@ -47,8 +47,19 @@ KCM.SimpleKCM {
     }
 
     WaydroidLoader {
+        id: initLoader
         visible: AIP.WaydroidState.errorTitle === "" && AIP.WaydroidState.status == AIP.WaydroidState.Initializing
         text: i18n("Waydroid is initializing.\nIt can take a few minutes.")
+
+        Connections {
+            target: AIP.WaydroidState
+
+            function onDownloadStatusChanged(downloaded, total, speed) {
+                const baseText = i18n("Waydroid is initializing.\nIt can take a few minutes.")
+
+                initLoader.text = `${baseText}\n(Downloaded: ${downloaded} MB, Total: ${total} MB, Speed: ${speed} Kbps)`
+            }
+        }
     }
 
     ColumnLayout {
