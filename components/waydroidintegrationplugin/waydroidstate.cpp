@@ -220,6 +220,18 @@ void WaydroidState::initialize(const SystemType systemType, const RomType romTyp
     KAuth::ExecuteJob *job = writeAction.execute();
     job->start();
 
+    connect(job, &KAuth::ExecuteJob::newData, this, [](const QVariantMap &data) {
+        QString log = data.value("log", "").toString();
+        float downloadedMB = data.value("downloaded", 0.0).toFloat();
+        float totalMB = data.value("total", 0.0).toFloat();
+        float speedKbps = data.value("speed", 0.0).toFloat();
+
+        qCDebug(WAYDROIDINTEGRATIONPLUGIN) << "log: " << log;
+        qCWarning(WAYDROIDINTEGRATIONPLUGIN) << "downloaded: " << downloadedMB << "MB";
+        qCWarning(WAYDROIDINTEGRATIONPLUGIN) << "total: " << totalMB << "MB";
+        qCWarning(WAYDROIDINTEGRATIONPLUGIN) << "speed: " << speedKbps << "kbps";
+    });
+
     connect(job, &KAuth::ExecuteJob::finished, this, [this](KJob *job, auto) {
         if (job->error() == 0) {
             m_status = Initialized;
