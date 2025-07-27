@@ -301,6 +301,32 @@ void WaydroidState::copyToClipboard(const QString text)
     qGuiApp->clipboard()->setText(text);
 }
 
+void WaydroidState::resetWaydroid()
+{
+    if (m_sessionStatus != SessionStopped) {
+        return;
+    }
+
+    KAuth::Action writeAction(u"org.kde.plasma.mobileshell.waydroidhelper.reset"_s);
+    writeAction.setHelperId(u"org.kde.plasma.mobileshell.waydroidhelper"_s);
+
+    KAuth::ExecuteJob *job = writeAction.execute();
+    job->start();
+
+    connect(job, &KAuth::ExecuteJob::finished, this, [this](KJob *job, auto) {
+        if (job->error() == 0) {
+            m_status = NotInitialized;
+        } else {
+            m_errorTitle = i18n("Failed to reset Waydroid.");
+            Q_EMIT errorTitleChanged();
+
+            qCWarning(WAYDROIDINTEGRATIONPLUGIN) << "KAuth returned an error code:" << job->error() << " message: " << job->errorString();
+        }
+
+        Q_EMIT statusChanged();
+    });
+}
+
 WaydroidState::Status WaydroidState::status() const
 {
     return m_status;
