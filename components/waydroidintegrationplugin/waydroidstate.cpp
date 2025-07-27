@@ -9,6 +9,7 @@
 #include "waydroidshared.h"
 
 #include <QClipboard>
+#include <QCoroProcess>
 #include <QDebug>
 #include <QDir>
 #include <QGuiApplication>
@@ -237,10 +238,10 @@ void WaydroidState::initialize(const SystemType systemType, const RomType romTyp
     });
 }
 
-void WaydroidState::startSession()
+QCoro::Task<void> WaydroidState::startSession()
 {
     if (m_sessionStatus == SessionStarting || m_sessionStatus == SessionRunning) {
-        return;
+        co_return;
     }
 
     m_sessionStatus = SessionStarting;
@@ -248,11 +249,11 @@ void WaydroidState::startSession()
 
     const QStringList arguments{u"session"_s, u"start"_s};
 
-    // Don't wait for result because the command is blocking
-    QProcess *process = new QProcess(this);
-    process->start(WAYDROID_COMMAND, arguments);
+    QProcess *basicProcess = new QProcess(this);
+    auto process = qCoro(basicProcess);
+    co_await process.start(WAYDROID_COMMAND, arguments);
 
-    connect(process, &QProcess::finished, this, [this, process](int exitCode, QProcess::ExitStatus exitStatus) {
+    connect(basicProcess, &QProcess::finished, this, [this, basicProcess](int exitCode, QProcess::ExitStatus exitStatus) {
         Q_UNUSED(exitStatus);
 
         if (exitCode == 0) {
@@ -262,7 +263,7 @@ void WaydroidState::startSession()
         m_sessionStatus = SessionStopped;
         Q_EMIT sessionStatusChanged();
 
-        QByteArray errorData = process->readAllStandardError();
+        QByteArray errorData = basicProcess->readAllStandardError();
         QString errorString = QString::fromUtf8(errorData);
 
         m_errorTitle = i18n("Failed to start the Waydroid session.");
@@ -276,29 +277,56 @@ void WaydroidState::startSession()
     checkSessionStarting(10);
 }
 
-void WaydroidState::stopSession()
+QCoro::Task<void> WaydroidState::stopSession()
 {
     if (m_sessionStatus == SessionStopped) {
-        return;
+        co_return;
     }
 
     const QStringList arguments{u"session"_s, u"stop"_s};
 
-    QProcess *process = new QProcess(this);
-    process->start(WAYDROID_COMMAND, arguments);
-    process->waitForFinished();
+    QProcess basicProcess = QProcess(this);
+    auto process = qCoro(basicProcess);
+    co_await process.start(WAYDROID_COMMAND, arguments);
+    co_await process.waitForFinished();
 
-    if (process->exitCode() == 0) {
+    if (basicProcess.exitCode() == 0) {
         m_sessionStatus = SessionStopped;
         Q_EMIT sessionStatusChanged();
     } else {
-        qCWarning(WAYDROIDINTEGRATIONPLUGIN) << "Failed to stop the Waydroid session: " << process->readAllStandardError();
+        qCWarning(WAYDROIDINTEGRATIONPLUGIN) << "Failed to stop the Waydroid session: " << basicProcess.readAllStandardError();
     }
 }
 
 void WaydroidState::copyToClipboard(const QString text)
 {
     qGuiApp->clipboard()->setText(text);
+}
+
+QCoro::Task<void> WaydroidState::resetWaydroid()
+{
+    if (m_sessionStatus != SessionStopped) {
+        co_await stopSession();
+    }
+
+    KAuth::Action writeAction(u"org.kde.plasma.mobileshell.waydroidhelper.reset"_s);
+    writeAction.setHelperId(u"org.kde.plasma.mobileshell.waydroidhelper"_s);
+
+    KAuth::ExecuteJob *job = writeAction.execute();
+    job->start();
+
+    connect(job, &KAuth::ExecuteJob::finished, this, [this](KJob *job, auto) {
+        if (job->error() == 0) {
+            m_status = NotInitialized;
+        } else {
+            m_errorTitle = i18n("Failed to reset Waydroid.");
+            Q_EMIT errorTitleChanged();
+
+            qCWarning(WAYDROIDINTEGRATIONPLUGIN) << "KAuth returned an error code:" << job->error() << " message: " << job->errorString();
+        }
+
+        Q_EMIT statusChanged();
+    });
 }
 
 WaydroidState::Status WaydroidState::status() const
