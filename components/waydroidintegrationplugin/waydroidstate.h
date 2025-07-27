@@ -99,6 +99,7 @@ public:
     Q_INVOKABLE void startSession();
     Q_INVOKABLE void stopSession();
     Q_INVOKABLE void copyToClipboard(const QString text);
+    Q_INVOKABLE void resetWaydroid();
 
     Status status() const;
     SessionStatus sessionStatus() const;
