@@ -52,7 +52,8 @@ public:
         NotSupported = 0,
         NotInitialized,
         Initializing,
-        Initialized
+        Initialized,
+        Resetting
     };
     Q_ENUM(Status)
 
@@ -103,6 +104,8 @@ public:
     QCoro::Task<void> startSession();
     Q_INVOKABLE QCoro::QmlTask stopSessionQml();
     QCoro::Task<void> stopSession();
+    Q_INVOKABLE QCoro::QmlTask resetWaydroidQml();
+    QCoro::Task<void> resetWaydroid();
     
     Q_INVOKABLE void copyToClipboard(const QString text);
 
