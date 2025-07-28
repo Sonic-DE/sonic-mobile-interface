@@ -95,9 +95,9 @@ public:
     Q_INVOKABLE void refreshAndroidId();
     Q_INVOKABLE void refreshPropsInfo();
     Q_INVOKABLE void resetError();
-    Q_INVOKABLE void initialize(const SystemType systemType, const RomType romType, const bool forced = false);
-    Q_INVOKABLE void startSession();
-    Q_INVOKABLE void stopSession();
+    Q_INVOKABLE QCoro::Task<void> initialize(const SystemType systemType, const RomType romType, const bool forced = false);
+    Q_INVOKABLE QCoro::Task<void> startSession();
+    Q_INVOKABLE QCoro::Task<void> stopSession();
     Q_INVOKABLE void copyToClipboard(const QString text);
 
     Status status() const;
