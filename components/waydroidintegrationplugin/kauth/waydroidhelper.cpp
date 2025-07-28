@@ -10,6 +10,7 @@
 #include <KAuth/HelperSupport>
 
 #include <QDebug>
+#include <QDir>
 #include <QFile>
 #include <QFileInfo>
 #include <QLoggingCategory>
@@ -19,6 +20,7 @@
 using namespace Qt::StringLiterals;
 
 #define WAYDROID_COMMAND "waydroid"
+#define WAYDROID_FOLDER "/var/lib/waydroid"
 
 class WaydroidHelper : public QObject
 {
@@ -26,6 +28,7 @@ class WaydroidHelper : public QObject
 public Q_SLOTS:
     KAuth::ActionReply initialize(const QVariantMap &args);
     KAuth::ActionReply getandroidid(const QVariantMap &args);
+    KAuth::ActionReply reset(const QVariantMap &args);
 };
 
 KAuth::ActionReply WaydroidHelper::initialize(const QVariantMap &args)
@@ -77,6 +80,23 @@ KAuth::ActionReply WaydroidHelper::getandroidid(const QVariantMap &args)
         return reply;
     } else {
         qCWarning(WAYDROIDHELPER) << "Failed to get Android ID: " << process->readAllStandardError();
+        return KAuth::ActionReply::HelperErrorReply();
+    }
+}
+
+KAuth::ActionReply WaydroidHelper::reset(const QVariantMap &args)
+{
+    Q_UNUSED(args);
+
+    if (!QDir().exists(WAYDROID_FOLDER)) {
+        return KAuth::ActionReply::SuccessReply();
+    }
+
+    QDir qDir(WAYDROID_FOLDER);
+    if (qDir.removeRecursively()) {
+        return KAuth::ActionReply::SuccessReply();
+    } else {
+        qCWarning(WAYDROIDHELPER) << "Failed to remove Waydroid folder";
         return KAuth::ActionReply::HelperErrorReply();
     }
 }

@@ -50,7 +50,8 @@ public:
         NotSupported = 0,
         NotInitialized,
         Initializing,
-        Initialized
+        Initialized,
+        Resetting
     };
     Q_ENUM(Status)
 
@@ -99,6 +100,7 @@ public:
     Q_INVOKABLE void startSession();
     Q_INVOKABLE void stopSession();
     Q_INVOKABLE void copyToClipboard(const QString text);
+    Q_INVOKABLE QCoro::Task<void> resetWaydroid();
 
     Status status() const;
     SessionStatus sessionStatus() const;

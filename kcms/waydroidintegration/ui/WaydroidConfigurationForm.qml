@@ -51,6 +51,11 @@ ColumnLayout {
             text: i18n("Installed applications")
             onClicked: kcm.push("WaydroidApplicationsPage.qml")
         }
+
+        FormCard.FormButtonDelegate {
+            text: i18n("Reset waydroid")
+            onClicked: AIP.WaydroidState.resetWaydroid()
+        }
     }
 
     // Some informations as IP address can take time to be set by Waydroid
