@@ -11,6 +11,7 @@
 #include <QCoroCore>
 #include <QCoroQmlTask>
 #include <QObject>
+#include <QTimer>
 
 #include <qqmlregistration.h>
 #include <qtmetamacros.h>
@@ -148,6 +149,7 @@ private:
     QString m_errorMessage{""};
     QString m_androidId{""};
     WaydroidApplicationListModel *m_applicationListModel{nullptr};
+    QTimer *m_refreshTimer{nullptr};
 
     // Waydroid props. See https://docs.waydro.id/usage/waydroid-prop-options
     bool m_multiWindows{false};

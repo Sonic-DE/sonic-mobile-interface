@@ -27,6 +27,7 @@
 #include <KSandbox>
 
 using namespace Qt::StringLiterals;
+using namespace std::chrono_literals;
 
 #define MULTI_WINDOWS_PROP_KEY "persist.waydroid.multi_windows"
 #define SUSPEND_PROP_KEY "persist.waydroid.suspend"
@@ -39,7 +40,19 @@ static const QRegularExpression systemOtaRegExp(u"system_ota\\s*=\\s*(\\S+)"_s);
 WaydroidState::WaydroidState(QObject *parent)
     : QObject{parent}
     , m_applicationListModel{new WaydroidApplicationListModel{this}}
+    , m_refreshTimer{new QTimer{this}}
 {
+    // HACK to refresh all instances of WaydroidState (Ex: KCM + QuickSettings).
+    // Maybe migrate it to DBUS Server/Client implementation later.
+    m_refreshTimer->setInterval(1s);
+    m_refreshTimer->setSingleShot(false);
+    m_refreshTimer->start();
+
+    connect(m_refreshTimer, &QTimer::timeout, this, [this]() {
+        refreshSupportsInfo();
+        refreshSessionInfo();
+    });
+
     // Connect it-self to auto-refresh when required status has changed
     connect(this, &WaydroidState::statusChanged, this, &WaydroidState::refreshSessionInfo);
     connect(this, &WaydroidState::statusChanged, this, &WaydroidState::refreshInstallationInfo);
@@ -50,6 +63,10 @@ WaydroidState::WaydroidState(QObject *parent)
 
 void WaydroidState::refreshSupportsInfo()
 {
+    if (m_status == Initializing) {
+        return;
+    }
+
     const QStringList arguments{u"-h"_s};
 
     QProcess *process = new QProcess(this);
@@ -57,19 +74,18 @@ void WaydroidState::refreshSupportsInfo()
     process->waitForFinished();
 
     const int exitCode = process->exitCode();
-    if (exitCode != 0) {
+    if (exitCode != 0 && m_status != NotSupported) {
         m_status = NotSupported;
         Q_EMIT statusChanged();
         return;
     }
 
     const QString output = fetchSessionInfo();
-    if (!output.contains("WayDroid is not initialized")) {
-        m_status = Initialized;
-    } else {
-        m_status = NotInitialized;
+    const Status status = output.contains("WayDroid is not initialized") ? NotInitialized : Initialized;
+    if (status != m_status) {
+        m_status = status;
+        Q_EMIT statusChanged();
     }
-    Q_EMIT statusChanged();
 }
 
 void WaydroidState::refreshInstallationInfo()
@@ -87,21 +103,25 @@ void WaydroidState::refreshInstallationInfo()
     const QString fileContent = in.readAll();
 
     const QString systemMatch = extractRegExp(fileContent, systemOtaRegExp);
+    SystemType systemType;
     if (systemMatch.contains("vanilla", Qt::CaseInsensitive)) {
-        m_systemType = Vanilla;
+        systemType = Vanilla;
     } else if (systemMatch.contains("gapps", Qt::CaseInsensitive)) {
-        m_systemType = Gapps;
+        systemType = Gapps;
     } else if (systemMatch.contains("foss", Qt::CaseInsensitive)) {
-        m_systemType = Foss;
+        systemType = Foss;
     } else {
-        m_systemType = UnknownSystemType;
+        systemType = UnknownSystemType;
     }
-    Q_EMIT systemTypeChanged();
+    if (systemType != m_systemType) {
+        m_systemType = systemType;
+        Q_EMIT systemTypeChanged();
+    }
 }
 
 void WaydroidState::refreshSessionInfo()
 {
-    if (m_status != Initialized) {
+    if (m_status != Initialized && m_sessionStatus == SessionStarting) {
         return;
     }
 
