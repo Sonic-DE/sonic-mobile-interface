@@ -225,7 +225,7 @@ QCoro::Task<void> WaydroidState::initialize(const SystemType systemType, const R
     KAuth::Action writeAction(u"org.kde.plasma.mobileshell.waydroidhelper.initialize"_s);
     writeAction.setHelperId(u"org.kde.plasma.mobileshell.waydroidhelper"_s);
     writeAction.setArguments(args);
-    writeAction.setTimeout(3600000); // HACK: 1 hour to wait installation
+    writeAction.setTimeout(-1); // HACK: Disable timeout
 
     KAuth::ExecuteJob *job = writeAction.execute();
     job->start();
