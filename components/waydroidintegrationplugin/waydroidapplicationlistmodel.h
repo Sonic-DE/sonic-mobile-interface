@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include "waydroidapplication.h"
-#include "waydroidstate.h"
+#include "waydroidapplicationdbusclient.h"
+#include "waydroiddbusobject.h"
 
 #include <QAbstractListModel>
 #include <QObject>
@@ -26,7 +26,7 @@ public:
         IdRole
     };
 
-    WaydroidApplicationListModel(WaydroidState *parent = nullptr);
+    explicit WaydroidApplicationListModel(WaydroidState *parent = nullptr);
     ~WaydroidApplicationListModel() override;
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -42,9 +42,9 @@ Q_SIGNALS:
 
 private:
     WaydroidState *m_waydroidState{nullptr};
-    QList<WaydroidApplication::Ptr> m_applications;
+    QList<WaydroidApplicationDBusClient::Ptr> m_applications;
     QTimer *m_refreshTimer{nullptr};
 
-    void loadApplications(const QList<WaydroidApplication::Ptr> applications);
+    void loadApplications(const QList<QString> packageNames);
     void refreshApplications();
 };
