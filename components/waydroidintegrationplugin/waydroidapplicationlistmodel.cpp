@@ -5,6 +5,7 @@
  */
 
 #include "waydroidapplicationlistmodel.h"
+#include "waydroidapplicationdbusclient.h"
 #include "waydroidintegrationplugin_debug.h"
 #include "waydroidshared.h"
 
@@ -33,7 +34,7 @@ WaydroidApplicationListModel::WaydroidApplicationListModel(WaydroidState *parent
 
 WaydroidApplicationListModel::~WaydroidApplicationListModel() = default;
 
-void WaydroidApplicationListModel::loadApplications(const QList<WaydroidApplication::Ptr> applications)
+void WaydroidApplicationListModel::loadApplications(const QList<QString> packageNames)
 {
     if (m_waydroidState->sessionStatus() != WaydroidState::SessionRunning) {
         return;
@@ -47,16 +48,16 @@ void WaydroidApplicationListModel::loadApplications(const QList<WaydroidApplicat
         appIdMap.insert(application->packageName(), i);
     }
 
-    QList<WaydroidApplication::Ptr> toInsert;
+    QList<QString> toInsert;
 
-    for (const WaydroidApplication::Ptr &application : applications) {
-        auto it = appIdMap.find(application->packageName());
+    for (const QString &packageName : packageNames) {
+        auto it = appIdMap.find(packageName);
         if (it != appIdMap.end()) {
             // Application already in m_applications
             appIdMap.erase(it);
         } else {
             // Application needs to be inserted into m_applications
-            toInsert.append(std::move(application));
+            toInsert.append(packageName);
         }
     }
 
@@ -77,20 +78,29 @@ void WaydroidApplicationListModel::loadApplications(const QList<WaydroidApplicat
     }
 
     // Append new elements
-    for (const WaydroidApplication::Ptr &application : toInsert) {
+    for (const QString &packageName : toInsert) {
         beginInsertRows({}, m_applications.size(), m_applications.size());
-        m_applications.append(application);
+        auto client = std::make_shared<WaydroidApplicationDBusClient>(packageName, this);
+        m_applications.append(client);
         endInsertRows();
     }
 }
 
 void WaydroidApplicationListModel::refreshApplications()
 {
-    QList<WaydroidApplication::Ptr> applications;
+    if (m_waydroidState->sessionStatus() != WaydroidState::SessionRunning) {
+        return;
+    }
+
+    QDBusInterface waydroidInterface(u"org.kde.plasmashell"_s, u"/Waydroid"_s, u"org.kde.plasmashell"_s, QDBusConnection::sessionBus());
+
+    if (!waydroidInterface.isValid()) {
+        qCWarning(WAYDROIDINTEGRATIONPLUGIN) << "Cannot connect to Waydroid DBus interface";
+        return;
+    }
 
     QStringList arguments = {u"app"_s, u"list"_s};
-
-    QProcess *process = new QProcess(m_waydroidState);
+    QProcess *process = new QProcess(this);
     process->start(WAYDROID_COMMAND, arguments);
 
     connect(process, &QProcess::finished, this, [this, process](int exitCode, QProcess::ExitStatus exitStatus) {
@@ -108,19 +118,18 @@ void WaydroidApplicationListModel::refreshApplications()
         qCDebug(WAYDROIDINTEGRATIONPLUGIN) << "Waydroid output: " << data;
         QTextStream output = QTextStream(data);
 
-        QList<WaydroidApplication::Ptr> applications;
+        QList<QString> packageNames;
         while (!output.atEnd()) {
-            const WaydroidApplication::Ptr app = WaydroidApplication::fromWaydroidLog(output);
-            if (app == nullptr) {
-                qCWarning(WAYDROIDINTEGRATIONPLUGIN) << "Failed to fetch the application: Maybe wrong QTextStream cursor position.";
-                break;
+            const QString line = output.readLine();
+            if (line.startsWith("packageName:")) {
+                const QString packageName = line.split(':').last().trimmed();
+                if (!packageName.isEmpty()) {
+                    packageNames.append(packageName);
+                }
             }
-
-            qCDebug(WAYDROIDINTEGRATIONPLUGIN) << "Waydroid application found: " << app.get()->name() << " (" << app.get()->packageName() << ")";
-            applications.append(app);
         }
 
-        loadApplications(applications);
+        loadApplications(packageNames);
     });
 }
 
@@ -135,7 +144,7 @@ QVariant WaydroidApplicationListModel::data(const QModelIndex &index, int role) 
         return QVariant();
     }
 
-    WaydroidApplication::Ptr app = m_applications.at(index.row());
+    WaydroidApplicationDBusClient::Ptr app = m_applications.at(index.row());
 
     switch (role) {
     case Qt::DisplayRole:
