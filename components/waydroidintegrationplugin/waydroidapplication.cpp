@@ -4,8 +4,10 @@
  *   SPDX-License-Identifier: GPL-2.0-or-later
  */
 
-#include <waydroidapplication.h>
+#include "waydroidapplication.h"
+#include "waydroidintegrationplugin_debug.h"
 
+#include <QLoggingCategory>
 #include <QRegularExpression>
 #include <QStringLiteral>
 
@@ -56,6 +58,22 @@ WaydroidApplication::Ptr WaydroidApplication::fromWaydroidLog(QTextStream &inFil
     }
 
     return app;
+}
+
+QList<WaydroidApplication::Ptr> WaydroidApplication::parseApplicationsFromWaydroidLog(QTextStream &inFile)
+{
+    QList<WaydroidApplication::Ptr> applications;
+    while (!inFile.atEnd()) {
+        const WaydroidApplication::Ptr app = fromWaydroidLog(inFile);
+        if (app == nullptr) {
+            qCWarning(WAYDROIDINTEGRATIONPLUGIN) << "Failed to fetch the application: Maybe wrong QTextStream cursor position.";
+            break;
+        }
+
+        qCDebug(WAYDROIDINTEGRATIONPLUGIN) << "Waydroid application found: " << app.get()->name() << " (" << app.get()->packageName() << ")";
+        applications.append(app);
+    }
+    return applications;
 }
 
 QString WaydroidApplication::name() const
