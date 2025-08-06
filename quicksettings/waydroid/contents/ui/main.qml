@@ -16,6 +16,10 @@ QS.QuickSetting {
     enabled: AIP.WaydroidState.sessionStatus === AIP.WaydroidState.SessionRunning
     available: AIP.WaydroidState.status === AIP.WaydroidState.Initialized
 
+    Component.onCompleted: {
+        AIP.WaydroidDBusObject.registerObject();
+    }
+
     function toggle(): void {
         if (AIP.WaydroidState.sessionStatus === AIP.WaydroidState.SessionRunning) {
             AIP.WaydroidState.stopSessionQml()
