@@ -100,6 +100,7 @@ public:
     Q_INVOKABLE QCoro::QmlTask startSession();
     Q_INVOKABLE QCoro::QmlTask stopSession();
     Q_INVOKABLE QCoro::QmlTask resetWaydroid();
+    Q_INVOKABLE QCoro::QmlTask refreshSessionInfo();
 
     Q_INVOKABLE void copyToClipboard(const QString text);
 
@@ -153,4 +154,5 @@ private:
     QCoro::Task<> setMultiWindowsTask(const bool multiWindows);
     QCoro::Task<> setSuspendTask(const bool suspend);
     QCoro::Task<> setUeventTask(const bool uevent);
+    QCoro::Task<> refreshSessionInfoTask();
 };

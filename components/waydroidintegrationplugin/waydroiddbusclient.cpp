@@ -94,7 +94,7 @@ QString WaydroidDBusClient::androidId() const
     return m_androidId;
 }
 
-QCoro::Task<void> WaydroidDBusClient::setMultiWindowsTask(const bool multiWindows)
+QCoro::Task<> WaydroidDBusClient::setMultiWindowsTask(const bool multiWindows)
 {
     auto pendingReply = m_interface->setMultiWindows(multiWindows);
     co_await pendingReply;
@@ -110,7 +110,7 @@ bool WaydroidDBusClient::multiWindows() const
     return m_multiWindows;
 }
 
-QCoro::Task<void> WaydroidDBusClient::setSuspendTask(const bool suspend)
+QCoro::Task<> WaydroidDBusClient::setSuspendTask(const bool suspend)
 {
     auto pendingReply = m_interface->setSuspend(suspend);
     co_await pendingReply;
@@ -126,7 +126,7 @@ bool WaydroidDBusClient::suspend() const
     return m_suspend;
 }
 
-QCoro::Task<void> WaydroidDBusClient::setUeventTask(const bool uevent)
+QCoro::Task<> WaydroidDBusClient::setUeventTask(const bool uevent)
 {
     auto pendingReply = m_interface->setUevent(uevent);
     co_await pendingReply;
@@ -137,12 +137,23 @@ QCoro::QmlTask WaydroidDBusClient::setUevent(const bool multiWindows)
     return setUeventTask(multiWindows);
 }
 
+QCoro::Task<> WaydroidDBusClient::refreshSessionInfoTask()
+{
+    auto pendingReply = m_interface->refreshSessionInfo();
+    co_await pendingReply;
+}
+
+QCoro::QmlTask WaydroidDBusClient::refreshSessionInfo()
+{
+    return refreshSessionInfoTask();
+}
+
 bool WaydroidDBusClient::uevent() const
 {
     return m_uevent;
 }
 
-QCoro::Task<void> WaydroidDBusClient::initializeTask(const SystemType systemType, const RomType romType, const bool forced)
+QCoro::Task<> WaydroidDBusClient::initializeTask(const SystemType systemType, const RomType romType, const bool forced)
 {
     auto pendingReply = m_interface->initialize(systemType, romType, forced);
     co_await pendingReply;
@@ -153,7 +164,7 @@ QCoro::QmlTask WaydroidDBusClient::initialize(const SystemType systemType, const
     return initializeTask(systemType, romType, forced);
 }
 
-QCoro::Task<void> WaydroidDBusClient::startSessionTask()
+QCoro::Task<> WaydroidDBusClient::startSessionTask()
 {
     auto pendingReply = m_interface->startSession();
     co_await pendingReply;
@@ -164,7 +175,7 @@ QCoro::QmlTask WaydroidDBusClient::startSession()
     return startSessionTask();
 }
 
-QCoro::Task<void> WaydroidDBusClient::stopSessionTask()
+QCoro::Task<> WaydroidDBusClient::stopSessionTask()
 {
     auto pendingReply = m_interface->stopSession();
     co_await pendingReply;
@@ -175,7 +186,7 @@ QCoro::QmlTask WaydroidDBusClient::stopSession()
     return startSessionTask();
 }
 
-QCoro::Task<void> WaydroidDBusClient::resetWaydroidTask()
+QCoro::Task<> WaydroidDBusClient::resetWaydroidTask()
 {
     auto pendingReply = m_interface->resetWaydroid();
     co_await pendingReply;

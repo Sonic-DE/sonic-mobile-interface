@@ -68,6 +68,15 @@ ColumnLayout {
 
     }
 
+    // Some informations as IP address can take time to be set by Waydroid
+    Timer {
+        id: autoRefreshSessionTimer
+        interval: 2000
+        repeat: true
+        running: root.visible
+        onTriggered: AIP.WaydroidDBusClient.refreshSessionInfo()
+    }
+
     FormCard.FormHeader {
         title: i18n("Waydroid properties")
     }

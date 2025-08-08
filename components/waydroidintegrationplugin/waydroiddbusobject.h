@@ -109,6 +109,7 @@ public Q_SLOTS:
     Q_SCRIPTABLE void startSession();
     Q_SCRIPTABLE void stopSession();
     Q_SCRIPTABLE void resetWaydroid();
+    Q_SCRIPTABLE void refreshSessionInfo();
 
 private:
     bool m_dbusInitialized{false};
@@ -123,11 +124,10 @@ private:
     bool m_suspend{false};
     bool m_uevent{false};
 
-    Q_INVOKABLE void refreshSupportsInfo();
-    Q_INVOKABLE void refreshInstallationInfo();
-    Q_INVOKABLE void refreshSessionInfo();
-    Q_INVOKABLE void refreshAndroidId();
-    Q_INVOKABLE void refreshPropsInfo();
+    void refreshSupportsInfo();
+    void refreshInstallationInfo();
+    void refreshAndroidId();
+    void refreshPropsInfo();
 
     /**
      * @brief Executes the command to retrieve the current session status and related
