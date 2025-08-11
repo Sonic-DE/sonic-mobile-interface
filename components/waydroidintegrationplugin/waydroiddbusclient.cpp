@@ -204,8 +204,12 @@ void WaydroidDBusClient::updateStatus()
 
     connect(watcher, &QDBusPendingCallWatcher::finished, this, [this](auto watcher) {
         QDBusPendingReply<int> reply = *watcher;
-        m_status = static_cast<Status>(reply.argumentAt<0>());
-        Q_EMIT statusChanged();
+        const auto status = static_cast<Status>(reply.argumentAt<0>());
+
+        if (m_status != status) {
+            m_status = status;
+            Q_EMIT statusChanged();
+        }
     });
 }
 
@@ -216,8 +220,12 @@ void WaydroidDBusClient::updateSessionStatus()
 
     connect(watcher, &QDBusPendingCallWatcher::finished, this, [this](auto watcher) {
         QDBusPendingReply<int> reply = *watcher;
-        m_sessionStatus = static_cast<SessionStatus>(reply.argumentAt<0>());
-        Q_EMIT sessionStatusChanged();
+        const auto sessionStatus = static_cast<SessionStatus>(reply.argumentAt<0>());
+
+        if (m_sessionStatus != sessionStatus) {
+            m_sessionStatus = sessionStatus;
+            Q_EMIT sessionStatusChanged();
+        }
     });
 }
 
@@ -228,8 +236,12 @@ void WaydroidDBusClient::updateSystemType()
 
     connect(watcher, &QDBusPendingCallWatcher::finished, this, [this](auto watcher) {
         QDBusPendingReply<int> reply = *watcher;
-        m_systemType = static_cast<SystemType>(reply.argumentAt<0>());
-        Q_EMIT sessionStatusChanged();
+        const auto systemType = static_cast<SystemType>(reply.argumentAt<0>());
+
+        if (m_systemType != systemType) {
+            m_systemType = systemType;
+            Q_EMIT systemTypeChanged();
+        }
     });
 }
 
@@ -240,8 +252,12 @@ void WaydroidDBusClient::updateIpAddress()
 
     connect(watcher, &QDBusPendingCallWatcher::finished, this, [this](auto watcher) {
         QDBusPendingReply<QString> reply = *watcher;
-        m_ipAddress = reply.argumentAt<0>();
-        Q_EMIT ipAddressChanged();
+        const auto ipAddress = reply.argumentAt<0>();
+
+        if (m_ipAddress != ipAddress) {
+            m_ipAddress = ipAddress;
+            Q_EMIT ipAddressChanged();
+        }
     });
 }
 
@@ -252,8 +268,12 @@ void WaydroidDBusClient::updateAndroidId()
 
     connect(watcher, &QDBusPendingCallWatcher::finished, this, [this](auto watcher) {
         QDBusPendingReply<QString> reply = *watcher;
-        m_androidId = reply.argumentAt<0>();
-        Q_EMIT androidIdChanged();
+        const auto androidId = reply.argumentAt<0>();
+
+        if (m_androidId != androidId) {
+            m_androidId = androidId;
+            Q_EMIT androidIdChanged();
+        }
     });
 }
 
@@ -264,8 +284,12 @@ void WaydroidDBusClient::updateMultiWindows()
 
     connect(watcher, &QDBusPendingCallWatcher::finished, this, [this](auto watcher) {
         QDBusPendingReply<bool> reply = *watcher;
-        m_multiWindows = reply.argumentAt<0>();
-        Q_EMIT multiWindowsChanged();
+        const auto multiWindows = reply.argumentAt<0>();
+
+        if (m_multiWindows != multiWindows) {
+            m_multiWindows = multiWindows;
+            Q_EMIT multiWindowsChanged();
+        }
     });
 }
 
@@ -276,8 +300,12 @@ void WaydroidDBusClient::updateSuspend()
 
     connect(watcher, &QDBusPendingCallWatcher::finished, this, [this](auto watcher) {
         QDBusPendingReply<bool> reply = *watcher;
-        m_suspend = reply.argumentAt<0>();
-        Q_EMIT suspendChanged();
+        const auto suspend = reply.argumentAt<0>();
+
+        if (m_suspend != suspend) {
+            m_suspend = suspend;
+            Q_EMIT suspendChanged();
+        }
     });
 }
 
@@ -288,8 +316,12 @@ void WaydroidDBusClient::updateUevent()
 
     connect(watcher, &QDBusPendingCallWatcher::finished, this, [this](auto watcher) {
         QDBusPendingReply<bool> reply = *watcher;
-        m_uevent = reply.argumentAt<0>();
-        Q_EMIT ueventChanged();
+        const auto uevent = reply.argumentAt<0>();
+
+        if (m_uevent != uevent) {
+            m_uevent = uevent;
+            Q_EMIT ueventChanged();
+        }
     });
 }
 
