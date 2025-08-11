@@ -6,6 +6,7 @@
 
 #include "waydroiddbusobject.h"
 #include "waydroidadaptor.h"
+#include "waydroidapplicationdbusobject.h"
 #include "waydroidintegrationplugin_debug.h"
 #include "waydroidshared.h"
 
@@ -49,6 +50,7 @@ void WaydroidDBusObject::registerObject()
         connect(this, &WaydroidDBusObject::statusChanged, this, &WaydroidDBusObject::refreshSessionInfo);
         connect(this, &WaydroidDBusObject::statusChanged, this, &WaydroidDBusObject::refreshInstallationInfo);
         connect(this, &WaydroidDBusObject::sessionStatusChanged, this, &WaydroidDBusObject::refreshPropsInfo);
+        connect(this, &WaydroidDBusObject::sessionStatusChanged, this, &WaydroidDBusObject::refreshApplications);
 
         refreshSupportsInfo();
     }
@@ -540,4 +542,84 @@ bool WaydroidDBusObject::removeWaydroidApplications()
     }
 
     return allFileRemoved;
+}
+
+void WaydroidDBusObject::refreshApplications()
+{
+    if (m_sessionStatus != SessionRunning) {
+        // Clear existing applications when session is not running
+        for (const auto &appObject : m_applicationObjects) {
+            appObject->unregisterObject();
+        }
+        m_applicationObjects.clear();
+        return;
+    }
+
+    const QString output = fetchApplicationsList();
+    if (output.isEmpty()) {
+        return;
+    }
+
+    QTextStream inFile(const_cast<QString *>(&output), QIODevice::ReadOnly);
+    const auto newApplications = WaydroidApplicationDBusObject::parseApplicationsFromWaydroidLog(inFile);
+
+    // Create a map of existing applications by package name for efficient lookup
+    QMap<QString, int> existingAppMap;
+    for (int i = 0; i < m_applicationObjects.size(); ++i) {
+        const auto &application = m_applicationObjects[i];
+        existingAppMap.insert(application->packageName(), i);
+    }
+
+    QList<WaydroidApplicationDBusObject::Ptr> toInsert;
+
+    // Check which applications need to be added or are already present
+    for (const auto &application : newApplications) {
+        if (!application->name().isEmpty() && !application->packageName().isEmpty()) {
+            auto it = existingAppMap.find(application->packageName());
+            if (it != existingAppMap.end()) {
+                // Application already exists, remove from map to mark as kept
+                existingAppMap.erase(it);
+            } else {
+                // Application needs to be inserted
+                toInsert.append(application);
+            }
+        }
+    }
+
+    // Remove applications that are no longer present
+    QList<int> toRemove;
+    for (int index : existingAppMap.values()) {
+        toRemove.append(index);
+    }
+
+    std::sort(toRemove.begin(), toRemove.end());
+
+    // Remove indices from end to start to avoid index shifting
+    for (int i = toRemove.size() - 1; i >= 0; --i) {
+        int ind = toRemove[i];
+        m_applicationObjects[ind]->unregisterObject();
+        m_applicationObjects.removeAt(ind);
+    }
+
+    // Add new applications and register them
+    for (const auto &application : toInsert) {
+        application->registerObject();
+        m_applicationObjects.append(application);
+    }
+}
+
+QString WaydroidDBusObject::fetchApplicationsList()
+{
+    const QStringList arguments{u"app"_s, u"list"_s};
+
+    auto process = QProcess(this);
+    process.start(WAYDROID_COMMAND, arguments);
+    process.waitForFinished();
+
+    if (process.exitCode() != 0) {
+        qCWarning(WAYDROIDINTEGRATIONPLUGIN) << "Failed to fetch applications list: " << process.readAllStandardError();
+        return QString{};
+    }
+
+    return process.readAllStandardOutput();
 }

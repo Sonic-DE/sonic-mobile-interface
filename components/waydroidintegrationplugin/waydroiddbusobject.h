@@ -6,10 +6,15 @@
 
 #pragma once
 
+#include "waydroidapplicationdbusobject.h"
+
+#include <QList>
 #include <QObject>
 #include <QString>
 
 #include <qqmlregistration.h>
+
+class WaydroidApplicationDBusObject;
 
 /**
  * This class provides an interface to interact with the Waydroid container,
@@ -110,6 +115,7 @@ public Q_SLOTS:
     Q_SCRIPTABLE void stopSession();
     Q_SCRIPTABLE void resetWaydroid();
     Q_SCRIPTABLE void refreshSessionInfo();
+    Q_SCRIPTABLE void refreshApplications();
 
 private:
     bool m_dbusInitialized{false};
@@ -183,4 +189,7 @@ private:
 
     QString desktopFileDirectory();
     bool removeWaydroidApplications();
+
+    QString fetchApplicationsList();
+    QList<WaydroidApplicationDBusObject::Ptr> m_applicationObjects;
 };

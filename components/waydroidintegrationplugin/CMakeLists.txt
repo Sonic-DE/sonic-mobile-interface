@@ -2,8 +2,8 @@
 # SPDX-License-Identifier: BSD-2-Clause
 
 set(waydroidintegrationplugin_SRCS
-#    waydroidstate.cpp
-    waydroidapplication.cpp
+    waydroidapplicationdbusobject.cpp
+#    waydroidapplicationdbusclient.cpp
 #    waydroidapplicationlistmodel.cpp
     waydroiddbusclient.cpp
     waydroiddbusobject.cpp
@@ -14,15 +14,32 @@ qt_generate_dbus_interface(
     org.kde.plasmashell.Waydroid.xml
     OPTIONS -s -m -P
 )
+qt_generate_dbus_interface(
+    ${CMAKE_CURRENT_SOURCE_DIR}/waydroidapplicationdbusobject.h
+    org.kde.plasmashell.Waydroid.Application.xml
+    OPTIONS -s -m -P
+)
 qt_add_dbus_adaptor(waydroidintegrationplugin_SRCS
     ${CMAKE_CURRENT_BINARY_DIR}/org.kde.plasmashell.Waydroid.xml
     ${CMAKE_CURRENT_SOURCE_DIR}/waydroiddbusobject.h WaydroidDBusObject
+)
+qt_add_dbus_adaptor(waydroidintegrationplugin_SRCS
+    ${CMAKE_CURRENT_BINARY_DIR}/org.kde.plasmashell.Waydroid.Application.xml
+    ${CMAKE_CURRENT_SOURCE_DIR}/waydroidapplicationdbusobject.h WaydroidApplicationDBusObject
 )
 qt_add_dbus_interface(waydroidintegrationplugin_SRCS
     ${CMAKE_CURRENT_BINARY_DIR}/org.kde.plasmashell.Waydroid.xml
     plasmashellwaydroidinterface
 )
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.kde.plasmashell.Waydroid.xml DESTINATION ${KDE_INSTALL_DBUSINTERFACEDIR})
+qt_add_dbus_interface(waydroidintegrationplugin_SRCS
+    ${CMAKE_CURRENT_BINARY_DIR}/org.kde.plasmashell.Waydroid.Application.xml
+    plasmashellwaydroidapplicationinterface
+)
+install(FILES 
+    ${CMAKE_CURRENT_BINARY_DIR}/org.kde.plasmashell.Waydroid.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/org.kde.plasmashell.Waydroid.Application.xml
+    DESTINATION ${KDE_INSTALL_DBUSINTERFACEDIR}
+)
 
 ecm_add_qml_module(waydroidintegrationplugin URI org.kde.plasma.private.mobileshell.waydroidintegrationplugin GENERATE_PLUGIN_SOURCE)
 target_sources(waydroidintegrationplugin PRIVATE ${waydroidintegrationplugin_SRCS} ${RESOURCES})
