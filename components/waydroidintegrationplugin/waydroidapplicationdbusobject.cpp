@@ -4,28 +4,49 @@
  *   SPDX-License-Identifier: GPL-2.0-or-later
  */
 
-#include "waydroidapplication.h"
+#include "waydroidapplicationdbusobject.h"
+#include "applicationadaptor.h"
 #include "waydroidintegrationplugin_debug.h"
 
+#include <QDBusConnection>
 #include <QLoggingCategory>
 #include <QRegularExpression>
-#include <QStringLiteral>
 
 using namespace Qt::StringLiterals;
 
 static const QRegularExpression nameRegExp(u"^Name:\\s*(\\S+)"_s);
 static const QRegularExpression packageNameRegExp(u"^packageName:\\s*(\\S+)"_s);
 
-WaydroidApplication::WaydroidApplication(QObject *parent)
+WaydroidApplicationDBusObject::WaydroidApplicationDBusObject(QObject *parent)
     : QObject{parent}
 {
-    // Nothing
 }
 
-WaydroidApplication::Ptr WaydroidApplication::fromWaydroidLog(QTextStream &inFile)
+void WaydroidApplicationDBusObject::registerObject()
 {
-    WaydroidApplication::Ptr app;
+    if (!m_dbusInitialized) {
+        new ApplicationAdaptor{this};
+        const QString objectPath = u"/Waydroid/Application/%1"_s.arg(m_packageName);
+        QDBusConnection::sessionBus().registerObject(objectPath, this);
+        m_objectPath = QDBusObjectPath(objectPath);
+    }
+}
 
+void WaydroidApplicationDBusObject::unregisterObject()
+{
+    if (m_dbusInitialized) {
+        QDBusConnection::sessionBus().unregisterObject(m_objectPath.path());
+        m_dbusInitialized = false;
+    }
+}
+
+QDBusObjectPath WaydroidApplicationDBusObject::objectPath() const
+{
+    return m_objectPath;
+}
+
+WaydroidApplicationDBusObject::Ptr WaydroidApplicationDBusObject::parseApplicationFromWaydroidLog(QTextStream &inFile)
+{
     const QString line = inFile.readLine();
     const QRegularExpressionMatch nameMatch = nameRegExp.match(line);
 
@@ -33,7 +54,7 @@ WaydroidApplication::Ptr WaydroidApplication::fromWaydroidLog(QTextStream &inFil
         return nullptr;
     }
 
-    app = std::make_shared<WaydroidApplication>();
+    auto app = std::make_shared<WaydroidApplicationDBusObject>();
     app->m_name = nameMatch.captured(nameMatch.lastCapturedIndex());
 
     qint64 oldPos = inFile.pos();
@@ -60,11 +81,11 @@ WaydroidApplication::Ptr WaydroidApplication::fromWaydroidLog(QTextStream &inFil
     return app;
 }
 
-QList<WaydroidApplication::Ptr> WaydroidApplication::parseApplicationsFromWaydroidLog(QTextStream &inFile)
+QList<WaydroidApplicationDBusObject::Ptr> WaydroidApplicationDBusObject::parseApplicationsFromWaydroidLog(QTextStream &inFile)
 {
-    QList<WaydroidApplication::Ptr> applications;
+    QList<Ptr> applications;
     while (!inFile.atEnd()) {
-        const WaydroidApplication::Ptr app = fromWaydroidLog(inFile);
+        const auto app = parseApplicationFromWaydroidLog(inFile);
         if (app == nullptr) {
             qCWarning(WAYDROIDINTEGRATIONPLUGIN) << "Failed to fetch the application: Maybe wrong QTextStream cursor position.";
             break;
@@ -76,12 +97,12 @@ QList<WaydroidApplication::Ptr> WaydroidApplication::parseApplicationsFromWaydro
     return applications;
 }
 
-QString WaydroidApplication::name() const
+QString WaydroidApplicationDBusObject::name() const
 {
     return m_name;
 }
 
-QString WaydroidApplication::packageName() const
+QString WaydroidApplicationDBusObject::packageName() const
 {
     return m_packageName;
 }
