@@ -9,8 +9,8 @@
 #include "plasmashellwaydroidinterface.h"
 #include "waydroiddbusobject.h"
 
-#include <QCoro/QCoroCore>
-#include <QCoro/QCoroQmlTask>
+#include <QCoroCore>
+#include <QCoroQmlTask>
 #include <QDBusServiceWatcher>
 #include <QObject>
 #include <QString>
@@ -147,12 +147,12 @@ private:
 
     void connectSignals();
 
-    QCoro::Task<> initializeTask(const SystemType systemType, const RomType romType, const bool forced = false);
-    QCoro::Task<> startSessionTask();
-    QCoro::Task<> stopSessionTask();
-    QCoro::Task<> resetWaydroidTask();
-    QCoro::Task<> setMultiWindowsTask(const bool multiWindows);
-    QCoro::Task<> setSuspendTask(const bool suspend);
-    QCoro::Task<> setUeventTask(const bool uevent);
-    QCoro::Task<> refreshSessionInfoTask();
+    QCoro::Task<void> initializeTask(const SystemType systemType, const RomType romType, const bool forced = false);
+    QCoro::Task<void> startSessionTask();
+    QCoro::Task<void> stopSessionTask();
+    QCoro::Task<void> resetWaydroidTask();
+    QCoro::Task<void> setMultiWindowsTask(const bool multiWindows);
+    QCoro::Task<void> setSuspendTask(const bool suspend);
+    QCoro::Task<void> setUeventTask(const bool uevent);
+    QCoro::Task<void> refreshSessionInfoTask();
 };
