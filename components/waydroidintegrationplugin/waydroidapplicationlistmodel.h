@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "waydroidapplication.h"
+#include "waydroidapplicationdbusclient.h"
 #include "waydroidstate.h"
 
 #include <QAbstractListModel>
@@ -42,9 +42,9 @@ Q_SIGNALS:
 
 private:
     WaydroidState *m_waydroidState{nullptr};
-    QList<WaydroidApplication::Ptr> m_applications;
+    QList<WaydroidApplicationDBusClient::Ptr> m_applications;
     QTimer *m_refreshTimer{nullptr};
 
-    void loadApplications(const QList<WaydroidApplication::Ptr> applications);
+    void loadApplications(const QList<QString> packageNames);
     void refreshApplications();
 };
