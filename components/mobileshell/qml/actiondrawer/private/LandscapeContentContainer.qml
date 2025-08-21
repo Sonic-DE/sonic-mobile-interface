@@ -47,15 +47,7 @@ Item {
         anchors.fill: parent
 
         // dismiss drawer when background is clicked
-        //onClicked: root.actionDrawer.close();
-
-        onClicked: {
-            root.actionDrawer.close();
-            let _w = (360 - (Kirigami.Units.gridUnit * (ShellSettings.Settings.quickSettingsColumns + 1))) / ShellSettings.Settings.quickSettingsColumns;
-            let _c = ShellSettings.Settings.quickSettingsColumns;
-            let _g = Kirigami.Units.gridUnit;
-            console.log("QS width: " + _w + " ; columns: " + _c + " gridUnit: " + _g);
-        }
+        onClicked: root.actionDrawer.close();
 
         // right sidebar
         MobileShell.QuickSettingsPanel {
