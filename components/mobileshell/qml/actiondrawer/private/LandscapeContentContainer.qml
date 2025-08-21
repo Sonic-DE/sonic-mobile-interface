@@ -12,6 +12,7 @@ import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.plasma5support 2.0 as P5Support
 import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.plasma.private.mobileshell as MobileShell
+import org.kde.plasma.private.mobileshell.shellsettingsplugin as ShellSettings
 import org.kde.plasma.private.mobileshell.quicksettingsplugin as QS
 
 /**
@@ -46,7 +47,15 @@ Item {
         anchors.fill: parent
 
         // dismiss drawer when background is clicked
-        onClicked: root.actionDrawer.close();
+        //onClicked: root.actionDrawer.close();
+
+        onClicked: {
+            root.actionDrawer.close();
+            let _w = (360 - (Kirigami.Units.gridUnit * (ShellSettings.Settings.quickSettingsColumns + 1))) / ShellSettings.Settings.quickSettingsColumns;
+            let _c = ShellSettings.Settings.quickSettingsColumns;
+            let _g = Kirigami.Units.gridUnit;
+            console.log("QS width: " + _w + " ; columns: " + _c + " gridUnit: " + _g);
+        }
 
         // right sidebar
         MobileShell.QuickSettingsPanel {
@@ -54,7 +63,8 @@ Item {
             height: quickSettingsPanel.contentImplicitHeight + quickSettingsPanel.topPadding + quickSettingsPanel.bottomPadding
             width: intendedWidth
 
-            readonly property real intendedWidth: 360
+            //readonly property real intendedWidth: 360
+            readonly property real intendedWidth: (6 * Kirigami.Units.gridUnit * ShellSettings.Settings.quickSettingsColumns) + Kirigami.Units.gridUnit
 
             property real offsetRatio: quickSettingsPanel.height / root.height
             anchors.topMargin: Math.min(root.actionDrawer.offsetResistance * offsetRatio - quickSettingsPanel.height, 0)
