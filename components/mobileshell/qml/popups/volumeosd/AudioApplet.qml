@@ -158,7 +158,7 @@ ColumnLayout {
                 Layout.fillWidth: true
 
                 model: PulseObjectFilterModel {
-                    filters: [ { role: "Name", value: "sink-input-by-media-role:event" } ]
+                    filters: [ makeFilter("Name", "sink-input-by-media-role:event") ]
                     sourceModel: StreamRestoreModel {}
                 }
                 delegate: StreamListItem {
@@ -175,7 +175,7 @@ ColumnLayout {
                 Layout.fillWidth: true
 
                 model: PulseObjectFilterModel {
-                    filters: [ { role: "VirtualStream", value: false } ]
+                    filters: [ makeFilter("VirtualStream", false) ]
                     sourceModel: SinkInputModel {}
                 }
 
@@ -219,7 +219,7 @@ ColumnLayout {
                 Layout.fillWidth: true
 
                 model: PulseObjectFilterModel {
-                    filters: [ { role: "VirtualStream", value: false } ]
+                    filters: [ makeFilter("VirtualStream", false) ]
                     sourceModel: SourceOutputModel {}
                 }
                 delegate: StreamListItem {
