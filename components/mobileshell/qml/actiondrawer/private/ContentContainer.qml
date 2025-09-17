@@ -26,7 +26,7 @@ Item {
 
     readonly property bool swipeAreaMoving: swipeAreaBase.moving || swipeAreaPortrait.moving
 
-    Kirigami.Theme.colorSet: Kirigami.Theme.View
+    Kirigami.Theme.colorSet: Kirigami.Theme.Complementary
     Kirigami.Theme.inherit: false
 
     readonly property alias brightnessPressedValue: quickSettings.brightnessPressedValue

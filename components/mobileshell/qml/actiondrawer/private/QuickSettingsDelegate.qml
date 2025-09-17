@@ -34,8 +34,11 @@ MobileShell.BaseItem {
     // set by children
     property var iconItem
 
+    Kirigami.Theme.inherit: false
+    Kirigami.Theme.colorSet: Kirigami.Theme.Button
+
     readonly property color enabledButtonBorderColor: Qt.darker(Kirigami.Theme.highlightColor, 1.25)
-    readonly property color disabledButtonBorderColor: Kirigami.ColorUtils.tintWithAlpha(Kirigami.Theme.textColor, Kirigami.Theme.backgroundColor, 0.75)
+    readonly property color disabledButtonBorderColor: Qt.darker(disabledButtonColor, 1.25)
     readonly property color enabledButtonColor: Kirigami.ColorUtils.tintWithAlpha(Kirigami.Theme.highlightColor, Kirigami.Theme.backgroundColor, 0.6)
     readonly property color enabledButtonPressedColor: Kirigami.ColorUtils.tintWithAlpha(Kirigami.Theme.highlightColor, Kirigami.Theme.backgroundColor, 0.4);
     readonly property color disabledButtonColor: Kirigami.Theme.backgroundColor
