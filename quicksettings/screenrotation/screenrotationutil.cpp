@@ -28,6 +28,10 @@ ScreenRotationUtil::ScreenRotationUtil(QObject *parent)
 
     connect(new KScreen::GetConfigOperation(), &KScreen::GetConfigOperation::finished, this, [this](auto *op) {
         m_config = qobject_cast<KScreen::GetConfigOperation *>(op)->config();
+        if (!m_config) {
+            return;
+        }
+
         KScreen::ConfigMonitor::instance()->addConfig(m_config);
 
         // update all screens with event connect

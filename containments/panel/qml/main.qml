@@ -64,11 +64,14 @@ ContainmentItem {
         }
     }
 
+    readonly property real panelHeight: MobileShell.Constants.topPanelHeight
+    onPanelHeightChanged: setWindowProperties()
+
     function setWindowProperties() {
         if (root.panel) {
             root.panel.floating = false;
             root.panel.maximize(); // maximize first, then we can apply offsets (otherwise they are overridden)
-            root.panel.thickness = MobileShell.Constants.topPanelHeight;
+            root.panel.thickness = root.panelHeight;
             root.panel.visibilityMode = ShellSettings.Settings.autoHidePanelsEnabled ? 3 : 0;
             MobileShell.ShellUtil.setWindowLayer(root.panel, LayerShell.Window.LayerOverlay)
             root.updateTouchArea();
@@ -83,6 +86,16 @@ ContainmentItem {
             MobileShell.ShellUtil.setInputRegion(root.panel, Qt.rect(0, 0, root.panel.width, hiddenTouchAreaThickness));
         } else {
             MobileShell.ShellUtil.setInputRegion(root.panel, Qt.rect(0, 0, 0, 0));
+        }
+    }
+
+    Connections {
+        target: root.panel
+
+        function onThicknessChanged() {
+            if (root.panel.thickness !== root.panelHeight) {
+                root.setWindowProperties();
+            }
         }
     }
 
