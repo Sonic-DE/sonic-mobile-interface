@@ -12,8 +12,30 @@ import org.kde.plasma.private.mobileshell.shellsettingsplugin as ShellSettings
 pragma Singleton
 
 QtObject {
-    readonly property real topPanelHeight: Math.round(Kirigami.Units.gridUnit * ShellSettings.Settings.statusBarScaleFactor / 2) * 2 + Kirigami.Units.smallSpacing
-    readonly property real navigationPanelThickness: ShellSettings.Settings.navigationPanelEnabled ? Kirigami.Units.gridUnit * 2 : 0
+    id: root
+    readonly property var panelSettings: ShellSettings.PanelSettings {
+        screenId: 1 // TODO: this needs to map to specific screens?
+    }
+
+    readonly property real defaultTopPanelHeight: Math.round(Kirigami.Units.gridUnit * ShellSettings.Settings.statusBarScaleFactor / 2) * 2 + Kirigami.Units.smallSpacing
+
+    readonly property real topPanelHeight: {
+        if (root.panelSettings.statusBarHeight <= 0) {
+            return defaultTopPanelHeight;
+        }
+        return root.panelSettings.statusBarHeight;
+    }
+
+    readonly property real defaultNavigationPanelThickness: Kirigami.Units.gridUnit * 2
+
+    readonly property real navigationPanelThickness: {
+        if (!ShellSettings.Settings.navigationPanelEnabled) {
+            return 0;
+        } else if (root.panelSettings.navigationPanelHeight <= 0) {
+            return defaultNavigationPanelThickness;
+        }
+        return root.panelSettings.navigationPanelHeight;
+    }
 
     function navigationPanelOnSide(screenWidth: real, screenHeight: real): bool {
         // TODO: we have this disabled for now, we might consider just removing this feature entirely due to it causing several issues:

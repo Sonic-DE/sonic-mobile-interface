@@ -70,6 +70,11 @@ Item {
         sourceComponent: SystemTray.StatusNotifierModel { }
     }
 
+    ShellSettings.PanelSettings {
+        id: panelSettings
+        screenId: 1 // TODO: this needs to map to specific screens?
+    }
+
     // drop shadow for icons
     MultiEffect {
         anchors.fill: control
@@ -87,8 +92,8 @@ Item {
         z: 1
         topPadding: Kirigami.Units.smallSpacing
         bottomPadding: Kirigami.Units.smallSpacing
-        rightPadding: Kirigami.Units.smallSpacing * 3
-        leftPadding: Kirigami.Units.smallSpacing * 3
+        rightPadding: Kirigami.Units.smallSpacing * 3 + panelSettings.statusBarLeftPadding
+        leftPadding: Kirigami.Units.smallSpacing * 3 + + panelSettings.statusBarRightPadding
 
         anchors.fill: parent
         background: Rectangle {
@@ -101,9 +106,10 @@ Item {
 
             RowLayout {
                 id: mainRow
-                readonly property real rowHeight: MobileShell.Constants.topPanelHeight - Kirigami.Units.smallSpacing * 2
+                readonly property real rowHeight: MobileShell.Constants.defaultTopPanelHeight - Kirigami.Units.smallSpacing * 2
 
                 Layout.fillWidth: true
+                Layout.alignment: Qt.AlignVCenter
                 Layout.preferredHeight: rowHeight
 
                 spacing: 0
