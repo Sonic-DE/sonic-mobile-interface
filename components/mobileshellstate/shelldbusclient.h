@@ -82,7 +82,7 @@ private Q_SLOTS:
 private:
     void connectSignals();
 
-    OrgKdePlasmashellInterface *m_interface;
+    OrgKdePlasmashellMobileInterface *m_interface;
     QDBusServiceWatcher *m_watcher;
 
     QString m_panelState = "default";

@@ -14,7 +14,7 @@ class ShellDBusObject : public QObject
     Q_OBJECT
     QML_ELEMENT
     QML_SINGLETON
-    Q_CLASSINFO("D-Bus Interface", "org.kde.plasmashell")
+    Q_CLASSINFO("D-Bus Interface", "org.kde.plasmashell.Mobile")
     Q_PROPERTY(StartupFeedbackModel *startupFeedbackModel READ startupFeedbackModel CONSTANT)
 
 public:

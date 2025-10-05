@@ -7,7 +7,7 @@
 
 ShellDBusClient::ShellDBusClient(QObject *parent)
     : QObject{parent}
-    , m_interface{new OrgKdePlasmashellInterface{QStringLiteral("org.kde.plasmashell"), QStringLiteral("/Mobile"), QDBusConnection::sessionBus(), this}}
+    , m_interface{new OrgKdePlasmashellMobileInterface{QStringLiteral("org.kde.plasmashell"), QStringLiteral("/Mobile"), QDBusConnection::sessionBus(), this}}
     , m_connected{false}
 {
     // Check if the service is already running
@@ -35,22 +35,22 @@ ShellDBusClient::ShellDBusClient(QObject *parent)
 
 void ShellDBusClient::connectSignals()
 {
-    connect(m_interface, &OrgKdePlasmashellInterface::panelStateChanged, this, &ShellDBusClient::updatePanelState);
-    connect(m_interface, &OrgKdePlasmashellInterface::isActionDrawerOpenChanged, this, &ShellDBusClient::updateIsActionDrawerOpen);
-    connect(m_interface, &OrgKdePlasmashellInterface::isVolumeOSDOpenChanged, this, &ShellDBusClient::updateIsVolumeOSDOpen);
-    connect(m_interface, &OrgKdePlasmashellInterface::isNotificationPopupDrawerOpenChanged, this, &ShellDBusClient::updateIsNotificationPopupDrawerOpen);
-    connect(m_interface, &OrgKdePlasmashellInterface::doNotDisturbChanged, this, &ShellDBusClient::updateDoNotDisturb);
-    connect(m_interface, &OrgKdePlasmashellInterface::isTaskSwitcherVisibleChanged, this, &ShellDBusClient::updateIsTaskSwitcherVisible);
-    connect(m_interface, &OrgKdePlasmashellInterface::openActionDrawerRequested, this, &ShellDBusClient::openActionDrawerRequested);
-    connect(m_interface, &OrgKdePlasmashellInterface::closeActionDrawerRequested, this, &ShellDBusClient::closeActionDrawerRequested);
+    connect(m_interface, &OrgKdePlasmashellMobileInterface::panelStateChanged, this, &ShellDBusClient::updatePanelState);
+    connect(m_interface, &OrgKdePlasmashellMobileInterface::isActionDrawerOpenChanged, this, &ShellDBusClient::updateIsActionDrawerOpen);
+    connect(m_interface, &OrgKdePlasmashellMobileInterface::isVolumeOSDOpenChanged, this, &ShellDBusClient::updateIsVolumeOSDOpen);
+    connect(m_interface, &OrgKdePlasmashellMobileInterface::isNotificationPopupDrawerOpenChanged, this, &ShellDBusClient::updateIsNotificationPopupDrawerOpen);
+    connect(m_interface, &OrgKdePlasmashellMobileInterface::doNotDisturbChanged, this, &ShellDBusClient::updateDoNotDisturb);
+    connect(m_interface, &OrgKdePlasmashellMobileInterface::isTaskSwitcherVisibleChanged, this, &ShellDBusClient::updateIsTaskSwitcherVisible);
+    connect(m_interface, &OrgKdePlasmashellMobileInterface::openActionDrawerRequested, this, &ShellDBusClient::openActionDrawerRequested);
+    connect(m_interface, &OrgKdePlasmashellMobileInterface::closeActionDrawerRequested, this, &ShellDBusClient::closeActionDrawerRequested);
     connect(m_interface,
-            &OrgKdePlasmashellInterface::appLaunchMaximizePanelAnimationTriggered,
+            &OrgKdePlasmashellMobileInterface::appLaunchMaximizePanelAnimationTriggered,
             this,
             &ShellDBusClient::appLaunchMaximizePanelAnimationTriggered);
-    connect(m_interface, &OrgKdePlasmashellInterface::openHomeScreenRequested, this, &ShellDBusClient::openHomeScreenRequested);
-    connect(m_interface, &OrgKdePlasmashellInterface::resetHomeScreenPositionRequested, this, &ShellDBusClient::resetHomeScreenPositionRequested);
-    connect(m_interface, &OrgKdePlasmashellInterface::showVolumeOSDRequested, this, &ShellDBusClient::showVolumeOSDRequested);
-    connect(m_interface, &OrgKdePlasmashellInterface::openLockScreenKeypadRequested, this, &ShellDBusClient::openLockScreenKeypadRequested);
+    connect(m_interface, &OrgKdePlasmashellMobileInterface::openHomeScreenRequested, this, &ShellDBusClient::openHomeScreenRequested);
+    connect(m_interface, &OrgKdePlasmashellMobileInterface::resetHomeScreenPositionRequested, this, &ShellDBusClient::resetHomeScreenPositionRequested);
+    connect(m_interface, &OrgKdePlasmashellMobileInterface::showVolumeOSDRequested, this, &ShellDBusClient::showVolumeOSDRequested);
+    connect(m_interface, &OrgKdePlasmashellMobileInterface::openLockScreenKeypadRequested, this, &ShellDBusClient::openLockScreenKeypadRequested);
 
     // Initial state fetch
     updatePanelState();
