@@ -31,17 +31,18 @@ Kirigami.ScrollablePage {
 
     implicitHeight: loader.height
 
-    padding: Kirigami.Units.largeSpacing
+    topPadding: 0
+    leftPadding: 0
+    rightPadding: 0
     bottomPadding: 0
 
     Loader {
         id: loader
-        width: parent.width
+
         // HACK the height of the loader is based on the implicitHeight of the content.
         // Unfortunately not all content items have a sensible implicitHeight.
         // If it is zero fall back to the height of its children
         // Also make it at least as high as the page itself. Some existing configs assume they fill the whole space
-        // TODO KF6 clean this up by making all configs based on SimpleKCM/ScrollViewKCM/GridViewKCM
         height: {
             if (item) {
                 return Math.max(root.availableHeight, item.implicitHeight ? item.implicitHeight : item.childrenRect.height);
