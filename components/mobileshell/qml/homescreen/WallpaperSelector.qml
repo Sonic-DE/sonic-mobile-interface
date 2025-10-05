@@ -133,12 +133,13 @@ Controls.Drawer {
                     visible: !walliePreview.visible
                 }
 
-                Addons.QPixmapItem {
+                Image {
                     id: walliePreview
-                    visible: model.screenshot != null
                     anchors.fill: parent
-                    smooth: true
-                    pixmap: model.screenshot
+                    visible: model.preview != null
+                    asynchronous: true
+                    cache: false
+                    source: model.preview
                     fillMode: Image.PreserveAspectCrop
                 }
             }
