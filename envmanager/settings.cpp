@@ -190,7 +190,11 @@ const QString Settings::loadSavedConfigSetting(KSharedConfig::Ptr &config, const
 
 KSharedConfig::Ptr Settings::kwinrcConfig() const
 {
-    return KSharedConfig::openConfig(MOBILE_KWINRC_FILE, KConfig::SimpleConfig);
+    if (m_isMobilePlatform) {
+        return KSharedConfig::openConfig(MOBILE_KWINRC_FILE, KConfig::SimpleConfig);
+    } else {
+        return KSharedConfig::openConfig(u"kwinrc"_s, KConfig::SimpleConfig);
+    }
 }
 
 void Settings::reloadKWinConfig()
