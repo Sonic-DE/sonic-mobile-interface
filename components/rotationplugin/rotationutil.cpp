@@ -51,11 +51,14 @@ RotationUtil::Rotation mapRotation(KScreen::Output::Rotation rotation)
 }
 
 RotationUtil::RotationUtil(QObject *parent)
-: QObject{parent}
-, m_sensor{new QOrientationSensor(this)}
+    : QObject{parent}
+    , m_sensor{new QOrientationSensor(this)}
 {
     connect(new KScreen::GetConfigOperation(), &KScreen::GetConfigOperation::finished, this, [this](auto *op) {
         m_config = qobject_cast<KScreen::GetConfigOperation *>(op)->config();
+        if (!m_config) {
+            return;
+        }
         KScreen::ConfigMonitor::instance()->addConfig(m_config);
 
         // update all screens with event connect
@@ -94,10 +97,7 @@ void RotationUtil::rotateToSuggestedRotation()
         output->setRotation(m_rotateTo);
     }
 
-    auto setop = new KScreen::SetConfigOperation(m_config, this);
-    setop->exec();
-
-    updateShowRotationButton();
+    new KScreen::SetConfigOperation(m_config, this);
 }
 
 bool RotationUtil::showRotationButton() const
