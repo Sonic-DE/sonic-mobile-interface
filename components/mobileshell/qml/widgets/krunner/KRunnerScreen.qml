@@ -98,7 +98,7 @@ MouseArea {
             Layout.rightMargin: Kirigami.Units.gridUnit
             Layout.alignment: Qt.AlignHCenter
 
-            Milou.ResultsListView {
+            Milou.ResultsView {
                 id: listView
                 queryString: queryField.text
                 clip: true
