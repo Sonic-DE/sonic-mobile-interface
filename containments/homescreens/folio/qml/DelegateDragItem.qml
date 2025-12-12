@@ -75,8 +75,8 @@ Item {
         property var delegateDroppedOn: null
 
         // reset and show drag item
-        function onSwipeStateChanged() {
-            if (folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate && !isWidgetDrag) {
+        function onDelegateDragStarted() {
+            if (!isWidgetDrag) {
                 root.scale = 1.0;
                 root.visible = true;
             }
@@ -142,7 +142,7 @@ Item {
 
                 // scale animation if we are creating, or inserting into a folder
                 scaleAnim.restart();
-                }
+            }
         }
 
         // if the drop has been abandoned, just hide

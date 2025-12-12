@@ -74,9 +74,8 @@ Item {
         id: stateWatcher
         target: folio.HomeScreenState
 
-        function onSwipeStateChanged() {
-            if (folio.HomeScreenState.swipeState === Folio.HomeScreenState.DraggingDelegate &&
-                folio.HomeScreenState.dragState.dropDelegate &&
+        function onDelegateDragStarted() {
+            if (folio.HomeScreenState.dragState.dropDelegate &&
                 folio.HomeScreenState.dragState.dropDelegate.type === Folio.FolioDelegate.Widget) {
 
                 root.startDrag(folio.HomeScreenState.dragState.dropDelegate.widget);
