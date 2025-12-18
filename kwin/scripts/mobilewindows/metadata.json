@@ -1,7 +1,7 @@
 {
     "KPlugin": {
         "Name": "Mobile Windows",
-        "Description": "Window Management for Plasma Mobile",
+        "Description": "Mobile Window Management for Plasma Mobile",
         "Icon": "preferences-system-windows",
 
         "Authors": [

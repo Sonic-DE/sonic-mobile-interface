@@ -11,5 +11,6 @@ endfunction()
 
 #add_kwin_script(convergentwindows convergentwindows)
 add_kwin_script(mobilewindows mobilewindows)
+add_kwin_script(dockedwindows dockedwindows)
 
 
