@@ -7,16 +7,15 @@
 cmake_minimum_required(VERSION 3.24)
 
 project(plasma-mobile)
-set(PROJECT_VERSION "6.6.5")
+set(PROJECT_VERSION "6.6.80")
 
-set(PROJECT_DEP_VERSION "6.6.5")
+set(PROJECT_DEP_VERSION "6.5.90")
 set(QT_MIN_VERSION "6.10.0")
 set(KF6_MIN_VERSION "6.22.0")
 set(KDE_COMPILERSETTINGS_LEVEL "5.82")
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(INSTALL_SYSTEMD_SERVICE "Install a systemd service file to start the session" OFF)
 
@@ -56,7 +55,12 @@ find_package(Qt6 ${QT_MIN_VERSION} CONFIG REQUIRED
     Quick
     Gui
     Sensors
+    WaylandClient
 )
+
+if(Qt6WaylandClient_VERSION VERSION_GREATER_EQUAL "6.10.0")
+    find_package(Qt6 REQUIRED COMPONENTS WaylandClientPrivate)
+endif()
 
 find_package(KF6 ${KF6_MIN_VERSION} REQUIRED COMPONENTS
     I18n
@@ -79,11 +83,11 @@ find_package(Plasma CONFIG REQUIRED)
 find_package(PlasmaQuick CONFIG REQUIRED)
 find_package(PlasmaActivities CONFIG REQUIRED)
 find_package(KF6Screen CONFIG REQUIRED)
+find_package(KWayland CONFIG REQUIRED)
 find_package(KPipeWire ${PROJECT_DEP_VERSION} REQUIRED)
 
 find_package(PkgConfig REQUIRED)
 
-find_package(Qt6QmlPrivate REQUIRED) # workaround for Qcoro
 find_package(QCoro6 REQUIRED COMPONENTS DBus Qml)
 qcoro_enable_coroutines()
 kde_enable_exceptions()
@@ -91,15 +95,25 @@ kde_enable_exceptions()
 find_package(KF6KirigamiAddons 0.6 REQUIRED)
 find_package(epoxy REQUIRED)
 find_package(XCB REQUIRED COMPONENTS XCB)
-find_package(KWinX11 ${PROJECT_DEP_VERSION} REQUIRED COMPONENTS
+find_package(KWin ${PROJECT_DEP_VERSION} REQUIRED COMPONENTS
     kwin
 )
+
+find_package(LayerShellQt REQUIRED)
+find_package(Wayland REQUIRED)
+find_package(PlasmaWaylandProtocols 1.8 CONFIG)
+set_package_properties(PlasmaWaylandProtocols PROPERTIES
+    TYPE REQUIRED
+    PURPOSE "Collection of Plasma-specific Wayland protocols"
+    URL "https://invent.kde.org/libraries/plasma-wayland-protocols/"
+)
+
 
 find_package(LibKWorkspace CONFIG REQUIRED)
 find_package(Libudev REQUIRED)
 
-find_package(KWinX11DBusInterface)
-set_package_properties(KWinX11DBusInterface PROPERTIES DESCRIPTION "KWin DBus interface"
+find_package(KWinDBusInterface)
+set_package_properties(KWinDBusInterface PROPERTIES DESCRIPTION "KWin DBus interface"
     TYPE REQUIRED
     PURPOSE "Needed for virtual keyboard toggle button"
 )
@@ -145,7 +159,6 @@ feature_summary(WHAT ALL INCLUDE_QUIET_PACKAGES FATAL_ON_MISSING_REQUIRED_PACKAG
 
 # add clang-format target for all our real source files
 file(GLOB_RECURSE ALL_CLANG_FORMAT_SOURCE_FILES *.cpp *.h)
-list(FILTER ALL_CLANG_FORMAT_SOURCE_FILES EXCLUDE REGEX ".*\\.ccls-cache/.*")
 kde_clang_format(${ALL_CLANG_FORMAT_SOURCE_FILES})
 kde_configure_git_pre_commit_hook(CHECKS CLANG_FORMAT)
 
