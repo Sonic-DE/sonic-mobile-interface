@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plasma-mobile\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2026-01-20 03:01+0000\n"
+"POT-Creation-Date: 2026-01-20 00:44+0000\n"
 "PO-Revision-Date: 2024-10-27 17:47+0100\n"
 "Last-Translator: Josep M. Ferrer <txemaq@gmail.com>\n"
 "Language-Team: Catalan <kde-i18n-ca@kde.org>\n"
@@ -2980,3 +2980,71 @@ msgstr "AM"
 #, kde-format
 msgid "PM"
 msgstr "PM"
+
+# skip-rule: punctuation-period-no
+#~ msgid "Jan"
+#~ msgstr "Gen."
+
+# skip-rule: punctuation-period-no
+#~ msgid "Feb"
+#~ msgstr "Febr."
+
+# skip-rule: punctuation-period-no
+#~ msgid "Mar"
+#~ msgstr "Mar."
+
+# skip-rule: punctuation-period-no
+#~ msgid "Apr"
+#~ msgstr "Abr."
+
+# skip-rule: punctuation-period-no
+#~ msgid "May"
+#~ msgstr "Mai."
+
+# skip-rule: punctuation-period-no
+#~ msgid "Jun"
+#~ msgstr "Jun."
+
+# skip-rule: punctuation-period-no
+#~ msgid "Jul"
+#~ msgstr "Jul."
+
+# skip-rule: punctuation-period-no
+#~ msgid "Aug"
+#~ msgstr "Ago."
+
+# skip-rule: punctuation-period-no
+#~ msgid "Sep"
+#~ msgstr "Set."
+
+# skip-rule: punctuation-period-no
+#~ msgid "Oct"
+#~ msgstr "Oct."
+
+# skip-rule: punctuation-period-no
+#~ msgid "Nov"
+#~ msgstr "Nov."
+
+# skip-rule: punctuation-period-no
+#~ msgid "Dec"
+#~ msgstr "Des."
+
+#~ msgid "Pick System Date"
+#~ msgstr "Trieu la data del sistema"
+
+#~ msgctxt "This means \"Local Timezone\""
+#~ msgid "Local"
+#~ msgstr "Local"
+
+#~ msgid "Your system time zone"
+#~ msgstr "Zona horària del sistema"
+
+#~ msgid "Current Time"
+#~ msgstr "Hora actual"
+
+#~ msgid "Date"
+#~ msgstr "Data"
+
+#~ msgctxt "@action:button"
+#~ msgid "Close"
+#~ msgstr "Tanca"
