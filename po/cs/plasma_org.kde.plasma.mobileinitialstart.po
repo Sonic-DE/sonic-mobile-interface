@@ -1,41 +1,41 @@
 # Copyright (C) 2023 This file is copyright:
 # This file is distributed under the same license as the plasma-mobile package.
-# SPDX-FileCopyrightText: 2023, 2024, 2026 Vit Pelcak <vit@pelcak.org>
+# SPDX-FileCopyrightText: 2023, 2024 Vit Pelcak <vit@pelcak.org>
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: plasma-mobile\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-11-17 11:54+0000\n"
-"PO-Revision-Date: 2026-03-13 11:46+0100\n"
-"Last-Translator:  Vít Pelčák <vit@pelcak.org>\n"
+"POT-Creation-Date: 2026-02-13 00:45+0000\n"
+"PO-Revision-Date: 2024-10-18 11:27+0200\n"
+"Last-Translator: Vit Pelcak <vit@pelcak.org>\n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
 "Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Lokalize 25.12.3\n"
+"X-Generator: Lokalize 24.08.2\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
 msgid "Your names"
-msgstr "Vít Pelčák,Libor Filípek"
+msgstr "Vít Pelčák"
 
 #, kde-format
 msgctxt "EMAIL OF TRANSLATORS"
 msgid "Your emails"
-msgstr "vit@pelcak.org,libor.filipek@gmail.com"
+msgstr "vit@pelcak.org"
 
 #: main.cpp:21
 #, kde-format
 msgid "Opens the initial start wizard without modifying configuration"
-msgstr "Otevřít průvodce počátečním spuštěním bez úpravy nastavení"
+msgstr ""
 
 #: main.cpp:36
 #, kde-format
-msgid "© 2024 KDE Community"
-msgstr "© 2024 Komunita KDE"
+msgid "© 2026 KDE Community"
+msgstr ""
 
 #: main.cpp:37
 #, kde-format
@@ -118,23 +118,21 @@ msgid ""
 "Please configure your APN below for mobile data, further information will be "
 "available with your carrier."
 msgstr ""
-"Níže nakonfigurujte APN pro mobilní data, další informace vám poskytne váš "
-"operátor."
 
 #: modules/cellular/package/contents/ui/main.qml:57
 #, kde-format
 msgid "You are connected to the mobile network."
-msgstr "Nejste připojeni k mobilní síti."
+msgstr ""
 
 #: modules/cellular/package/contents/ui/main.qml:59
 #, kde-format
 msgid "Please insert a SIM card into your device."
-msgstr "Prosím, vložte kartu SIM do vašeho zařízení."
+msgstr ""
 
 #: modules/cellular/package/contents/ui/main.qml:61
 #, kde-format
 msgid "Your device does not have a modem available."
-msgstr "Vaše zařízení nemá k dispozici modem."
+msgstr ""
 
 #: modules/cellular/package/contents/ui/main.qml:73
 #, kde-format
@@ -165,28 +163,28 @@ msgstr "Dokončeno."
 #: modules/finished/contents/ui/main.qml:25
 #, kde-format
 msgid "Your device is now ready. <br /><br />Enjoy <b>%1</b>!"
-msgstr "Vaše zařízení je nyní připraveno. <br /><br /> Užívejte si <b>%1</b>!"
+msgstr ""
 
 #: modules/prepare/package/contents/ui/main.qml:17
 #, kde-format
 msgid "Before we get started…"
-msgstr "Než začneme…"
+msgstr ""
 
 #: modules/prepare/package/contents/ui/main.qml:49
 #, kde-format
 msgid ""
 "Adjust the screen brightness to be comfortable for the installation process."
-msgstr "Nastavte jas displeje tak, aby byl pro instalační proces pohodlný."
+msgstr ""
 
 #: modules/prepare/package/contents/ui/main.qml:105
 #, kde-format
 msgid "Adjust the size of elements on the screen."
-msgstr "Upravte velikost prvků na obrazovce."
+msgstr ""
 
 #: modules/prepare/package/contents/ui/main.qml:116
 #, kde-format
 msgid "Display Scaling"
-msgstr "Měřítko zobrazení"
+msgstr ""
 
 #: modules/prepare/package/contents/ui/main.qml:136
 #, kde-format
@@ -196,17 +194,17 @@ msgstr "Tmavý motiv"
 #: modules/systemnavigation/contents/ui/main.qml:15
 #, kde-format
 msgid "System Navigation"
-msgstr "Systémová navigace"
+msgstr ""
 
 #: modules/systemnavigation/contents/ui/main.qml:40
 #, kde-format
 msgid "Choose a method to navigate around the system."
-msgstr "Vyberte způsob navigace v systému."
+msgstr ""
 
 #: modules/systemnavigation/contents/ui/main.qml:49
 #, kde-format
 msgid "Gesture navigation"
-msgstr "Navigace pomocí gest"
+msgstr ""
 
 #: modules/systemnavigation/contents/ui/main.qml:50
 #, kde-format
@@ -214,23 +212,21 @@ msgid ""
 "Swipe up from the bottom to see running applications. Flick to go to the "
 "home screen."
 msgstr ""
-"Přejetím prstem nahoru od spodní části zobrazíte spuštěné aplikace. Rychlým "
-"přejetím přejdete na domovskou obrazovku."
 
 #: modules/systemnavigation/contents/ui/main.qml:70
 #, kde-format
 msgid "Button navigation"
-msgstr "Navigace pomocí tlačítek"
+msgstr ""
 
 #: modules/systemnavigation/contents/ui/main.qml:71
 #, kde-format
 msgid "Use buttons on a navigation bar to navigate the system."
-msgstr "K navigaci v systému použijte tlačítka na navigační liště."
+msgstr ""
 
 #: modules/systemnavigation/contents/ui/main.qml:93
 #, kde-format
 msgid "This can later be changed in the settings."
-msgstr "Toto lze později změnit v nastavení."
+msgstr ""
 
 #: modules/time/package/contents/ui/main.qml:15
 #, kde-format
@@ -240,7 +236,7 @@ msgstr "Datum a čas"
 #: modules/time/package/contents/ui/main.qml:39
 #, kde-format
 msgid "Select your time zone and preferred time format."
-msgstr "Vyberte své časové pásmo a preferovaný formát času."
+msgstr ""
 
 #: modules/time/package/contents/ui/main.qml:50
 #, kde-format
@@ -280,7 +276,7 @@ msgstr "Síť"
 #: modules/wifi/package/contents/ui/main.qml:74
 #, kde-format
 msgid "Connect to a WiFi network for network access."
-msgstr "Připojte se k síti WiFi pro přístup k síti."
+msgstr ""
 
 #: modules/wifi/package/contents/ui/PasswordField.qml:10
 #, kde-format
@@ -290,7 +286,7 @@ msgstr "Heslo…"
 #: qml/LandingComponent.qml:105
 #, kde-format
 msgid "Welcome to<br/><b>Plasma Mobile</b>"
-msgstr "Vítejte v <br/><b>Plasma Mobile</b>"
+msgstr "Vítejte V <br/><b>Plasma Mobile</b>"
 
 #: qml/LandingComponent.qml:131
 #, kde-format
@@ -305,7 +301,7 @@ msgstr "Následující"
 #: qml/Main.qml:19
 #, kde-format
 msgid "Initial Start"
-msgstr "Počáteční spuštění"
+msgstr ""
 
 #: qml/Wizard.qml:284
 #, kde-format
