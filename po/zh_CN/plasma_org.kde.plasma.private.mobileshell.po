@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdeorg\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2026-03-06 02:43+0000\n"
+"POT-Creation-Date: 2026-02-16 00:48+0000\n"
 "PO-Revision-Date: 2024-04-22 15:58\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
@@ -14,9 +14,9 @@ msgstr ""
 "X-Crowdin-Project: kdeorg\n"
 "X-Crowdin-Project-ID: 269464\n"
 "X-Crowdin-Language: zh-CN\n"
-"X-Crowdin-File: /kf6-stable/messages/plasma-mobile/plasma_org.kde.plasma."
+"X-Crowdin-File: /kf6-trunk/messages/plasma-mobile/plasma_org.kde.plasma."
 "private.mobileshell.pot\n"
-"X-Crowdin-File-ID: 52920\n"
+"X-Crowdin-File-ID: 43507\n"
 
 #: notifications/notificationfileinfo.cpp:169
 #, kde-format
@@ -154,7 +154,7 @@ msgstr "配置音频流"
 msgid "Open audio settings"
 msgstr "打开音频设置"
 
-#: qml/statusbar/indicators/BatteryIndicator.qml:68
+#: qml/statusbar/indicators/BatteryIndicator.qml:61
 #, kde-format
 msgid "%1%"
 msgstr "%1%"

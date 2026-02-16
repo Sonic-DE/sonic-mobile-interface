@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plasma_org.kde.plasma.private.mobileshell\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2026-03-06 02:43+0000\n"
+"POT-Creation-Date: 2026-02-16 00:48+0000\n"
 "PO-Revision-Date: 2023-07-28 16:07+0200\n"
 "Last-Translator: Ferdinand Galko <galko.ferdinand@gmail.com>\n"
 "Language-Team: Slovak <opensuse-translation@opensuse.org>\n"
@@ -13,18 +13,18 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 "X-Generator: Lokalize 21.12.3\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
 #: notifications/notificationfileinfo.cpp:169
 #, kde-format
 msgid "Open with %1"
-msgstr "Open with %1"
+msgstr ""
 
 #: notifications/notificationfileinfo.cpp:173
 #, kde-format
 msgid "Open with…"
-msgstr "Open with…"
+msgstr ""
 
 #: notifications/notificationfilemenu.cpp:109
 #: qml/widgets/notifications/NotificationJobItem.qml:217
@@ -69,12 +69,14 @@ msgid "SIM Locked"
 msgstr "Uzamknutá SIM"
 
 #: qml/popups/volumeosd/AudioApplet.qml:89
-#, kde-format
+#, fuzzy, kde-format
+#| msgid "Outputs"
 msgid "Output Devices"
 msgstr "Výstupy"
 
 #: qml/popups/volumeosd/AudioApplet.qml:118
-#, kde-format
+#, fuzzy, kde-format
+#| msgid "Inputs"
 msgid "Input Devices"
 msgstr "Vstupy"
 
@@ -143,7 +145,8 @@ msgid "Mute"
 msgstr "Stlmiť"
 
 #: qml/popups/volumeosd/VolumeChangedPopup.qml:210
-#, kde-format
+#, fuzzy, kde-format
+#| msgid "Toggle showing audio streams"
 msgid "configure audio streams"
 msgstr "Prepnúť zobrazovanie zvukových prúdov"
 
@@ -152,13 +155,14 @@ msgstr "Prepnúť zobrazovanie zvukových prúdov"
 msgid "Open audio settings"
 msgstr "Otvoriť nastavenia zvuku"
 
-#: qml/statusbar/indicators/BatteryIndicator.qml:68
+#: qml/statusbar/indicators/BatteryIndicator.qml:61
 #, kde-format
 msgid "%1%"
 msgstr "%1%"
 
 #: qml/widgets/krunner/KRunnerScreen.qml:68
-#, kde-format
+#, fuzzy, kde-format
+#| msgid "Search…"
 msgctxt "@info:placeholder"
 msgid "Search…"
 msgstr "Hľadať..."
@@ -187,19 +191,20 @@ msgstr "Nasledujúca skladba"
 #, kde-format
 msgctxt "@action:inmenu"
 msgid "Copy Link Address"
-msgstr "Copy Link Address"
+msgstr ""
 
 #: qml/widgets/notifications/NotificationEditContextMenu.qml:44
-#, kde-format
+#, fuzzy, kde-format
+#| msgid "&Copy"
 msgctxt "@action:inmenu"
 msgid "Copy"
-msgstr "Kopírovať"
+msgstr "&Kopírovať"
 
 #: qml/widgets/notifications/NotificationEditContextMenu.qml:61
 #, kde-format
 msgctxt "@action:inmenu"
 msgid "Select All"
-msgstr "Vybrať všetko"
+msgstr ""
 
 #: qml/widgets/notifications/NotificationFooterActions.qml:58
 #, kde-format
@@ -208,7 +213,8 @@ msgid "Reply"
 msgstr "Odpovedať"
 
 #: qml/widgets/notifications/NotificationJobDetails.qml:31
-#, kde-format
+#, fuzzy, kde-format
+#| msgid "%1%"
 msgctxt "Row description, e.g. Source"
 msgid "%1:"
 msgstr "%1%"
@@ -217,67 +223,68 @@ msgstr "%1%"
 #, kde-format
 msgctxt "How many bytes have been copied"
 msgid "%2 of %1"
-msgstr "%2 of %1"
+msgstr ""
 
 #: qml/widgets/notifications/NotificationJobDetails.qml:106
 #, kde-format
 msgctxt "How many files have been copied"
 msgid "%2 of %1 file"
 msgid_plural "%2 of %1 files"
-msgstr[0] "%2 of %1 file"
-msgstr[1] "%2 of %1 files"
-msgstr[2] "%2 of %1 files"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
 
 #: qml/widgets/notifications/NotificationJobDetails.qml:109
 #, kde-format
 msgctxt "How many dirs have been copied"
 msgid "%2 of %1 folder"
 msgid_plural "%2 of %1 folders"
-msgstr[0] "%2 of %1 folder"
-msgstr[1] "%2 of %1 folders"
-msgstr[2] "%2 of %1 folders"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
 
 #: qml/widgets/notifications/NotificationJobDetails.qml:112
 #, kde-format
 msgctxt "How many items (that includes files and dirs) have been copied"
 msgid "%2 of %1 item"
 msgid_plural "%2 of %1 items"
-msgstr[0] "%2 of %1 item"
-msgstr[1] "%2 of %1 items"
-msgstr[2] "%2 of %1 items"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
 
 #: qml/widgets/notifications/NotificationJobDetails.qml:120
 #, kde-format
 msgid "%1 file"
 msgid_plural "%1 files"
-msgstr[0] "%1 file"
-msgstr[1] "%1 files"
-msgstr[2] "%1 files"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
 
 #: qml/widgets/notifications/NotificationJobDetails.qml:122
 #, kde-format
 msgid "%1 folder"
 msgid_plural "%1 folders"
-msgstr[0] "%1 folder"
-msgstr[1] "%1 folders"
-msgstr[2] "%1 folders"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
 
 #: qml/widgets/notifications/NotificationJobDetails.qml:124
 #, kde-format
 msgid "%1 item"
 msgid_plural "%1 items"
-msgstr[0] "%1 item"
-msgstr[1] "%1 items"
-msgstr[2] "%1 items"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
 
 #: qml/widgets/notifications/NotificationJobDetails.qml:141
 #, kde-format
 msgctxt "Bytes per second"
 msgid "%1/s"
-msgstr "%1/s"
+msgstr ""
 
 #: qml/widgets/notifications/NotificationJobItem.qml:115
-#, kde-format
+#, fuzzy, kde-format
+#| msgid "%1%"
 msgctxt "Percentage of a job"
 msgid "%1%"
 msgstr "%1%"
@@ -286,19 +293,21 @@ msgstr "%1%"
 #, kde-format
 msgctxt "Hides/expands item details"
 msgid "Details"
-msgstr "Podrobnosti"
+msgstr ""
 
 #: qml/widgets/notifications/NotificationJobItem.qml:141
-#, kde-format
+#, fuzzy, kde-format
+#| msgctxt "Job name, e.g. Copying is paused"
+#| msgid "%1 (Paused)"
 msgctxt "Pause running job"
 msgid "Pause"
-msgstr "Pozastaviť"
+msgstr "%1 (Pozastavené)"
 
 #: qml/widgets/notifications/NotificationJobItem.qml:150
 #, kde-format
 msgctxt "Cancel running job"
 msgid "Cancel"
-msgstr "Zrušiť"
+msgstr ""
 
 #: qml/widgets/notifications/NotificationJobItem.qml:181
 #: qml/widgets/notifications/ThumbnailStrip.qml:134
@@ -309,7 +318,7 @@ msgstr "Viac možností..."
 #: qml/widgets/notifications/NotificationJobItem.qml:209
 #, kde-format
 msgid "Open"
-msgstr "Otvoriť"
+msgstr ""
 
 #: qml/widgets/notifications/NotificationReplyField.qml:36
 #, kde-format
@@ -354,7 +363,7 @@ msgstr "Úloha dokončená"
 #: qml/widgets/notifications/NotificationsUtils.js:45
 #, kde-format
 msgid "now"
-msgstr "now"
+msgstr ""
 
 #: qml/widgets/notifications/NotificationsUtils.js:50
 #, kde-format
