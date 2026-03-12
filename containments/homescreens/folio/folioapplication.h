@@ -11,11 +11,6 @@
 #include <KIO/ApplicationLauncherJob>
 #include <KService>
 
-#include <KWayland/Client/connection_thread.h>
-#include <KWayland/Client/plasmawindowmanagement.h>
-#include <KWayland/Client/registry.h>
-#include <KWayland/Client/surface.h>
-
 #include "homescreen.h"
 
 class HomeScreen;
@@ -46,12 +41,10 @@ public:
     QString name() const;
     QString icon() const;
     QString storageId() const;
-    KWayland::Client::PlasmaWindow *window() const;
 
     void setName(QString &name);
     void setIcon(QString &icon);
     void setStorageId(QString &storageId);
-    void setWindow(KWayland::Client::PlasmaWindow *window);
 
     Q_INVOKABLE void setMinimizedDelegate(QQuickItem *delegate);
     Q_INVOKABLE void unsetMinimizedDelegate(QQuickItem *delegate);
@@ -67,5 +60,4 @@ private:
     QString m_name;
     QString m_icon;
     QString m_storageId;
-    KWayland::Client::PlasmaWindow *m_window{nullptr};
 };

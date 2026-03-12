@@ -32,14 +32,6 @@ ApplicationListModel::ApplicationListModel(HomeScreen *parent)
     connect(m_reloadAppsTimer, &QTimer::timeout, this, &ApplicationListModel::sycocaDbChanged);
 
     connect(KSycoca::self(), &KSycoca::databaseChanged, m_reloadAppsTimer, static_cast<void (QTimer::*)()>(&QTimer::start));
-
-    // initialize wayland window checking
-    KWayland::Client::ConnectionThread *connection = KWayland::Client::ConnectionThread::fromApplication(this);
-    if (!connection) {
-        return;
-    }
-
-    load();
 }
 
 ApplicationListModel::~ApplicationListModel() = default;

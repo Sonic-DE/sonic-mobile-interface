@@ -84,7 +84,6 @@ target_link_libraries(org.kde.plasma.mobile.homescreen.folio PRIVATE
     KF6::Service
     KF6::KIOGui
     KF6::Notifications
-    Plasma::KWaylandClient
     KF6::WindowSystem
     KF6::JobWidgets
 )

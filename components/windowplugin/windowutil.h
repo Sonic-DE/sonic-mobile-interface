@@ -17,11 +17,6 @@
 #include <KConfigWatcher>
 #include <KSharedConfig>
 
-#include <KWayland/Client/connection_thread.h>
-#include <KWayland/Client/plasmawindowmanagement.h>
-#include <KWayland/Client/registry.h>
-#include <KWayland/Client/surface.h>
-
 /**
  * Utility class that provides useful functions related to windows and KWin+KWayland.
  *
@@ -57,11 +52,6 @@ public:
     bool hasCloseableActiveWindow() const;
 
     /**
-     * Get the list of windows associated to a storage id.
-     */
-    QList<KWayland::Client::PlasmaWindow *> windowsFromStorageId(const QString &storageId) const;
-
-    /**
      * Activates the first window by its associated storage id.
      *
      * @param storageId the window's storage id
@@ -95,7 +85,6 @@ public:
 
 Q_SIGNALS:
     // Emitted when a window has been opened
-    void windowCreated(KWayland::Client::PlasmaWindow *window);
     void showingDesktopChanged(bool showingDesktop);
     void hasCloseableActiveWindowChanged();
     void activeWindowChanged();
@@ -114,18 +103,12 @@ private Q_SLOTS:
     void updateActiveWindowIsShell();
     void forgetActiveWindow();
     void updateShowingDesktop(bool showing);
-    void windowCreatedSlot(KWayland::Client::PlasmaWindow *window);
 
 private:
-    void initWayland();
     void updateActiveWindow();
 
-    KWayland::Client::PlasmaWindowManagement *m_windowManagement = nullptr;
-    QPointer<KWayland::Client::PlasmaWindow> m_activeWindow;
     QTimer *m_activeWindowTimer;
 
     bool m_showingDesktop = false;
     bool m_activeWindowIsShell = false;
-
-    QHash<QString, QList<KWayland::Client::PlasmaWindow *>> m_windows; // <storageId, window>
 };

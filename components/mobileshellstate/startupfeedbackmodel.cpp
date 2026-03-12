@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include "startupfeedbackmodel.h"
-#include "windowlistener.h"
 
 constexpr int STARTUP_FEEDBACK_TIMEOUT_MS = 8000;
 
@@ -81,9 +80,6 @@ void StartupFeedback::startTimeoutTimer()
 StartupFeedbackModel::StartupFeedbackModel(QObject *parent)
     : QAbstractListModel{parent}
 {
-    connect(WindowListener::instance(), &WindowListener::windowCreated, this, &StartupFeedbackModel::onWindowOpened);
-    connect(WindowListener::instance(), &WindowListener::plasmaWindowCreated, this, &StartupFeedbackModel::onPlasmaWindowOpened);
-    connect(WindowListener::instance(), &WindowListener::activeWindowChanged, this, &StartupFeedbackModel::onActiveWindowChanged);
 }
 
 void StartupFeedbackModel::addApp(StartupFeedback *startupFeedback)
@@ -149,99 +145,9 @@ bool StartupFeedbackModel::activeWindowIsStartupFeedback() const
     return m_activeWindowIsStartupFeedback;
 }
 
-void StartupFeedbackModel::onWindowOpened(KWayland::Client::PlasmaWindow *window)
-{
-    if (!window) {
-        return;
-    }
-
-    QString appId = window->appId();
-
-    int indexToRemove = 0;
-
-    // storageId may get suffixed with ".desktop", check for that
-    const QString suffix = QStringLiteral(".desktop");
-
-    // Remove StartupFeedback when the respective window is created
-    // NOTE: often, the window "appId" does not match the actual app storageId in third-party apps, so we can't rely on this.
-    for (int i = 0; i < m_list.size(); ++i) {
-        auto *startupFeedback = m_list[i];
-        if (startupFeedback->storageId() == appId || startupFeedback->storageId() == appId + suffix) {
-            indexToRemove = i;
-            break;
-        }
-    }
-
-    // If no windows were matched, the oldest StartupFeedback (since indexToRemove = 0)
-    // NOTE: This is our fallback if the window "appId" doesn't match anything.
-
-    if (m_list.size() > indexToRemove) {
-        StartupFeedback *feedbackToRemove = m_list[indexToRemove];
-
-        // Function to remove the startup feedback from the model
-        auto removeFunction = [this, window, feedbackToRemove]() {
-            if (!window->isActive()) {
-                return;
-            }
-
-            int indexToRemove = m_list.indexOf(feedbackToRemove);
-
-            if (indexToRemove != -1) {
-                beginRemoveRows(QModelIndex{}, indexToRemove, indexToRemove);
-
-                m_list[indexToRemove]->deleteLater();
-                m_list.removeAt(indexToRemove);
-                updateActiveWindowIsStartupFeedback();
-
-                endRemoveRows();
-            }
-
-            window->disconnect(this);
-        };
-
-        // Only delete StartupFeedback once the window becomes active
-        // -> There is a potential gap of time between when a window is created and when it is actually visible/active
-        if (window->isActive()) {
-            removeFunction();
-        } else {
-            connect(window, &KWayland::Client::PlasmaWindow::activeChanged, this, removeFunction);
-        }
-    }
-}
-
-void StartupFeedbackModel::onPlasmaWindowOpened(KWayland::Client::PlasmaWindow *window)
-{
-    // Fill in the respective StartupFeedback with the window uuid
-    // Heuristic: window title should match
-    for (auto *startupFeedback : m_list) {
-        if (startupFeedback->title() == window->title() && startupFeedback->windowUuid().isEmpty()) {
-            startupFeedback->setWindowUuid(window->uuid());
-        }
-    }
-
-    // Update variable that depends on window uuid
-    updateActiveWindowIsStartupFeedback();
-}
-
-void StartupFeedbackModel::onActiveWindowChanged(KWayland::Client::PlasmaWindow *activeWindow)
-{
-    m_activeWindow = activeWindow;
-    updateActiveWindowIsStartupFeedback();
-}
-
 void StartupFeedbackModel::updateActiveWindowIsStartupFeedback()
 {
     bool isStartupFeedback = false;
-
-    if (m_activeWindow) {
-        // Check if there exists a StartupFeedback window with the same id as the active window
-        for (const auto *startupFeedback : m_list) {
-            if (startupFeedback->windowUuid() == m_activeWindow->uuid()) {
-                isStartupFeedback = true;
-                break;
-            }
-        }
-    }
 
     if (isStartupFeedback != m_activeWindowIsStartupFeedback) {
         m_activeWindowIsStartupFeedback = isStartupFeedback;

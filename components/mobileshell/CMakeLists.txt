@@ -151,7 +151,6 @@ target_link_libraries(mobileshellplugin
         Qt::Qml
         Qt::Gui
         Qt::Quick
-        Qt::WaylandClientPrivate
         KF6::KIOGui
         Plasma::Plasma
         KF6::I18n

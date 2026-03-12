@@ -55,12 +55,7 @@ find_package(Qt6 ${QT_MIN_VERSION} CONFIG REQUIRED
     Quick
     Gui
     Sensors
-    WaylandClient
 )
-
-if(Qt6WaylandClient_VERSION VERSION_GREATER_EQUAL "6.10.0")
-    find_package(Qt6 REQUIRED COMPONENTS WaylandClientPrivate)
-endif()
 
 find_package(KF6 ${KF6_MIN_VERSION} REQUIRED COMPONENTS
     I18n
@@ -83,7 +78,6 @@ find_package(Plasma CONFIG REQUIRED)
 find_package(PlasmaQuick CONFIG REQUIRED)
 find_package(PlasmaActivities CONFIG REQUIRED)
 find_package(KF6Screen CONFIG REQUIRED)
-find_package(KWayland CONFIG REQUIRED)
 find_package(KPipeWire ${PROJECT_DEP_VERSION} REQUIRED)
 
 find_package(PkgConfig REQUIRED)
@@ -101,14 +95,6 @@ find_package(KWinX11 ${PROJECT_DEP_VERSION} REQUIRED COMPONENTS
 )
 
 find_package(LayerShellQt REQUIRED)
-find_package(Wayland REQUIRED)
-find_package(PlasmaWaylandProtocols 1.8 CONFIG)
-set_package_properties(PlasmaWaylandProtocols PROPERTIES
-    TYPE REQUIRED
-    PURPOSE "Collection of Plasma-specific Wayland protocols"
-    URL "https://invent.kde.org/libraries/plasma-wayland-protocols/"
-)
-
 
 find_package(LibKWorkspace CONFIG REQUIRED)
 find_package(Libudev REQUIRED)

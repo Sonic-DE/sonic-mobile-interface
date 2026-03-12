@@ -12,7 +12,6 @@ target_link_libraries(shellsettingsplugin PRIVATE
     Qt::DBus
     Qt::Gui
     Qt::Quick
-    Plasma::KWaylandClient
     KF6::Service
     KF6::Package
     KF6::KIOGui
