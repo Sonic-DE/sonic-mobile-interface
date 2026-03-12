@@ -13,11 +13,6 @@
 #include <QQuickItem>
 #include <QSet>
 
-#include <KWayland/Client/connection_thread.h>
-#include <KWayland/Client/plasmawindowmanagement.h>
-#include <KWayland/Client/registry.h>
-#include <KWayland/Client/surface.h>
-
 #include <qqmlregistration.h>
 
 /**

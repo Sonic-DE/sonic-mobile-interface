@@ -7,7 +7,6 @@
 #include "kwinsettings.h"
 
 const QString CONFIG_FILE = QStringLiteral("kwinrc");
-const QString WAYLAND_CONFIG_GROUP = QStringLiteral("Wayland");
 
 KWinSettings::KWinSettings(QObject *parent)
     : QObject{parent}
@@ -16,21 +15,14 @@ KWinSettings::KWinSettings(QObject *parent)
     m_configWatcher = KConfigWatcher::create(m_config);
     connect(m_configWatcher.data(), &KConfigWatcher::configChanged, this, [this](const KConfigGroup &group, const QByteArrayList &names) -> void {
         Q_UNUSED(names)
-        if (group.name() == WAYLAND_CONFIG_GROUP) {
-            Q_EMIT doubleTapWakeupChanged();
-        }
     });
 }
 
 bool KWinSettings::doubleTapWakeup() const
 {
-    auto group = KConfigGroup{m_config, WAYLAND_CONFIG_GROUP};
-    return group.readEntry("DoubleTapWakeup", true);
+    return false;
 }
 
 void KWinSettings::setDoubleTapWakeup(bool enabled)
 {
-    auto group = KConfigGroup{m_config, WAYLAND_CONFIG_GROUP};
-    group.writeEntry("DoubleTapWakeup", enabled, KConfigGroup::Notify);
-    m_config->sync();
 }

@@ -36,7 +36,6 @@ target_link_libraries(org.kde.plasma.mobile.homescreen.halcyon PRIVATE
                       Qt::Qml
                       Qt::Quick
                       Plasma::Plasma
-                      Plasma::KWaylandClient
                       KF6::I18n
                       KF6::Service
                       KF6::KIOGui

@@ -34,10 +34,7 @@ const QMap<QString, QMap<QString, QVariant>> KDEGLOBALS_SETTINGS = {{"KDE", {{"L
 
 // .config/plasma-mobile/kwinrc - non-immutable settings:
 const QMap<QString, QMap<QString, QVariant>> KWINRC_DEFAULT_SETTINGS = {
-    {"Wayland",
-     {
-         {"InputMethod", "/usr/share/applications/com.github.maliit.keyboard.desktop"} // ensure maliit is our default vkbd
-     }}};
+};
 
 // .config/plasma-mobile/kwinrc - immutable settings:
 QMap<QString, QMap<QString, QVariant>> getKwinrcSettings(KSharedConfig::Ptr m_mobileConfig)
@@ -58,10 +55,6 @@ QMap<QString, QMap<QString, QVariant>> getKwinrcSettings(KSharedConfig::Ptr m_mo
                  {"mobiletaskswitcherEnabled", true}, // ensure the mobile task switcher plugin is enabled
                  {"screenedgeEnabled", false} // disable the blue highlighting of screen edge effects. TODO would be nice if we could only deactivate it on
                                               // touchscreen gestures and not mouse as well
-             }},
-            {"Wayland",
-             {
-                 {"VirtualKeyboardEnabled", true} // enable vkbd
              }},
             {"org.kde.kdecoration2",
              {

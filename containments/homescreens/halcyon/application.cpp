@@ -18,24 +18,6 @@ Application::Application(QObject *parent, KService::Ptr service)
     if (service->property<bool>(QStringLiteral("X-KDE-PlasmaMobile-UseGenericName"))) {
         m_name = service->genericName();
     }
-
-    auto windows = WindowListener::instance()->windowsFromStorageId(m_storageId);
-    if (windows.empty()) {
-        m_window = nullptr;
-    } else {
-        m_window = windows[0];
-    }
-
-    connect(WindowListener::instance(), &WindowListener::windowChanged, this, [this](QString storageId) {
-        if (storageId == m_storageId) {
-            auto windows = WindowListener::instance()->windowsFromStorageId(m_storageId);
-            if (windows.empty()) {
-                setWindow(nullptr);
-            } else {
-                setWindow(windows[0]);
-            }
-        }
-    });
 }
 
 Application *Application::fromJson(QJsonObject &obj, QObject *parent)
@@ -57,7 +39,7 @@ QJsonObject Application::toJson()
 
 bool Application::running() const
 {
-    return m_window != nullptr;
+    return false;
 }
 
 QString Application::name() const
@@ -73,11 +55,6 @@ QString Application::icon() const
 QString Application::storageId() const
 {
     return m_storageId;
-}
-
-KWayland::Client::PlasmaWindow *Application::window() const
-{
-    return m_window;
 }
 
 void Application::setName(QString &name)
@@ -98,45 +75,10 @@ void Application::setStorageId(QString &storageId)
     Q_EMIT storageIdChanged();
 }
 
-void Application::setWindow(KWayland::Client::PlasmaWindow *window)
-{
-    m_window = window;
-    Q_EMIT windowChanged();
-}
-
 void Application::setMinimizedDelegate(QQuickItem *delegate)
 {
-    QWindow *delegateWindow = delegate->window();
-    if (!delegateWindow) {
-        return;
-    }
-    if (!m_window) {
-        return;
-    }
-
-    KWayland::Client::Surface *surface = KWayland::Client::Surface::fromWindow(delegateWindow);
-    if (!surface) {
-        return;
-    }
-
-    QRect rect = delegate->mapRectToScene(QRectF(0, 0, delegate->width(), delegate->height())).toRect();
-    m_window->setMinimizedGeometry(surface, rect);
 }
 
 void Application::unsetMinimizedDelegate(QQuickItem *delegate)
 {
-    QWindow *delegateWindow = delegate->window();
-    if (!delegateWindow) {
-        return;
-    }
-    if (!m_window) {
-        return;
-    }
-
-    KWayland::Client::Surface *surface = KWayland::Client::Surface::fromWindow(delegateWindow);
-    if (!surface) {
-        return;
-    }
-
-    m_window->unsetMinimizedGeometry(surface);
 }

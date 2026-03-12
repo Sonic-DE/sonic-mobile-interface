@@ -9,8 +9,6 @@
 #include <QTimer>
 #include <qqmlregistration.h>
 
-#include <KWayland/Client/plasmawindowmanagement.h>
-
 class StartupFeedback : public QObject
 {
     Q_OBJECT
@@ -90,17 +88,11 @@ public:
 Q_SIGNALS:
     void activeWindowIsStartupFeedbackChanged();
 
-private Q_SLOTS:
-    void onWindowOpened(KWayland::Client::PlasmaWindow *window);
-    void onPlasmaWindowOpened(KWayland::Client::PlasmaWindow *window);
-    void onActiveWindowChanged(KWayland::Client::PlasmaWindow *activeWindow);
-
 private:
     void updateActiveWindowIsStartupFeedback();
 
     bool m_activeWindowIsStartupFeedback{false};
     QList<StartupFeedback *> m_list;
-    KWayland::Client::PlasmaWindow *m_activeWindow{nullptr};
 };
 
 class StartupFeedbackFilterModel : public QSortFilterProxyModel

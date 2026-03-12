@@ -9,8 +9,6 @@
 
 #include "qqml.h"
 
-class WaylandAboveLockscreen;
-
 /**
  * A plugin to implement raising windows over the lockscreen.
  */
@@ -45,5 +43,4 @@ private:
     bool m_initialized = false;
     QWindow *m_window = nullptr;
     int m_serial = 0;
-    std::unique_ptr<WaylandAboveLockscreen> m_implementation;
 };

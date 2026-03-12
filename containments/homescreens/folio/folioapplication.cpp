@@ -19,24 +19,6 @@ FolioApplication::FolioApplication(KService::Ptr service, QObject *parent)
     if (service->property<bool>(QStringLiteral("X-KDE-PlasmaMobile-UseGenericName"))) {
         m_name = service->genericName();
     }
-
-    auto windows = WindowListener::instance()->windowsFromStorageId(m_storageId);
-    if (windows.empty()) {
-        m_window = nullptr;
-    } else {
-        m_window = windows[0];
-    }
-
-    connect(WindowListener::instance(), &WindowListener::windowChanged, this, [this](QString storageId) {
-        if (storageId == m_storageId) {
-            auto windows = WindowListener::instance()->windowsFromStorageId(m_storageId);
-            if (windows.empty()) {
-                setWindow(nullptr);
-            } else {
-                setWindow(windows[0]);
-            }
-        }
-    });
 }
 
 FolioApplication::Ptr FolioApplication::fromJson(QJsonObject &obj)
@@ -58,7 +40,7 @@ QJsonObject FolioApplication::toJson() const
 
 bool FolioApplication::running() const
 {
-    return m_window != nullptr;
+    return false;
 }
 
 QString FolioApplication::name() const
@@ -74,11 +56,6 @@ QString FolioApplication::icon() const
 QString FolioApplication::storageId() const
 {
     return m_storageId;
-}
-
-KWayland::Client::PlasmaWindow *FolioApplication::window() const
-{
-    return m_window;
 }
 
 void FolioApplication::setName(QString &name)
@@ -99,45 +76,10 @@ void FolioApplication::setStorageId(QString &storageId)
     Q_EMIT storageIdChanged();
 }
 
-void FolioApplication::setWindow(KWayland::Client::PlasmaWindow *window)
-{
-    m_window = window;
-    Q_EMIT windowChanged();
-}
-
 void FolioApplication::setMinimizedDelegate(QQuickItem *delegate)
 {
-    QWindow *delegateWindow = delegate->window();
-    if (!delegateWindow) {
-        return;
-    }
-    if (!m_window) {
-        return;
-    }
-
-    KWayland::Client::Surface *surface = KWayland::Client::Surface::fromWindow(delegateWindow);
-    if (!surface) {
-        return;
-    }
-
-    QRect rect = delegate->mapRectToScene(QRectF(0, 0, delegate->width(), delegate->height())).toRect();
-    m_window->setMinimizedGeometry(surface, rect);
 }
 
 void FolioApplication::unsetMinimizedDelegate(QQuickItem *delegate)
 {
-    QWindow *delegateWindow = delegate->window();
-    if (!delegateWindow) {
-        return;
-    }
-    if (!m_window) {
-        return;
-    }
-
-    KWayland::Client::Surface *surface = KWayland::Client::Surface::fromWindow(delegateWindow);
-    if (!surface) {
-        return;
-    }
-
-    m_window->unsetMinimizedGeometry(surface);
 }
