@@ -44,7 +44,7 @@ void PrepareUtil::initKScreen(std::function<void()> callback)
             }
             scaling = output->scale() * 100;
             m_output = output->id();
-            if (output->isPrimary()) {
+            if (output->priority() == 1) {
                 break;
             }
         }
