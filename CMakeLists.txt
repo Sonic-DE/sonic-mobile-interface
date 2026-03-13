@@ -97,7 +97,7 @@ pkg_check_modules(GIO gio-2.0 REQUIRED IMPORTED_TARGET)
 find_package(KF6KirigamiAddons 0.6 REQUIRED)
 find_package(epoxy REQUIRED)
 find_package(XCB REQUIRED COMPONENTS XCB)
-find_package(KWin ${PROJECT_DEP_VERSION} REQUIRED COMPONENTS
+find_package(KWinX11 ${PROJECT_DEP_VERSION} REQUIRED COMPONENTS
     kwin
 )
 
@@ -114,8 +114,8 @@ set_package_properties(PlasmaWaylandProtocols PROPERTIES
 find_package(LibKWorkspace CONFIG REQUIRED)
 find_package(Libudev REQUIRED)
 
-find_package(KWinDBusInterface)
-set_package_properties(KWinDBusInterface PROPERTIES DESCRIPTION "KWin DBus interface"
+find_package(KWinX11DBusInterface)
+set_package_properties(KWinX11DBusInterface PROPERTIES DESCRIPTION "KWin DBus interface"
     TYPE REQUIRED
     PURPOSE "Needed for virtual keyboard toggle button"
 )
