@@ -23,7 +23,7 @@ target_link_libraries(mobiletaskswitcherplugin PRIVATE
     Qt::Quick
     Qt::Core
 
-    KWin::kwin
+    KWinX11::kwin
     Plasma::Activities
 )
 
