@@ -43,10 +43,10 @@ void PrepareUtil::initKScreen(std::function<void()> callback)
             if (!output) {
                 continue;
             }
-            if (output->priority() <= lowestPriority) {
-                lowestPriority = output->priority();
-                scaling = output->scale() * 100;
-                m_output = output->id();
+            scaling = output->scale() * 100;
+            m_output = output->id();
+            if (output->priority() == 1) {
+                break;
             }
         }
 
