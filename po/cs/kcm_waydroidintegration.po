@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: plasma-mobile\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2026-01-03 00:45+0000\n"
-"PO-Revision-Date: 2026-03-30 12:47+0200\n"
+"PO-Revision-Date: 2026-03-13 14:37+0100\n"
 "Last-Translator:  Vít Pelčák <vit@pelcak.org>\n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
 "Language: cs\n"
@@ -25,12 +25,12 @@ msgstr "Integrace Waydroidu"
 #: ui/main.qml:32
 #, kde-format
 msgid "Waydroid is not installed"
-msgstr "Waydroid není nainstalován"
+msgstr ""
 
 #: ui/main.qml:39
 #, kde-format
 msgid "Check installation"
-msgstr "Zkontrolovat instalaci"
+msgstr ""
 
 #: ui/main.qml:52
 #, kde-format
@@ -38,8 +38,6 @@ msgid ""
 "Downloading Android and vendor images.\n"
 "It can take a few minutes."
 msgstr ""
-"Stahování obrazů systému Android a obrazů výrobců.\n"
-"Může to trvat několik minut."
 
 #: ui/main.qml:67
 #, kde-format
@@ -47,18 +45,16 @@ msgid ""
 "Waydroid is resetting.\n"
 "It can take a few seconds."
 msgstr ""
-"Waydroid se restartuje.\n"
-"Může to trvat několik sekund."
 
 #: ui/main.qml:76
 #, kde-format
 msgid "The Waydroid session is not running."
-msgstr "Sezení Waydroidu není spuštěno."
+msgstr ""
 
 #: ui/main.qml:82
 #, kde-format
 msgid "Start the session"
-msgstr "Spustit sezení"
+msgstr ""
 
 #: ui/main.qml:90
 #, kde-format
@@ -66,8 +62,6 @@ msgid ""
 "Waydroid session is starting.\n"
 "It can take a few seconds."
 msgstr ""
-"Spouští se sezení Waydroidu.\n"
-"Může to trvat několik sekund."
 
 #: ui/WaydroidApplicationsPage.qml:25
 #, kde-format
@@ -89,7 +83,7 @@ msgstr "Je třeba zvolit místní soubor"
 #, kde-format
 msgctxt "@action:button"
 msgid "Delete the application"
-msgstr "Smazat aplikaci"
+msgstr ""
 
 #: ui/WaydroidConfigurationForm.qml:19
 #, kde-format
@@ -109,7 +103,7 @@ msgstr "Kopírovat"
 #: ui/WaydroidConfigurationForm.qml:35
 #, kde-format
 msgid "Waydroid status"
-msgstr "Stav Waydroidu"
+msgstr ""
 
 #: ui/WaydroidConfigurationForm.qml:36
 #, kde-format
@@ -119,17 +113,17 @@ msgstr "Spuštěno"
 #: ui/WaydroidConfigurationForm.qml:39
 #, kde-format
 msgid "Stop session"
-msgstr "Zastavit sezení"
+msgstr ""
 
 #: ui/WaydroidConfigurationForm.qml:46
 #, kde-format
 msgid "Certify my device for Google Play Protect"
-msgstr "Ověřit moje zařízení pro službu Google Play Protect"
+msgstr ""
 
 #: ui/WaydroidConfigurationForm.qml:51
 #, kde-format
 msgid "Installed applications"
-msgstr "Nainstalované aplikace"
+msgstr ""
 
 #: ui/WaydroidConfigurationForm.qml:56
 #, kde-format
@@ -140,7 +134,7 @@ msgstr "Obnovit Waydroid"
 #, kde-format
 msgctxt "@title:window"
 msgid "Confirm Waydroid Reset"
-msgstr "Potvrdit obnovení Waydroidu"
+msgstr ""
 
 #: ui/WaydroidConfigurationForm.qml:63
 #, kde-format
@@ -148,28 +142,26 @@ msgid ""
 "Are you sure you want to reset Waydroid? This is a destructive action, and "
 "will wipe all user data."
 msgstr ""
-"Opravdu chcete obnovit Waydroid? Jedná se o nevratný úkon, který vymaže "
-"všechna uživatelská data."
 
 #: ui/WaydroidConfigurationForm.qml:81
 #, kde-format
 msgid "Waydroid properties"
-msgstr "Vlastnosti Waydroidu"
+msgstr ""
 
 #: ui/WaydroidConfigurationForm.qml:92
 #, kde-format
 msgid "May require restarting the Waydroid session to apply"
-msgstr "K uplatnění změn může být nutné restartovat sezení Waydroidu"
+msgstr ""
 
 #: ui/WaydroidConfigurationForm.qml:109
 #, kde-format
 msgid "Multi Windows"
-msgstr "Multi okna"
+msgstr ""
 
 #: ui/WaydroidConfigurationForm.qml:110
 #, kde-format
 msgid "Enables/Disables window integration with the desktop"
-msgstr "Zapne/vypne integraci okna s pracovní plochou"
+msgstr ""
 
 #: ui/WaydroidConfigurationForm.qml:122
 #, kde-format
@@ -182,23 +174,21 @@ msgid ""
 "Let the Waydroid container sleep (after the display timeout) when no apps "
 "are active"
 msgstr ""
-"Nechat kontejner Waydroid přejít do režimu spánku (po vypršení časového "
-"limitu displeje), pokud nejsou spuštěny žádné aplikace"
 
 #: ui/WaydroidConfigurationForm.qml:135
 #, kde-format
 msgid "UEvent"
-msgstr "UEvent"
+msgstr ""
 
 #: ui/WaydroidConfigurationForm.qml:136
 #, kde-format
 msgid "Allow android direct access to hotplugged devices"
-msgstr "Povolit systému Android přímý přístup k zařízením připojeným za chodu"
+msgstr ""
 
 #: ui/WaydroidDownloadStatus.qml:40
 #, kde-format
 msgid "Downloading %1MB/%2MB Speed %3"
-msgstr "Stahování %1 MB/%2 MB, rychlost %3"
+msgstr ""
 
 #: ui/WaydroidDownloadStatus.qml:48
 #, kde-format
@@ -213,7 +203,7 @@ msgstr "%1kB/s"
 #: ui/WaydroidGooglePlayProtectConfigurationPage.qml:23
 #, kde-format
 msgid "Google Play Protect configuration"
-msgstr "Nastavení služby Google Play Protect"
+msgstr ""
 
 #: ui/WaydroidGooglePlayProtectConfigurationPage.qml:33
 #, kde-format
@@ -221,8 +211,6 @@ msgid ""
 "Fetching your Android ID.\n"
 "It can take a few seconds."
 msgstr ""
-"Načítání vašeho Android ID.\n"
-"Může to trvat několik sekund."
 
 #: ui/WaydroidGooglePlayProtectConfigurationPage.qml:65
 #, kde-format
@@ -232,29 +220,24 @@ msgid ""
 "your device, paste the Android ID in the field on the website. Then, give "
 "the Google services some minutes to reflect the change and restart Waydroid."
 msgstr ""
-"Při prvním spuštění aplikace Waydroid s balíčkem GAPPS se zobrazí "
-"upozornění, že zařízení není certifikováno pro službu Google Play Protect. "
-"Chcete-li zařízení certifikovat sami, vložte Android ID do příslušného pole "
-"na webové stránce. Poté počkejte několik minut, než se změna projeví ve "
-"službách Google, a restartujte aplikaci Waydroid."
 
 #: ui/WaydroidGooglePlayProtectConfigurationPage.qml:70
 #, kde-format
 msgctxt "@action:button"
 msgid "Copy Android ID and open the website"
-msgstr "Zkopírovat Android ID a otevřít webovou stránku"
+msgstr ""
 
 #: ui/WaydroidInitialConfigurationForm.qml:16
 #, kde-format
 msgid "Initial configuration"
-msgstr "Počáteční nastavení"
+msgstr ""
 
 #: ui/WaydroidInitialConfigurationForm.qml:22
 #, kde-format
 msgid "System type"
-msgstr "Typ systému"
+msgstr ""
 
 #: ui/WaydroidInitialConfigurationForm.qml:35
 #, kde-format
 msgid "Configure Waydroid"
-msgstr "wNastavení Waydroidu"
+msgstr ""
