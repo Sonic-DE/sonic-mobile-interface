@@ -50,7 +50,15 @@ QString TaskFilterModel::screenName() const
 
 void TaskFilterModel::setScreenName(const QString &screen)
 {
-    LogicalOutput *output = workspace()->findOutput(screen);
+    KWin::Output *output = nullptr;
+    const auto outputs = workspace()->outputs();
+    for (KWin::Output *o : outputs) {
+        if (o->name() == screen) {
+            output = o;
+            break;
+        }
+    }
+
     if (m_output != output) {
         m_output = output;
         Q_EMIT screenNameChanged();
@@ -93,7 +101,7 @@ bool TaskFilterModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceP
     }
 
     // Filter by same screen
-    if (window->output() != m_output) {
+    if (window->output() != m_output.data()) {
         return false;
     }
 
