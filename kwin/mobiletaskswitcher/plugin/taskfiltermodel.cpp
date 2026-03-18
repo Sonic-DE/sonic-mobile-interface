@@ -50,7 +50,14 @@ QString TaskFilterModel::screenName() const
 
 void TaskFilterModel::setScreenName(const QString &screen)
 {
-    LogicalOutput *output = workspace()->findOutput(screen);
+    KWin::Output *output = nullptr;
+    for (KWin::Output *o : workspace()->outputs()) {
+        if (o->name() == screen) {  // or o->description() if the "name" is meant to be the human-readable label
+            output = o;
+            break;
+        }
+    }
+
     if (m_output != output) {
         m_output = output;
         Q_EMIT screenNameChanged();
