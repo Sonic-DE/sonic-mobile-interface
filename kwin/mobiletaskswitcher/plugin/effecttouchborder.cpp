@@ -56,7 +56,7 @@ void EffectTouchBorder::setBorders(const QList<int> &touchActivateBorders)
         m_touchBorderActivate.append(ElectricBorder(border));
         effects->registerRealtimeTouchBorder(ElectricBorder(border),
                                              m_state->activateAction(),
-                                             [this](ElectricBorder border, const QPointF &deltaProgress, const LogicalOutput *screen) {
+                                             [this](ElectricBorder border, const QPointF &deltaProgress, const KWin::Output *screen) {
                                                  Q_UNUSED(screen)
                                                  m_state->setInProgress(true);
 
