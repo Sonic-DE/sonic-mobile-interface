@@ -77,8 +77,10 @@ void Application::setStorageId(QString &storageId)
 
 void Application::setMinimizedDelegate(QQuickItem *delegate)
 {
+    (void)delegate;
 }
 
 void Application::unsetMinimizedDelegate(QQuickItem *delegate)
 {
+    (void)delegate;
 }

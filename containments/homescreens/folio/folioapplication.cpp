@@ -78,8 +78,10 @@ void FolioApplication::setStorageId(QString &storageId)
 
 void FolioApplication::setMinimizedDelegate(QQuickItem *delegate)
 {
+    (void)delegate;
 }
 
 void FolioApplication::unsetMinimizedDelegate(QQuickItem *delegate)
 {
+    (void)delegate;
 }
