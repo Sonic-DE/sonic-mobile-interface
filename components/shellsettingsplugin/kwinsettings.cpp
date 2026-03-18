@@ -7,6 +7,8 @@
 #include "kwinsettings.h"
 
 const QString CONFIG_FILE = QStringLiteral("kwinrc");
+const QString OVERLAY_CONFIG_FILE = QStringLiteral("plasma-mobile/kwinrc");
+const QString SCREEN_EDGES_CONFIG_GROUP = QStringLiteral("ScreenEdges");
 
 KWinSettings::KWinSettings(QObject *parent)
     : QObject{parent}
@@ -16,6 +18,9 @@ KWinSettings::KWinSettings(QObject *parent)
     m_configWatcher = KConfigWatcher::create(m_config);
     connect(m_configWatcher.data(), &KConfigWatcher::configChanged, this, [this](const KConfigGroup &group, const QByteArrayList &names) -> void {
         Q_UNUSED(names)
+        if (group.name() == SCREEN_EDGES_CONFIG_GROUP) {
+            Q_EMIT screenEdgeTouchTargetChanged();
+        }
     });
 }
 
@@ -26,4 +31,21 @@ bool KWinSettings::doubleTapWakeup() const
 
 void KWinSettings::setDoubleTapWakeup(bool enabled)
 {
+    (void)enabled;
+}
+
+int KWinSettings::screenEdgeTouchTarget() const
+{
+    auto group = KConfigGroup{m_overlayConfig, SCREEN_EDGES_CONFIG_GROUP};
+    return group.readEntry("TouchTarget", 0);
+}
+
+void KWinSettings::setScreenEdgeTouchTarget(int target)
+{
+    // Use m_overlayConfig instead of m_config so we don't affect other shells
+    if (target != screenEdgeTouchTarget()) {
+        auto group = KConfigGroup{m_overlayConfig, SCREEN_EDGES_CONFIG_GROUP};
+        group.writeEntry("TouchTarget", target, KConfigGroup::Notify);
+        m_overlayConfig->sync();
+    }
 }
