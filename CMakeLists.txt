@@ -90,7 +90,7 @@ kde_enable_exceptions()
 find_package(KF6KirigamiAddons 0.6 REQUIRED)
 find_package(epoxy REQUIRED)
 find_package(XCB REQUIRED COMPONENTS XCB)
-find_package(KWinX11 6.6.2 REQUIRED COMPONENTS
+find_package(KWinX11 ${PROJECT_DEP_VERSION} REQUIRED COMPONENTS
     kwin
 )
 
