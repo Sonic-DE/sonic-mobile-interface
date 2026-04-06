@@ -162,7 +162,6 @@ target_link_libraries(mobileshellplugin
         KF6::Package
         KF6::ConfigGui
         KF6::ItemModels
-        LayerShellQt::Interface
 )
 
 ecm_finalize_qml_module(mobileshellplugin)
