@@ -121,6 +121,8 @@ void ShellUtil::setWindowLayer(QQuickWindow *window, LayerShellQt::Window::Layer
 
 void ShellUtil::setInputRegion(QWindow *window, const QRect &region)
 {
+    Q_UNUSED(window);
+    Q_UNUSED(region);
     qWarning() << "Wayland legacy has been removed.";
 }
 
