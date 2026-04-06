@@ -94,8 +94,6 @@ find_package(KWinX11 ${PROJECT_DEP_VERSION} REQUIRED COMPONENTS
     kwin
 )
 
-find_package(LayerShellQt REQUIRED)
-
 find_package(LibKWorkspace CONFIG REQUIRED)
 find_package(Libudev REQUIRED)
 

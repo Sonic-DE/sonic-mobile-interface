@@ -23,7 +23,6 @@
 #include <QProcess>
 
 #include <QTextDocumentFragment>
-#include <LayerShellQt/Window>
 
 
 #define FORMAT24H "HH:mm:ss"
@@ -107,16 +106,6 @@ void ShellUtil::setInputTransparent(QQuickWindow *window, bool transparent)
         flags &= ~Qt::WindowTransparentForInput;
     }
     window->setFlags(flags);
-}
-
-void ShellUtil::setWindowLayer(QQuickWindow *window, LayerShellQt::Window::Layer layer)
-{
-    if (!window) {
-        return;
-    }
-
-    auto layerShellWindow = LayerShellQt::Window::get(window);
-    layerShellWindow->setLayer(layer);
 }
 
 void ShellUtil::setInputRegion(QWindow *window, const QRect &region)
