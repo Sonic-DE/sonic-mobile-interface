@@ -39,6 +39,7 @@ void PrepareUtil::initKScreen(std::function<void()> callback)
         // To determine the scaling value:
         // Try to take the primary display's scaling, otherwise use the scaling of any of the displays
         int lowestPriority = std::numeric_limits<unsigned int>::max();
+        Q_UNUSED(lowestPriority);
         for (KScreen::OutputPtr output : m_config->outputs()) {
             if (!output) {
                 continue;

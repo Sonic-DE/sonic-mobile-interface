@@ -126,6 +126,7 @@ void Settings::applyMobileConfiguration()
 
 void Settings::writeKeys(const QString &fileName, KSharedConfig::Ptr &config, const QMap<QString, QMap<QString, QVariant>> &settings)
 {
+    Q_UNUSED(fileName);
     const auto groupNames = settings.keys();
     for (const auto &groupName : groupNames) {
         auto group = KConfigGroup{config, groupName};

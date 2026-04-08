@@ -46,6 +46,7 @@ bool WindowUtil::hasCloseableActiveWindow() const
 
 bool WindowUtil::activateWindowByStorageId(const QString &storageId)
 {
+    Q_UNUSED(storageId);
     return false;
 }
 
@@ -55,6 +56,7 @@ void WindowUtil::closeActiveWindow()
 
 void WindowUtil::requestShowingDesktop(bool showingDesktop)
 {
+    Q_UNUSED(showingDesktop);
 }
 
 void WindowUtil::minimizeAll()
@@ -64,6 +66,7 @@ void WindowUtil::minimizeAll()
 
 void WindowUtil::unsetAllMinimizedGeometries(QQuickItem *parent)
 {
+    Q_UNUSED(parent);
 }
 
 void WindowUtil::updateShowingDesktop(bool showing)

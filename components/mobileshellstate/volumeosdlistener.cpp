@@ -27,17 +27,17 @@ VolumeOSDListener::VolumeOSDListener(QObject *parent)
 
 void VolumeOSDListener::connectDBus()
 {
-    bool success = QDBusConnection::sessionBus().connect(QStringLiteral("org.kde.plasmashell"),
-                                                         QStringLiteral("/org/kde/osdService"),
-                                                         QStringLiteral("org.kde.osdService"),
-                                                         QStringLiteral("osdProgress"),
-                                                         this,
-                                                         SLOT(onOSDProgress(QString, int, int, QString)));
+    Q_UNUSED(QDBusConnection::sessionBus().connect(QStringLiteral("org.kde.plasmashell"),
+                                                   QStringLiteral("/org/kde/osdService"),
+                                                   QStringLiteral("org.kde.osdService"),
+                                                   QStringLiteral("osdProgress"),
+                                                   this,
+                                                   SLOT(onOSDProgress(QString, int, int, QString))));
 }
 
 void VolumeOSDListener::onOSDProgress(const QString &icon, int volume, int maxVolume, const QString &text)
 {
-    Q_UNUSED(text)
+    Q_UNUSED(text);
 
     if (icon == "audio-volume-muted"_L1 || icon == "audio-volume-low"_L1 || icon == "audio-volume-medium"_L1 || icon == "audio-volume-high"_L1) {
         Q_EMIT showOSD(icon, volume, maxVolume);
