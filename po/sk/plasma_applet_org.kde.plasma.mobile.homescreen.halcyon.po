@@ -60,12 +60,12 @@ msgstr "Homescreen Settings"
 #: qml/settings/ConfigGeneral.qml:26
 #, kde-format
 msgid "Homescreen"
-msgstr "Homescreen"
+msgstr "Domovská obrazovka"
 
 #: qml/settings/ConfigGeneral.qml:32
 #, kde-format
 msgid "Wallpaper blur effect"
-msgstr "Wallpaper blur effect"
+msgstr "Efekt rozmazania tapety"
 
 #: qml/settings/ConfigGeneral.qml:35
 #, kde-format
@@ -77,23 +77,23 @@ msgstr "Žiadne"
 #, kde-format
 msgctxt "Wallpaper blur effect"
 msgid "Simple"
-msgstr "Simple"
+msgstr "Jednoduché"
 
 #: qml/settings/ConfigGeneral.qml:37
 #, kde-format
 msgctxt "Wallpaper blur effect"
 msgid "Full"
-msgstr "Full"
+msgstr "Plné"
 
 #: qml/settings/ConfigGeneral.qml:54
 #, kde-format
 msgid "Double tap to lock device"
-msgstr "Double tap to lock device"
+msgstr "Dvojité ťuknutie pre uzamknutie zariadenia"
 
 #: qml/settings/SettingsScreen.qml:71
 #, kde-format
 msgid "Wallpapers"
-msgstr "Wallpapers"
+msgstr "Tapety"
 
 #: qml/settings/SettingsScreen.qml:99
 #, kde-format

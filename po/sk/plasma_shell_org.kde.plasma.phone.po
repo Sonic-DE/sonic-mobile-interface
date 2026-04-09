@@ -18,15 +18,15 @@ msgstr ""
 
 #: contents/applet/AppletError.qml:168
 msgid "Copy to Clipboard"
-msgstr "Copy to Clipboard"
+msgstr "Skopírovať do schránky"
 
 #: contents/applet/AppletError.qml:191
 msgid "View Error Details…"
-msgstr "View Error Details…"
+msgstr "Zobraziť podrobnosti chyby..."
 
 #: contents/applet/CompactApplet.qml:88
 msgid "Open %1"
-msgstr "Open %1"
+msgstr "Otvoriť %1"
 
 #: contents/configuration/AppletConfiguration.qml:90
 msgctxt "The title of the applet configuration window"
@@ -79,7 +79,7 @@ msgstr "Zmeny rozloženia boli zakázané systémovým administrátorom"
 
 #: contents/lockscreen/LockScreenState.qml:31
 msgid "Enter PIN"
-msgstr "Zadajte PIN"
+msgstr "Zadať PIN"
 
 #: contents/lockscreen/LockScreenState.qml:32
 msgid "Wrong PIN"
