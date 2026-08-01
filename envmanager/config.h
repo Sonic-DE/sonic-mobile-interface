@@ -30,7 +30,7 @@ const QMap<QString, QMap<QString, QVariant>> APPLICATIONS_BLACKLIST_DEFAULT_SETT
 const QMap<QString, QMap<QString, QVariant>> KDEGLOBALS_DEFAULT_SETTINGS = {{"General", {{"BrowserApplication", "angelfish"}}}};
 
 // .config/plasma-mobile/kdeglobals - immutable settings:
-const QMap<QString, QMap<QString, QVariant>> KDEGLOBALS_SETTINGS = {{"KDE", {{"LookAndFeelPackage", "org.kde.breeze.mobile"}}}};
+const QMap<QString, QMap<QString, QVariant>> KDEGLOBALS_SETTINGS = {{"KDE", {{"LookAndFeelPackage", "org.kde.silver.mobile"}}}};
 
 // .config/plasma-mobile/kwinrc - non-immutable settings:
 const QMap<QString, QMap<QString, QVariant>> KWINRC_DEFAULT_SETTINGS = {

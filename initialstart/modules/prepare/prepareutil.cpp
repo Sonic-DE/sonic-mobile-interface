@@ -10,6 +10,7 @@
 
 #include <QDBusPendingCallWatcher>
 #include <QDBusPendingReply>
+#include <QDebug>
 #include <QProcess>
 
 PrepareUtil::PrepareUtil(QObject *parent)
@@ -19,7 +20,7 @@ PrepareUtil::PrepareUtil(QObject *parent)
     initKScreen([]() { });
 
     // set property initially
-    m_usingDarkTheme = m_colorsSettings->colorScheme() == "BreezeDark";
+    m_usingDarkTheme = m_colorsSettings->colorScheme() == "SilverDark";
 }
 
 void PrepareUtil::initKScreen(std::function<void()> callback)
@@ -109,10 +110,11 @@ bool PrepareUtil::usingDarkTheme() const
 void PrepareUtil::setUsingDarkTheme(bool usingDarkTheme)
 {
     // use plasma-apply-colorscheme since it has logic for notifying the shell of changes
-    if (usingDarkTheme) {
-        QProcess::execute("plasma-apply-colorscheme", {QStringLiteral("BreezeDark")});
-    } else {
-        QProcess::execute("plasma-apply-colorscheme", {QStringLiteral("BreezeLight")});
+    const QString scheme = usingDarkTheme ? QStringLiteral("SilverDark") : QStringLiteral("SilverLight");
+    const int result = QProcess::execute(QStringLiteral("plasma-apply-colorscheme"), {scheme});
+    if (result != 0) {
+        qWarning() << "Failed to apply color scheme" << scheme << "exit status" << result;
+        return;
     }
 
     m_usingDarkTheme = usingDarkTheme;
