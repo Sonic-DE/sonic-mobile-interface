@@ -559,7 +559,7 @@ FocusScope {
             // home button
             middleAction: MobileShell.NavigationPanelAction {
                 enabled: true
-                iconSource: "start-here-kde"
+                iconSource: "start-here-sonicde"
                 onTriggered: root.hide()
             }
 

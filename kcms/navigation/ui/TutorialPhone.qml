@@ -44,7 +44,7 @@ Item {
         Kirigami.Icon {
             visible: root.showBackground
 
-            source: "start-here-kde"
+            source: "start-here-sonicde"
             smooth: true
 
             anchors.verticalCenter: phone.verticalCenter
