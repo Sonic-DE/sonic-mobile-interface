@@ -35,7 +35,7 @@ void UrlNotificationTest::sendNotification(QCoreApplication &app)
     notification->setComponentName(QStringLiteral("plasma_mobile_notificationtest"));
     notification->setTitle("Web link");
     notification->setText("I like links!");
-    notification->setUrls({QUrl{"file:/usr/share/wallpapers/Next/contents/images/1920x1080.png"}});
+    notification->setUrls({QUrl{"file:/usr/share/wallpapers/Silver/contents/images/1920x1080.png"}});
 
     connect(notification, &KNotification::closed, &app, QCoreApplication::quit);
     notification->sendEvent();
