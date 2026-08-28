@@ -8,11 +8,13 @@
 #include <QDebug>
 #include <QModelIndex>
 #include <QProcess>
+#include <QQmlEngine>
 #include <QQuickWindow>
 
 #include <KApplicationTrader>
 #include <KConfigGroup>
 #include <KIO/ApplicationLauncherJob>
+#include <KLocalizedString>
 #include <KNotificationJobUiDelegate>
 #include <KService>
 #include <KSharedConfig>
@@ -38,7 +40,7 @@ ApplicationListModel::~ApplicationListModel() = default;
 
 QHash<int, QByteArray> ApplicationListModel::roleNames() const
 {
-    return {{DelegateRole, QByteArrayLiteral("delegate")}};
+    return {{DelegateRole, QByteArrayLiteral("delegate")}, {NameRole, QByteArrayLiteral("name")}, {CategoryRole, QByteArrayLiteral("category")}};
 }
 
 void ApplicationListModel::sycocaDbChanged()
@@ -46,29 +48,45 @@ void ApplicationListModel::sycocaDbChanged()
     load();
 }
 
-KService::List ApplicationListModel::queryApplications()
+void ApplicationListModel::fetchAppsFromMenu(const KServiceGroup::Ptr &serviceGroup,
+                                             const QString &categoryName,
+                                             const QStringList &blacklist,
+                                             QMap<QString, std::pair<KService::Ptr, QStringList>> &applicationsMap,
+                                             QStringList &orderedCategories)
 {
-    auto cfg = KSharedConfig::openConfig(QStringLiteral("applications-blacklistrc"));
-    auto blgroup = KConfigGroup(cfg, QStringLiteral("Applications"));
+    if (!serviceGroup) {
+        return;
+    }
 
-    const QStringList blacklist = blgroup.readEntry("blacklist", QStringList());
-    auto filter = [blacklist](const KService::Ptr &service) -> bool {
-        if (service->noDisplay()) {
-            return false;
+    const KSycocaEntry::List entries = serviceGroup->entries(true, true);
+
+    for (const KSycocaEntry::Ptr &entry : entries) {
+        if (entry->isType(KST_KService)) {
+            KService::Ptr service(static_cast<KService *>(entry.data()));
+
+            if (service->noDisplay() || !service->showOnCurrentPlatform() || blacklist.contains(service->desktopEntryName())) {
+                continue;
+            }
+
+            if (!categoryName.isEmpty() && !orderedCategories.contains(categoryName)) {
+                orderedCategories.append(categoryName);
+            }
+
+            if (!applicationsMap.contains(service->storageId())) {
+                applicationsMap.insert(service->storageId(), {service, QStringList{categoryName}});
+            } else {
+                if (!applicationsMap[service->storageId()].second.contains(categoryName)) {
+                    applicationsMap[service->storageId()].second.append(categoryName);
+                }
+            }
+
+        } else if (entry->isType(KST_KServiceGroup)) {
+            KServiceGroup::Ptr subServiceGroup(static_cast<KServiceGroup *>(entry.data()));
+
+            QString currentCategoryName = categoryName.isEmpty() ? subServiceGroup->caption() : categoryName;
+            fetchAppsFromMenu(subServiceGroup, currentCategoryName, blacklist, applicationsMap, orderedCategories);
         }
-
-        if (!service->showOnCurrentPlatform()) {
-            return false;
-        }
-
-        if (blacklist.contains(service->desktopEntryName())) {
-            return false;
-        }
-
-        return true;
-    };
-
-    return KApplicationTrader::query(filter);
+    }
 }
 
 void ApplicationListModel::load()
@@ -76,33 +94,58 @@ void ApplicationListModel::load()
     qDebug() << "Reloading folio app list...";
 
     // This function supports dynamic insertions and deletions to the existing
-    // list depending on what is given from queryApplications().
 
-    QMap<QString, int> storageIdMap; // <storageId, index>
-    for (int i = 0; i < m_delegates.size(); ++i) {
-        const auto &delegate = m_delegates[i];
-        storageIdMap.insert(delegate->application()->storageId(), i);
-    }
+    auto config = KSharedConfig::openConfig(QStringLiteral("applications-blacklistrc"));
+    auto blacklistConfigGroup = KConfigGroup(config, QStringLiteral("Applications"));
+    const QStringList blacklist = blacklistConfigGroup.readEntry("blacklist", QStringList());
 
-    const KService::List currentApps = queryApplications();
-    QList<KService::Ptr> toInsert;
+    QMap<QString, std::pair<KService::Ptr, QStringList>> newApplicationsMap;
+    QStringList orderedCategories;
 
-    for (const KService::Ptr &service : currentApps) {
-        auto it = storageIdMap.find(service->storageId());
-        if (it != storageIdMap.end()) {
-            // Service already in m_delegates
-            storageIdMap.erase(it);
-        } else {
-            // Service needs to be inserted into m_delegates
-            toInsert.append(std::move(service));
+    fetchAppsFromMenu(KServiceGroup::root(), QString(), blacklist, newApplicationsMap, orderedCategories);
+
+    // Menu files provide category membership, but must not determine which apps
+    // are available in All Apps (for example, when no application menu is installed).
+    const auto applications = KApplicationTrader::query([&blacklist](const KService::Ptr &service) {
+        return !service->noDisplay() && service->showOnCurrentPlatform() && !blacklist.contains(service->desktopEntryName());
+    });
+    for (const auto &service : applications) {
+        if (!newApplicationsMap.contains(service->storageId())) {
+            newApplicationsMap.insert(service->storageId(), {service, {}});
         }
     }
 
-    QList<int> toRemove;
-    for (int index : storageIdMap.values()) {
-        toRemove.append(index);
+    QMap<QString, int> storageIdMap; // <storageId, index>
+    for (int i = 0; i < m_delegates.size(); ++i) {
+        if (m_delegates[i]->application()) {
+            storageIdMap.insert(m_delegates[i]->application()->storageId(), i);
+        }
     }
 
+    QList<std::pair<KService::Ptr, QStringList>> toInsert;
+    bool categoriesUpdated = false;
+
+    for (auto mapIterator = newApplicationsMap.constBegin(); mapIterator != newApplicationsMap.constEnd(); ++mapIterator) {
+        auto it = storageIdMap.find(mapIterator.key());
+        if (it != storageIdMap.end()) {
+            // Service already in m_delegates
+            int delegateIndex = it.value();
+            auto app = m_delegates[delegateIndex]->application();
+            if (app && app->categories() != mapIterator.value().second) {
+                app->setCategories(mapIterator.value().second);
+                categoriesUpdated = true;
+
+                QModelIndex modelIndex = index(delegateIndex, 0);
+                Q_EMIT dataChanged(modelIndex, modelIndex, {CategoryRole});
+            }
+            storageIdMap.erase(it);
+        } else {
+            // Service needs to be inserted into m_delegates
+            toInsert.append(mapIterator.value());
+        }
+    }
+
+    QList<int> toRemove = storageIdMap.values();
     std::sort(toRemove.begin(), toRemove.end());
 
     // Remove indices first, from end to start to avoid indices changing
@@ -122,33 +165,55 @@ void ApplicationListModel::load()
     }
 
     // Append new elements
-    for (const KService::Ptr &service : toInsert) {
-        FolioApplication::Ptr app = std::make_shared<FolioApplication>(service);
-        FolioDelegate::Ptr delegate = std::make_shared<FolioDelegate>(app);
-
-        beginInsertRows({}, m_delegates.size(), m_delegates.size());
-        m_delegates.append(delegate);
+    if (!toInsert.isEmpty()) {
+        beginInsertRows({}, m_delegates.size(), m_delegates.size() + toInsert.size() - 1);
+        for (const auto &appPair : std::as_const(toInsert)) {
+            FolioApplication::Ptr app = std::make_shared<FolioApplication>(appPair.first, appPair.second);
+            FolioDelegate::Ptr delegate = std::make_shared<FolioDelegate>(app);
+            // get() exposes these shared_ptr-owned objects through an invokable
+            // method; QML must not take ownership of them.
+            QQmlEngine::setObjectOwnership(delegate.get(), QQmlEngine::CppOwnership);
+            m_delegates.append(delegate);
+        }
         endInsertRows();
+    }
+
+    // rebuild tab categories if insertions, removals, or category changes happened
+    if (!toRemove.isEmpty() || !toInsert.isEmpty() || categoriesUpdated) {
+        QStringList newCategories;
+        newCategories << i18nc("Label indicating app category for all applications", "All"); // we always put the "All" category first
+
+        // append categories in the order they were discovered in the menu tree
+        for (const QString &category : orderedCategories) {
+            if (!category.isEmpty() && !newCategories.contains(category)) {
+                newCategories << category;
+            }
+        }
+
+        if (m_categories != newCategories) {
+            m_categories = newCategories;
+            Q_EMIT categoriesChanged();
+        }
     }
 }
 
 QVariant ApplicationListModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid()) {
+    if (!index.isValid() || index.row() >= m_delegates.count()) {
         return QVariant();
     }
 
-    FolioDelegate::Ptr delegate = m_delegates.at(index.row());
+    auto delegate = m_delegates.at(index.row());
+    auto app = delegate->application();
 
     switch (role) {
     case Qt::DisplayRole:
     case DelegateRole:
         return QVariant::fromValue(delegate.get());
     case NameRole:
-        if (!delegate->application()) {
-            return QVariant();
-        }
-        return delegate->application()->name();
+        return app ? app->name() : QVariant();
+    case CategoryRole:
+        return app ? QVariant(app->categories()) : QVariant();
     default:
         return QVariant();
     }
@@ -163,11 +228,9 @@ int ApplicationListModel::rowCount(const QModelIndex &parent) const
     return m_delegates.count();
 }
 
-ApplicationListSearchModel::ApplicationListSearchModel(HomeScreen *parent, ApplicationListModel *model)
+ApplicationListSearchModel::ApplicationListSearchModel(QObject *parent)
     : QSortFilterProxyModel(parent)
 {
-    setSourceModel(model);
-
     setFilterRole(ApplicationListModel::NameRole);
     setFilterCaseSensitivity(Qt::CaseInsensitive);
 
@@ -176,4 +239,57 @@ ApplicationListSearchModel::ApplicationListSearchModel(HomeScreen *parent, Appli
     setSortLocaleAware(true);
 
     sort(0, Qt::AscendingOrder);
+
+    connect(this, &QSortFilterProxyModel::rowsInserted, this, &ApplicationListSearchModel::countChanged);
+    connect(this, &QSortFilterProxyModel::rowsRemoved, this, &ApplicationListSearchModel::countChanged);
+    connect(this, &QSortFilterProxyModel::modelReset, this, &ApplicationListSearchModel::countChanged);
+    connect(this, &QSortFilterProxyModel::layoutChanged, this, &ApplicationListSearchModel::countChanged);
+}
+
+void ApplicationListSearchModel::setCategoryFilter(const QString &category)
+{
+    if (m_categoryFilter != category) {
+        m_categoryFilter = category;
+        Q_EMIT categoryFilterChanged();
+        beginFilterChange();
+        endFilterChange();
+    }
+}
+
+void ApplicationListSearchModel::setSearchString(const QString &search)
+{
+    if (m_searchString != search) {
+        m_searchString = search;
+        setFilterFixedString(search);
+        Q_EMIT searchStringChanged();
+    }
+}
+
+bool ApplicationListSearchModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
+{
+    if (!QSortFilterProxyModel::filterAcceptsRow(source_row, source_parent)) {
+        return false;
+    }
+
+    if (m_categoryFilter.isEmpty() || m_categoryFilter == i18n("All") || m_categoryFilter == QLatin1String("All")) {
+        return true;
+    }
+
+    QModelIndex index = sourceModel()->index(source_row, 0, source_parent);
+
+    QStringList rowCategories = sourceModel()->data(index, ApplicationListModel::CategoryRole).toStringList();
+
+    return rowCategories.contains(m_categoryFilter);
+}
+
+QVariant ApplicationListSearchModel::get(int row, const QString &roleName) const
+{
+    if (row < 0 || row >= rowCount())
+        return QVariant();
+
+    int role = roleNames().key(roleName.toUtf8(), -1);
+    if (role == -1)
+        return QVariant();
+
+    return data(index(row, 0), role);
 }
