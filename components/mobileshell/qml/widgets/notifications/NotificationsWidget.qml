@@ -8,7 +8,6 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Window 2.2
-import Qt5Compat.GraphicalEffects
 
 import org.kde.kirigami as Kirigami
 

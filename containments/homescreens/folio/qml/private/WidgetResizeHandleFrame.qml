@@ -4,7 +4,6 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls as QQC2
-import Qt5Compat.GraphicalEffects
 
 import org.kde.kirigami as Kirigami
 import plasma.applet.org.kde.plasma.mobile.homescreen.folio as Folio
@@ -190,9 +189,9 @@ Item {
 
         width: Math.round(Math.max(height, resizeOutline.width * 0.3)) + touchPadding * 2
 
-        onPressed: pressedHandler(orientation)
-        onDragEvent: (leftEdgeDelta, rightEdgeDelta, topEdgeDelta, bottomEdgeDelta) => dragHandler(orientation, leftEdgeDelta, rightEdgeDelta, topEdgeDelta, bottomEdgeDelta)
-        onReleased: releaseHandler(orientation)
+        onPressed: root.pressedHandler(orientation)
+        onDragEvent: (leftEdgeDelta, rightEdgeDelta, topEdgeDelta, bottomEdgeDelta) => root.dragHandler(orientation, leftEdgeDelta, rightEdgeDelta, topEdgeDelta, bottomEdgeDelta)
+        onReleased: root.releaseHandler(orientation)
     }
 
     WidgetResizeHandle {
@@ -204,9 +203,9 @@ Item {
 
         height: Math.round(Math.max(width, resizeOutline.height * 0.3)) + touchPadding * 2
 
-        onPressed: pressedHandler(orientation)
-        onDragEvent: (leftEdgeDelta, rightEdgeDelta, topEdgeDelta, bottomEdgeDelta) => dragHandler(orientation, leftEdgeDelta, rightEdgeDelta, topEdgeDelta, bottomEdgeDelta)
-        onReleased: releaseHandler(orientation)
+        onPressed: root.pressedHandler(orientation)
+        onDragEvent: (leftEdgeDelta, rightEdgeDelta, topEdgeDelta, bottomEdgeDelta) => root.dragHandler(orientation, leftEdgeDelta, rightEdgeDelta, topEdgeDelta, bottomEdgeDelta)
+        onReleased: root.releaseHandler(orientation)
     }
 
     WidgetResizeHandle {
@@ -218,9 +217,9 @@ Item {
 
         height: Math.round(Math.max(width, resizeOutline.height * 0.3)) + touchPadding * 2
 
-        onPressed: pressedHandler(orientation)
-        onDragEvent: (leftEdgeDelta, rightEdgeDelta, topEdgeDelta, bottomEdgeDelta) => dragHandler(orientation, leftEdgeDelta, rightEdgeDelta, topEdgeDelta, bottomEdgeDelta)
-        onReleased: releaseHandler(orientation)
+        onPressed: root.pressedHandler(orientation)
+        onDragEvent: (leftEdgeDelta, rightEdgeDelta, topEdgeDelta, bottomEdgeDelta) => root.dragHandler(orientation, leftEdgeDelta, rightEdgeDelta, topEdgeDelta, bottomEdgeDelta)
+        onReleased: root.releaseHandler(orientation)
     }
 
     WidgetResizeHandle {
@@ -232,8 +231,8 @@ Item {
 
         width: Math.round(Math.max(height, resizeOutline.width * 0.3)) + touchPadding * 2
 
-        onPressed: pressedHandler(orientation)
-        onDragEvent: (leftEdgeDelta, rightEdgeDelta, topEdgeDelta, bottomEdgeDelta) => dragHandler(orientation, leftEdgeDelta, rightEdgeDelta, topEdgeDelta, bottomEdgeDelta)
-        onReleased: releaseHandler(orientation)
+        onPressed: root.pressedHandler(orientation)
+        onDragEvent: (leftEdgeDelta, rightEdgeDelta, topEdgeDelta, bottomEdgeDelta) => root.dragHandler(orientation, leftEdgeDelta, rightEdgeDelta, topEdgeDelta, bottomEdgeDelta)
+        onReleased: root.releaseHandler(orientation)
     }
 }

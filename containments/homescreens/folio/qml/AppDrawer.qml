@@ -4,7 +4,6 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls as Controls
-import Qt5Compat.GraphicalEffects
 
 import org.kde.plasma.components 3.0 as PC3
 import org.kde.kirigami as Kirigami

@@ -4,7 +4,6 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls as QQC2
-import Qt5Compat.GraphicalEffects
 
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.core as PlasmaCore
@@ -15,6 +14,8 @@ import plasma.applet.org.kde.plasma.mobile.homescreen.folio as Folio
 
 import './delegate'
 import './private'
+
+pragma ComponentBehavior: Bound
 
 // Placeholder item that the user sees as they drag widgets around.
 // See DelegateDragItem for the equivalent for app delegates.
@@ -27,14 +28,14 @@ Item {
 
     property Folio.FolioWidget widget
 
-    readonly property bool isWidgetDelegate: folio.HomeScreenState.dragState.dropDelegate
-        && folio.HomeScreenState.dragState.dropDelegate.type === Folio.FolioDelegate.Widget
-        && folio.HomeScreenState.dragState.dropDelegate.widget.visualApplet
+    readonly property bool isWidgetDelegate: root.folio.HomeScreenState.dragState.dropDelegate
+        && root.folio.HomeScreenState.dragState.dropDelegate.type === Folio.FolioDelegate.Widget
+        && root.folio.HomeScreenState.dragState.dropDelegate.widget.visualApplet
     readonly property bool dropAnimationRunning: dragXAnim.running || dragYAnim.running
 
     visible: false
-    x: Math.round(folio.HomeScreenState.delegateDragX)
-    y: Math.round(folio.HomeScreenState.delegateDragY)
+    x: Math.round(root.folio.HomeScreenState.delegateDragX)
+    y: Math.round(root.folio.HomeScreenState.delegateDragY)
 
     function startDrag(widget) {
         root.widget = widget;
@@ -42,10 +43,10 @@ Item {
     }
 
     function setXBinding() {
-        x = Qt.binding(() => Math.round(folio.HomeScreenState.delegateDragX));
+        x = Qt.binding(() => Math.round(root.folio.HomeScreenState.delegateDragX));
     }
     function setYBinding() {
-        y = Qt.binding(() => Math.round(folio.HomeScreenState.delegateDragY));
+        y = Qt.binding(() => Math.round(root.folio.HomeScreenState.delegateDragY));
     }
 
     // animate drop x
@@ -76,19 +77,19 @@ Item {
 
     Connections {
         id: stateWatcher
-        target: folio.HomeScreenState
+        target: root.folio.HomeScreenState
 
         function onDelegateDragStarted() {
             if (!root.isWidgetDelegate) {
                 return;
             }
 
-            root.startDrag(folio.HomeScreenState.dragState.dropDelegate.widget);
+            root.startDrag(root.folio.HomeScreenState.dragState.dropDelegate.widget);
         }
     }
 
     Connections {
-        target: folio.HomeScreenState.dragState
+        target: root.folio.HomeScreenState.dragState
 
         // animate from when the delegate is dropped to its drop position
         function onDelegateDroppedAndPlaced() {
@@ -96,10 +97,10 @@ Item {
                 return;
             }
 
-            let dragState = folio.HomeScreenState.dragState;
+            let dragState = root.folio.HomeScreenState.dragState;
             let dropPosition = dragState.candidateDropPosition;
 
-            let pos = folio.HomeScreenState.getPageDelegateScreenPosition(dropPosition.page, dropPosition.pageRow, dropPosition.pageColumn);
+            let pos = root.folio.HomeScreenState.getPageDelegateScreenPosition(dropPosition.page, dropPosition.pageRow, dropPosition.pageColumn);
 
             dragXAnim.to = pos.x;
             dragYAnim.to = pos.y;

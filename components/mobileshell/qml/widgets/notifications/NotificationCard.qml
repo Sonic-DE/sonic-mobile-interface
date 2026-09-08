@@ -2,13 +2,10 @@
 // SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
 
 import QtQuick
-import QtQuick.Effects
 import QtQuick.Controls
-import Qt5Compat.GraphicalEffects
 
 import org.kde.kirigami as Kirigami
 
-import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.plasma.private.mobileshell as MobileShell
 
 Item {
@@ -84,7 +81,9 @@ Item {
 
     implicitHeight: contentParent.implicitHeight
 
-    NumberAnimation on dragOffset {
+    // The declarative "animation on property" idiom combined with the property
+    // initializer is intentional; dragAnim drives dragOffset imperatively.
+    NumberAnimation on dragOffset { // qmllint disable duplicate-property-binding
         id: dragAnim
         duration: Kirigami.Units.longDuration
         easing.type: Easing.OutCubic
@@ -110,7 +109,7 @@ Item {
         anchors.rightMargin: root.dragOffset < 0 ? -root.dragOffset : 0
         anchors.top: parent.top
 
-        implicitHeight: inPopupDrawer ? currentPopupHeight : contentParent.implicitHeight
+        implicitHeight: root.inPopupDrawer ? root.currentPopupHeight : contentParent.implicitHeight
         Behavior on implicitHeight {
             NumberAnimation {
                 duration: Kirigami.Units.veryLongDuration
@@ -125,9 +124,9 @@ Item {
             anchors.top: parent.top
             width: root.width
             height: 2
-            value: remainingTimeProgress
+            value: root.remainingTimeProgress
 
-            opacity: closeTimerRunning ? 1 : 0
+            opacity: root.closeTimerRunning ? 1 : 0
             Behavior on opacity {
                 NumberAnimation {
                     duration: Kirigami.Units.longDuration
@@ -135,7 +134,7 @@ Item {
                 }
             }
 
-            background: Item
+            background: Item {}
 
             contentItem: Item {
                 implicitWidth: parent.width
@@ -180,7 +179,7 @@ Item {
             anchors.right: root.dragOffset < 0 ? parent.right : undefined
 
             width: root.width
-            implicitHeight: contentItem.implicitHeight + contentItem.anchors.topMargin + contentItem.anchors.bottomMargin
+            implicitHeight: root.contentItem.implicitHeight + root.contentItem.anchors.topMargin + root.contentItem.anchors.bottomMargin
         }
     }
 
@@ -188,7 +187,7 @@ Item {
         id: dragHandler
         enabled: root.swipeGestureEnabled
         yAxis.enabled: false
-        xAxis.enabled: !inPopupDrawer
+        xAxis.enabled: !root.inPopupDrawer
 
         property real startDragOffset: 0
         property real startPosition: 0

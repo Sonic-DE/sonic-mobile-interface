@@ -2,30 +2,32 @@
 // SPDX-License-Identifier: LGPL-2.0-or-later
 
 import QtQuick
-import QtQuick.Layouts
-import QtQuick.Controls as Controls
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 
 import org.kde.kirigami as Kirigami
 
-OpacityMask {
+pragma ComponentBehavior: Bound
+
+MultiEffect {
     id: root
 
     property var flickable
 
+    maskEnabled: true
     source: flickable
     maskSource: Rectangle {
         id: mask
-        width: flickable.width
-        height: flickable.height
+        width: root.flickable.width
+        height: root.flickable.height
+        layer.enabled: true
 
-        property real gradientPct: (Kirigami.Units.gridUnit * 2) / flickable.height
+        property real gradientPct: (Kirigami.Units.gridUnit * 2) / root.flickable.height
 
         gradient: Gradient {
-            GradientStop { position: 0.0; color: flickable.atYBeginning ? 'white' : 'transparent' }
-            GradientStop { position: mask.gradientPct; color: 'white' }
-            GradientStop { position: 1.0 - mask.gradientPct; color: 'white' }
-            GradientStop { position: 1.0; color: flickable.atYEnd ? 'white' : 'transparent' }
+            GradientStop { position: 0.0; color: root.flickable.atYBeginning ? "white" : "transparent" }
+            GradientStop { position: mask.gradientPct; color: "white" }
+            GradientStop { position: 1.0 - mask.gradientPct; color: "white" }
+            GradientStop { position: 1.0; color: root.flickable.atYEnd ? "white" : "transparent" }
         }
     }
 }

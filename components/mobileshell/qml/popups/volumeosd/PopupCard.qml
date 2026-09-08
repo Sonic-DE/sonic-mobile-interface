@@ -7,15 +7,9 @@
 
 import QtQuick
 import QtQuick.Controls as Controls
-import QtQuick.Layouts
 import QtQuick.Window
 
-import QtQuick.Effects
-import Qt5Compat.GraphicalEffects
-
 import org.kde.kirigami as Kirigami
-import org.kde.ksvg 1.0 as KSvg
-import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.plasma.private.mobileshell as MobileShell
 
 Controls.Control {
@@ -27,10 +21,10 @@ Controls.Control {
     padding: Kirigami.Units.largeSpacing
 
     transform: Scale {
-        origin.x: Math.round(implicitWidth / 2)
-        origin.y: Math.round(height / 2)
-        xScale: scaleFactor
-        yScale: scaleFactor
+        origin.x: Math.round(content.implicitWidth / 2)
+        origin.y: Math.round(content.height / 2)
+        xScale: content.scaleFactor
+        yScale: content.scaleFactor
     }
 
     Kirigami.Theme.colorSet: Kirigami.Theme.View

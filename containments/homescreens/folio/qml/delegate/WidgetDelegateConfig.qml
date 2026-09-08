@@ -4,7 +4,7 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls as QQC2
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.core as PlasmaCore
@@ -14,6 +14,8 @@ import org.kde.plasma.components 3.0 as PC3
 import plasma.applet.org.kde.plasma.mobile.homescreen.folio as Folio
 
 import '../private'
+
+pragma ComponentBehavior: Bound
 
 Item {
     id: root
@@ -88,7 +90,7 @@ Item {
         }
 
         Connections {
-            target: folio.HomeScreenState
+            target: root.folio.HomeScreenState
 
             // if we are starting drag-and-drop, close the menu immediately
             function onDelegateDragStarted() {
@@ -98,10 +100,13 @@ Item {
         }
 
         // the config overlay
-        FastBlur {
+        MultiEffect {
             anchors.fill: parent
             source: configPopup.contentItem
-            radius: 0
+            blurEnabled: false
+            blurMax: 2
+            blur: 0
+            blurMultiplier: 0
         }
     }
 
@@ -137,7 +142,7 @@ Item {
         }
 
         Connections {
-            target: folio.HomeScreenState
+            target: root.folio.HomeScreenState
 
             // don't show config overlay if we have navigated to another page
             function onCurrentPageChanged() {
@@ -190,7 +195,7 @@ Item {
             PC3.Button {
                 id: button
                 icon.name: 'settings-configure'
-                text: i18n("Options")
+                text: i18n("Options") // qmllint disable unqualified
                 display: (resizeFrame.handleContainer.width > Kirigami.Units.gridUnit * 7) ? PC3.Button.TextBesideIcon : PC3.Button.IconOnly
 
                 readonly property var handleContainer: resizeFrame.handleContainer
@@ -204,7 +209,7 @@ Item {
                 id: contextMenuDialog
                 preferredWidth: Kirigami.Units.gridUnit * 20
                 padding: 0
-                title: i18n("Widget Options")
+                title: i18n("Widget Options") // qmllint disable unqualified
 
                 // workaround: remove background so that it doesn't remain if the widget is deleted (and this is de-initialized without closing)
                 QQC2.Overlay.modal: null
@@ -220,6 +225,8 @@ Item {
                         model: root.widget.applet ? [...root.widget.applet.contextualActions, configureAppletAction, removeDelegateAction] : [removeDelegateAction]
 
                         delegate: QQC2.ItemDelegate {
+                            required property var modelData
+
                             Layout.fillWidth: true
                             Layout.preferredHeight: Kirigami.Units.gridUnit * 2
 
@@ -244,14 +251,14 @@ Item {
     Kirigami.Action {
         id: removeDelegateAction
         icon.name: 'edit-delete-remove'
-        text: i18n("Remove widget")
+        text: i18n("Remove widget") // qmllint disable unqualified
         onTriggered: root.removeRequested()
     }
 
     Kirigami.Action {
         id: configureAppletAction
         icon.name: 'settings-configure'
-        text: i18n("Configure widget")
+        text: i18n("Configure widget") // qmllint disable unqualified
         onTriggered: root.widget.applet.internalAction('configure').trigger();
     }
 }

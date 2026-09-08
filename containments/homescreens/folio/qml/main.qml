@@ -5,7 +5,6 @@ import QtQuick
 import QtQuick.Window
 import QtQuick.Layouts
 import QtQuick.Effects
-import Qt5Compat.GraphicalEffects
 
 import org.kde.kirigami as Kirigami
 
@@ -21,14 +20,16 @@ import plasma.applet.org.kde.plasma.mobile.homescreen.folio as Folio
 
 import "./private"
 
+pragma ComponentBehavior: Bound
+
 ContainmentItem {
     id: root
-    property Folio.HomeScreen folio: root.plasmoid
+    property Folio.HomeScreen folio: root.plasmoid // qmllint disable incompatible-type
 
     Component.onCompleted: {
-        folio.FolioSettings.load();
-        folio.FavouritesModel.load();
-        folio.PageListModel.load();
+        root.folio.FolioSettings.load();
+        root.folio.FavouritesModel.load();
+        root.folio.PageListModel.load();
     }
 
     property MobileShell.MaskManager maskManager: MobileShell.MaskManager {
@@ -44,17 +45,17 @@ ContainmentItem {
     // wallpaper blur layer
     MobileShell.BlurEffect {
         id: wallpaperBlur
-        active: folio.FolioSettings.wallpaperBlurEffect > 0
+        active: root.folio.FolioSettings.wallpaperBlurEffect > 0
         anchors.fill: parent
-        sourceLayer: Plasmoid.wallpaperGraphicsObject
-        maskSourceLayer: folio.FolioSettings.wallpaperBlurEffect > 1 ? maskManager.maskLayer : null
+        sourceLayer: Plasmoid.wallpaperGraphicsObject // qmllint disable missing-property
+        maskSourceLayer: root.folio.FolioSettings.wallpaperBlurEffect > 1 ? root.maskManager.maskLayer : null
 
         fullBlur: Math.min(1,
                            Math.max(
                                1 - homeScreen.contentOpacity,
-                               folio.HomeScreenState.appDrawerOpenProgress * 2, // blur faster during swipe
-                               folio.HomeScreenState.searchWidgetOpenProgress * 1.5, // blur faster during swipe
-                               folio.HomeScreenState.folderOpenProgress
+                               root.folio.HomeScreenState.appDrawerOpenProgress * 2, // blur faster during swipe
+                               root.folio.HomeScreenState.searchWidgetOpenProgress * 1.5, // blur faster during swipe
+                               root.folio.HomeScreenState.folderOpenProgress
                            )
         )
     }
@@ -75,39 +76,39 @@ ContainmentItem {
         if (isInWindow) {
             // Only minimize windows and go to homescreen when not in docked mode
             if (!ShellSettings.Settings.convergenceModeEnabled) {
-                folio.HomeScreenState.closeFolder();
-                folio.HomeScreenState.closeSearchWidget();
-                folio.HomeScreenState.closeAppDrawer();
-                folio.HomeScreenState.goToPage(0, false);
+                root.folio.HomeScreenState.closeFolder();
+                root.folio.HomeScreenState.closeSearchWidget();
+                root.folio.HomeScreenState.closeAppDrawer();
+                root.folio.HomeScreenState.goToPage(0, false);
 
                 WindowPlugin.WindowUtil.minimizeAll();
             }
 
             // Always ensure settings view is closed
-            if (folio.HomeScreenState.viewState == Folio.HomeScreenState.SettingsView) {
-                folio.HomeScreenState.closeSettingsView();
+            if (root.folio.HomeScreenState.viewState == Folio.HomeScreenState.SettingsView) {
+                root.folio.HomeScreenState.closeSettingsView();
             }
 
         } else { // If we are already on the homescreen
-            switch (folio.HomeScreenState.viewState) {
+            switch (root.folio.HomeScreenState.viewState) {
                 case Folio.HomeScreenState.PageView:
-                    if (folio.HomeScreenState.currentPage === 0) {
-                        folio.HomeScreenState.openAppDrawer();
+                    if (root.folio.HomeScreenState.currentPage === 0) {
+                        root.folio.HomeScreenState.openAppDrawer();
                     } else {
-                        folio.HomeScreenState.goToPage(0, false);
+                        root.folio.HomeScreenState.goToPage(0, false);
                     }
                     break;
                 case Folio.HomeScreenState.AppDrawerView:
-                    folio.HomeScreenState.closeAppDrawer();
+                    root.folio.HomeScreenState.closeAppDrawer();
                     break;
                 case Folio.HomeScreenState.SearchWidgetView:
-                    folio.HomeScreenState.closeSearchWidget();
+                    root.folio.HomeScreenState.closeSearchWidget();
                     break;
                 case Folio.HomeScreenState.FolderView:
-                    folio.HomeScreenState.closeFolder();
+                    root.folio.HomeScreenState.closeFolder();
                     break;
                 case Folio.HomeScreenState.SettingsView:
-                    folio.HomeScreenState.closeSettingsView();
+                    root.folio.HomeScreenState.closeSettingsView();
                     break;
             }
         }
@@ -120,7 +121,7 @@ ContainmentItem {
         anchors.fill: parent
         color: Qt.rgba(0, 0, 0, 0.6)
 
-        opacity: folio.HomeScreenState.appDrawerOpenProgress
+        opacity: root.folio.HomeScreenState.appDrawerOpenProgress
     }
 
     Rectangle {
@@ -128,7 +129,7 @@ ContainmentItem {
         anchors.fill: parent
         color: Qt.rgba(0, 0, 0, 0.3)
 
-        opacity: folio.HomeScreenState.searchWidgetOpenProgress
+        opacity: root.folio.HomeScreenState.searchWidgetOpenProgress
     }
 
     Rectangle {
@@ -136,7 +137,7 @@ ContainmentItem {
         anchors.fill: parent
         color: Qt.rgba(0, 0, 0, 0.3)
 
-        opacity: folio.HomeScreenState.settingsOpenProgress
+        opacity: root.folio.HomeScreenState.settingsOpenProgress
     }
 
     MobileShell.HomeScreen {
@@ -176,12 +177,12 @@ ContainmentItem {
     MobileShell.BlurEffect {
         id: homescreenBlur
         anchors.fill: parent
-        active: folio.FolioSettings.wallpaperBlurEffect > 1 && ((delegateDragItem.visible && folio.HomeScreenState.dragState.dropDelegate.type === Folio.FolioDelegate.Folder) || wallpaperSelectorLoader.active)
+        active: root.folio.FolioSettings.wallpaperBlurEffect > 1 && ((delegateDragItem.visible && root.folio.HomeScreenState.dragState.dropDelegate.type === Folio.FolioDelegate.Folder) || wallpaperSelectorLoader.active)
         visible: active
         fullBlur: 0
 
         sourceLayer: homeScreenLayer
-        maskSourceLayer: frontMaskManager.maskLayer
+        maskSourceLayer: root.frontMaskManager.maskLayer
 
         // stacking both wallpaper and homescreen layers so we can blur them in one pass
         Item {
@@ -194,7 +195,7 @@ ContainmentItem {
                 anchors.fill: parent
 
                 textureSize: homescreenBlur.textureSize
-                sourceItem: Plasmoid.wallpaperGraphicsObject
+                sourceItem: Plasmoid.wallpaperGraphicsObject // qmllint disable missing-property
                 hideSource: false
             }
 
@@ -230,7 +231,7 @@ ContainmentItem {
         active: false
 
         onLoaded: {
-            wallpaperSelectorLoader.item.open();
+            wallpaperSelectorLoader.item.open(); // qmllint disable missing-property
         }
 
         sourceComponent: MobileShell.WallpaperSelector {

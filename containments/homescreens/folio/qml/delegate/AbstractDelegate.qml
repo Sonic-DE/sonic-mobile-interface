@@ -4,7 +4,6 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.1
 import QtQuick.Controls 2.3 as Controls
-import Qt5Compat.GraphicalEffects
 import QtQuick.Effects
 
 import org.kde.kirigami as Kirigami
@@ -118,8 +117,8 @@ Folio.DelegateTouchArea {
                 id: visualItem
 
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
-                Layout.minimumWidth: folio.FolioSettings.delegateIconSize
-                Layout.minimumHeight: folio.FolioSettings.delegateIconSize
+                Layout.minimumWidth: root.folio.FolioSettings.delegateIconSize
+                Layout.minimumHeight: root.folio.FolioSettings.delegateIconSize
                 Layout.preferredHeight: Layout.minimumHeight
 
                 // darken effect when hovered
@@ -137,8 +136,8 @@ Folio.DelegateTouchArea {
                 opacity: text.length > 0
 
                 Layout.fillWidth: true
-                Layout.preferredHeight: folio.HomeScreenState.pageDelegateLabelHeight
-                Layout.topMargin: folio.HomeScreenState.pageDelegateLabelSpacing
+                Layout.preferredHeight: root.folio.HomeScreenState.pageDelegateLabelHeight
+                Layout.topMargin: root.folio.HomeScreenState.pageDelegateLabelSpacing
                 Layout.leftMargin: -parent.anchors.leftMargin + Kirigami.Units.smallSpacing
                 Layout.rightMargin: -parent.anchors.rightMargin + Kirigami.Units.smallSpacing
 

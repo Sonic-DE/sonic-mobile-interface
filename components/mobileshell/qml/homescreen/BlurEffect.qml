@@ -3,8 +3,9 @@
 // SPDX-License-Identifier: LGPL-2.0-or-later
 
 import QtQuick
-import QtQuick.Layouts
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
+
+pragma ComponentBehavior: Bound
 
 Loader {
     id: root
@@ -32,13 +33,14 @@ Loader {
             visible: opacity > 0
 
             // wallpaper blur
-            // we attempted to use MultiEffect in the past, but it had very poor performance on the PinePhone
-            sourceItem: FastBlur {
+            sourceItem: MultiEffect {
                 height: controlledWallpaperSource.textureSize.height
                 width: controlledWallpaperSource.textureSize.width
 
-                cached: true
-                radius: root.fastBlurRadius
+                blurEnabled: true
+                blur: 1
+                blurMax: 42
+                blurMultiplier: 0
 
                 source: ShaderEffectSource {
                     anchors.fill: parent
@@ -51,7 +53,7 @@ Loader {
             }
         }
 
-        // load in the layer mask so we can utilize it with the OpacityMask
+        // load in the layer mask so we can utilize it with the MultiEffect mask
         Item {
             id: blurMask
             anchors.fill: parent
@@ -80,9 +82,10 @@ Loader {
         }
 
         // here we utilize the mask on the blur layer so we can blur behind the some homescreen items
-        OpacityMask {
+        MultiEffect {
             anchors.fill: parent
             source: controlledWallpaperSource
+            maskEnabled: true
             maskSource: blurMask
             visible: opacity > 0 && root.maskSourceLayer != null
         }

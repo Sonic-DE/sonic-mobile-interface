@@ -3,19 +3,17 @@
 // SPDX-License-Identifier: LGPL-2.0-or-later
 
 import QtQuick 2.15
-import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Effects
 
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.components 3.0 as PlasmaComponents
-import Qt5Compat.GraphicalEffects
 
 /**
  * This is a simple marquee (flowing) label based on PlasmaComponents Label.
  */
 
-OpacityMask {
+MultiEffect {
     id: root
     height: row.height
 
@@ -34,59 +32,77 @@ OpacityMask {
     onFilteredTextChanged: if (root.charactersOverflowing) { textAnimationLoop.restart() }
     onCharactersOverflowingChanged: if (charactersOverflowing) { row.scrollPosition = 0 }
 
-    Item {
-        id: rowContaner
-        anchors.fill: parent
-        height: row.height
-        opacity: 0 // we display with the opacity gradient below
+    maskEnabled: true
+    source: ShaderEffectSource {
+        sourceItem: Item {
+            id: rowContaner
+            anchors.fill: parent
+            height: row.height
 
-        // use two identical labels for scrolling so we can give the illusion of infinite scrolling
-        RowLayout {
-            id: row
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: parent.top
+            // use two identical labels for scrolling so we can give the illusion of infinite scrolling
+            RowLayout {
+                id: row
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
 
-            property real scrollPosition: 0
+                property real scrollPosition: 0
 
-            transform: [
-                Translate {
-                    x: row.scrollPosition
-                }
-            ]
+                transform: [
+                    Translate {
+                        x: row.scrollPosition
+                    }
+                ]
 
-            spacing: 32
+                spacing: 32
 
-            PlasmaComponents.Label {
-                id: label
-                font: root.font
-                textFormat: root.textFormat
-                text: filteredText
-
-                Layout.alignment: Qt.AlignLeft
-
-                TextMetrics {
-                    id: txtMeter
+                PlasmaComponents.Label {
+                    id: label
                     font: root.font
-                    text: filteredText
+                    textFormat: root.textFormat
+                    text: root.filteredText
+
+                    Layout.alignment: Qt.AlignLeft
+
+                    TextMetrics {
+                        id: txtMeter
+                        font: root.font
+                        text: root.filteredText
+                    }
                 }
-            }
 
-            PlasmaComponents.Label {
-                // hide this label when the text is not overflowing so the user never sees both labels
-                visible: textAnimationLoop.running
-                font: root.font
-                textFormat: root.textFormat
-                text: filteredText
+                PlasmaComponents.Label {
+                    // hide this label when the text is not overflowing so the user never sees both labels
+                    visible: textAnimationLoop.running
+                    font: root.font
+                    textFormat: root.textFormat
+                    text: root.filteredText
 
-                Layout.alignment: Qt.AlignLeft
-                Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignLeft
+                }
             }
         }
+        hideSource: true
+        live: true
     }
 
-    // setting the gradient mask source
-    source: rowContaner
+    maskSource: Rectangle {
+        id: mask
+        width: root.width
+        height: root.height
+        layer.enabled: true
+
+        property real gradientPct: (Kirigami.Units.gridUnit * 0.35) / root.width
+
+        gradient: Gradient {
+            orientation: Gradient.Horizontal
+
+            GradientStop { position: 0; color: row.scrollPosition == 0 || row.scrollPosition < -txtMeter.advanceWidth ? 'white' : 'transparent' }
+            GradientStop { position: 0 + mask.gradientPct; color: 'white' }
+            GradientStop { position: 1.0 - mask.gradientPct; color: 'white' }
+            GradientStop { position: 1.0; color: 'transparent' }
+        }
+    }
 
     // if the label is overflowing, this animation in a loop smoothly scrolling thought the text
     SequentialAnimation {
@@ -97,23 +113,4 @@ OpacityMask {
         PauseAnimation { duration: root.waitDuration }
         NumberAnimation { target: row; property: "scrollPosition"; from: 0; to: -txtMeter.advanceWidth - row.spacing; duration: (txtMeter.advanceWidth + row.spacing) / root.scrollSpeed }
     }
-
-    // gradient mask to smoothly fade the ends of the label when it is scrolling
-    maskSource: Rectangle {
-        id: mask
-        width: root.width
-        height: root.height
-
-        property real gradientPct: (Kirigami.Units.gridUnit * 0.35) / root.width
-
-        gradient: Gradient {
-            orientation: Gradient.Horizontal
-
-            GradientStop { position: 0; color: row.scrollPosition == 0 || row.scrollPosition < -txtMeter.advanceWidth ? 'white' : 'transparent' } // remove the beginning of the gradient when at the start of the label so the front text is fully visible
-            GradientStop { position: 0 + mask.gradientPct; color: 'white' }
-            GradientStop { position: 1.0 - mask.gradientPct; color: 'white' }
-            GradientStop { position: 1.0; color: 'transparent' }
-        }
-    }
 }
-

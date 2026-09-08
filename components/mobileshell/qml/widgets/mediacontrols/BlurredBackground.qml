@@ -3,9 +3,10 @@
 
 import QtQuick
 import QtQuick.Effects
-import Qt5Compat.GraphicalEffects
 
 import org.kde.kirigami as Kirigami
+
+pragma ComponentBehavior: Bound
 
 Item {
     id: root
@@ -16,10 +17,12 @@ Item {
 
     // clip corners so that the image has rounded corners
     layer.enabled: true
-    layer.effect: OpacityMask {
+    layer.effect: MultiEffect {
+        maskEnabled: true
         maskSource: Item {
             width: img.width
             height: img.height
+            layer.enabled: true
 
             Rectangle {
                 anchors.centerIn: parent

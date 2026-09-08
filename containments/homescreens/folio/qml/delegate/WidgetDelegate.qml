@@ -4,7 +4,6 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls as QQC2
-import Qt5Compat.GraphicalEffects
 
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.core as PlasmaCore
@@ -77,7 +76,7 @@ Folio.WidgetContainer {
         KSvg.FrameSvgItem {
             id: widgetBackground
             anchors.fill: parent
-            enabledBorders: KSvg.FrameSvgItem.AllBorders
+            enabledBorders: KSvg.FrameSvg.AllBorders
             imagePath: {
                 if (!root.widget || !root.widget.applet || root.widget.applet.effectiveBackgroundHints === PlasmaCore.Types.NoBackground) {
                     return '';
@@ -101,10 +100,10 @@ Folio.WidgetContainer {
         Item {
             id: widgetHolder
             anchors.fill: parent
-            anchors.leftMargin: (root.widget && root.widget.applet && root.widget.applet.constraintHints === PlasmaCore.Types.CanFillArea) ? 0 : widgetBackground.margins.left
-            anchors.rightMargin: (root.widget && root.widget.applet && root.widget.applet.constraintHints === PlasmaCore.Types.CanFillArea) ? 0 : widgetBackground.margins.right
-            anchors.topMargin: (root.widget && root.widget.applet && root.widget.applet.constraintHints === PlasmaCore.Types.CanFillArea) ? 0 : widgetBackground.margins.top
-            anchors.bottomMargin: (root.widget && root.widget.applet && root.widget.applet.constraintHints === PlasmaCore.Types.CanFillArea) ? 0 : widgetBackground.margins.bottom
+            anchors.leftMargin: (root.widget && root.widget.applet && root.widget.applet.constraintHints === PlasmaCore.Types.CanFillArea) ? 0 : widgetBackground.margins.left // qmllint disable missing-property
+            anchors.rightMargin: (root.widget && root.widget.applet && root.widget.applet.constraintHints === PlasmaCore.Types.CanFillArea) ? 0 : widgetBackground.margins.right // qmllint disable missing-property
+            anchors.topMargin: (root.widget && root.widget.applet && root.widget.applet.constraintHints === PlasmaCore.Types.CanFillArea) ? 0 : widgetBackground.margins.top // qmllint disable missing-property
+            anchors.bottomMargin: (root.widget && root.widget.applet && root.widget.applet.constraintHints === PlasmaCore.Types.CanFillArea) ? 0 : widgetBackground.margins.bottom // qmllint disable missing-property
         }
 
         // TODO implement blur behind, see plasma-workspace BasicAppletContainer for how to do this
