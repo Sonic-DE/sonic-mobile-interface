@@ -16,3 +16,8 @@ target_compile_definitions(folioappdrawertest PRIVATE FOLIO_PLUGIN_PATH="$<TARGE
 add_dependencies(folioappdrawertest org.kde.plasma.mobile.homescreen.folio)
 add_test(NAME folioappdrawertest COMMAND folioappdrawertest -input ${CMAKE_CURRENT_SOURCE_DIR}/folio)
 set_tests_properties(folioappdrawertest PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=xcb;QSG_RHI_BACKEND=opengl")
+
+add_executable(marqueelabeltest marqueelabeltest.cpp)
+target_link_libraries(marqueelabeltest PRIVATE Qt6::QuickTest Qt6::Test)
+add_test(NAME marqueelabeltest COMMAND marqueelabeltest -input ${CMAKE_CURRENT_SOURCE_DIR}/marqueelabel)
+set_tests_properties(marqueelabeltest PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=xcb;QSG_RHI_BACKEND=opengl")
