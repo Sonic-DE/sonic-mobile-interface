@@ -114,5 +114,28 @@ Item {
             label.font.pixelSize = 40;
             tryCompare(animation, "running", true);
         }
+
+        function test_maskingOnlyForOverflowingText() {
+            const label = createTemporaryObject(labelComponent, scene, { inputText: "Short", width: 300 });
+            verify(label);
+            const animation = animationFor(label);
+            compare(label.charactersOverflowing, false);
+            compare(label.layer.enabled, false);
+            compare(animation.running, false);
+
+            label.width = 10;
+            tryCompare(label.layer, "enabled", true);
+            tryCompare(animation, "running", true);
+
+            label.scrollingEnabled = false;
+            compare(animation.running, false);
+            // Text that still overflows must stay clipped and masked even when scrolling is disabled.
+            compare(label.layer.enabled, true);
+
+            label.width = 300;
+            tryCompare(label.layer, "enabled", false);
+            label.inputText = "";
+            compare(label.layer.enabled, false);
+        }
     }
 }

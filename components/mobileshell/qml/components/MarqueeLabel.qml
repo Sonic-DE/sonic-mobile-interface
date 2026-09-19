@@ -13,7 +13,7 @@ import org.kde.plasma.components 3.0 as PlasmaComponents
  * This is a simple marquee (flowing) label based on PlasmaComponents Label.
  */
 
-MultiEffect {
+Item {
     id: root
     height: row.height
 
@@ -36,75 +36,75 @@ MultiEffect {
     onFilteredTextChanged: if (root.shouldAnimate) { textAnimationLoop.restart() }
     onCharactersOverflowingChanged: if (charactersOverflowing) { row.scrollPosition = 0 }
 
-    maskEnabled: true
-    source: ShaderEffectSource {
-        sourceItem: Item {
-            id: rowContaner
-            anchors.fill: parent
-            height: row.height
+    Item {
+        id: rowContaner
+        anchors.fill: parent
+        height: row.height
 
-            // use two identical labels for scrolling so we can give the illusion of infinite scrolling
-            RowLayout {
-                id: row
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: parent.top
+        // use two identical labels for scrolling so we can give the illusion of infinite scrolling
+        RowLayout {
+            id: row
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
 
-                property real scrollPosition: 0
+            property real scrollPosition: 0
 
-                transform: [
-                    Translate {
-                        x: row.scrollPosition
-                    }
-                ]
-
-                spacing: 32
-
-                PlasmaComponents.Label {
-                    id: label
-                    font: root.font
-                    textFormat: root.textFormat
-                    text: root.filteredText
-
-                    Layout.alignment: Qt.AlignLeft
-
-                    TextMetrics {
-                        id: txtMeter
-                        font: root.font
-                        text: root.filteredText
-                    }
+            transform: [
+                Translate {
+                    x: row.scrollPosition
                 }
+            ]
 
-                PlasmaComponents.Label {
-                    // hide this label when the text is not overflowing so the user never sees both labels
-                    visible: textAnimationLoop.running
+            spacing: 32
+
+            PlasmaComponents.Label {
+                id: label
+                font: root.font
+                textFormat: root.textFormat
+                text: root.filteredText
+
+                Layout.alignment: Qt.AlignLeft
+
+                TextMetrics {
+                    id: txtMeter
                     font: root.font
-                    textFormat: root.textFormat
                     text: root.filteredText
-
-                    Layout.alignment: Qt.AlignLeft
                 }
             }
+
+            PlasmaComponents.Label {
+                // hide this label when the text is not overflowing so the user never sees both labels
+                visible: textAnimationLoop.running
+                font: root.font
+                textFormat: root.textFormat
+                text: root.filteredText
+
+                Layout.alignment: Qt.AlignLeft
+            }
         }
-        hideSource: true
-        live: true
     }
 
-    maskSource: Rectangle {
-        id: mask
-        width: root.width
-        height: root.height
-        layer.enabled: true
+    // gradient mask to smoothly fade the ends of the label when it is scrolling
+    layer.enabled: root.charactersOverflowing
+    layer.effect: MultiEffect {
+        maskEnabled: true
+        maskSource: Rectangle {
+            id: mask
+            width: root.width
+            height: root.height
+            layer.enabled: true
 
-        property real gradientPct: (Kirigami.Units.gridUnit * 0.35) / root.width
+            property real gradientPct: (Kirigami.Units.gridUnit * 0.35) / root.width
 
-        gradient: Gradient {
-            orientation: Gradient.Horizontal
+            gradient: Gradient {
+                orientation: Gradient.Horizontal
 
-            GradientStop { position: 0; color: row.scrollPosition == 0 || row.scrollPosition < -root.textAdvanceWidth ? 'white' : 'transparent' }
-            GradientStop { position: 0 + mask.gradientPct; color: 'white' }
-            GradientStop { position: 1.0 - mask.gradientPct; color: 'white' }
-            GradientStop { position: 1.0; color: 'transparent' }
+                GradientStop { position: 0; color: row.scrollPosition == 0 || row.scrollPosition < -root.textAdvanceWidth ? 'white' : 'transparent' } // remove the beginning of the gradient when at the start of the label so the front text is fully visible
+                GradientStop { position: 0 + mask.gradientPct; color: 'white' }
+                GradientStop { position: 1.0 - mask.gradientPct; color: 'white' }
+                GradientStop { position: 1.0; color: 'transparent' }
+            }
         }
     }
 
