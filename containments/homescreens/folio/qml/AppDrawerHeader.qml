@@ -33,6 +33,10 @@ ColumnLayout {
         folio.HomeScreenState.goToAppDrawerPage(0, false);
     }
 
+    function removeLastSearchCharacter(): void {
+        searchField.text = searchField.text.slice(0, -1);
+    }
+
     function clearSearchText(): void {
         searchField.text = '';
     }
