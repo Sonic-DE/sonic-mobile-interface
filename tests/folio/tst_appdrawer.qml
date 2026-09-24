@@ -2,6 +2,7 @@
 
 import QtQuick
 import QtTest
+import org.kde.kirigami as Kirigami
 import plasma.applet.org.kde.plasma.mobile.homescreen.folio as Folio
 import "../../containments/homescreens/folio/qml" as Drawer
 
@@ -77,17 +78,53 @@ TestCase {
         compare(search.get(0, "delegate").application.storageId, storageId);
     }
 
-    function test_headerKeyboardNavigation() {
+    function test_headerKeyboardNavigation_data() {
+        return [
+            { tag: "down", key: Qt.Key_Down },
+            { tag: "tab", key: Qt.Key_Tab }
+        ];
+    }
+
+    function test_headerKeyboardNavigation(data) {
         const header = createTemporaryObject(headerComponent, testCase);
         verify(header);
         focusSpy.target = header;
         focusSpy.clear();
         header.focusSearchBar();
-        keyClick(Qt.Key_Down);
+        verify(header.searchField.activeFocus);
+
+        keyClick(data.key);
+        verify(header.tabbar.activeFocus);
+        verify(header.tabbar.keyboardFocus);
+        compare(focusSpy.count, 0);
+
+        keyClick(data.key);
         compare(focusSpy.count, 1);
-        header.focusSearchBar();
-        keyClick(Qt.Key_Tab);
-        compare(focusSpy.count, 2);
+    }
+
+    function test_headerReverseKeyboardNavigation_data() {
+        return [
+            { tag: "up", key: Qt.Key_Up },
+            { tag: "backtab", key: Qt.Key_Backtab }
+        ];
+    }
+
+    function test_headerReverseKeyboardNavigation(data) {
+        const header = createTemporaryObject(headerComponent, testCase);
+        verify(header);
+        header.focusTabBar();
+        verify(header.tabbar.activeFocus);
+        keyClick(data.key);
+        verify(header.searchField.activeFocus);
+        compare(header.tabbar.keyboardFocus, false);
+    }
+
+    function test_headerPillUsesCompactSizing() {
+        const header = createTemporaryObject(headerComponent, testCase);
+        verify(header);
+        compare(header.tabbar.implicitHeight, Kirigami.Units.gridUnit * 1.5);
+        compare(header.tabbar.font.pointSize, Kirigami.Theme.smallFont.pointSize);
+        compare(header.tabbar.font.pixelSize, Kirigami.Theme.smallFont.pixelSize);
     }
 
     function test_forwardedSearchReturnsToAllApps() {
