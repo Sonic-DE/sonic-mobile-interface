@@ -96,6 +96,10 @@ ContainmentItem {
     Connections {
         target: root.panel
 
+        function onWidthChanged() {
+            root.updateTouchArea();
+        }
+
         function onThicknessChanged() {
             if (root.panel.thickness !== root.panelHeight) {
                 root.panel.thickness = root.panelHeight;
