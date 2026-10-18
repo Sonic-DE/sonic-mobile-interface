@@ -18,10 +18,9 @@ KWinSettings::KWinSettings(QObject *parent)
     , m_config{KSharedConfig::openConfig(CONFIG_FILE)}
     , m_overlayConfig{KSharedConfig::openConfig(OVERLAY_CONFIG_FILE)}
 {
-    m_configWatcher = KConfigWatcher::create(m_config);
-    connect(m_configWatcher.data(), &KConfigWatcher::configChanged, this, [this](const KConfigGroup &group, const QByteArrayList &names) -> void {
-        Q_UNUSED(names)
-        if (group.name() == SCREEN_EDGES_CONFIG_GROUP) {
+    m_overlayConfigWatcher = KConfigWatcher::create(m_overlayConfig);
+    connect(m_overlayConfigWatcher.data(), &KConfigWatcher::configChanged, this, [this](const KConfigGroup &group, const QByteArrayList &names) {
+        if (group.name() == SCREEN_EDGES_CONFIG_GROUP && names.contains(QByteArrayLiteral("TouchTarget"))) {
             Q_EMIT screenEdgeTouchTargetChanged();
         }
     });

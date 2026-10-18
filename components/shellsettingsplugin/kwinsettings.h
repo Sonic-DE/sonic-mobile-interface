@@ -53,7 +53,7 @@ Q_SIGNALS:
     void screenEdgeTouchTargetChanged();
 
 private:
-    KConfigWatcher::Ptr m_configWatcher;
+    KConfigWatcher::Ptr m_overlayConfigWatcher;
     KSharedConfig::Ptr m_config;
     KSharedConfig::Ptr m_overlayConfig;
 };
