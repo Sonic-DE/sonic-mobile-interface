@@ -4,6 +4,8 @@
     SPDX-License-Identifier: GPL-2.0-or-later
  */
 
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import org.kde.kirigami as Kirigami
 import plasma.applet.org.kde.plasma.mobile.homescreen.folio as Folio
@@ -14,7 +16,7 @@ AbstractAppDrawerGrid {
     id: root
     property var categoryAppGrid
 
-    readonly property int columns: Math.max(baseColumns - 2, 1)
+    columns: Math.max(baseColumns - 2, 1)
 
     // maximun amount of space available for a cell, used for calculating the category folder size
     readonly property real rawCellWidth: (width / columns)
@@ -43,9 +45,16 @@ AbstractAppDrawerGrid {
 
     signal pageLeftRequested()
 
+    // Keyboard focus on category delegate when it is the selected item
+    onCurrentItemChanged: (currentItem as CategoryDelegate)?.keyboardFocus()
+
     signal expandCategory(categoryGrid: var, expandCategoryLayout: var, categoryTitle: string)
 
     delegate: CategoryDelegate {
+        required property var modelData
+        required property int index
+
+        delegateIndex: index
         folio: root.folio
         homeScreen: root.homeScreen
         categoryAppGrid: root.categoryAppGrid

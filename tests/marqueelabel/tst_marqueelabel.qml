@@ -119,23 +119,32 @@ Item {
             const label = createTemporaryObject(labelComponent, scene, { inputText: "Short", width: 300 });
             verify(label);
             const animation = animationFor(label);
+            // The software renderer can't run the mask's shader, so overflowing text is clipped there instead.
+            const masked = label.GraphicsInfo.api !== GraphicsInfo.Software;
             compare(label.charactersOverflowing, false);
             compare(label.layer.enabled, false);
+            compare(label.clip, false);
             compare(animation.running, false);
 
             label.width = 10;
-            tryCompare(label.layer, "enabled", true);
+            tryCompare(label, "charactersOverflowing", true);
+            compare(label.layer.enabled, masked);
+            compare(label.clip, !masked);
             tryCompare(animation, "running", true);
 
             label.scrollingEnabled = false;
             compare(animation.running, false);
-            // Text that still overflows must stay clipped and masked even when scrolling is disabled.
-            compare(label.layer.enabled, true);
+            // Text that still overflows must stay clipped or masked even when scrolling is disabled.
+            compare(label.layer.enabled, masked);
+            compare(label.clip, !masked);
 
             label.width = 300;
-            tryCompare(label.layer, "enabled", false);
+            tryCompare(label, "charactersOverflowing", false);
+            compare(label.layer.enabled, false);
+            compare(label.clip, false);
             label.inputText = "";
             compare(label.layer.enabled, false);
+            compare(label.clip, false);
         }
     }
 }

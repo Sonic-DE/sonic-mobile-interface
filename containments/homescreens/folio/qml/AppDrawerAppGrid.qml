@@ -5,6 +5,8 @@
     SPDX-License-Identifier: GPL-2.0-or-later
  */
 
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.private.mobileshell as MobileShell
@@ -14,8 +16,6 @@ import "./private"
 
 AbstractAppDrawerGrid {
     id: root
-
-    readonly property int columns: baseColumns
 
     cellWidth: Math.floor(effectiveContentWidth / columns)
     cellHeight: Math.max(folio.FolioSettings.delegateIconSize + folio.HomeScreenState.pageDelegateLabelHeight + Kirigami.Units.gridUnit * 2, cellWidth * 0.75)
@@ -42,11 +42,16 @@ AbstractAppDrawerGrid {
 
     signal pageRightRequested()
 
+    // Keyboard focus on app delegate when it is the selected item
+    onCurrentItemChanged: (currentItem as AppDelegate)?.keyboardFocus()
+
     MobileShell.HapticsEffect {
         id: haptics
     }
 
     delegate: AppDelegate {
+        required property var model
+
         folio: root.folio
         shadow: false
         application: model.delegate.application

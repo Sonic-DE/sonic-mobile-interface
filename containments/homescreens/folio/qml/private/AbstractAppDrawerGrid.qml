@@ -31,7 +31,7 @@ MobileShell.GridView {
     signal focusHeaderRequested()
 
     Keys.onUpPressed: (event) => {
-        if (currentIndex < columns) {
+        if (currentIndex < root.columns) {
             focusHeaderRequested();
             event.accepted = true;
         } else {
@@ -43,7 +43,8 @@ MobileShell.GridView {
 
     cacheBuffer: cellHeight * 20
     reuseItems: true
-    layer.enabled: true
+    // with software rendering, this would render the grid off-screen on every frame
+    layer.enabled: GraphicsInfo.api !== GraphicsInfo.Software
 
     keyNavigationEnabled: true
     highlightMoveDuration: 0
@@ -65,29 +66,24 @@ MobileShell.GridView {
     // this value represent how many app icons can comfortably fit on the screen with a lower limit of the homescreen column value and a upper limit of 8
     // we add a portion of the `horizontalMargin` value to the icon size to make sure the column value does not grow as much for the wider screen sizes
     readonly property int baseColumns: Math.min(Math.max(Math.round(width / (folio.FolioSettings.delegateIconSize + __iconCellPadding + horizontalMargin * 0.5)), folio.FolioSettings.homeScreenColumns), 8)
+    // the number of columns in the grid; subclasses may lay out fewer
+    property int columns: baseColumns
     readonly property real effectiveContentWidth: width - leftMargin - rightMargin
     // make sure we set a lower limit for the `baseHorizontalMargin` and `horizontalMargin` so it never goes under `__horizontalMarginLowerLimit`
     readonly property real baseHorizontalMargin: Math.max(Math.round(width * 0.125) - Kirigami.Units.gridUnit * 2.25, __horizontalMarginLowerLimit)
     // we set an upper limit for the horizontal margins, as aesthetically for a grid full of apps, it looks better to not let the padding get too exessive
     readonly property real horizontalMargin: Math.min(Math.max((root.width - __horizontalMarginUpperLimit) * 0.5, __horizontalMarginLowerLimit), baseHorizontalMargin)
 
-    // Keyboard focus on app delegate when it is the selected item
-    onCurrentItemChanged: {
-        if (currentItem) {
-            currentItem.keyboardFocus();
-        }
-    }
-
     Component.onCompleted: Qt.callLater(() => {
         root.contentY = 0 - root.topMargin
     })
 
     Connections {
-        target: folio.HomeScreenState
+        target: root.folio.HomeScreenState
         enabled: root.isCurrentlyActivePage
 
         function onSwipeStateChanged() {
-            if (folio.HomeScreenState.swipeState === Folio.HomeScreenState.SwipingAppDrawerGrid) {
+            if (root.folio.HomeScreenState.swipeState === Folio.HomeScreenState.SwipingAppDrawerGrid) {
                 velocityCalculator.startMeasure();
                 velocityCalculator.changePosition(root.contentY);
             }

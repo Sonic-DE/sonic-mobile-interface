@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: 2023 Devin Lin <devin@kde.org>
 // SPDX-License-Identifier: LGPL-2.0-or-later
 
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls as Controls
@@ -54,7 +56,7 @@ Item {
     Connections {
         target: root.headerItem
         function onFocusGridRequested() {
-            if (folio.HomeScreenState.currentAppDrawerPage === 0) {
+            if (root.folio.HomeScreenState.currentAppDrawerPage === 0) {
                 allAppsGrid.forceActiveFocus();
             } else {
                 categoryGridView.forceActiveFocus();
@@ -108,11 +110,11 @@ Item {
 
             clip: true
 
-            onWidthChanged: folio.HomeScreenState.appDrawerPageWidth = width
-            Component.onCompleted: folio.HomeScreenState.appDrawerPageWidth = width
+            onWidthChanged: root.folio.HomeScreenState.appDrawerPageWidth = width
+            Component.onCompleted: root.folio.HomeScreenState.appDrawerPageWidth = width
 
             Binding {
-                target: folio.HomeScreenState
+                target: root.folio.HomeScreenState
                 property: "appDrawerPageCount"
                 value: 2
             }
@@ -120,7 +122,7 @@ Item {
             Item {
                 id: contentContainer
                 height: parent.height
-                x: folio.HomeScreenState.appDrawerPageX
+                x: root.folio.HomeScreenState.appDrawerPageX
 
                 // All apps grid
                 AppDrawerAppGrid {
@@ -176,7 +178,7 @@ Item {
                 }
             }
 
-            layer.enabled: true
+            layer.enabled: GraphicsInfo.api !== GraphicsInfo.Software
             layer.effect: MultiEffect {
                 maskEnabled: true
                 maskInverted: true
@@ -209,7 +211,7 @@ Item {
                         readonly property point position: {
                             swipeContainer.width
                             swipeContainer.height
-                            folio.HomeScreenState.appDrawerPageX
+                            root.folio.HomeScreenState.appDrawerPageX
                             swipeContainer.mapFromItem(root.headerItem.tabbar, 0, 0)
                         }
 
@@ -243,7 +245,7 @@ Item {
             homeScreen: root.homeScreen
             clip: true
 
-            layer.enabled: true
+            layer.enabled: GraphicsInfo.api !== GraphicsInfo.Software
             layer.effect: MultiEffect {
                 maskEnabled: true
                 maskSource: Rectangle {
