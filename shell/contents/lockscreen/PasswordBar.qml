@@ -7,6 +7,7 @@ import QtQuick.Layouts
 
 
 import org.kde.kirigami as Kirigami
+import org.kde.plasma.private.mobileshell.shellsettingsplugin as ShellSettings
 
 Rectangle {
     id: root
@@ -229,6 +230,7 @@ Rectangle {
                 model: dotDisplayModel
 
                 Behavior on implicitWidth {
+                    enabled: ShellSettings.Settings.animationsEnabled
                     NumberAnimation { duration: 50 }
                 }
 
@@ -246,7 +248,10 @@ Rectangle {
                     property bool showChar: index === root.previewCharIndex
 
                     Component.onCompleted: {
-                        if (showChar) {
+                        if (!ShellSettings.Settings.animationsEnabled) {
+                            charLabel.scale = showChar ? 1 : 0;
+                            dot.scale = showChar ? 0 : 1;
+                        } else if (showChar) {
                             charAnimation.to = 1;
                             charAnimation.duration = 75;
                             charAnimation.restart();
@@ -257,7 +262,10 @@ Rectangle {
                     }
 
                     onShowCharChanged: {
-                        if (!showChar) {
+                        if (!ShellSettings.Settings.animationsEnabled) {
+                            charLabel.scale = showChar ? 1 : 0;
+                            dot.scale = showChar ? 0 : 1;
+                        } else if (!showChar) {
                             charAnimation.to = 0;
                             charAnimation.duration = 50;
                             charAnimation.restart();
