@@ -123,7 +123,7 @@ Item {
             folio: root.folio
             widget: root.widget
 
-            layer.enabled: true
+            layer.enabled: GraphicsInfo.api !== GraphicsInfo.Software
             layer.effect: DarkenEffect {}
         }
     }

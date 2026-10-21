@@ -107,7 +107,7 @@ Folio.DelegateTouchArea {
             anchors.fill: parent
             spacing: 0
 
-            layer.enabled: root.shadow
+            layer.enabled: root.shadow && GraphicsInfo.api !== GraphicsInfo.Software
             layer.effect: DelegateShadow {}
 
             // transform is not on delegateWrapper because when it's zoomed in, it apparently

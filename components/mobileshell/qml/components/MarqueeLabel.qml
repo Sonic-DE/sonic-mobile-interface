@@ -2,6 +2,8 @@
 // SPDX-FileCopyrightText: 2025 Micah Stanley <stanleymicah@proton.me>
 // SPDX-License-Identifier: LGPL-2.0-or-later
 
+pragma ComponentBehavior: Bound
+
 import QtQuick 2.15
 import QtQuick.Layouts
 import QtQuick.Effects
@@ -85,8 +87,11 @@ Item {
         }
     }
 
+    // without the mask (software renderer), at least keep the text inside the label
+    clip: root.charactersOverflowing && GraphicsInfo.api === GraphicsInfo.Software
+
     // gradient mask to smoothly fade the ends of the label when it is scrolling
-    layer.enabled: root.charactersOverflowing
+    layer.enabled: root.charactersOverflowing && GraphicsInfo.api !== GraphicsInfo.Software
     layer.effect: MultiEffect {
         maskEnabled: true
         maskSource: Rectangle {

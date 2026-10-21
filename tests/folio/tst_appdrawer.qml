@@ -33,6 +33,31 @@ TestCase {
         Folio.ApplicationListSearchModel { sourceModel: testFolio.ApplicationListModel }
     }
 
+    Component {
+        id: appGridComponent
+        Drawer.AppDrawerAppGrid {
+            folio: testFolio
+            width: 480
+            height: 800
+            model: Folio.ApplicationListSearchModel { sourceModel: testFolio.ApplicationListModel }
+        }
+    }
+
+    Component {
+        id: categoryGridComponent
+        Drawer.AppDrawerCategoryGrid {
+            folio: testFolio
+            width: 480
+            height: 800
+            model: testFolio.ApplicationListModel.categories.slice(1)
+            // stands in for the expanded category grid that AppDrawer passes
+            categoryAppGrid: QtObject {
+                property string __category: ""
+                property bool visible: false
+            }
+        }
+    }
+
     SignalSpy { id: focusSpy; signalName: "focusGridRequested" }
     SignalSpy { id: clickSpy; signalName: "clicked" }
 
@@ -135,6 +160,35 @@ TestCase {
         compare(testFolio.HomeScreenState.currentAppDrawerPage, 1);
         header.addSearchText("test");
         compare(testFolio.HomeScreenState.currentAppDrawerPage, 0);
+    }
+
+    function test_appGridDelegatesGetTheirApplicationAndFocus() {
+        const grid = createTemporaryObject(appGridComponent, testCase);
+        verify(grid);
+        if (grid.count < 2) {
+            skip("Fewer than two installed applications for the app grid test");
+        }
+        compare(grid.columns, grid.baseColumns);
+        tryVerify(() => grid.itemAtIndex(1) !== null);
+        for (const row of [0, 1]) {
+            compare(grid.itemAtIndex(row).application.storageId, grid.model.get(row, "delegate").application.storageId);
+        }
+        grid.currentIndex = 1;
+        tryVerify(() => grid.currentItem && grid.currentItem.delegateItem.focus);
+    }
+
+    function test_categoryGridDelegatesGetTheirCategoryAndIndex() {
+        const grid = createTemporaryObject(categoryGridComponent, testCase);
+        verify(grid);
+        if (grid.count < 2) {
+            skip("Fewer than two application categories for the category grid test");
+        }
+        compare(grid.columns, Math.max(grid.baseColumns - 2, 1));
+        tryVerify(() => grid.itemAtIndex(1) !== null);
+        for (const row of [0, 1]) {
+            compare(grid.itemAtIndex(row).category, grid.model[row]);
+            compare(grid.itemAtIndex(row).delegateIndex, row);
+        }
     }
 
     function test_noninteractiveDelegatesDoNotReceiveClicks() {
