@@ -134,7 +134,7 @@ void PanelSettingsDBusObject::registerObject(KScreen::OutputPtr output)
     connect(m_output.data(), &KScreen::Output::scaleChanged, this, &PanelSettingsDBusObject::updateFields);
     updateFields();
 
-    new PlasmashellMobilePanelsAdaptor{this};
+    new MobilePanelsAdaptor{this};
 
     // Register the screen DBus object
     QString objectName = m_output->name().replace("-", ""); // DBus doesn't allow dashes

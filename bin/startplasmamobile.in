@@ -28,5 +28,5 @@ fi
 QT_QPA_PLATFORM=offscreen plasma-mobile-envmanager --apply-settings
 
 # start the shell
-export PLASMA_DEFAULT_SHELL=org.kde.plasma.mobileshell
+export SONIC_DEFAULT_SHELL=org.kde.plasma.mobileshell
 startplasma-x11 --inputmethod maliit-keyboard

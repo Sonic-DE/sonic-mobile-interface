@@ -29,7 +29,7 @@ class WaydroidDBusObject : public QObject
     Q_OBJECT
     QML_ELEMENT
     QML_SINGLETON
-    Q_CLASSINFO("D-Bus Interface", "org.kde.plasmashell.Waydroid")
+    Q_CLASSINFO("D-Bus Interface", "org.sonicde.sonicshell.Waydroid")
 
 public:
     explicit WaydroidDBusObject(QObject *parent = nullptr);

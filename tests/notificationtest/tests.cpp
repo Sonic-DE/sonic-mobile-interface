@@ -139,7 +139,7 @@ void JobNotificationTest::sendNotification(QCoreApplication &app)
 
     KJob *job = new FakeJob{this};
     job->setProperty("immediateProgressReporting", true);
-    job->setProperty("desktopFileName", "org.kde.plasmashell");
+    job->setProperty("desktopFileName", "org.sonicde.sonicshell");
     connect(job, &KJob::finished, &app, QCoreApplication::quit);
 
     jobTracker->registerJob(job);

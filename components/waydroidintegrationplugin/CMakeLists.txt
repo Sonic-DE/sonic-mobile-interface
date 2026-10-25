@@ -11,33 +11,33 @@ set(waydroidintegrationplugin_SRCS
 
 qt_generate_dbus_interface(
     ${CMAKE_CURRENT_SOURCE_DIR}/waydroiddbusobject.h
-    org.kde.plasmashell.Waydroid.xml
+    org.sonicde.sonicshell.Waydroid.xml
     OPTIONS -s -m -P
 )
 qt_generate_dbus_interface(
     ${CMAKE_CURRENT_SOURCE_DIR}/waydroidapplicationdbusobject.h
-    org.kde.plasmashell.WaydroidApplication.xml
+    org.sonicde.sonicshell.WaydroidApplication.xml
     OPTIONS -s -m -P
 )
 qt_add_dbus_adaptor(waydroidintegrationplugin_SRCS
-    ${CMAKE_CURRENT_BINARY_DIR}/org.kde.plasmashell.Waydroid.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/org.sonicde.sonicshell.Waydroid.xml
     ${CMAKE_CURRENT_SOURCE_DIR}/waydroiddbusobject.h WaydroidDBusObject
 )
 qt_add_dbus_adaptor(waydroidintegrationplugin_SRCS
-    ${CMAKE_CURRENT_BINARY_DIR}/org.kde.plasmashell.WaydroidApplication.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/org.sonicde.sonicshell.WaydroidApplication.xml
     ${CMAKE_CURRENT_SOURCE_DIR}/waydroidapplicationdbusobject.h WaydroidApplicationDBusObject
 )
 qt_add_dbus_interface(waydroidintegrationplugin_SRCS
-    ${CMAKE_CURRENT_BINARY_DIR}/org.kde.plasmashell.Waydroid.xml
-    plasmashellwaydroidinterface
+    ${CMAKE_CURRENT_BINARY_DIR}/org.sonicde.sonicshell.Waydroid.xml
+    sonicshellwaydroidinterface
 )
 qt_add_dbus_interface(waydroidintegrationplugin_SRCS
-    ${CMAKE_CURRENT_BINARY_DIR}/org.kde.plasmashell.WaydroidApplication.xml
-    plasmashellwaydroidapplicationinterface
+    ${CMAKE_CURRENT_BINARY_DIR}/org.sonicde.sonicshell.WaydroidApplication.xml
+    sonicshellwaydroidapplicationinterface
 )
 install(FILES 
-    ${CMAKE_CURRENT_BINARY_DIR}/org.kde.plasmashell.Waydroid.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/org.kde.plasmashell.WaydroidApplication.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/org.sonicde.sonicshell.Waydroid.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/org.sonicde.sonicshell.WaydroidApplication.xml
     DESTINATION ${KDE_INSTALL_DBUSINTERFACEDIR}
 )
 

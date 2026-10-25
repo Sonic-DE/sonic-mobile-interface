@@ -256,9 +256,9 @@ void MobileShellSettings::updateNavigationBarsInPlasma()
         return;
     }
 
-    auto message = QDBusMessage::createMethodCall(QLatin1String("org.kde.plasmashell"),
-                                                  QLatin1String("/PlasmaShell"),
-                                                  QLatin1String("org.kde.PlasmaShell"),
+    auto message = QDBusMessage::createMethodCall(QLatin1String("org.sonicde.sonicshell"),
+                                                  QLatin1String("/SonicShell"),
+                                                  QLatin1String("org.sonicde.SonicShell"),
                                                   QLatin1String("evaluateScript"));
 
     if (navigationPanelEnabled() || gesturePanelEnabled()) {

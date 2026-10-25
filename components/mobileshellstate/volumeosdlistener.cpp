@@ -16,7 +16,7 @@ VolumeOSDListener::VolumeOSDListener(QObject *parent)
     : QObject{parent}
 {
     QDBusServiceWatcher *watcher =
-        new QDBusServiceWatcher(QStringLiteral("org.kde.plasmashell"), QDBusConnection::sessionBus(), QDBusServiceWatcher::WatchForOwnerChange, this);
+        new QDBusServiceWatcher(QStringLiteral("org.sonicde.sonicshell"), QDBusConnection::sessionBus(), QDBusServiceWatcher::WatchForOwnerChange, this);
 
     connect(watcher, &QDBusServiceWatcher::serviceRegistered, this, [this]() -> void {
         connectDBus();
@@ -27,9 +27,9 @@ VolumeOSDListener::VolumeOSDListener(QObject *parent)
 
 void VolumeOSDListener::connectDBus()
 {
-    Q_UNUSED(QDBusConnection::sessionBus().connect(QStringLiteral("org.kde.plasmashell"),
-                                                   QStringLiteral("/org/kde/osdService"),
-                                                   QStringLiteral("org.kde.osdService"),
+    Q_UNUSED(QDBusConnection::sessionBus().connect(QStringLiteral("org.sonicde.sonicshell"),
+                                                   QStringLiteral("/org/sonicde/osdService"),
+                                                   QStringLiteral("org.sonicde.osdService"),
                                                    QStringLiteral("osdProgress"),
                                                    this,
                                                    SLOT(onOSDProgress(QString, int, int, QString))));

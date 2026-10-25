@@ -14,12 +14,12 @@ using namespace Qt::StringLiterals;
 
 WaydroidDBusClient::WaydroidDBusClient(QObject *parent)
     : QObject{parent}
-    , m_interface{new OrgKdePlasmashellWaydroidInterface{u"org.kde.plasmashell"_s, u"/Waydroid"_s, QDBusConnection::sessionBus(), this}}
-    , m_watcher{new QDBusServiceWatcher{u"org.kde.plasmashell"_s, QDBusConnection::sessionBus(), QDBusServiceWatcher::WatchForOwnerChange, this}}
+    , m_interface{new OrgSonicdeSonicshellWaydroidInterface{u"org.sonicde.sonicshell"_s, u"/Waydroid"_s, QDBusConnection::sessionBus(), this}}
+    , m_watcher{new QDBusServiceWatcher{u"org.sonicde.sonicshell"_s, QDBusConnection::sessionBus(), QDBusServiceWatcher::WatchForOwnerChange, this}}
     , m_applicationListModel{new WaydroidApplicationListModel{this}}
 {
     // Check if the service is already running
-    if (QDBusConnection::sessionBus().interface()->isServiceRegistered(u"org.kde.plasmashell"_s)) {
+    if (QDBusConnection::sessionBus().interface()->isServiceRegistered(u"org.sonicde.sonicshell"_s)) {
         m_connected = true;
         if (m_interface->isValid()) {
             connectSignals();
@@ -27,7 +27,7 @@ WaydroidDBusClient::WaydroidDBusClient(QObject *parent)
     }
 
     connect(m_watcher, &QDBusServiceWatcher::serviceOwnerChanged, this, [this](const QString &service, const QString &oldOwner, const QString &newOwner) {
-        if (service == u"org.kde.plasmashell"_s) {
+        if (service == u"org.sonicde.sonicshell"_s) {
             if (newOwner.isEmpty()) {
                 // Service stopped
                 m_connected = false;
@@ -44,24 +44,24 @@ WaydroidDBusClient::WaydroidDBusClient(QObject *parent)
 
 void WaydroidDBusClient::connectSignals()
 {
-    connect(m_interface, &OrgKdePlasmashellWaydroidInterface::statusChanged, this, &WaydroidDBusClient::updateStatus);
-    connect(m_interface, &OrgKdePlasmashellWaydroidInterface::downloadStatusChanged, this, [this](double downloaded, double total, double speed) {
+    connect(m_interface, &OrgSonicdeSonicshellWaydroidInterface::statusChanged, this, &WaydroidDBusClient::updateStatus);
+    connect(m_interface, &OrgSonicdeSonicshellWaydroidInterface::downloadStatusChanged, this, [this](double downloaded, double total, double speed) {
         Q_EMIT downloadStatusChanged(downloaded, total, speed);
     });
-    connect(m_interface, &OrgKdePlasmashellWaydroidInterface::sessionStatusChanged, this, &WaydroidDBusClient::updateSessionStatus);
-    connect(m_interface, &OrgKdePlasmashellWaydroidInterface::systemTypeChanged, this, &WaydroidDBusClient::updateSystemType);
-    connect(m_interface, &OrgKdePlasmashellWaydroidInterface::ipAddressChanged, this, &WaydroidDBusClient::updateIpAddress);
-    connect(m_interface, &OrgKdePlasmashellWaydroidInterface::androidIdChanged, this, &WaydroidDBusClient::updateAndroidId);
-    connect(m_interface, &OrgKdePlasmashellWaydroidInterface::multiWindowsChanged, this, &WaydroidDBusClient::updateMultiWindows);
-    connect(m_interface, &OrgKdePlasmashellWaydroidInterface::suspendChanged, this, &WaydroidDBusClient::updateSuspend);
-    connect(m_interface, &OrgKdePlasmashellWaydroidInterface::ueventChanged, this, &WaydroidDBusClient::updateUevent);
-    connect(m_interface, &OrgKdePlasmashellWaydroidInterface::actionFinished, this, [this](const QString message) {
+    connect(m_interface, &OrgSonicdeSonicshellWaydroidInterface::sessionStatusChanged, this, &WaydroidDBusClient::updateSessionStatus);
+    connect(m_interface, &OrgSonicdeSonicshellWaydroidInterface::systemTypeChanged, this, &WaydroidDBusClient::updateSystemType);
+    connect(m_interface, &OrgSonicdeSonicshellWaydroidInterface::ipAddressChanged, this, &WaydroidDBusClient::updateIpAddress);
+    connect(m_interface, &OrgSonicdeSonicshellWaydroidInterface::androidIdChanged, this, &WaydroidDBusClient::updateAndroidId);
+    connect(m_interface, &OrgSonicdeSonicshellWaydroidInterface::multiWindowsChanged, this, &WaydroidDBusClient::updateMultiWindows);
+    connect(m_interface, &OrgSonicdeSonicshellWaydroidInterface::suspendChanged, this, &WaydroidDBusClient::updateSuspend);
+    connect(m_interface, &OrgSonicdeSonicshellWaydroidInterface::ueventChanged, this, &WaydroidDBusClient::updateUevent);
+    connect(m_interface, &OrgSonicdeSonicshellWaydroidInterface::actionFinished, this, [this](const QString message) {
         Q_EMIT actionFinished(message);
     });
-    connect(m_interface, &OrgKdePlasmashellWaydroidInterface::actionFailed, this, [this](const QString message) {
+    connect(m_interface, &OrgSonicdeSonicshellWaydroidInterface::actionFailed, this, [this](const QString message) {
         Q_EMIT actionFailed(message);
     });
-    connect(m_interface, &OrgKdePlasmashellWaydroidInterface::errorOccurred, this, [this](const QString title, const QString message) {
+    connect(m_interface, &OrgSonicdeSonicshellWaydroidInterface::errorOccurred, this, [this](const QString title, const QString message) {
         Q_EMIT errorOccurred(title, message);
     });
 
@@ -94,8 +94,11 @@ void WaydroidDBusClient::initializeApplicationListModel()
         m_applicationListModel->initializeApplications(applications);
 
         // Connect applicationListModel signals only when applications is synced
-        connect(m_interface, &OrgKdePlasmashellWaydroidInterface::applicationAdded, m_applicationListModel, &WaydroidApplicationListModel::addApplication);
-        connect(m_interface, &OrgKdePlasmashellWaydroidInterface::applicationRemoved, m_applicationListModel, &WaydroidApplicationListModel::removeApplication);
+        connect(m_interface, &OrgSonicdeSonicshellWaydroidInterface::applicationAdded, m_applicationListModel, &WaydroidApplicationListModel::addApplication);
+        connect(m_interface,
+                &OrgSonicdeSonicshellWaydroidInterface::applicationRemoved,
+                m_applicationListModel,
+                &WaydroidApplicationListModel::removeApplication);
 
         watcher->deleteLater();
     });

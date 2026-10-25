@@ -36,8 +36,7 @@ private:
 class PanelSettingsDBusObject : public QObject
 {
     Q_OBJECT
-    // HACK: org.kde.plasmashell prefix seems to bug out and not compile with the qt macro, use this for now
-    Q_CLASSINFO("D-Bus Interface", "org.kde.plasmashellMobilePanels")
+    Q_CLASSINFO("D-Bus Interface", "org.sonicde.sonicshell.MobilePanels")
 
 public:
     PanelSettingsDBusObject(QObject *parent = nullptr);

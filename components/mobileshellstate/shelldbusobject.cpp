@@ -15,7 +15,7 @@ ShellDBusObject::ShellDBusObject(QObject *parent)
 void ShellDBusObject::registerObject()
 {
     if (!m_initialized) {
-        new PlasmashellAdaptor{this};
+        new MobileAdaptor{this};
         QDBusConnection::sessionBus().registerObject(QStringLiteral("/Mobile"), this);
         m_initialized = true;
     }

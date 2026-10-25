@@ -1,4 +1,5 @@
 // SPDX-FileCopyrightText: 2025 Devin Lin <devin@kde.org>
+// SPDX-FileCopyrightText: 2026 SonicDE contributors
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include "panelsettingsdbusclient.h"
@@ -17,13 +18,13 @@ void PanelSettingsDBusClient::connectToDBus()
     if (m_interface) {
         return;
     }
-    m_interface = new OrgKdePlasmashellMobilePanelsInterface{QStringLiteral("org.kde.plasmashell"),
-                                                             QStringLiteral("/Mobile/Panels/") + m_screenName.replace("-", ""),
-                                                             QDBusConnection::sessionBus(),
-                                                             this};
+    m_interface = new OrgSonicdeSonicshellMobilePanelsInterface{QStringLiteral("org.sonicde.sonicshell"),
+                                                                QStringLiteral("/Mobile/Panels/") + m_screenName.replace("-", ""),
+                                                                QDBusConnection::sessionBus(),
+                                                                this};
 
     // Check if the service is already running
-    if (QDBusConnection::sessionBus().interface()->isServiceRegistered(QStringLiteral("org.kde.plasmashell"))) {
+    if (QDBusConnection::sessionBus().interface()->isServiceRegistered(QStringLiteral("org.sonicde.sonicshell"))) {
         m_connected = true;
         if (m_interface->isValid()) {
             connectSignals();
@@ -35,7 +36,7 @@ void PanelSettingsDBusClient::connectToDBus()
             this,
             [this](const QString &service, const QString &oldOwner, const QString &newOwner) {
                 Q_UNUSED(oldOwner);
-                if (service == QStringLiteral("org.kde.plasmashell")) {
+                if (service == QStringLiteral("org.sonicde.sonicshell")) {
                     if (!newOwner.isEmpty() && !m_connected) {
                         m_connected = true;
                         if (m_interface->isValid()) {
@@ -66,17 +67,20 @@ void PanelSettingsDBusClient::setScreenName(const QString &screenName)
 
 void PanelSettingsDBusClient::connectSignals()
 {
-    connect(m_interface, &OrgKdePlasmashellMobilePanelsInterface::statusBarHeightChanged, this, &PanelSettingsDBusClient::updateStatusBarHeight);
-    connect(m_interface, &OrgKdePlasmashellMobilePanelsInterface::statusBarLeftPaddingChanged, this, &PanelSettingsDBusClient::updateStatusBarLeftPadding);
-    connect(m_interface, &OrgKdePlasmashellMobilePanelsInterface::statusBarRightPaddingChanged, this, &PanelSettingsDBusClient::updateStatusBarRightPadding);
-    connect(m_interface, &OrgKdePlasmashellMobilePanelsInterface::statusBarCenterSpacingChanged, this, &PanelSettingsDBusClient::updateStatusBarCenterSpacing);
-    connect(m_interface, &OrgKdePlasmashellMobilePanelsInterface::navigationPanelHeightChanged, this, &PanelSettingsDBusClient::updateNavigationPanelHeight);
+    connect(m_interface, &OrgSonicdeSonicshellMobilePanelsInterface::statusBarHeightChanged, this, &PanelSettingsDBusClient::updateStatusBarHeight);
+    connect(m_interface, &OrgSonicdeSonicshellMobilePanelsInterface::statusBarLeftPaddingChanged, this, &PanelSettingsDBusClient::updateStatusBarLeftPadding);
+    connect(m_interface, &OrgSonicdeSonicshellMobilePanelsInterface::statusBarRightPaddingChanged, this, &PanelSettingsDBusClient::updateStatusBarRightPadding);
     connect(m_interface,
-            &OrgKdePlasmashellMobilePanelsInterface::navigationPanelLeftPaddingChanged,
+            &OrgSonicdeSonicshellMobilePanelsInterface::statusBarCenterSpacingChanged,
+            this,
+            &PanelSettingsDBusClient::updateStatusBarCenterSpacing);
+    connect(m_interface, &OrgSonicdeSonicshellMobilePanelsInterface::navigationPanelHeightChanged, this, &PanelSettingsDBusClient::updateNavigationPanelHeight);
+    connect(m_interface,
+            &OrgSonicdeSonicshellMobilePanelsInterface::navigationPanelLeftPaddingChanged,
             this,
             &PanelSettingsDBusClient::updateNavigationPanelLeftPadding);
     connect(m_interface,
-            &OrgKdePlasmashellMobilePanelsInterface::navigationPanelRightPaddingChanged,
+            &OrgSonicdeSonicshellMobilePanelsInterface::navigationPanelRightPaddingChanged,
             this,
             &PanelSettingsDBusClient::updateNavigationPanelRightPadding);
 

@@ -20,7 +20,7 @@ QCoro::Task<void> VibrationManager::vibrateTask(int durationMs)
         m_interface = new OrgSigxcpuFeedbackHapticInterface("org.sigxcpu.Feedback", objectPath, QDBusConnection::sessionBus(), this);
     }
 
-    const QString appId = QStringLiteral("org.kde.plasmashell");
+    const QString appId = QStringLiteral("org.sonicde.sonicshell");
     const VibrationEvent event{1.0, static_cast<quint32>(durationMs)};
     const VibrationEventList pattern = {event};
 

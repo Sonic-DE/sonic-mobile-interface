@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "plasmashellmobilepanelsinterface.h"
+#include "sonicshellmobilepanelsinterface.h"
 
 #include <QDBusServiceWatcher>
 #include <QObject>
@@ -66,7 +66,7 @@ private Q_SLOTS:
 private:
     void connectSignals();
 
-    OrgKdePlasmashellMobilePanelsInterface *m_interface;
+    OrgSonicdeSonicshellMobilePanelsInterface *m_interface;
     QDBusServiceWatcher *m_watcher;
 
     QString m_screenName;

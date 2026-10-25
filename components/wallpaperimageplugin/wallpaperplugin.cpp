@@ -24,19 +24,19 @@ WallpaperPlugin::WallpaperPlugin(QObject *parent)
     : QObject{parent}
     , m_homescreenConfig{new QQmlPropertyMap{this}}
     , m_lockscreenConfig{new QQmlPropertyMap{this}}
-    , m_homescreenConfigFile{KSharedConfig::openConfig("plasma-org.kde.plasma.mobileshell-appletsrc")}
+    , m_homescreenConfigFile{KSharedConfig::openConfig("sonic-org.kde.plasma.mobileshell-appletsrc")}
     , m_lockscreenConfigFile{KSharedConfig::openConfig("kscreenlockerrc")}
 {
     m_lockscreenConfigWatcher = KConfigWatcher::create(m_lockscreenConfigFile);
 
-    const bool connected = QDBusConnection::sessionBus().connect(QStringLiteral("org.kde.plasmashell"),
-                                                                 QStringLiteral("/PlasmaShell"),
-                                                                 QStringLiteral("org.kde.PlasmaShell"),
+    const bool connected = QDBusConnection::sessionBus().connect(QStringLiteral("org.sonicde.sonicshell"),
+                                                                 QStringLiteral("/SonicShell"),
+                                                                 QStringLiteral("org.sonicde.SonicShell"),
                                                                  QStringLiteral("wallpaperChanged"),
                                                                  this,
                                                                  SLOT(loadHomescreenSettings()));
     if (!connected) {
-        qWarning() << "Could not connect to dbus service org.kde.plasmashell to listen to wallpaperChanged";
+        qWarning() << "Could not connect to dbus service org.sonicde.sonicshell to listen to wallpaperChanged";
     }
 
     connect(m_lockscreenConfigWatcher.data(), &KConfigWatcher::configChanged, this, [this](const KConfigGroup &group) {
@@ -164,9 +164,9 @@ void WallpaperPlugin::setLockscreenWallpaperPlugin(const QString &wallpaperPlugi
 
 QCoro::Task<void> WallpaperPlugin::setHomescreenWallpaper(const QString &path)
 {
-    auto message = QDBusMessage::createMethodCall(QLatin1String("org.kde.plasmashell"),
-                                                  QLatin1String("/PlasmaShell"),
-                                                  QLatin1String("org.kde.PlasmaShell"),
+    auto message = QDBusMessage::createMethodCall(QLatin1String("org.sonicde.sonicshell"),
+                                                  QLatin1String("/SonicShell"),
+                                                  QLatin1String("org.sonicde.SonicShell"),
                                                   QLatin1String("setWallpaper"));
 
     for (uint screen = 0; screen < qApp->screens().size(); screen++) {
@@ -211,9 +211,9 @@ QString WallpaperPlugin::lockscreenWallpaperPath()
 
 QCoro::Task<void> WallpaperPlugin::loadHomescreenSettings()
 {
-    auto message = QDBusMessage::createMethodCall(QLatin1String("org.kde.plasmashell"),
-                                                  QLatin1String("/PlasmaShell"),
-                                                  QLatin1String("org.kde.PlasmaShell"),
+    auto message = QDBusMessage::createMethodCall(QLatin1String("org.sonicde.sonicshell"),
+                                                  QLatin1String("/SonicShell"),
+                                                  QLatin1String("org.sonicde.SonicShell"),
                                                   QLatin1String("wallpaper"));
     message.setArguments({(uint)0}); // assume wallpaper on first screen
 
@@ -233,7 +233,7 @@ QCoro::Task<void> WallpaperPlugin::loadHomescreenSettings()
     m_homescreenWallpaperPath = QString{};
 
     if (!map.contains("wallpaperPlugin")) {
-        qWarning() << "wallpaperPlugin not found in response from org.kde.PlasmaShell wallpaper(), could not retrieve wallpaper";
+        qWarning() << "wallpaperPlugin not found in response from org.sonicde.SonicShell wallpaper(), could not retrieve wallpaper";
         Q_EMIT homescreenWallpaperPathChanged();
         co_return;
     }
@@ -313,7 +313,7 @@ QQmlPropertyMap *WallpaperPlugin::loadConfiguration(KConfigGroup group, QString 
 
 QCoro::Task<void> WallpaperPlugin::saveHomescreenSettings()
 {
-    auto iface = new QDBusInterface("org.kde.plasmashell", "/PlasmaShell", "org.kde.PlasmaShell", QDBusConnection::sessionBus(), this);
+    auto iface = new QDBusInterface("org.sonicde.sonicshell", "/SonicShell", "org.sonicde.SonicShell", QDBusConnection::sessionBus(), this);
     if (!iface->isValid()) {
         qWarning() << "Failed to connect to wallpaper dbus:" << qPrintable(QDBusConnection::sessionBus().lastError().message());
         co_return;

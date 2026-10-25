@@ -23,7 +23,7 @@ class WaydroidApplicationDBusObject : public QObject
 {
     Q_OBJECT
     QML_ELEMENT
-    Q_CLASSINFO("D-Bus Interface", "org.kde.plasmashell.WaydroidApplication")
+    Q_CLASSINFO("D-Bus Interface", "org.sonicde.sonicshell.WaydroidApplication")
 
 public:
     typedef std::shared_ptr<WaydroidApplicationDBusObject> Ptr;

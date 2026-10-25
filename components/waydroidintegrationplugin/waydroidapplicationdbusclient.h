@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "plasmashellwaydroidapplicationinterface.h"
+#include "sonicshellwaydroidapplicationinterface.h"
 
 #include <QObject>
 #include <QString>
@@ -46,7 +46,7 @@ Q_SIGNALS:
     void packageNameChanged();
 
 private:
-    OrgKdePlasmashellWaydroidApplicationInterface *m_interface;
+    OrgSonicdeSonicshellWaydroidApplicationInterface *m_interface;
     QDBusServiceWatcher *m_watcher;
 
     QString m_packageName;

@@ -328,9 +328,9 @@ void MobileTaskSwitcherState::quickDeactivate()
 
 void MobileTaskSwitcherState::setDBusState(bool active)
 {
-    QDBusMessage request = QDBusMessage::createMethodCall(QStringLiteral("org.kde.plasmashell"),
+    QDBusMessage request = QDBusMessage::createMethodCall(QStringLiteral("org.sonicde.sonicshell"),
                                                           QStringLiteral("/Mobile"),
-                                                          QStringLiteral("org.kde.plasmashell"),
+                                                          QStringLiteral("org.sonicde.sonicshell.Mobile"),
                                                           QStringLiteral("setIsTaskSwitcherVisible"));
     request.setArguments({active});
 

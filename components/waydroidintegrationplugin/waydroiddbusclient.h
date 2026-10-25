@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "plasmashellwaydroidinterface.h"
+#include "sonicshellwaydroidinterface.h"
 #include "waydroidapplicationlistmodel.h"
 #include "waydroiddbusobject.h"
 
@@ -139,7 +139,7 @@ private Q_SLOTS:
     void updateUevent();
 
 private:
-    OrgKdePlasmashellWaydroidInterface *m_interface;
+    OrgSonicdeSonicshellWaydroidInterface *m_interface;
     QDBusServiceWatcher *m_watcher;
 
     Status m_status{NotInitialized};

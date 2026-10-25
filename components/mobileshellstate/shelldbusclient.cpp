@@ -1,4 +1,5 @@
 // SPDX-FileCopyrightText: 2023 Devin Lin <devin@kde.org>
+// SPDX-FileCopyrightText: 2026 SonicDE contributors
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include "shelldbusclient.h"
@@ -7,11 +8,14 @@
 
 ShellDBusClient::ShellDBusClient(QObject *parent)
     : QObject{parent}
-    , m_interface{new OrgKdePlasmashellInterface{QStringLiteral("org.kde.plasmashell"), QStringLiteral("/Mobile"), QDBusConnection::sessionBus(), this}}
+    , m_interface{new OrgSonicdeSonicshellMobileInterface{QStringLiteral("org.sonicde.sonicshell"),
+                                                          QStringLiteral("/Mobile"),
+                                                          QDBusConnection::sessionBus(),
+                                                          this}}
     , m_connected{false}
 {
     // Check if the service is already running
-    if (QDBusConnection::sessionBus().interface()->isServiceRegistered(QStringLiteral("org.kde.plasmashell"))) {
+    if (QDBusConnection::sessionBus().interface()->isServiceRegistered(QStringLiteral("org.sonicde.sonicshell"))) {
         m_connected = true;
         if (m_interface->isValid()) {
             connectSignals();
@@ -20,7 +24,7 @@ ShellDBusClient::ShellDBusClient(QObject *parent)
 
     connect(QDBusConnection::sessionBus().interface(), &QDBusConnectionInterface::serviceOwnerChanged, this, [this](const QString &service, const QString &oldOwner, const QString &newOwner) {
         Q_UNUSED(oldOwner);
-        if (service == QStringLiteral("org.kde.plasmashell")) {
+        if (service == QStringLiteral("org.sonicde.sonicshell")) {
             if (!newOwner.isEmpty() && !m_connected) {
                 m_connected = true;
                 if (m_interface->isValid()) {
@@ -35,22 +39,25 @@ ShellDBusClient::ShellDBusClient(QObject *parent)
 
 void ShellDBusClient::connectSignals()
 {
-    connect(m_interface, &OrgKdePlasmashellInterface::panelStateChanged, this, &ShellDBusClient::updatePanelState);
-    connect(m_interface, &OrgKdePlasmashellInterface::isActionDrawerOpenChanged, this, &ShellDBusClient::updateIsActionDrawerOpen);
-    connect(m_interface, &OrgKdePlasmashellInterface::isVolumeOSDOpenChanged, this, &ShellDBusClient::updateIsVolumeOSDOpen);
-    connect(m_interface, &OrgKdePlasmashellInterface::isNotificationPopupDrawerOpenChanged, this, &ShellDBusClient::updateIsNotificationPopupDrawerOpen);
-    connect(m_interface, &OrgKdePlasmashellInterface::doNotDisturbChanged, this, &ShellDBusClient::updateDoNotDisturb);
-    connect(m_interface, &OrgKdePlasmashellInterface::isTaskSwitcherVisibleChanged, this, &ShellDBusClient::updateIsTaskSwitcherVisible);
-    connect(m_interface, &OrgKdePlasmashellInterface::openActionDrawerRequested, this, &ShellDBusClient::openActionDrawerRequested);
-    connect(m_interface, &OrgKdePlasmashellInterface::closeActionDrawerRequested, this, &ShellDBusClient::closeActionDrawerRequested);
+    connect(m_interface, &OrgSonicdeSonicshellMobileInterface::panelStateChanged, this, &ShellDBusClient::updatePanelState);
+    connect(m_interface, &OrgSonicdeSonicshellMobileInterface::isActionDrawerOpenChanged, this, &ShellDBusClient::updateIsActionDrawerOpen);
+    connect(m_interface, &OrgSonicdeSonicshellMobileInterface::isVolumeOSDOpenChanged, this, &ShellDBusClient::updateIsVolumeOSDOpen);
     connect(m_interface,
-            &OrgKdePlasmashellInterface::appLaunchMaximizePanelAnimationTriggered,
+            &OrgSonicdeSonicshellMobileInterface::isNotificationPopupDrawerOpenChanged,
+            this,
+            &ShellDBusClient::updateIsNotificationPopupDrawerOpen);
+    connect(m_interface, &OrgSonicdeSonicshellMobileInterface::doNotDisturbChanged, this, &ShellDBusClient::updateDoNotDisturb);
+    connect(m_interface, &OrgSonicdeSonicshellMobileInterface::isTaskSwitcherVisibleChanged, this, &ShellDBusClient::updateIsTaskSwitcherVisible);
+    connect(m_interface, &OrgSonicdeSonicshellMobileInterface::openActionDrawerRequested, this, &ShellDBusClient::openActionDrawerRequested);
+    connect(m_interface, &OrgSonicdeSonicshellMobileInterface::closeActionDrawerRequested, this, &ShellDBusClient::closeActionDrawerRequested);
+    connect(m_interface,
+            &OrgSonicdeSonicshellMobileInterface::appLaunchMaximizePanelAnimationTriggered,
             this,
             &ShellDBusClient::appLaunchMaximizePanelAnimationTriggered);
-    connect(m_interface, &OrgKdePlasmashellInterface::openHomeScreenRequested, this, &ShellDBusClient::openHomeScreenRequested);
-    connect(m_interface, &OrgKdePlasmashellInterface::resetHomeScreenPositionRequested, this, &ShellDBusClient::resetHomeScreenPositionRequested);
-    connect(m_interface, &OrgKdePlasmashellInterface::showVolumeOSDRequested, this, &ShellDBusClient::showVolumeOSDRequested);
-    connect(m_interface, &OrgKdePlasmashellInterface::openLockScreenKeypadRequested, this, &ShellDBusClient::openLockScreenKeypadRequested);
+    connect(m_interface, &OrgSonicdeSonicshellMobileInterface::openHomeScreenRequested, this, &ShellDBusClient::openHomeScreenRequested);
+    connect(m_interface, &OrgSonicdeSonicshellMobileInterface::resetHomeScreenPositionRequested, this, &ShellDBusClient::resetHomeScreenPositionRequested);
+    connect(m_interface, &OrgSonicdeSonicshellMobileInterface::showVolumeOSDRequested, this, &ShellDBusClient::showVolumeOSDRequested);
+    connect(m_interface, &OrgSonicdeSonicshellMobileInterface::openLockScreenKeypadRequested, this, &ShellDBusClient::openLockScreenKeypadRequested);
 
     // Initial state fetch
     updatePanelState();

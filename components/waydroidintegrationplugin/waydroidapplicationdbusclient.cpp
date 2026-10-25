@@ -13,11 +13,11 @@ using namespace Qt::StringLiterals;
 WaydroidApplicationDBusClient::WaydroidApplicationDBusClient(const QDBusObjectPath &objectPath, QObject *parent)
     : QObject{parent}
     , m_objectPath{objectPath}
-    , m_interface{new OrgKdePlasmashellWaydroidApplicationInterface{u"org.kde.plasmashell"_s, objectPath.path(), QDBusConnection::sessionBus(), this}}
-    , m_watcher{new QDBusServiceWatcher{u"org.kde.plasmashell"_s, QDBusConnection::sessionBus(), QDBusServiceWatcher::WatchForOwnerChange, this}}
+    , m_interface{new OrgSonicdeSonicshellWaydroidApplicationInterface{u"org.sonicde.sonicshell"_s, objectPath.path(), QDBusConnection::sessionBus(), this}}
+    , m_watcher{new QDBusServiceWatcher{u"org.sonicde.sonicshell"_s, QDBusConnection::sessionBus(), QDBusServiceWatcher::WatchForOwnerChange, this}}
 {
     // Check if the service is already running
-    if (QDBusConnection::sessionBus().interface()->isServiceRegistered(u"org.kde.plasmashell"_s)) {
+    if (QDBusConnection::sessionBus().interface()->isServiceRegistered(u"org.sonicde.sonicshell"_s)) {
         m_connected = true;
         if (m_interface->isValid()) {
             connectSignals();
@@ -25,7 +25,7 @@ WaydroidApplicationDBusClient::WaydroidApplicationDBusClient(const QDBusObjectPa
     }
 
     connect(m_watcher, &QDBusServiceWatcher::serviceOwnerChanged, this, [this](const QString &service, const QString &oldOwner, const QString &newOwner) {
-        if (service == u"org.kde.plasmashell"_s) {
+        if (service == u"org.sonicde.sonicshell"_s) {
             if (newOwner.isEmpty()) {
                 // Service stopped
                 m_connected = false;
