@@ -89,7 +89,7 @@ kde_enable_exceptions()
 
 find_package(KF6KirigamiAddons 0.6 REQUIRED)
 find_package(epoxy REQUIRED)
-find_package(XCB REQUIRED COMPONENTS XCB)
+find_package(XCB REQUIRED COMPONENTS XCB SHAPE)
 find_package(KWinX11 ${PROJECT_DEP_VERSION} REQUIRED COMPONENTS
     kwin
 )
@@ -100,13 +100,13 @@ find_package(Libudev REQUIRED)
 find_package(KWinX11DBusInterface)
 set_package_properties(KWinX11DBusInterface PROPERTIES DESCRIPTION "KWin DBus interface"
     TYPE REQUIRED
-    PURPOSE "Needed for virtual keyboard toggle button"
+    PURPOSE "Needed for the night color quick setting"
 )
 
 find_package(KF6 ${KF6_MIN_VERSION} REQUIRED COMPONENTS Auth)
 set_package_properties(KF6::AuthCore PROPERTIES
     TYPE REQUIRED
-    PURPOSE "Allows Plasma Mobile to configure Waydroid"
+    PURPOSE "Allows the flashlight quick setting to control the flashlight"
 )
 
 include(CheckIncludeFiles)

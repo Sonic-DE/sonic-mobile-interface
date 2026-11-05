@@ -18,7 +18,7 @@
 #include <KSharedConfig>
 
 /**
- * Utility class that provides useful functions related to windows and KWin+KWayland.
+ * Utility class that provides useful functions related to windows on X11.
  *
  * @author Devin Lin <devin@kde.org>
  **/
@@ -109,6 +109,8 @@ private:
 
     QTimer *m_activeWindowTimer;
 
+    WId m_activeWindow = 0;
     bool m_showingDesktop = false;
+    bool m_hasCloseableActiveWindow = false;
     bool m_activeWindowIsShell = false;
 };

@@ -136,8 +136,8 @@ void MobileShellSettings::setShowBatteryPercentage(bool showBatteryPercentage)
 
 bool MobileShellSettings::navigationPanelEnabled() const
 {
-    auto group = KConfigGroup{m_config, GENERAL_CONFIG_GROUP};
-    return group.readEntry("navigationPanelEnabled", true);
+    // SonicWin's gesture handlers don't activate on X11, so without the panel there would be no navigation.
+    return true;
 }
 
 void MobileShellSettings::setNavigationPanelEnabled(bool navigationPanelEnabled)

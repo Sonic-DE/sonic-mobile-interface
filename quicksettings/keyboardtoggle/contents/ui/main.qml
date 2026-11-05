@@ -6,28 +6,17 @@
 
 import org.kde.plasma.private.mobileshell.quicksettingsplugin as QS
 import org.kde.plasma.private.mobileshell as MobileShell
-import org.kde.plasma.workspace.keyboardlayout 1.0 as Keyboards
 
+// Sonic Keyboard opens by itself in each application when text input gets focus, so there is nothing
+// to switch on or off here: this opens its settings.
 QS.QuickSetting {
     text: i18n("Virtual Keyboard")
     icon: "input-keyboard-virtual"
-    status: !Keyboards.KWinVirtualKeyboard.available ? i18n("Tap to open settings")
-                                                     : (keyboardEnabled ? i18n("On") : i18n("Off"))
-    enabled: keyboardEnabled && Keyboards.KWinVirtualKeyboard.available
-    settingsCommand: "plasma-open-settings kcm_mobile_onscreenkeyboard"
-
-    property bool keyboardEnabled: Keyboards.KWinVirtualKeyboard.mode !== Keyboards.KWinVirtualKeyboard.Never
+    status: i18n("Tap to open settings")
+    enabled: false
+    settingsCommand: "plasma-open-settings kcm_plasmakeyboard"
 
     function toggle() {
-        if (!Keyboards.KWinVirtualKeyboard.available) {
-            // select a keyboard in the settings (none is likely set)
-            MobileShell.ShellUtil.executeCommand("plasma-open-settings kcm_virtualkeyboard");
-        } else if (keyboardEnabled) {
-            Keyboards.KWinVirtualKeyboard.mode = Keyboards.KWinVirtualKeyboard.Never;
-        } else {
-            Keyboards.KWinVirtualKeyboard.mode = Keyboards.KWinVirtualKeyboard.AnyInput;
-        }
+        MobileShell.ShellUtil.executeCommand("plasma-open-settings kcm_plasmakeyboard");
     }
 }
-
-

@@ -11,7 +11,6 @@ import QtQuick.Layouts 1.1
 import QtQuick.Window 2.2
 
 import org.kde.plasma.components 3.0 as PlasmaComponents
-import org.kde.plasma.private.nanoshell 2.0 as NanoShell
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.private.mobileshell.quicksettingsplugin as QS
 import org.kde.plasma.private.mobileshell as MobileShell
@@ -171,6 +170,7 @@ Item {
 
     function open() {
         cancelAnimations();
+        root.intendedToBeVisible = true;
         if (openToPinnedMode) {
             root.state = "open"; // go to pinned height
         } else {

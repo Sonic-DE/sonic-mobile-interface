@@ -24,8 +24,37 @@
 
 #include <QTextDocumentFragment>
 
+#include <xcb/shape.h>
+#include <xcb/xcb.h>
 
 #define FORMAT24H "HH:mm:ss"
+
+namespace {
+constexpr auto inputRegionProperty = "_sonicmobile_inputRegion";
+
+void applyInputRegion(QWindow *window)
+{
+    const auto x11App = qGuiApp->nativeInterface<QNativeInterface::QX11Application>();
+    // An input transparent window has an empty input shape, which the region must not replace.
+    if (!x11App || (window->flags() & Qt::WindowTransparentForInput)) {
+        return;
+    }
+
+    xcb_connection_t *connection = x11App->connection();
+    const QRect region = window->property(inputRegionProperty).toRect();
+    if (region.isEmpty()) {
+        xcb_shape_mask(connection, XCB_SHAPE_SO_SET, XCB_SHAPE_SK_INPUT, window->winId(), 0, 0, XCB_PIXMAP_NONE);
+    } else {
+        const qreal scale = window->devicePixelRatio();
+        const xcb_rectangle_t rectangle{static_cast<int16_t>(qRound(region.x() * scale)),
+                                        static_cast<int16_t>(qRound(region.y() * scale)),
+                                        static_cast<uint16_t>(qRound(region.width() * scale)),
+                                        static_cast<uint16_t>(qRound(region.height() * scale))};
+        xcb_shape_rectangles(connection, XCB_SHAPE_SO_SET, XCB_SHAPE_SK_INPUT, XCB_CLIP_ORDERING_UNSORTED, window->winId(), 0, 0, 1, &rectangle);
+    }
+    xcb_flush(connection);
+}
+}
 
 ShellUtil::ShellUtil(QObject *parent)
     : QObject{parent}
@@ -106,13 +135,21 @@ void ShellUtil::setInputTransparent(QQuickWindow *window, bool transparent)
         flags &= ~Qt::WindowTransparentForInput;
     }
     window->setFlags(flags);
+
+    // Qt resets the input shape when it clears the transparency.
+    if (!transparent) {
+        applyInputRegion(window);
+    }
 }
 
 void ShellUtil::setInputRegion(QWindow *window, const QRect &region)
 {
-    Q_UNUSED(window);
-    Q_UNUSED(region);
-    qWarning() << "Wayland legacy has been removed.";
+    if (!window) {
+        return;
+    }
+
+    window->setProperty(inputRegionProperty, region);
+    applyInputRegion(window);
 }
 
 QString ShellUtil::toPlainText(QString htmlString)

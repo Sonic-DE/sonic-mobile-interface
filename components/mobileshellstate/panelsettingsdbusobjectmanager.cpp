@@ -4,6 +4,8 @@
 #include "panelsettingsdbusobjectmanager.h"
 #include "panelsadaptor.h"
 
+#include <QTimer>
+
 #include <kscreen/configmonitor.h>
 #include <kscreen/getconfigoperation.h>
 #include <kscreen/output.h>
@@ -63,7 +65,7 @@ void PanelSettingsDBusObjectManager::registerObjects()
         m_kscreenConfig = qobject_cast<KScreen::GetConfigOperation *>(op)->config();
         if (!m_kscreenConfig) {
             qDebug() << "PanelSettingsDBusObjectManager: Failed to get kscreen config, attempting again";
-            registerObjects();
+            QTimer::singleShot(std::chrono::seconds(1), this, &PanelSettingsDBusObjectManager::registerObjects);
             return;
         }
 

@@ -41,6 +41,7 @@ InitialStartModule {
             }
 
             FormCard.FormCard {
+                visible: false
                 maximumWidth: root.cardWidth
                 Layout.topMargin: Kirigami.Units.gridUnit
                 Layout.fillWidth: true

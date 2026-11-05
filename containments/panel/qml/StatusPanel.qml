@@ -19,7 +19,6 @@ import org.kde.plasma.private.mobileshell.windowplugin as WindowPlugin
 
 import org.kde.taskmanager as TaskManager
 import org.kde.notificationmanager as NotificationManager
-import org.kde.layershell 1.0 as LayerShell
 
 Item {
     id: root
@@ -140,7 +139,7 @@ Item {
 
         onVisibleChanged: {
             if (visible && MobileShellState.LockscreenDBusClient.lockscreenActive) {
-                // This works as long the wayland surface is the same (no window.close(), just window.visible = false)
+                // This works as long the window is the same (no window.close(), just window.visible = false)
                 lockScreenOverlay.raiseOverlay();
             }
         }

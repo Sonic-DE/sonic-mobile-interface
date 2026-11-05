@@ -10,6 +10,7 @@
 #include <QDBusPendingReply>
 #include <QDebug>
 #include <QGuiApplication>
+#include <QTimer>
 
 #include <kscreen/configmonitor.h>
 #include <kscreen/getconfigoperation.h>
@@ -66,7 +67,7 @@ void RotationUtil::retrieveKScreen()
         m_config = qobject_cast<KScreen::GetConfigOperation *>(op)->config();
         if (!m_config) {
             qDebug() << "RotationUtil: Failed to get kscreen config, attempting again";
-            retrieveKScreen();
+            QTimer::singleShot(std::chrono::seconds(1), this, &RotationUtil::retrieveKScreen);
             return;
         }
         KScreen::ConfigMonitor::instance()->addConfig(m_config);

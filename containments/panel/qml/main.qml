@@ -19,7 +19,6 @@ import org.kde.plasma.private.mobileshell.windowplugin as WindowPlugin
 
 import org.kde.taskmanager as TaskManager
 import org.kde.notificationmanager as NotificationManager
-import org.kde.layershell 1.0 as LayerShell
 
 ContainmentItem {
     id: root
@@ -77,7 +76,6 @@ ContainmentItem {
             root.panel.thickness = root.panelHeight;
 
             root.panel.visibilityMode = ShellSettings.Settings.autoHidePanelsEnabled ? 3 : 0;
-            MobileShell.ShellUtil.setWindowLayer(root.panel, LayerShell.Window.LayerOverlay)
             root.updateTouchArea();
         }
     }

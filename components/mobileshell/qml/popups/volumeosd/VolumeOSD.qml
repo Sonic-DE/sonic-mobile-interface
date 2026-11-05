@@ -18,21 +18,17 @@ import org.kde.plasma.private.mobileshell.state as MobileShellState
 
 import org.kde.plasma.private.volume
 
-import org.kde.layershell 1.0 as LayerShell
-
-
-Window {
+MobileShell.OverlayWindow {
     id: window
 
+    type: MobileShell.OverlayWindow.OnScreenDisplay
+
+    x: Screen.virtualX
+    y: Screen.virtualY
     width: Screen.width
     height: Screen.height
 
     visible: false
-
-    LayerShell.Window.scope: "overlay"
-    LayerShell.Window.anchors: LayerShell.Window.AnchorTop
-    LayerShell.Window.layer: LayerShell.Window.LayerOverlay
-    LayerShell.Window.exclusionZone: -1
 
     readonly property color backgroundColor: Qt.darker(Qt.rgba(Kirigami.Theme.backgroundColor.r, Kirigami.Theme.backgroundColor.g, Kirigami.Theme.backgroundColor.b, 0.95), 1.05)
 

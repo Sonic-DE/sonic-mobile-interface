@@ -12,8 +12,6 @@ import org.kde.kirigami as Kirigami
 import org.kde.plasma.private.mobileshell as MobileShell
 import org.kde.plasma.private.mobileshell.state as MobileShellState
 
-import org.kde.layershell 1.0 as LayerShell
-
 import org.kde.notificationmanager as NotificationManager
 import org.kde.plasma.clock
 
@@ -25,19 +23,13 @@ import org.kde.taskmanager 0.1 as TaskManager
 /**
  * This sets up and manages the notification popups
  */
-Window {
+MobileShell.OverlayWindow {
     id: notificationPopupManager
+
+    type: MobileShell.OverlayWindow.Notification
 
     readonly property int popupWidth: Math.min(Kirigami.Units.gridUnit * 20, Screen.width - Kirigami.Units.gridUnit * 2)
     readonly property real openOffset: Kirigami.Units.gridUnit + Kirigami.Units.smallSpacing * 3
-    readonly property int longestLength: Math.max(Screen.width, Screen.height)
-    property var keyboardInteractivity: LayerShell.Window.KeyboardInteractivityNone
-
-    LayerShell.Window.scope: "notification"
-    LayerShell.Window.anchors: LayerShell.Window.AnchorTop | LayerShell.Window.AnchorHorizontalCenter
-    LayerShell.Window.layer: LayerShell.Window.LayerOverlay
-    LayerShell.Window.exclusionZone: -1
-    LayerShell.Window.keyboardInteractivity: keyboardInteractivity
 
     // This toggles whether to show all the active popup notifications at ones in a list
     property bool popupDrawerOpened: false
@@ -61,8 +53,10 @@ Window {
         }
     }
 
-    width: longestLength
-    height: longestLength
+    x: Screen.virtualX
+    y: Screen.virtualY
+    width: Screen.width
+    height: Screen.height
 
     signal timeChanged
 
@@ -200,7 +194,7 @@ Window {
                     popupWidth: notificationPopupManager.popupWidth
                     openOffset: notificationPopupManager.openOffset
 
-                    keyboardInteractivity: notificationPopupManager.keyboardInteractivity
+                    hasKeyboardFocus: notificationPopupManager.takeFocus
                     popupNotifications: notifications
                     popupIndex: index
 
@@ -219,9 +213,9 @@ Window {
 
                     onOpenPopupDrawer: notificationPopupManager.popupDrawerOpened = true
 
-                    onSetKeyboardFocus: notificationPopupManager.keyboardInteractivity = LayerShell.Window.KeyboardInteractivityOnDemand
+                    onSetKeyboardFocus: notificationPopupManager.takeFocus = true
 
-                    onRemoveKeyboardFocus: notificationPopupManager.keyboardInteractivity = LayerShell.Window.KeyboardInteractivityNone
+                    onRemoveKeyboardFocus: notificationPopupManager.takeFocus = false
 
                     defaultTimeout: notificationSettings.popupTimeout + (model.urls && model.urls.length > 0 ? 5000 : 0)
 

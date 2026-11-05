@@ -37,7 +37,6 @@ It is recommended to use `kdesrc-build` to build this from source. See [this pag
 
 Dependencies:
 * KDE Frameworks 6 setup (plasma-framework and its dependencies)
-* plasma-nano
 * plasma-workspace
 * plasma-nm
 * plasma-pa
@@ -45,21 +44,16 @@ Dependencies:
 * Milou (for search)
 * Kirigami
 * Kirigami Addons
+* sonic-keyboard
 * feedbackd (optional: for vibrations)
 
-To start the shell in a window, run:
+The shell runs on X11. To start it on a nested or virtual X server, with `sonic-win` as its window manager, run:
 
 ```
-QT_QPA_PLATFORM=wayland dbus-run-session kwin_wayland --xwayland "plasmashell -p org.kde.plasma.mobileshell"
+QT_QUICK_CONTROLS_MOBILE=true PLASMA_PLATFORM=phone:handset dbus-run-session sonicshell -p org.kde.plasma.mobileshell --no-respawn
 ```
 
-Useful options:
-- Specify the `--output-count` flag for the number of displays
-- Specify `--width` and `--height` for the window size
-
-```
-QT_QPA_PLATFORM=wayland dbus-run-session kwin_wayland --xwayland "plasmashell -p org.kde.plasma.mobileshell" --output-count 2 --width 360 --height 720
-```
+Use your X server's own options to set the screen size, such as `Xephyr -screen 360x720`.
 
 ### Device specific configuration
 

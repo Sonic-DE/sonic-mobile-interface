@@ -18,8 +18,6 @@ import org.kde.plasma.private.mobileshell as MobileShell
 import org.kde.plasma.private.mobileshell.shellsettingsplugin as ShellSettings
 import org.kde.plasma.private.mobileshell.windowplugin as WindowPlugin
 import org.kde.plasma.private.mobileshell.state as MobileShellState
-import org.kde.plasma.workspace.keyboardlayout as Keyboards
-import org.kde.layershell 1.0 as LayerShell
 
 ContainmentItem {
     id: root
@@ -87,7 +85,6 @@ ContainmentItem {
             root.panel.thickness = navigationPanelHeight;
             root.panel.location = intendedWindowLocation;
             root.panel.visibilityMode = ShellSettings.Settings.autoHidePanelsEnabled ? 3 : 0;
-            MobileShell.ShellUtil.setWindowLayer(root.panel, LayerShell.Window.LayerOverlay);
             root.updateTouchArea();
         }
     }
@@ -139,7 +136,7 @@ ContainmentItem {
     // only opaque if there are no maximized windows on this screen
     readonly property bool showingStartupFeedback: MobileShellState.ShellDBusObject.startupFeedbackModel.activeWindowIsStartupFeedback && startupFeedbackColorAnimation.visible && windowMaximizedTracker.windowCount === 1
     readonly property bool opaqueBar: {
-        if (Keyboards.KWinVirtualKeyboard.visible) {
+        if (Qt.inputMethod.visible) {
             return true;
         }
         return (windowMaximizedTracker.showingWindow || isCurrentWindowFullscreen) && !showingStartupFeedback

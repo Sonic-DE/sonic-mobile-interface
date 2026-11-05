@@ -5,8 +5,6 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-import org.kde.plasma.workspace.keyboardlayout 1.0
-import org.kde.plasma.workspace.keyboardlayout 1.0 as Keyboards
 
 import org.kde.kirigami as Kirigami
 
@@ -95,7 +93,7 @@ Rectangle {
         interval: 10
         running: false
         repeat: false
-        onTriggered: Keyboards.KWinVirtualKeyboard.active = true
+        onTriggered: Qt.inputMethod.show()
     }
 
     // trigger turning letter into dot after 500 milliseconds
@@ -119,7 +117,7 @@ Rectangle {
 
         onFocusChanged: {
             if (focus) {
-                Keyboards.KWinVirtualKeyboard.active = true;
+                Qt.inputMethod.show();
             }
         }
 
@@ -163,7 +161,7 @@ Rectangle {
         onClicked: {
             // clicking on rectangle opens keyboard if not already open
             if (root.lockScreenState.isKeyboardMode) {
-                Keyboards.KWinVirtualKeyboard.active = true;
+                Qt.inputMethod.show();
             }
         }
 
@@ -187,7 +185,7 @@ Rectangle {
             onClicked: {
                 root.lockScreenState.isKeyboardMode = !root.lockScreenState.isKeyboardMode;
                 if (root.lockScreenState.isKeyboardMode) {
-                    Keyboards.KWinVirtualKeyboard.active = true;
+                    Qt.inputMethod.show();
                 }
             }
         }

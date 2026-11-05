@@ -13,8 +13,6 @@ import org.kde.plasma.components 3.0 as PlasmaComponents
 import org.kde.plasma.private.mobileshell as MobileShell
 import org.kde.plasma.private.mobileshell.state as MobileShellState
 
-import org.kde.layershell 1.0 as LayerShell
-
 import org.kde.notificationmanager as NotificationManager
 import org.kde.plasma.clock
 
@@ -185,7 +183,7 @@ Item {
     property bool popupDrawerOpened: false
     property bool inPopupDrawer: false
 
-    property var keyboardInteractivity
+    property bool hasKeyboardFocus
     property Instantiator popupNotifications
     property int popupCount: popupNotifications.count
     property int popupIndex
@@ -334,7 +332,7 @@ Item {
         closeTimerRunning: hideTimer.running
 
         onDragStart: preventDismissTimeout = true
-        onDragEnd: preventDismissTimeout = (keyboardInteractivity == LayerShell.Window.KeyboardInteractivityOnDemand)
+        onDragEnd: preventDismissTimeout = hasKeyboardFocus
 
         onTakeFocus: {
             notificationPopup.setKeyboardFocus();
@@ -573,7 +571,7 @@ Item {
                 if (notificationPopup.dragOffset - lastOffset > 1.0 || Kirigami.Units.gridUnit * 3 < notificationPopup.dragOffset) {
                     // this code is called when the notification is swiped or dragged down.
                 }
-                notificationPopup.preventDismissTimeout = (keyboardInteractivity == LayerShell.Window.KeyboardInteractivityOnDemand);
+                notificationPopup.preventDismissTimeout = hasKeyboardFocus;
             } else {
                 dragOffsetAn.running = false;
             }

@@ -11,8 +11,6 @@ import QtQuick.Window
 
 import org.kde.plasma.private.mobileshell as MobileShell
 import org.kde.plasma.components 3.0 as PlasmaComponents
-import org.kde.plasma.private.nanoshell 2.0 as NanoShell
-import org.kde.layershell 1.0 as LayerShell
 
 /**
  * Window with the ActionDrawer component embedded in it.
@@ -20,14 +18,13 @@ import org.kde.layershell 1.0 as LayerShell
  * Used for overlaying the ActionDrawer if the original window does not cover
  * the whole screen.
  */
-Window {
+MobileShell.OverlayWindow {
     id: window
 
-    LayerShell.Window.scope: "overlay"
-    LayerShell.Window.anchors: LayerShell.Window.AnchorTop | LayerShell.Window.AnchorLeft | LayerShell.Window.AnchorRight | LayerShell.Window.AnchorBottom
-    LayerShell.Window.layer: LayerShell.Window.LayerOverlay
-    LayerShell.Window.exclusionZone: -1
-    LayerShell.Window.keyboardInteractivity: LayerShell.Window.KeyboardInteractivityNone
+    x: Screen.virtualX
+    y: Screen.virtualY
+    width: Screen.width
+    height: Screen.height
 
     /**
      * The ActionDrawer component.

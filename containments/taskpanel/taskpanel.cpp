@@ -13,9 +13,6 @@
 
 K_PLUGIN_CLASS_WITH_JSON(TaskPanel, "metadata.json")
 
-// register type for Keyboards.KWinVirtualKeyboard.forceActivate();
-Q_DECLARE_METATYPE(QDBusPendingReply<>)
-
 TaskPanel::TaskPanel(QObject *parent, const KPluginMetaData &data, const QVariantList &args)
     : Plasma::Containment(parent, data, args)
 {

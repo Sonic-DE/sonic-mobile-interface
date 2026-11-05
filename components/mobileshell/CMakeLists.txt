@@ -5,6 +5,7 @@ ecm_add_qml_module(mobileshellplugin URI org.kde.plasma.private.mobileshell GENE
 
 set(mobileshellplugin_SRCS
     shellutil.cpp
+    overlaywindow.cpp
     components/direction.cpp
     components/direction.h
     components/swipearea.cpp
@@ -162,6 +163,9 @@ target_link_libraries(mobileshellplugin
         KF6::Package
         KF6::ConfigGui
         KF6::ItemModels
+        KF6::WindowSystem # KX11Extras
+        XCB::XCB
+        XCB::SHAPE
 )
 
 ecm_finalize_qml_module(mobileshellplugin)

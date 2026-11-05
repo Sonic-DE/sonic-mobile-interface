@@ -14,6 +14,7 @@ export QT_ENABLE_GLYPH_CACHE_WORKAROUND=1
 export QT_QUICK_CONTROLS_MOBILE=true
 export PLASMA_INTEGRATION_USE_PORTAL=1
 export PLASMA_PLATFORM=phone:handset
+export QT_IM_MODULE=sonicvirtualkeyboard
 
 # Set ~/.config/plasma-mobile/... as location for default mobile configs (i.e. envmanager generated)
 export XDG_CONFIG_DIRS="$HOME/.config/plasma-mobile:/etc/xdg:$XDG_CONFIG_DIRS"
@@ -29,4 +30,4 @@ QT_QPA_PLATFORM=offscreen plasma-mobile-envmanager --apply-settings
 
 # start the shell
 export SONIC_DEFAULT_SHELL=org.kde.plasma.mobileshell
-startplasma-x11 --inputmethod maliit-keyboard
+startplasma-x11

@@ -9,8 +9,6 @@ import org.kde.plasma.private.mobileshell as MobileShell
 import org.kde.plasma.private.mobileshell.state as MobileShellState
 import org.kde.plasma.private.mobileshell.raiselockscreenplugin as RaiseLockscreenPlugin
 
-import org.kde.layershell 1.0 as LayerShell
-
 // Raise panel window over the lockscreen when it is shown
 QtObject {
     id: root

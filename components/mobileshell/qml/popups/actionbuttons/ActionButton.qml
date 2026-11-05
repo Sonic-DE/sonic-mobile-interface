@@ -13,11 +13,10 @@ import org.kde.kirigami as Kirigami
 import org.kde.plasma.private.mobileshell.state as MobileShellState
 import org.kde.plasma.private.mobileshell as MobileShell
 
-import org.kde.layershell 1.0 as LayerShell
-
-
-Window {
+MobileShell.OverlayWindow {
     id: root
+
+    type: MobileShell.OverlayWindow.Notification
 
     readonly property int size: Kirigami.Units.gridUnit * 2
     readonly property int margins: Math.round(Kirigami.Units.largeSpace * 0.5)
@@ -48,24 +47,17 @@ Window {
         hideButton.restart();
     }
 
-    LayerShell.Window.scope: "overlay"
-    LayerShell.Window.margins.top: margins
-    LayerShell.Window.margins.bottom: margins
-    LayerShell.Window.margins.left: margins
-    LayerShell.Window.margins.right: margins
-    LayerShell.Window.layer: LayerShell.Window.LayerOverlay
-    LayerShell.Window.exclusionZone: -1
-    LayerShell.Window.keyboardInteractivity: LayerShell.Window.KeyboardInteractivityNone
-    LayerShell.Window.anchors: {
-        if (screenCorner === ActionButton.ScreenCorner.TopLeft) {
-            return LayerShell.Window.AnchorTop | LayerShell.Window.AnchorLeft
-        } else if (screenCorner === ActionButton.ScreenCorner.BottomRight) {
-            return LayerShell.Window.AnchorBottom | LayerShell.Window.AnchorRight
-        } else if (screenCorner === ActionButton.ScreenCorner.BottomLeft) {
-            return LayerShell.Window.AnchorBottom | LayerShell.Window.AnchorLeft
-        } else {
-            return LayerShell.Window.AnchorTop | LayerShell.Window.AnchorRight
+    x: {
+        if (screenCorner === ActionButton.ScreenCorner.TopLeft || screenCorner === ActionButton.ScreenCorner.BottomLeft) {
+            return Screen.virtualX + margins;
         }
+        return Screen.virtualX + Screen.width - width - margins;
+    }
+    y: {
+        if (screenCorner === ActionButton.ScreenCorner.TopLeft || screenCorner === ActionButton.ScreenCorner.TopRight) {
+            return Screen.virtualY + margins;
+        }
+        return Screen.virtualY + Screen.height - height - margins;
     }
 
     Kirigami.Theme.colorSet: Kirigami.Theme.View

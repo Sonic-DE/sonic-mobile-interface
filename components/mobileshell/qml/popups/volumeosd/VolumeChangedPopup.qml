@@ -16,24 +16,19 @@ import org.kde.plasma.private.mobileshell.state as MobileShellState
 
 import org.kde.plasma.private.volume
 
-import org.kde.layershell 1.0 as LayerShell
-
-
-Window {
+MobileShell.OverlayWindow {
     id: window
 
+    type: MobileShell.OverlayWindow.OnScreenDisplay
+
+    x: Screen.virtualX + (Screen.width - width) / 2
+    y: Screen.virtualY
     width: osd.width + 6
     height: cards.implicitHeight + 6 + cards.openOffset
 
     onWidthChanged: if (visible) window.updateTouchRegion()
 
     visible: false
-
-    LayerShell.Window.scope: "overlay"
-    LayerShell.Window.anchors: LayerShell.Window.AnchorTop
-    LayerShell.Window.layer: LayerShell.Window.LayerOverlay
-    LayerShell.Window.exclusionZone: -1
-    LayerShell.Window.keyboardInteractivity: LayerShell.Window.KeyboardInteractivityNone
 
     Kirigami.Theme.colorSet: Kirigami.Theme.View
     Kirigami.Theme.inherit: false

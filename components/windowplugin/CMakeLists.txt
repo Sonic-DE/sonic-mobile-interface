@@ -14,6 +14,8 @@ target_link_libraries(windowplugin PRIVATE
     Qt::Quick
     KF6::Service
     KF6::ConfigCore
+    KF6::WindowSystem
+    XCB::XCB
 )
 
 ecm_finalize_qml_module(windowplugin)

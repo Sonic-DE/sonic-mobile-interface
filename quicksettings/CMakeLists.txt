@@ -13,14 +13,13 @@ plasma_install_package(keyboardtoggle org.kde.plasma.quicksetting.keyboardtoggle
 plasma_install_package(kscreenosd org.kde.plasma.quicksetting.kscreenosd quicksettings)
 plasma_install_package(mobiledata org.kde.plasma.quicksetting.mobiledata quicksettings)
 plasma_install_package(settingsapp org.kde.plasma.quicksetting.settingsapp quicksettings)
-plasma_install_package(waydroid org.kde.plasma.quicksetting.waydroid quicksettings)
 plasma_install_package(wifi org.kde.plasma.quicksetting.wifi quicksettings)
 plasma_install_package(hotspot org.kde.plasma.quicksetting.hotspot quicksettings)
 add_subdirectory(flashlight)
 add_subdirectory(kscreenosd)
 add_subdirectory(nightcolor)
 add_subdirectory(powermenu)
-# TODO: Disable screen recording quick setting, as it does not work properly
-add_subdirectory(record)
+# Not built: screen recording needs TaskManager.ScreencastingRequest, a Wayland screencast stream.
+# add_subdirectory(record)
 add_subdirectory(screenshot)
 add_subdirectory(screenrotation)

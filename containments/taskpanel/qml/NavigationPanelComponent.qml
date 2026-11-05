@@ -7,7 +7,6 @@ import QtQuick.Window
 
 import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
-import org.kde.plasma.workspace.keyboardlayout as Keyboards
 
 import org.kde.plasma.private.mobileshell as MobileShell
 import org.kde.plasma.private.mobileshell.state as MobileShellState
@@ -97,15 +96,15 @@ MobileShell.NavigationPanel {
     rightAction: MobileShell.NavigationPanelAction {
         id: closeAppAction
 
-        enabled: Keyboards.KWinVirtualKeyboard.visible || WindowPlugin.WindowUtil.hasCloseableActiveWindow
-        iconSource: Keyboards.KWinVirtualKeyboard.visible ? "go-down-symbolic" : "mobile-close-app"
+        enabled: Qt.inputMethod.visible || WindowPlugin.WindowUtil.hasCloseableActiveWindow
+        iconSource: Qt.inputMethod.visible ? "go-down-symbolic" : "mobile-close-app"
         // mobile-close-app (from plasma-frameworks) seems to have fewer margins than icons from breeze-icons
-        shrinkSize: Keyboards.KWinVirtualKeyboard.visible ? 0 : 4
+        shrinkSize: Qt.inputMethod.visible ? 0 : 4
 
         onTriggered: {
-            if (Keyboards.KWinVirtualKeyboard.visible) {
+            if (Qt.inputMethod.visible) {
                 // close keyboard if it is open
-                Keyboards.KWinVirtualKeyboard.active = false;
+                Qt.inputMethod.hide();
             } else if (WindowPlugin.WindowUtil.hasCloseableActiveWindow) {
                 // if task switcher is closed, but there is an active window
                 if (tasksModel.activeTask !== 0) {
@@ -129,17 +128,16 @@ MobileShell.NavigationPanel {
 
     rightCornerAction: MobileShell.NavigationPanelAction {
         id: keyboardToggleAction
-        visible: ShellSettings.Settings.alwaysShowKeyboardToggleOnNavigationPanel ||
-                 (Keyboards.KWinVirtualKeyboard.available && !Keyboards.KWinVirtualKeyboard.activeClientSupportsTextInput)
+        visible: ShellSettings.Settings.alwaysShowKeyboardToggleOnNavigationPanel
         enabled: true
         iconSource: "input-keyboard-virtual-symbolic"
         shrinkSize: 4
 
         onTriggered: {
-            if (Keyboards.KWinVirtualKeyboard.active) {
-                Keyboards.KWinVirtualKeyboard.active = false;
+            if (Qt.inputMethod.visible) {
+                Qt.inputMethod.hide();
             } else {
-                Keyboards.KWinVirtualKeyboard.forceActivate();
+                Qt.inputMethod.show();
             }
         }
     }

@@ -44,6 +44,7 @@ KCM.SimpleKCM {
 
             FormCard.FormRadioDelegate {
                 id: gesturesRadio
+                visible: false
                 text: i18nc("Gestures Navigation Mode", "Gestures")
                 checked: !ShellSettings.Settings.navigationPanelEnabled
                 onClicked: ShellSettings.Settings.navigationPanelEnabled = false;

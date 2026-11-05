@@ -21,3 +21,33 @@ add_executable(marqueelabeltest marqueelabeltest.cpp)
 target_link_libraries(marqueelabeltest PRIVATE Qt6::QuickTest Qt6::Test)
 add_test(NAME marqueelabeltest COMMAND marqueelabeltest -input ${CMAKE_CURRENT_SOURCE_DIR}/marqueelabel)
 set_tests_properties(marqueelabeltest PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=xcb;QSG_RHI_BACKEND=opengl")
+
+add_executable(qmlimportstest qmlimportstest.cpp)
+target_link_libraries(qmlimportstest PRIVATE Qt6::Test)
+target_compile_definitions(qmlimportstest PRIVATE SOURCE_ROOT="${CMAKE_SOURCE_DIR}")
+add_test(NAME qmlimportstest COMMAND qmlimportstest)
+
+add_executable(overlaywindowtest
+    overlaywindowtest.cpp
+    ${CMAKE_SOURCE_DIR}/components/mobileshell/overlaywindow.cpp
+    ${CMAKE_SOURCE_DIR}/components/mobileshell/shellutil.cpp
+)
+target_include_directories(overlaywindowtest PRIVATE ${CMAKE_SOURCE_DIR}/components/mobileshell)
+target_link_libraries(overlaywindowtest PRIVATE
+    Qt6::Test
+    Qt6::DBus
+    Qt6::Gui
+    Qt6::Quick
+    KF6::ConfigCore
+    KF6::CoreAddons
+    KF6::I18n
+    KF6::KIOGui
+    KF6::KIOWidgets # KNotificationJobUiDelegate
+    KF6::Notifications
+    KF6::Service
+    KF6::WindowSystem
+    XCB::XCB
+    XCB::SHAPE
+)
+add_test(NAME overlaywindowtest COMMAND overlaywindowtest)
+set_tests_properties(overlaywindowtest PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=xcb")

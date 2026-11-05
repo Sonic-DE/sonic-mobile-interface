@@ -11,7 +11,7 @@ import org.kde.plasma.core as PlasmaCore
 import org.kde.ksvg 1.0 as KSvg
 import org.kde.kquickcontrolsaddons 2.0
 import org.kde.plasma.plasmoid 2.0
-import org.kde.plasma.private.nanoshell 2.0 as NanoShell
+import org.kde.plasma.private.mobileshell as MobileShell
 import org.kde.kirigami as Kirigami
 
 Item {
@@ -112,10 +112,13 @@ Item {
         }
     }
 
-    NanoShell.FullScreenOverlay {
+    MobileShell.OverlayWindow {
         id: expandedOverlay
+        takeFocus: true
         color: Qt.rgba(0, 0, 0, 0.6)
         visible: plasmoidItem?.expanded && fullRepresentation
+        x: Screen.virtualX
+        y: Screen.virtualY
         width: Screen.width
         height: Screen.height
         MouseArea {

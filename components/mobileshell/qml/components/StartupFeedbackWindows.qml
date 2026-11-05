@@ -9,7 +9,6 @@ import org.kde.kirigami as Kirigami
 import org.kde.plasma.components 3.0 as PC3
 import org.kde.plasma.private.mobileshell.shellsettingsplugin as ShellSettings
 import org.kde.plasma.private.mobileshell.state as MobileShellState
-import org.kde.plasma.private.nanoshell 2.0 as NanoShell
 
 Item {
     id: root

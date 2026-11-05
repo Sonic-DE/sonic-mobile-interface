@@ -12,12 +12,6 @@ Loader {
     property var currentWindow
 
     function run(window) {
-        // HACK: don't maximize xwaylandvideobridge
-        // see: https://invent.kde.org/plasma/plasma-mobile/-/issues/324
-        if (window.resourceClass === 'xwaylandvideobridge') {
-            return;
-        }
-
         if (!window.normalWindow) {
             return;
         }
