@@ -8,7 +8,7 @@
 set -e
 
 # Make built-from-source sessions appear in login screen
-sudo install @CMAKE_CURRENT_BINARY_DIR@/plasma-mobile-dev.desktop /usr/share/xsessions/
+sudo install @CMAKE_CURRENT_BINARY_DIR@/sonicde-mobile-dev.desktop /usr/share/xsessions/
 install @CMAKE_CURRENT_BINARY_DIR@/startplasmamobile-dev.sh @CMAKE_INSTALL_FULL_LIBEXECDIR@
 
 # Make the system DBus able to see any new DBus files that have been added to
