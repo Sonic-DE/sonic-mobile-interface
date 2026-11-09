@@ -2,10 +2,12 @@
 
 SonicDE's touch-friendly shell for phones and tablets.
 
-## Unreleased
+## 6.8.2 (2026-11-10)
 
+- The mobile shell now runs on X11, where it used to show only a black screen, and starts with the SonicDE on-screen keyboard. Navigation uses panel buttons until gestures work on X11, and Waydroid support and the screen recording quick setting have been removed.
 - Now presents itself with SonicDE names and identity throughout the desktop.
 - The mobile session is now called "SonicDE Mobile" on the login screen, in every language SonicDE is translated into. If you used it before, choose it once more after upgrading.
+- Behind the scenes: new automated tests for the X11 shell, and repository tidying.
 
 ## 6.8.0 (2026-10-20)
 
