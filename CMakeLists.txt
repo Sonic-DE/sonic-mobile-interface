@@ -34,6 +34,7 @@ include(ECMSetupVersion)
 include(ECMMarkNonGuiExecutable)
 include(ECMGenerateHeaders)
 include(ECMFindQmlModule)
+include(ECMQmlModule)
 include(ECMConfiguredInstall)
 include(ECMFindQmlModule)
 include(ECMQtDeclareLoggingCategory)
@@ -55,6 +56,7 @@ find_package(Qt6 ${QT_MIN_VERSION} CONFIG REQUIRED
     Quick
     Gui
     Sensors
+    Multimedia
 )
 
 find_package(KF6 ${KF6_MIN_VERSION} REQUIRED COMPONENTS
@@ -78,7 +80,7 @@ find_package(Plasma CONFIG REQUIRED)
 find_package(PlasmaQuick CONFIG REQUIRED)
 find_package(PlasmaActivities CONFIG REQUIRED)
 find_package(KF6Screen CONFIG REQUIRED)
-find_package(KPipeWire ${PROJECT_DEP_VERSION} REQUIRED)
+find_package(SonicLogging CONFIG REQUIRED)
 
 find_package(PkgConfig REQUIRED)
 
@@ -89,7 +91,7 @@ kde_enable_exceptions()
 
 find_package(KF6KirigamiAddons 0.6 REQUIRED)
 find_package(epoxy REQUIRED)
-find_package(XCB REQUIRED COMPONENTS XCB SHAPE)
+find_package(XCB REQUIRED COMPONENTS XCB SHAPE RANDR)
 find_package(KWinX11 ${PROJECT_DEP_VERSION} REQUIRED COMPONENTS
     kwin
 )
@@ -111,7 +113,6 @@ set_package_properties(KF6::AuthCore PROPERTIES
 
 include(CheckIncludeFiles)
 
-ecm_find_qmlmodule(org.kde.pipewire 0.1)
 
 plasma_install_package(lookandfeel org.kde.silver.mobile look-and-feel lookandfeel)
 plasma_install_package(shell org.kde.plasma.mobileshell shells)

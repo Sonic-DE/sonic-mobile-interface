@@ -19,7 +19,6 @@ add_subdirectory(flashlight)
 add_subdirectory(kscreenosd)
 add_subdirectory(nightcolor)
 add_subdirectory(powermenu)
-# Not built: screen recording needs TaskManager.ScreencastingRequest, a Wayland screencast stream.
-# add_subdirectory(record)
+add_subdirectory(record)
 add_subdirectory(screenshot)
 add_subdirectory(screenrotation)

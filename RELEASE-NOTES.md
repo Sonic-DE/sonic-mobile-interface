@@ -4,6 +4,7 @@ SonicDE's touch-friendly shell for phones and tablets.
 
 ## Unreleased
 
+- The **Record Screen** quick setting is back. It records the screen to your Videos folder and tells you where the video was saved.
 - Behind the scenes: removed the Waydroid leftovers (translations, hidden app list entries, and a "Waydroid Management" label that the flashlight's permission prompt carried by mistake) until SonicDE has its own Android app support.
 
 ## 6.8.2 (2026-11-10)

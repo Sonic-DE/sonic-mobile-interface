@@ -5,7 +5,6 @@ import QtQuick
 import QtQuick.Window
 
 import org.kde.plasma.private.mobileshell.state as MobileShellState
-import org.kde.taskmanager as TaskManager
 import org.kde.plasma.quicksetting.record
 import org.kde.plasma.private.mobileshell.quicksettingsplugin as QS
 
@@ -21,29 +20,8 @@ QS.QuickSetting {
     function toggle() {
         if (RecordUtil.isRecording) {
             RecordUtil.stopRecording();
-            waylandItem.outputName = '';
-        } else {
-            // Start recording only when waylandItem's nodeId updates
-            waylandItem.startRecordingRequest = true;
-            waylandItem.outputName = Screen.name;
-        }
-    }
-
-    TaskManager.ScreencastingRequest {
-        id: waylandItem
-        property bool startRecordingRequest: false
-
-        onNodeIdChanged: {
-            if (startRecordingRequest) {
-                let status = RecordUtil.startRecording(waylandItem.nodeId);
-                if (status) {
-                    MobileShellState.ShellDBusClient.closeActionDrawer();
-                } else {
-                    waylandItem.outputName = '';
-                }
-
-                startRecordingRequest = false;
-            }
+        } else if (RecordUtil.startRecording(Screen.name)) {
+            MobileShellState.ShellDBusClient.closeActionDrawer();
         }
     }
 }
