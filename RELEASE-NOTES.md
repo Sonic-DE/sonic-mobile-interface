@@ -2,6 +2,10 @@
 
 SonicDE's touch-friendly shell for phones and tablets.
 
+## Unreleased
+
+- Behind the scenes: removed the Waydroid leftovers (translations, hidden app list entries, and a "Waydroid Management" label that the flashlight's permission prompt carried by mistake) until SonicDE has its own Android app support.
+
 ## 6.8.2 (2026-11-10)
 
 - The mobile shell now runs on X11, where it used to show only a black screen, and starts with the SonicDE on-screen keyboard. Navigation uses panel buttons until gestures work on X11, and Waydroid support and the screen recording quick setting have been removed.

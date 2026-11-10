@@ -1,39 +1,6 @@
 # SPDX-FileCopyrightText: 2025 Florian RICHER <florian.richer@protonmail.com>
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-[Domain]
-Name=Waydroid Management
-Name[ar]=إدارة ويدرويد
-Name[ca]=Gestió del Waydroid
-Name[ca@valencia]=Gestioneu Waydroid
-Name[cs]=Správa Waydroidu
-Name[de]=Waydroid-Verwaltung
-Name[es]=Gestión de Waydroid
-Name[eu]=Waydroid kudeaketa
-Name[fi]=Waydroidin hallinnointi
-Name[fr]=Gestion de Waydroid
-Name[he]=ניהול Waydroid
-Name[hu]=Waydroid-kezelés
-Name[ia]=Gestion de Waydroid
-Name[is]=Umsjón með Waydroid
-Name[it]=Gestione di Waydroid
-Name[ka]=Waydroid-ის მართვა
-Name[ko]=Waydroid 관리
-Name[lv]=„Waydroid“ pārvaldība
-Name[nl]=Waydroid-beheer
-Name[nn]=Waydroid-handsaming
-Name[pl]=Zarządzanie Waydroidem
-Name[pt_BR]=Gerenciamento do Waydroid
-Name[ru]=Управление Waydroid
-Name[sk]=Waydroid Management
-Name[sl]=Upravljanje Waydroid
-Name[sv]=Hantering av Waydroid
-Name[tr]=Waydroid Yönetimi
-Name[uk]=Керування Waydroid
-Name[zh_CN]=Waydroid 管理
-Name[zh_TW]=Waydroid 管理
-Icon=color
-
 [org.kde.plasma.mobileshell.flashlighthelper.setbrightness]
 Name=Set flashlight brightness
 Name[ar]=اضبط سطوع الكشاف
