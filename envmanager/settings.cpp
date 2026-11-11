@@ -62,7 +62,7 @@ void Settings::loadSavedConfiguration()
 
     // kdeglobals (legacy, we only write in the plasma-mobile/kdeglobals file now)
     auto originalKdeglobalsConfig = KSharedConfig::openConfig(u"kdeglobals"_s, KConfig::SimpleConfig);
-    loadKeys(u"kdeglobals"_s, originalKdeglobalsConfig, KDEGLOBALS_SETTINGS);
+    loadKeys(u"kdeglobals"_s, originalKdeglobalsConfig, LEGACY_KDEGLOBALS_SETTINGS);
     originalKdeglobalsConfig->sync();
 
     // save our changes
@@ -95,14 +95,13 @@ void Settings::applyMobileConfiguration()
 
     // kdeglobals
     {
-        setOptionsImmutable(false, MOBILE_KDEGLOBALS_FILE, KDEGLOBALS_SETTINGS);
+        // Older versions forced a global theme here; drop it so the user's own theme applies.
+        setOptionsImmutable(false, MOBILE_KDEGLOBALS_FILE, {});
 
         auto kdeglobals = KSharedConfig::openConfig(MOBILE_KDEGLOBALS_FILE, KConfig::SimpleConfig);
+        KConfigGroup{kdeglobals, u"KDE"_s}.deleteEntry("LookAndFeelPackage");
         writeKeys(MOBILE_KDEGLOBALS_FILE, kdeglobals, KDEGLOBALS_DEFAULT_SETTINGS); // only write, don't make immutable
-        writeKeys(MOBILE_KDEGLOBALS_FILE, kdeglobals, KDEGLOBALS_SETTINGS);
         kdeglobals->sync();
-
-        setOptionsImmutable(true, MOBILE_KDEGLOBALS_FILE, KDEGLOBALS_SETTINGS);
     }
 
     // ksmserver

@@ -52,6 +52,12 @@ target_link_libraries(overlaywindowtest PRIVATE
 add_test(NAME overlaywindowtest COMMAND overlaywindowtest)
 set_tests_properties(overlaywindowtest PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=xcb")
 
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
+add_test(
+    NAME test_envmanager_theme
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_envmanager_theme.py $<TARGET_FILE:plasma-mobile-envmanager>
+)
+
 find_program(XVFB_EXECUTABLE Xvfb REQUIRED)
 add_executable(screenrecordertest screenrecordertest.cpp)
 target_link_libraries(screenrecordertest PRIVATE Qt6::Test Qt6::Multimedia sonicmobilescreenrecorder Sonic::Logging)
