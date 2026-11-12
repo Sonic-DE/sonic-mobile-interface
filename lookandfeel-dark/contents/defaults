@@ -1,0 +1,36 @@
+# SPDX-FileCopyrightText: 2026 Joseph Crowell <joseph.w.crowell@gmail.com>
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+[kcminputrc][Mouse]
+cursorTheme=silver_cursors_dark
+
+[kdeglobals][General]
+ColorScheme=SilverDark
+
+[kdeglobals][Icons]
+Theme=silver-dark
+
+[kdeglobals][KDE]
+widgetStyle=Silver
+
+[kwinrc][DesktopSwitcher]
+LayoutName=thumbnail_grid
+
+[kwinrc][WindowSwitcher]
+LayoutName=thumbnail_grid
+
+[kwinrc][org.kde.kdecoration2]
+library=org.kde.silver
+theme=Silver
+
+[silver/silverrc][Windeco]
+ButtonIconStyle=StyleFluent
+
+[plasmarc][Theme]
+name=silver-dark
+
+[Wallpaper]
+Image=Silver
+
+[ksplashrc][KSplash]
+Theme=org.kde.silverlightbottompanel.desktop

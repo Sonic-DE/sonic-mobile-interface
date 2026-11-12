@@ -114,7 +114,11 @@ set_package_properties(KF6::AuthCore PROPERTIES
 include(CheckIncludeFiles)
 
 
-plasma_install_package(lookandfeel org.kde.silver.mobile look-and-feel lookandfeel)
+plasma_install_package(lookandfeel org.sonicde.silver.mobile.light look-and-feel lookandfeel)
+plasma_install_package(lookandfeel-dark org.sonicde.silver.mobile.dark look-and-feel lookandfeel)
+# The dark theme shares the light one's mobile logout screen and layout.
+install(DIRECTORY lookandfeel/contents/logout lookandfeel/contents/layouts
+        DESTINATION ${KDE_INSTALL_DATADIR}/plasma/look-and-feel/org.sonicde.silver.mobile.dark/contents)
 plasma_install_package(shell org.kde.plasma.mobileshell shells)
 
 add_subdirectory(bin)

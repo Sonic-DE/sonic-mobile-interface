@@ -6,6 +6,7 @@ SonicDE's touch-friendly shell for phones and tablets.
 
 - The **Record Screen** quick setting is back. It records the screen to your Videos folder and tells you where the video was saved.
 - The mobile session keeps your own global theme and splash screen, with Silver as the default, instead of switching them to its own Breeze-based theme.
+- The SonicDE Mobile Silver global theme is now Silver Light - Mobile, with the full Silver look and splash screen, and has a new dark twin, Silver Dark - Mobile. If you used it, you're moved to Silver Light - Mobile, or Silver Dark - Mobile with a dark colour scheme, when you next log in.
 - Behind the scenes: removed the Waydroid leftovers (translations, hidden app list entries, and a "Waydroid Management" label that the flashlight's permission prompt carried by mistake) until SonicDE has its own Android app support.
 
 ## 6.8.2 (2026-11-10)
