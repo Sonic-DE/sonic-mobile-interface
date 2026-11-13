@@ -55,6 +55,9 @@ class MobileShellSettings : public QObject
     // logout dialog
     Q_PROPERTY(bool allowLogout READ allowLogout READ allowLogout NOTIFY allowLogoutChanged)
 
+    // Silver Dark - Mobile instead of Silver Light - Mobile
+    Q_PROPERTY(bool darkMode READ darkMode WRITE setDarkMode NOTIFY darkModeChanged)
+
     // locksreen shortcut icons
     Q_PROPERTY(LockscreenButtonAction lockscreenLeftButtonAction READ lockscreenLeftButtonAction WRITE setLockscreenLeftButtonAction NOTIFY lockscreenLeftButtonActionChanged)
     Q_PROPERTY(LockscreenButtonAction lockscreenRightButtonAction READ lockscreenRightButtonAction WRITE setLockscreenRightButtonAction NOTIFY lockscreenRightButtonActionChanged)
@@ -270,6 +273,12 @@ public:
     bool allowLogout() const;
 
     /**
+     * Whether the session uses the dark mobile global theme.
+     */
+    bool darkMode() const;
+    void setDarkMode(bool dark);
+
+    /**
      * The action of the left lock screen shortcut
      */
     LockscreenButtonAction lockscreenLeftButtonAction() const;
@@ -311,6 +320,7 @@ Q_SIGNALS:
     void convergenceModeEnabledChanged();
     void autoHidePanelsEnabledChanged();
     void allowLogoutChanged();
+    void darkModeChanged();
     void lockscreenLeftButtonActionChanged();
     void lockscreenRightButtonActionChanged();
 

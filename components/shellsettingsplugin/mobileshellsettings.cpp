@@ -45,6 +45,7 @@ MobileShellSettings::MobileShellSettings(QObject *parent)
             Q_EMIT convergenceModeEnabledChanged();
             Q_EMIT autoHidePanelsEnabledChanged();
             Q_EMIT allowLogoutChanged();
+            Q_EMIT darkModeChanged();
         }
         if (group.name() == LOCKSCREEN_CONFIG_GROUP) {
             Q_EMIT lockscreenLeftButtonActionChanged();
@@ -298,6 +299,28 @@ bool MobileShellSettings::allowLogout() const
 {
     auto group = KConfigGroup{m_config, GENERAL_CONFIG_GROUP};
     return group.readEntry("allowLogout", true);
+}
+
+bool MobileShellSettings::darkMode() const
+{
+    auto group = KConfigGroup{m_config, GENERAL_CONFIG_GROUP};
+    return group.readEntry("darkMode", false);
+}
+
+void MobileShellSettings::setDarkMode(bool dark)
+{
+    if (dark == darkMode()) {
+        return;
+    }
+    auto group = KConfigGroup{m_config, GENERAL_CONFIG_GROUP};
+    group.writeEntry("darkMode", dark, KConfigGroup::Notify);
+    m_config->sync();
+
+    // The environment manager writes the session theme
+    auto *job = new KIO::CommandLauncherJob(QStringLiteral("plasma-mobile-envmanager --apply-settings"), {});
+    job->setUiDelegate(new KNotificationJobUiDelegate(KJobUiDelegate::AutoErrorHandlingEnabled));
+    job->setDesktopName(QStringLiteral("org.kde.plasma-mobile-envmanager"));
+    job->start();
 }
 
 MobileShellSettings::LockscreenButtonAction MobileShellSettings::lockscreenLeftButtonAction() const

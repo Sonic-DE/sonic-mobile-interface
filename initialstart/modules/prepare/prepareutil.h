@@ -8,8 +8,6 @@
 
 #include <kscreen/config.h>
 
-#include "colorssettings.h"
-
 class PrepareUtil : public QObject
 {
     Q_OBJECT
@@ -41,6 +39,5 @@ private:
 
     int m_output{0};
 
-    ColorsSettings *m_colorsSettings;
     KScreen::ConfigPtr m_config;
 };

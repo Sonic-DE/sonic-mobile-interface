@@ -1,0 +1,19 @@
+# SPDX-FileCopyrightText: 2026 Joseph Crowell <joseph.w.crowell@gmail.com>
+# SPDX-License-Identifier: GPL-2.0-or-later
+msgid ""
+msgstr ""
+"Project-Id-Version: plasma_org.kde.plasma.quicksetting.darkmode\n"
+"Report-Msgid-Bugs-To: https://github.com/Sonic-DE/\n"
+"POT-Creation-Date: 2026-11-13 00:00+0000\n"
+"PO-Revision-Date: 2026-11-13 00:00+0000\n"
+"Last-Translator: Joseph Crowell <joseph.w.crowell@gmail.com>\n"
+"Language-Team: sl\n"
+"Language: sl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: contents/ui/main.qml:10
+#, kde-format
+msgid "Dark Mode"
+msgstr "Temni način"

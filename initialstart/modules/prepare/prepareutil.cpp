@@ -3,6 +3,9 @@
 
 #include "prepareutil.h"
 
+#include <KConfigGroup>
+#include <KSharedConfig>
+
 #include <kscreen/configmonitor.h>
 #include <kscreen/getconfigoperation.h>
 #include <kscreen/output.h>
@@ -15,12 +18,11 @@
 
 PrepareUtil::PrepareUtil(QObject *parent)
     : QObject{parent}
-    , m_colorsSettings{new ColorsSettings(this)}
 {
     initKScreen([]() { });
 
     // set property initially
-    m_usingDarkTheme = m_colorsSettings->colorScheme() == "SilverDark";
+    m_usingDarkTheme = KConfigGroup(KSharedConfig::openConfig(QStringLiteral("plasmamobilerc")), QStringLiteral("General")).readEntry("darkMode", false);
 }
 
 void PrepareUtil::initKScreen(std::function<void()> callback)
@@ -109,11 +111,13 @@ bool PrepareUtil::usingDarkTheme() const
 
 void PrepareUtil::setUsingDarkTheme(bool usingDarkTheme)
 {
-    // use plasma-apply-colorscheme since it has logic for notifying the shell of changes
-    const QString scheme = usingDarkTheme ? QStringLiteral("SilverDark") : QStringLiteral("SilverLight");
-    const int result = QProcess::execute(QStringLiteral("plasma-apply-colorscheme"), {scheme});
+    // The session's own theme, as the Dark Mode quick setting sets it; the desktop keeps its own.
+    auto config = KSharedConfig::openConfig(QStringLiteral("plasmamobilerc"));
+    KConfigGroup(config, QStringLiteral("General")).writeEntry("darkMode", usingDarkTheme, KConfig::Notify);
+    config->sync();
+    const int result = QProcess::execute(QStringLiteral("plasma-mobile-envmanager"), {QStringLiteral("--apply-settings")});
     if (result != 0) {
-        qWarning() << "Failed to apply color scheme" << scheme << "exit status" << result;
+        qWarning() << "Failed to apply the session theme, exit status" << result;
         return;
     }
 

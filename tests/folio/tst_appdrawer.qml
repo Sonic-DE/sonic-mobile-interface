@@ -67,6 +67,12 @@ TestCase {
         testFolio.HomeScreenState.goToAppDrawerPage(0, true);
     }
 
+    function test_applicationsListedWithoutDatabaseChange() {
+        // A session whose app database is already current gets no change signal.
+        verify(expectedStorageIds.length > 0);
+        compare(startupApplicationCount, expectedStorageIds.length);
+    }
+
     function test_allAppsPreservesInstalledApplications() {
         const model = testFolio.ApplicationListModel;
         model.sycocaDbChanged();

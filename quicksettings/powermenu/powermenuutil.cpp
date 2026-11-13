@@ -16,5 +16,6 @@ PowerMenuUtil::PowerMenuUtil(QObject *parent)
 void PowerMenuUtil::openShutdownScreen()
 {
     SessionManagement sessionManagement;
-    sessionManagement.requestShutdown();
+    // All options, as on TV; a shut-down-only prompt hides Log Out and Restart
+    sessionManagement.requestLogoutPrompt();
 }

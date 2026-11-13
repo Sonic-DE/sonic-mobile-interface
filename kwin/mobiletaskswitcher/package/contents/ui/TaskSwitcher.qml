@@ -17,7 +17,7 @@ import org.kde.plasma.private.mobileshell.shellsettingsplugin as ShellSettings
 import org.kde.plasma.private.mobileshell.taskswitcherplugin as TaskSwitcherPlugin
 
 import org.kde.kwin 3.0 as KWinComponents
-import org.kde.kwin.private.effects 1.0
+import org.kde.kwin_x11.private.effects
 import org.kde.kitemmodels
 
 

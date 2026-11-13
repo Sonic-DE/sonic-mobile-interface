@@ -55,7 +55,7 @@ set_tests_properties(overlaywindowtest PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=x
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
 add_test(
     NAME test_envmanager_theme
-    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_envmanager_theme.py $<TARGET_FILE:plasma-mobile-envmanager>
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test_envmanager_theme.py $<TARGET_FILE:plasma-mobile-envmanager> ${CMAKE_SOURCE_DIR}
 )
 
 find_program(XVFB_EXECUTABLE Xvfb REQUIRED)

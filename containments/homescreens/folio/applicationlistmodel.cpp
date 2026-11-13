@@ -34,6 +34,8 @@ ApplicationListModel::ApplicationListModel(HomeScreen *parent)
     connect(m_reloadAppsTimer, &QTimer::timeout, this, &ApplicationListModel::sycocaDbChanged);
 
     connect(KSycoca::self(), &KSycoca::databaseChanged, m_reloadAppsTimer, static_cast<void (QTimer::*)()>(&QTimer::start));
+
+    load();
 }
 
 ApplicationListModel::~ApplicationListModel() = default;

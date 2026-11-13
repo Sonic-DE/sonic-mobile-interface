@@ -5,6 +5,7 @@
 #include "settings.h"
 #include "config.h"
 #include "devicepresets.h"
+#include "sessiontheme.h"
 #include "utils.h"
 
 #include <KRuntimePlatform>
@@ -95,11 +96,9 @@ void Settings::applyMobileConfiguration()
 
     // kdeglobals
     {
-        // Older versions forced a global theme here; drop it so the user's own theme applies.
         setOptionsImmutable(false, MOBILE_KDEGLOBALS_FILE, {});
 
         auto kdeglobals = KSharedConfig::openConfig(MOBILE_KDEGLOBALS_FILE, KConfig::SimpleConfig);
-        KConfigGroup{kdeglobals, u"KDE"_s}.deleteEntry("LookAndFeelPackage");
         writeKeys(MOBILE_KDEGLOBALS_FILE, kdeglobals, KDEGLOBALS_DEFAULT_SETTINGS); // only write, don't make immutable
         kdeglobals->sync();
     }
@@ -117,6 +116,9 @@ void Settings::applyMobileConfiguration()
 
     // Save our changes
     m_mobileConfig->sync();
+
+    // Last, as the blocks above unlock keys in the overlay files it locks.
+    SessionTheme::apply(m_mobileConfig, u"plasma-mobile"_s, u"org.sonicde.silver.mobile.light"_s, u"org.sonicde.silver.mobile.dark"_s);
 
     // Setup device configs
     DevicePresets devicePresets;

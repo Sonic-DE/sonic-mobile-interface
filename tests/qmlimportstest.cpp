@@ -29,7 +29,6 @@ private Q_SLOTS:
         const QSet<QString> registeredInProcess{
             QStringLiteral("initialstart"),
             QStringLiteral("org.kde.kwin"),
-            QStringLiteral("org.kde.kwin.private.effects"),
             QStringLiteral("org.kde.timesettings"),
             QStringLiteral("org.sonicde.sonicshell.panel"),
         };

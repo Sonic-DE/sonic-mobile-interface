@@ -6,6 +6,7 @@
 #include <KPluginFactory>
 #include <KSharedConfig>
 #include <Plasma/Containment>
+#include <QAbstractItemModel>
 #include <QQmlContext>
 #include <QQmlEngine>
 #include <QStandardPaths>
@@ -32,6 +33,10 @@ public Q_SLOTS:
         }
         m_folio.reset(result.plugin);
         engine->rootContext()->setContextProperty(QStringLiteral("testFolio"), m_folio.get());
+
+        // Counted before anything can reload the list, as at session start.
+        const auto *appModel = m_folio->property("ApplicationListModel").value<QAbstractItemModel *>();
+        engine->rootContext()->setContextProperty(QStringLiteral("startupApplicationCount"), appModel ? appModel->rowCount() : -1);
 
         const auto config = KSharedConfig::openConfig(QStringLiteral("applications-blacklistrc"));
         const auto blacklist = KConfigGroup(config, QStringLiteral("Applications")).readEntry("blacklist", QStringList());

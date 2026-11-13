@@ -85,11 +85,12 @@ bool TaskFilterModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceP
         return false;
     }
 
-#if KWIN_BUILD_ACTIVITIES 
-    // Filter by same activity
-    auto activity = Workspace::self()->activities()->current();
-    if (!window->isOnActivity(activity)) {
-        return false;
+#if KWIN_BUILD_ACTIVITIES
+    // Filter by same activity; there are none when SonicWin runs without activities
+    if (Activities *activities = Workspace::self()->activities()) {
+        if (!window->isOnActivity(activities->current())) {
+            return false;
+        }
     }
 #endif
 

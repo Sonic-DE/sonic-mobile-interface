@@ -5,9 +5,11 @@ SonicDE's touch-friendly shell for phones and tablets.
 ## Unreleased
 
 - The **Record Screen** quick setting is back. It records the screen to your Videos folder and tells you where the video was saved.
-- The mobile session keeps your own global theme and splash screen, with Silver as the default, instead of switching them to its own Breeze-based theme.
+- The mobile session has its own look, Silver Light - Mobile or Silver Dark - Mobile, kept apart from your desktop's theme, so neither changes the other. The first time, it matches your desktop's light or dark colours, and the new Dark Mode quick setting changes it at any time.
 - The SonicDE Mobile Silver global theme is now Silver Light - Mobile, with the full Silver look and splash screen, and has a new dark twin, Silver Dark - Mobile. If you used it, you're moved to Silver Light - Mobile, or Silver Dark - Mobile with a dark colour scheme, when you next log in.
-- Behind the scenes: removed the Waydroid leftovers (translations, hidden app list entries, and a "Waydroid Management" label that the flashlight's permission prompt carried by mistake) until SonicDE has its own Android app support.
+- Your apps show up on the home screen and in the app drawer again. After the first login they were missing, so the home screen showed only the wallpaper.
+- The task switcher opens from the navigation bar again, and no longer takes the window manager down when activities are turned off.
+- Behind the scenes: removed the Waydroid leftovers (translations, hidden app list entries, and a "Waydroid Management" label that the flashlight's permission prompt carried by mistake) until SonicDE has its own Android app support. New automated checks catch an empty app list at login and task switcher modules that can't be found.
 
 ## 6.8.2 (2026-11-10)
 

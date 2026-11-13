@@ -41,6 +41,7 @@ QList<QString> QuickSettingsConfig::enabledQuickSettings() const
                                           QStringLiteral("org.kde.plasma.quicksetting.audio"),
                                           QStringLiteral("org.kde.plasma.quicksetting.battery"),
                                           QStringLiteral("org.kde.plasma.quicksetting.nightcolor"),
+                                          QStringLiteral("org.kde.plasma.quicksetting.darkmode"),
                                           QStringLiteral("org.kde.plasma.quicksetting.screenshot"),
                                           QStringLiteral("org.kde.plasma.quicksetting.powermenu"),
                                           QStringLiteral("org.kde.plasma.quicksetting.donotdisturb"),

@@ -4,6 +4,7 @@
 set(plasma-mobile-envmanager_SRCS
     main.cpp
     settings.cpp
+    sessiontheme.cpp
     utils.cpp
     devicepresets.cpp
     config.h
