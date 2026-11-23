@@ -19,7 +19,7 @@ target_link_libraries(flashlightplugin PRIVATE
     KF6::ConfigGui
     KF6::I18n
     KF6::Notifications
-    udev
+    PkgConfig::Libudev
 )
 
 ecm_finalize_qml_module(flashlightplugin)

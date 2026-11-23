@@ -20,15 +20,27 @@ target_include_directories(mobileshellplugin PRIVATE notifications)
 target_include_directories(mobileshellplugin PRIVATE masklayer)
 target_sources(mobileshellplugin PRIVATE ${mobileshellplugin_SRCS})
 
+# FreeBSD has no ModemManager or BlueZ: data providers without modems or Bluetooth, under the same names.
+if(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
+    set(signal_strength_info qml/dataproviders/freebsd/SignalStrengthInfo.qml)
+    set(bluetooth_info qml/dataproviders/freebsd/BluetoothInfo.qml)
+    set_property(GLOBAL APPEND PROPERTY MOBILE_UNBUILT_QML
+        components/mobileshell/qml/dataproviders/SignalStrengthInfo.qml
+        components/mobileshell/qml/dataproviders/BluetoothInfo.qml)
+else()
+    set(signal_strength_info qml/dataproviders/SignalStrengthInfo.qml)
+    set(bluetooth_info qml/dataproviders/BluetoothInfo.qml)
+endif()
+
 # Singleton declarations
 set_source_files_properties(
     qml/components/AppLaunch.qml
     qml/components/Constants.qml
     qml/dataproviders/AudioInfo.qml
     qml/dataproviders/BatteryInfo.qml
-    qml/dataproviders/BluetoothInfo.qml
+    ${bluetooth_info}
     qml/dataproviders/NetworkInfo.qml
-    qml/dataproviders/SignalStrengthInfo.qml
+    ${signal_strength_info}
     qml/popups/PopupProviderLoader.qml
     PROPERTIES
     QT_QML_SINGLETON_TYPE TRUE
@@ -59,9 +71,9 @@ ecm_target_qml_sources(mobileshellplugin SOURCES
 
     qml/dataproviders/AudioInfo.qml
     qml/dataproviders/BatteryInfo.qml
-    qml/dataproviders/BluetoothInfo.qml
+    ${bluetooth_info}
     qml/dataproviders/NetworkInfo.qml
-    qml/dataproviders/SignalStrengthInfo.qml
+    ${signal_strength_info}
 
     qml/homescreen/BlurEffect.qml
     qml/homescreen/DeviceLock.qml

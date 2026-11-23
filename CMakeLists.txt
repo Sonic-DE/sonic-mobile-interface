@@ -68,13 +68,16 @@ find_package(KF6 ${KF6_MIN_VERSION} REQUIRED COMPONENTS
     ItemModels
     Service
     Notifications
-    ModemManagerQt
     NetworkManagerQt
     KCMUtils
     Package
     JobWidgets
     WindowSystem
 )
+# FreeBSD has no ModemManager; the cellular parts aren't built there.
+if(NOT CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
+    find_package(KF6 ${KF6_MIN_VERSION} REQUIRED COMPONENTS ModemManagerQt)
+endif()
 
 find_package(Plasma CONFIG REQUIRED)
 find_package(PlasmaQuick CONFIG REQUIRED)

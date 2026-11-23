@@ -24,7 +24,10 @@ set_tests_properties(marqueelabeltest PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=xc
 
 add_executable(qmlimportstest qmlimportstest.cpp)
 target_link_libraries(qmlimportstest PRIVATE Qt6::Test)
-target_compile_definitions(qmlimportstest PRIVATE SOURCE_ROOT="${CMAKE_SOURCE_DIR}")
+# QML the build leaves out on this platform (files or folders): its imports needn't resolve here.
+get_property(unbuilt_qml GLOBAL PROPERTY MOBILE_UNBUILT_QML)
+list(JOIN unbuilt_qml ":" unbuilt_qml)
+target_compile_definitions(qmlimportstest PRIVATE SOURCE_ROOT="${CMAKE_SOURCE_DIR}" UNBUILT_QML="${unbuilt_qml}")
 add_test(NAME qmlimportstest COMMAND qmlimportstest)
 
 add_executable(overlaywindowtest

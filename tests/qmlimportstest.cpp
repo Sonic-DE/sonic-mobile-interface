@@ -35,12 +35,20 @@ private Q_SLOTS:
 
         static const QRegularExpression importLine(QStringLiteral("^\\s*import\\s+([A-Za-z_][\\w.]*)"), QRegularExpression::MultilineOption);
 
+        const QStringList unbuilt = QStringLiteral(UNBUILT_QML).split(QLatin1Char(':'), Qt::SkipEmptyParts);
+
         QMap<QString, QString> missing;
         int files = 0;
         QDirIterator it(root.path(), {QStringLiteral("*.qml")}, QDir::Files, QDirIterator::Subdirectories);
         while (it.hasNext()) {
             const QString path = it.next();
             if (path.contains(QLatin1String("/graphify-out/"))) {
+                continue;
+            }
+            const QString relativePath = root.relativeFilePath(path);
+            if (std::any_of(unbuilt.cbegin(), unbuilt.cend(), [&relativePath](const QString &entry) {
+                    return relativePath == entry || relativePath.startsWith(entry + QLatin1Char('/'));
+                })) {
                 continue;
             }
             QFile file(path);

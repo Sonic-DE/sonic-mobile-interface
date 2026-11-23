@@ -4,6 +4,7 @@ SonicDE's touch-friendly shell for phones and tablets.
 
 ## Unreleased
 
+- The mobile interface can now be installed on FreeBSD. Mobile data, SIM and the cellular setup step aren't there, since FreeBSD has no modem support, and neither is the Bluetooth quick setting.
 - The **Record Screen** quick setting is back. It records the screen to your Videos folder and tells you where the video was saved.
 - The mobile session has its own look, Silver Light - Mobile or Silver Dark - Mobile, kept apart from your desktop's theme, so neither changes the other. The first time, it matches your desktop's light or dark colours, and the new Dark Mode quick setting changes it at any time.
 - The SonicDE Mobile Silver global theme is now Silver Light - Mobile, with the full Silver look and splash screen, and has a new dark twin, Silver Dark - Mobile. If you used it, you're moved to Silver Light - Mobile, or Silver Dark - Mobile with a dark colour scheme, when you next log in.

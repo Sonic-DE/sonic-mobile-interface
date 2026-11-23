@@ -8,7 +8,7 @@ target_link_libraries(flashlighthelper
     Qt6::Core
     KF6::AuthCore
     KF6::CoreAddons
-    udev
+    PkgConfig::Libudev
 )
 
 install(TARGETS flashlighthelper DESTINATION ${KAUTH_HELPER_INSTALL_DIR})
