@@ -38,6 +38,16 @@ X11ScreenRecorder::~X11ScreenRecorder()
     }
 }
 
+void X11ScreenRecorder::chooseMediaBackend()
+{
+#ifdef Q_OS_FREEBSD
+    // FreeBSD's Qt prefers GStreamer, which can't record from a QVideoFrameInput; FFmpeg can.
+    if (qEnvironmentVariableIsEmpty("QT_MEDIA_BACKEND")) {
+        qputenv("QT_MEDIA_BACKEND", "ffmpeg");
+    }
+#endif
+}
+
 std::optional<X11ScreenRecorder::Format> X11ScreenRecorder::availableFormat()
 {
     const Format candidates[] = {

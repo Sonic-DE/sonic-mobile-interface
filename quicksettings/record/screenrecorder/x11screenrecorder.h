@@ -35,6 +35,10 @@ public:
     explicit X11ScreenRecorder(QObject *parent = nullptr);
     ~X11ScreenRecorder() override;
 
+    // Picks a Qt Multimedia backend that can encode frames the program supplies. Call it before
+    // anything else uses Qt Multimedia; a QT_MEDIA_BACKEND the user set is kept.
+    static void chooseMediaBackend();
+
     // The first file format and codec this system can encode, VP9 in WebM before H.264 in MP4.
     static std::optional<Format> availableFormat();
 

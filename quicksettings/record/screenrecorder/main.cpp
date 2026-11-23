@@ -81,6 +81,7 @@ QRect screenArea(const QString &name)
 
 int main(int argc, char **argv)
 {
+    X11ScreenRecorder::chooseMediaBackend();
     QCoreApplication app(argc, argv);
     Sonic::Logging::install();
     app.setApplicationName(u"sonic-mobile-screenrecorder"_s);

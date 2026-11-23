@@ -48,6 +48,7 @@ private:
 
 void ScreenRecorderTest::initTestCase()
 {
+    X11ScreenRecorder::chooseMediaBackend();
     int fds[2];
     QVERIFY(::pipe(fds) == 0);
     m_xvfb.setChildProcessModifier([readEnd = fds[0]] {
